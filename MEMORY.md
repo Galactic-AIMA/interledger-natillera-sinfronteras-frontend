@@ -108,4 +108,5 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 - (vacío)
 
 ### pitch
+- 2026-10-16 ~13:10 (Henry) — Guion de 5 min con camino de la demo (Andrés en EUR pone la cuota → llega en pesos), checklist y preguntas del jurado: [docs/pitch-guion.md](docs/pitch-guion.md). Falta pasarlo a la plantilla oficial de Google Slides. Revisión de textos (A6): [docs/copy-henry.md](docs/copy-henry.md), sin aplicar todavía.
 - (vacío)
