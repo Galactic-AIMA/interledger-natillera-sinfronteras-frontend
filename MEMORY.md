@@ -74,6 +74,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 ### pagos
 - 2026-10-16 — Sesión B arranca con agentes: contrato del flujo en `src/features/pagos/flow.ts`; ejecutores Sonnet, validación Opus. Orden: 11→28→30→resultado, luego 26/27, luego 12/14.
 - 2026-10-16 — Hechas 11, 28, 30, resultado (14, 31–34), 26, 27 y 12 (+ «Cobrar ahora» demo). `tsc` y export web ok; validación Opus encontró y se corrigieron 10 defectos. **Sin probar en celular/Expo Go** (pendiente). Faltan préstamos 16–25 (`resultado.tsx` admite 19 y 23 con un caso más).
+- 2026-10-16 — **Traspaso a Henry (pagos → préstamos):** `feat/pagos` tiene 11, 12, 26, 27, 28, 30 y resultado. Falta: (1) probar 11→28→30→34 en Expo Go y web (el diálogo demo en web usa `window.confirm`); (2) préstamos 16–25: reutilizan `antesHref`/`volviendoHref` de `src/features/pagos/flow.ts`; para 19 y 23 agregar `'credito-autorizado'`/`'prestamo-desembolsado'` a `ResultKind` y una entrada en `VARIANTS` de `src/app/resultado.tsx` (TypeScript marca lo que falte); en `volviendo.tsx` añadir la rama `finishLoanRepaymentGrant`/desembolso. (3) PR de `feat/pagos` a `main` (pendiente de Camilo).
 
 ### creditos
 - (vacío)
