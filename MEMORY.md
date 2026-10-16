@@ -7,9 +7,29 @@ terminar. Fechas absolutas (YYYY-MM-DD). Reglas de uso en [CLAUDE.md](CLAUDE.md)
 
 - 2026-10-16 — Repo creado por Duvan (`initial commit`: solo `app/package.json` con
   `@interledger/open-payments ^7.4.0`). Arquitectura final transcrita a
-  [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md). Setup de CLAUDE.md / MEMORY.md / USO-IA subido a la rama `david`.
-- Ramas: `master` (integración por PR), `duvdev` (la crea y maneja Duvan), `david` (David + sus
+  [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md). Setup de CLAUDE.md / MEMORY.md / AI_USAGE.md subido a la rama `david`.
+- Ramas: `master` (integración por PR), `duvdev` (la crea y maneja Duvan), `docs` (Camilo: info de
+  conexión con el frontend), `david` (David + sus
   sesiones de Claude; las sesiones salen de `david` con `feat/<carril>-...` y vuelven a `david`).
+
+## Metas acordadas con todo el equipo (2026-10-16)
+
+Enfoque actual: **pagos 1 a 1**. Lo demás espera a que P0 funcione.
+
+| Cuándo | Meta | Entregable | Responsable |
+|---|---|---|---|
+| Vie 16, 11:00–14:00 | **P0** Pago 1 a 1 con grant interactivo (solicitud, autorización, ejecución, confirmación) | Pago real **EUR→COP** en la Test Wallet | Duvan (backend); Camilo y David (pantalla) |
+| Vie 16, 15:00–17:30 | **P1** Cuota recurrente con scheduler + aporte desde el exterior | Cuota cobrada por el backend | Duvan, David |
+| Vie 16 noche | **P2** App de la natillera: crear, unirse, aportar, historial | Flujo completo navegable | Camilo, Henry |
+| Vie 16 (si 17:30 estable) | P3 Préstamo con aprobación de la tesorera (opcional) | Préstamo + plan de pagos | Duvan |
+| Sáb 17, 8:00–9:00 | P4 Diciembre / reparto (opcional, solo si P0–P2 firmes) | Reparto de diciembre | Camilo, David |
+| Sáb 17, 9:00–11:00 | Pruebas, README, `AI_USAGE.md`, `/prompts` | Repo listo | Henry, todos |
+| **Sáb 17, 11:00** | **CÓDIGO CONGELADO** en `main` del repo público | Commit final | Todos |
+| Sáb 17, antes 12:00 | Video demo (pantalla del pago real) y slides | Video + slides | Henry |
+| Sáb 17, 12:00 / 14:30–16:30 | Ronda 1 (8 criterios 0–5) / Ronda 2 y ganadores | Pitch | Henry / todos |
+
+Mapeo a la arquitectura: P0 = flujos 3 y 4 (+ signup/login mínimos); P1 = flujos 12 y 9;
+P2 = flujos 7, 8, 9, 13; P3 = flujos 10, 11, 12B; P4 no está en el diagrama.
 
 ## Carriles de trabajo
 

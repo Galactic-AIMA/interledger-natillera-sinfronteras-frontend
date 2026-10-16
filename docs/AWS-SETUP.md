@@ -10,6 +10,12 @@ antes de crear cada recurso; un recurso en otra región "no existe" para los dem
 **Nunca** pegar en este archivo, en el repo ni en el chat: llaves privadas, contraseñas, access
 keys de IAM ni tokens. Los IDs y ARNs sí se pueden anotar (no son secretos).
 
+## Prioridad: P0 (pago 1 a 1 EUR→COP) antes de las 14:00 del 2026-10-16
+
+Solo lo mínimo para P0, en este orden: **1 → 2 → 3 → 4 (solo `Users-info` y `Payments-history`)
+→ 5 → 6 (Lambdas `start-payment` y `finish-payment`) → 7 (rutas de P0)**. El resto de tablas,
+rutas y el paso 8 (Scheduler, P1) van después de las 15:00.
+
 ## Estado
 
 | # | Paso | Estado | Fecha | Datos (no secretos) |
@@ -47,7 +53,9 @@ Open Payments no crea billeteras: se crean a mano en la Test Wallet
    - **Wallet del cliente (backend):** la identidad con la que el backend firma las peticiones de
      Open Payments.
    - **Wallet del fondo:** la billetera común de la natillera de demo (flujo 7).
-   Para la demo también hace falta al menos una wallet por usuario de prueba.
+   Para P0 hacen falta además **dos wallets de usuario de prueba**: una que paga en **EUR** y
+   otra que recibe en **COP** (cada wallet address toma la moneda de la cuenta donde se crea, así
+   que se necesita una cuenta EUR y una cuenta COP).
 3. En la wallet del cliente: **Settings → Developer Keys → Generate keys**. Descarga
    `private.key` y muestra un **Key ID**.
    - Guardar `private.key` fuera del repo (p. ej. en tu gestor de contraseñas). No commitearlo.

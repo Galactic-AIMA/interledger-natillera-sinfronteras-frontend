@@ -20,7 +20,7 @@ fondo presta a sus integrantes. Los pagos se hacen con **Open Payments** (Interl
 | Documento | Para qué |
 |---|---|
 | [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md) | Los 13 flujos, tablas DynamoDB y reglas. Transcrito de la página 3 del draw.io (versión final). **Fuente de verdad del diseño.** |
-| [docs/USO-IA.md](docs/USO-IA.md) | Bitácora obligatoria del uso de IA (entregable de la hackathon). |
+| [AI_USAGE.md](AI_USAGE.md) | Bitácora obligatoria del uso de IA (entregable de la hackathon). |
 | [docs/AWS-SETUP.md](docs/AWS-SETUP.md) | Guía de montaje de la infra AWS (manual) y estado de cada recurso. |
 | [MEMORY.md](MEMORY.md) | Estado vivo: carriles, quién hace qué, decisiones, bloqueos. |
 | Open Payments (es) | https://openpayments.dev/es/ — SDK en `/es/sdk/...`, guías en `/es/guides/...` |
@@ -50,6 +50,7 @@ Guías de Open Payments más relevantes para nuestros flujos:
 - **Modelo de ramas:**
   - `master` — integración final; solo entra por PR.
   - `duvdev` — rama de Duvan (la crea y la maneja él). No tocarla.
+  - `docs` — rama de Camilo con la info de conexión con el frontend. No tocarla.
   - `david` — rama de David y sus sesiones de Claude. Lo que nos toca se sube aquí y de aquí
     sale el PR a `master`.
   - Sesiones paralelas de David: cada una en su worktree con una rama corta salida de `david`
@@ -65,12 +66,15 @@ Guías de Open Payments más relevantes para nuestros flujos:
 - MEMORY.md: cada carril edita **solo su propia sección** y agrega líneas (no reescribe las de
   otros) para minimizar conflictos de merge.
 - Antes de cerrar la sesión: actualizar tu sección de MEMORY.md y añadir la entrada en
-  docs/USO-IA.md.
+  AI_USAGE.md.
 
 ## Documentar el uso de IA (obligatorio)
 
+Entregables de la hackathon: `AI_USAGE.md` (raíz) y la carpeta `prompts/` con los prompts
+relevantes usados (un `.md` por tema/sesión).
+
 Cada sesión que produzca código, docs o decisiones con ayuda de IA agrega una entrada a
-[docs/USO-IA.md](docs/USO-IA.md) con: fecha, persona, herramienta/modelo, carril, qué se pidió,
+[AI_USAGE.md](AI_USAGE.md) con: fecha, persona, herramienta/modelo, carril, qué se pidió,
 qué produjo la IA, qué se revisó/corrigió a mano. Los commits hechos con IA llevan la línea
 `Co-Authored-By` correspondiente.
 
