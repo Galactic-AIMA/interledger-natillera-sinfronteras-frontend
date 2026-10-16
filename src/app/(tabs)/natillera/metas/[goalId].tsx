@@ -12,11 +12,13 @@ import { BackButton } from '@/features/navegacion/BackButton';
 import { antesHref, encodeAmount } from '@/features/pagos/flow';
 import { param } from '@/features/pagos/flujo/params';
 import { palette, space } from '@/theme';
+import { formatMovementDate } from '@/utils/dates';
 import { currencyName, formatAmount, toMinorUnits } from '@/utils/money';
 
 function ContributionRow({ item }: { item: GoalContribution }) {
   // Si aportó en otra moneda se ve lo que salió de su billetera: ahí está lo "sin fronteras".
   const sentOther = item.sent && item.sent.assetCode !== item.amount.assetCode ? `Envió ${formatAmount(item.sent)}` : undefined;
+  const when = formatMovementDate(item.createdAt);
   return (
     <View style={styles.row} accessible accessibilityLabel={`${item.authorName}, ${formatAmount(item.amount, { signed: true })}${sentOther ? `. ${sentOther}` : ''}`}>
       <View style={styles.rowText}>
@@ -24,6 +26,11 @@ function ContributionRow({ item }: { item: GoalContribution }) {
         {sentOther ? (
           <AppText variant="caption" tone="muted">
             {sentOther}
+          </AppText>
+        ) : null}
+        {when ? (
+          <AppText variant="caption" tone="muted">
+            {when}
           </AppText>
         ) : null}
       </View>

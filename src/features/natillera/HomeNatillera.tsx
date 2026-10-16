@@ -7,6 +7,7 @@ import type { Natillera, NatilleraRecord } from '@/api/types';
 import { AppText, Button, Card, InfoRow, LinkRow, Screen, StatusPill } from '@/components';
 import { GoalCard } from '@/features/metas/GoalCard';
 import { palette, radius, space } from '@/theme';
+import { formatMovementDate } from '@/utils/dates';
 import { formatAmount } from '@/utils/money';
 
 import { JarIllustration } from './JarIllustration';
@@ -27,13 +28,19 @@ function jarProgress(natillera: Natillera): { fill: number; monthsReached: numbe
 
 function RecentRecord({ record }: { record: NatilleraRecord }) {
   const note = record.paidByName !== record.authorName ? `Lo puso ${record.paidByName}` : undefined;
+  const when = formatMovementDate(record.createdAt);
   return (
-    <View style={styles.record} accessible accessibilityLabel={`${record.authorName}, ${formatAmount(record.amount, { signed: true })}`}>
+    <View style={styles.record} accessible accessibilityLabel={`${record.authorName}, ${formatAmount(record.amount, { signed: true })}${when ? `, ${when}` : ''}`}>
       <View style={styles.recordText}>
         <AppText variant="bodyStrong">{record.authorName}</AppText>
         {note ? (
           <AppText variant="caption" tone="muted">
             {note}
+          </AppText>
+        ) : null}
+        {when ? (
+          <AppText variant="caption" tone="muted">
+            {when}
           </AppText>
         ) : null}
       </View>

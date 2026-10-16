@@ -18,3 +18,13 @@ Válida si esto puede estar solo en el front sin necesidad de hacer una nueva fu
 ## Prompt 3
 
 dale de acuerdo empieza ejcutar
+
+## Prompt 4
+
+Sí, haz push de feat/metas a main.
+
+## Prompt 5
+
+Perfecto, actualiza las memorias de nuestro workspace y que esté todo al día, listo. Y en la aplicación que quede todo listo. También en esa parte que ponga una fecha pequeñita. Cada, eh, en, en gris pequeño. Que muestre cuándo se realizó eh, la transferencia.
+
+(Adjuntó una captura de la tarjeta «Lo último que pasó» de la pantalla 10.)
