@@ -213,24 +213,62 @@ Por cada handler que entregue Duvan:
 Nombres de función sugeridos: `natillera-<flujo>`, p. ej. `natillera-signup`,
 `natillera-start-payment`, `natillera-finish-payment`.
 
-## Paso 7 · API Gateway
+## Paso 7 · API Gateway (HTTP API + authorizer JWT de Cognito)
 
-Recomendado: **HTTP API** (más simple y barato, authorizer JWT nativo para Cognito). Si el
-equipo decide usar VTL (decisión abierta 4), tendría que ser **REST API**.
+Se usa **HTTP API** (más simple y barato, authorizer JWT nativo). Signup y login NO pasan por
+aquí: la app los hace directo contra Cognito ([API-AUTH.md](API-AUTH.md)).
 
-1. **API Gateway → Create API → HTTP API** → nombre `natillera-api`, stage `$default` con auto-deploy.
-2. **Authorization → Create authorizer → JWT**:
-   - Issuer: `https://cognito-idp.us-east-2.amazonaws.com/us-east-2_2pQzW95IK`
-   - Audience: el **Client ID** del paso 3.
-3. Rutas (una integración Lambda por ruta). Todas con el authorizer **excepto** signup y login:
-   `POST /signup`, `POST /login`, `POST /payments/start`, `POST /payments/finish`,
-   `POST /accounts`, `POST /accounts/pay`, `POST /natilleras`, `POST /natilleras/join`,
-   `POST /natilleras/savings`, `POST /loans/requests`, `POST /loans/requests/decision`,
-   `POST /recurring/start`, `POST /recurring/finish`, `POST /loans/repayment/start`,
-   `POST /loans/repayment/finish`, y los `GET` del flujo 13.
-   (Rutas tentativas: ajustarlas a lo que implemente Duvan.)
-4. **CORS**: no hace falta para la app nativa; sí si se prueba desde un navegador.
-5. Anotar la **Invoke URL** en la tabla.
+### 7.1 · Lambda de prueba `natillera-me` (GET /me)
+
+Sirve para probar toda la cadena antes de que existan las Lambdas de pagos.
+
+1. **Lambda → Create function** → `natillera-me`, Node.js 22.x, rol nuevo con permisos básicos.
+2. Pegar [deploy/me/index.mjs](../deploy/me/index.mjs) como `index.mjs` → **Deploy**.
+3. Variable de entorno `USER_VIEW_TABLE` = `Users-info`.
+4. Rol → política inline `natillera-me-dynamo`:
+   ```json
+   { "Version": "2012-10-17", "Statement": [{ "Effect": "Allow", "Action": "dynamodb:GetItem",
+     "Resource": "arn:aws:dynamodb:us-east-2:349607459198:table/Users-info" }] }
+   ```
+
+### 7.2 · Crear el API
+
+1. **API Gateway → Crear API → API HTTP → Crear**.
+2. Integraciones: **Lambda** → `natillera-me` (región us-east-2), versión de payload **2.0**.
+3. Nombre del API: **`natillera-api`** → Siguiente.
+4. Rutas: `GET` `/me` → integración `natillera-me` → Siguiente.
+5. Etapas: dejar **`$default`** con *implementación automática* → Siguiente → **Crear**.
+6. Anotar la **URL de invocación** (`https://xxxx.execute-api.us-east-2.amazonaws.com`).
+
+### 7.3 · Authorizer JWT (Cognito)
+
+1. En el API → **Autorización** → pestaña *Administrar autorizadores* → **Crear**:
+   - Tipo: **JWT** · Nombre: `cognito-jwt`
+   - Emisor (issuer): `https://cognito-idp.us-east-2.amazonaws.com/us-east-2_2pQzW95IK`
+   - Audiencia: `20b10a2tnnr69lqlp2sf62orv0` (Client ID)
+   - Origen de identidad: `$request.header.Authorization` (por defecto)
+2. Pestaña *Adjuntar autorizadores a rutas* → `GET /me` → `cognito-jwt` → **Adjuntar**.
+   Toda ruta nueva (salvo las públicas) debe llevar este autorizador.
+
+### 7.4 · Probar
+
+```bash
+curl -i https://<URL>/me
+```
+→ **401** `{"message":"Unauthorized"}` (sin token).
+
+```bash
+curl -i https://<URL>/me -H "Authorization: Bearer <AccessToken>"
+```
+→ **200** con el usuario de `Users-info` (un usuario creado después del cambio de pre-signup).
+
+### 7.5 · Rutas siguientes (P0 y después)
+
+Cuando Duvan entregue cada Lambda: **Rutas → Crear** → método + path → integración Lambda →
+adjuntar `cognito-jwt`. Rutas tentativas: `POST /payments/start`, `POST /payments/finish`
+(P0); `POST /accounts`, `POST /accounts/pay`, `POST /natilleras`, `POST /natilleras/join`,
+`POST /natilleras/savings`, `POST /recurring/start`, `POST /recurring/finish`, préstamos y los
+`GET` del flujo 13. CORS: no hace falta para la app nativa.
 
 ## Paso 8 · EventBridge Scheduler (flujos 12 y 12B)
 
