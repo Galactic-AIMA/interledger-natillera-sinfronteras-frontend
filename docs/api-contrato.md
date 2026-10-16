@@ -10,8 +10,8 @@ Reglas comunes: `Authorization: Bearer <accessToken de Cognito>` en todo salvo s
 
 | Flujo | Método y ruta | Body → respuesta | Pantallas |
 |---|---|---|---|
-| 1 | `POST /signup` | {username, password, email, phone, walletAddress} → {userId} | 02 |
-| 2 | Cognito `InitiateAuth` (USER_PASSWORD_AUTH) | → {AccessToken, IdToken, RefreshToken} | 03 |
+| 1 | Cognito `SignUp` directo (no pasa por nuestra API) | {ClientId, Username, Password, UserAttributes: email, phone_number (+57…), custom:walletId} → {UserConfirmed: true, UserSub} | 02 |
+| 2 | Cognito `InitiateAuth` (USER_PASSWORD_AUTH; renovar con REFRESH_TOKEN_AUTH) | → {AccessToken, RefreshToken, ExpiresIn: 3600} | 03 |
 | 13 | `GET /me` | → {username, email, phone, walletAddress, assetCode, assetScale} | 04, 26 |
 | — | `GET /wallets/verify?url=` | → {exists, assetCode, assetScale} | 02, 08, 27 |
 | 3 | `POST /payments` | {kind: "p2p"\|"aporte", customWalletName? \| natilleraId?, author?, value, assetCode, assetScale} → {paymentId, redirectUrl, debitAmount?, receiveAmount?} | 11, 26, 28 |
@@ -48,3 +48,11 @@ Por verificar con la Test Wallet: si acepta `natillera://` como `finish.uri` (si
 - **`returnUrl`** en `POST /payments`, `POST /recurring`, `POST /loans/requests/{id}/repayment-grant` y `POST /loans/requests/{id}/decision`: la app manda a dónde debe volver la persona (`natillera://retorno` en el APK, otra URL en Expo Go). El back la usa como `finish.uri` (opción A) o como destino del 302 (opción B).
 - **`POST /payments/preview`** (opcional): mismo body que `POST /payments`, devuelve `{debitAmount, receiveAmount, fee?}` sin crear grant. Si responde 404, la app muestra "se calcula al confirmar" y sigue.
 - **Token**: la app manda el `AccessToken` de Cognito; si el authorizer de API Gateway espera el `IdToken`, se cambia con `EXPO_PUBLIC_AUTH_TOKEN_TYPE=id` sin tocar código.
+
+## Auth con Cognito (confirmado por el back, 2026-10-16)
+
+- Registro y login: `POST https://cognito-idp.us-east-2.amazonaws.com/`, sin token ni API key. Headers `Content-Type: application/x-amz-json-1.1` y `X-Amz-Target: AWSCognitoIdentityProviderService.SignUp` o `.InitiateAuth`. `ClientId` `20b10a2tnnr69lqlp2sf62orv0` (App Client público, sin secreto).
+- SignUp confirma la cuenta al instante; la app entra sola con `InitiateAuth` después.
+- `AccessToken` en `Authorization: Bearer <AccessToken>`; dura 1 h y se renueva con `REFRESH_TOKEN_AUTH`. Tokens en `expo-secure-store`.
+- Errores (400, `__type` + `message`): `UserLambdaValidationException` (se muestra el motivo del back), `UsernameExistsException`, `InvalidPasswordException`, `InvalidParameterException`, `NotAuthorizedException`.
+- Detalle: `docs/API-AUTH.md` de la rama `david` del back. Implementación: `src/api/auth.ts`.

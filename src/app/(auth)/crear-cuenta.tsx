@@ -22,7 +22,7 @@ export default function ScreenCrearCuenta() {
 
   const signup = useMutation({
     mutationFn: async () => {
-      await api.signup({ username: username.trim(), password, email: email.trim(), phone: phone.trim(), walletAddress: wallet.trim() });
+      await api.signup({ username: username.trim(), password, email: email.trim(), phone: phone.replace(/\s/g, ''), walletAddress: wallet.trim() });
       try {
         await login(username.trim(), password);
         return 'logged' as const;
@@ -45,9 +45,9 @@ export default function ScreenCrearCuenta() {
   function submit() {
     const next: Errors = {};
     if (username.trim().length < 3) next.username = 'Escriba un usuario de al menos 3 letras.';
-    if (password.length < 8) next.password = 'La contraseña necesita al menos 8 caracteres.';
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{8,}$/.test(password)) next.password = 'Use mínimo 8 caracteres con mayúscula, minúscula, número y símbolo.';
     if (!/^\S+@\S+\.\S+$/.test(email.trim())) next.email = 'Escriba un correo válido, como rosa@correo.com.';
-    if (phone.replace(/\D/g, '').length < 7) next.phone = 'Escriba su celular con el indicativo del país.';
+    if (!/^\+57\d{10}$/.test(phone.replace(/\s/g, ''))) next.phone = 'Escriba su celular con +57 y los 10 números, como +573001234567.';
     if (!wallet.trim()) next.wallet = 'Escriba la dirección de su billetera.';
     else if (!info) next.wallet = 'Todavía no verificamos la billetera. Toque fuera del campo y espere el aviso.';
     setErrors(next);
@@ -61,7 +61,7 @@ export default function ScreenCrearCuenta() {
       <TextField label="Usuario" value={username} onChangeText={field('username', setUsername)} error={errors.username} autoCapitalize="none" autoCorrect={false} textContentType="username" />
       <TextField label="Contraseña" value={password} onChangeText={field('password', setPassword)} error={errors.password} secureTextEntry autoCapitalize="none" textContentType="newPassword" />
       <TextField label="Correo" value={email} onChangeText={field('email', setEmail)} error={errors.email} placeholder="rosa@correo.com" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} textContentType="emailAddress" />
-      <TextField label="Celular" value={phone} onChangeText={field('phone', setPhone)} error={errors.phone} placeholder="+57 300 555 0101" keyboardType="phone-pad" textContentType="telephoneNumber" />
+      <TextField label="Celular" value={phone} onChangeText={field('phone', setPhone)} error={errors.phone} placeholder="+573001234567" keyboardType="phone-pad" textContentType="telephoneNumber" />
       <WalletVerifier
         label="Dirección de su billetera"
         helper="Verificamos que la billetera exista."

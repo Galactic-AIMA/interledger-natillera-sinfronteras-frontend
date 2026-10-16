@@ -26,9 +26,12 @@ export type User = {
 
 export type SignupInput = {
   username: string;
+  /** Mínimo 8 caracteres, con mayúscula, minúscula, número y símbolo (política de Cognito). */
   password: string;
   email: string;
+  /** Formato internacional sin espacios: +57 y el número. Va a Cognito como `phone_number`. */
   phone: string;
+  /** URL (o id) de la Test Wallet del usuario. Va a Cognito como `custom:walletId`; el back la verifica. */
   walletAddress: string;
 };
 
