@@ -37,6 +37,9 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
   borrador de Duvan (`app/src/handlers/start-payment.ts`), y las probó en local (tipos, bundle,
   validaciones, conexión firmada a la Test Wallet). Duvan las revisa antes de desplegar.
   Guía y requests de prueba: [`docs/API-PAGOS.md`](docs/API-PAGOS.md).
+- **Documentación del API y script de prueba:** [`docs/API.md`](docs/API.md) (piezas, auth,
+  endpoints, flujo de pago, errores) y [`scripts/probar-pago.sh`](scripts/probar-pago.sh) (prueba
+  interactiva de punta a punta sin exponer tokens).
 - **Requests de auth para el front:** [`docs/API-AUTH.md`](docs/API-AUTH.md). Incluye SignUp e
   InitiateAuth contra Cognito y un ejemplo con `fetch` para React Native.
 - **Verificaciones automáticas:** consultas a la wallet de prueba (`GET` público), una llamada de

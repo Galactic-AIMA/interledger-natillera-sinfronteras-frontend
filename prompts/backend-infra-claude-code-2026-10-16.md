@@ -166,3 +166,13 @@ Prompts **literales**, en orden. Las capturas de pantalla adjuntas se marcan com
 
 ### 33
 > Duvan quiere mantener el VTL; adapta las Lambdas para que funcionen con el mapping template.
+
+### 34
+> Bien, voy a crear los otros recursos (get-payment y finish-payment) pasame los VTL de esos recursos
+
+### 35
+> Listo ahora quiero probar todo el flujo desde iniciar el pago hasta completarlo y tambien iniciar sesion y que mandes toda la documentacion del funcionamiento del api al repo para entenderla
+
+### 36
+> [captura: recursos /finish-payment POST, /get-payment GET, /start-payment POST en API Gateway]
+> Como creo los recursos?, asi los tengo actualmente pero no se como crear los otros que estan encerrados por llaves {}

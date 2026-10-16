@@ -19,6 +19,7 @@ fondo presta a sus integrantes. Los pagos se hacen con **Open Payments** (Interl
 
 | Documento | Para qué |
 |---|---|
+| [docs/API.md](docs/API.md) | **Cómo funciona el API** (piezas, auth, endpoints, flujo de pago, pruebas). Empezar aquí. |
 | [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md) | Los 13 flujos, tablas DynamoDB y reglas. Transcrito de la página 3 del draw.io (versión final). **Fuente de verdad del diseño.** |
 | [AI_USAGE.md](AI_USAGE.md) | Bitácora obligatoria del uso de IA (entregable de la hackathon). |
 | [docs/AWS-SETUP.md](docs/AWS-SETUP.md) | Guía de montaje de la infra AWS (manual) y estado de cada recurso. |
