@@ -184,7 +184,8 @@ export const httpApi: NatilleraApi = {
       return await request<QuotePreview>('POST', '/payments/preview', toPaymentBody(input));
     } catch (error) {
       // Si el back aún no tiene vista previa, la pantalla muestra "se calcula al confirmar".
-      if (error instanceof ApiError && (error.status === 404 || error.status === 405)) return null;
+      // API REST: una ruta que no existe responde 403 (pedido de Henry, 17:15).
+      if (error instanceof ApiError && (error.status === 403 || error.status === 404 || error.status === 405)) return null;
       throw error;
     }
   },
