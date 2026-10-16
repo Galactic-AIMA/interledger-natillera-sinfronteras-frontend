@@ -108,7 +108,9 @@ Open Payments no crea billeteras: se crean a mano en la Test Wallet
    - Atributo personalizado requerido en el pool: **`custom:walletId`** (String, mutable), con
      permiso de escritura en el app client.
    - Lambda: Node.js 22.x, timeout 5 s (Cognito corta a los 5 s), rol con `cognito-idp:ListUsers`
-     sobre el pool.
+     sobre el pool y `dynamodb:PutItem` sobre `Users-info`.
+   - También guarda el usuario en `Users-info` (variable de entorno `USER_VIEW_TABLE=Users-info`).
+     La llave es `username` porque en Pre sign-up todavía no existe el `sub`.
 
 Anotar **User pool ID** (`us-east-2_xxxx`) y **Client ID** en la tabla.
 
@@ -120,7 +122,7 @@ donde dice Number.
 
 | Tabla | Partition key | Sort key |
 |---|---|---|
-| `Users-info` | `userId` (S) | — |
+| `Users-info` | `username` (S) | — |
 | `Saved-accounts` | `author` (S) | `customWalletName` (S) |
 | `Payments-history` | `paymentId` (S) | — |
 | `natillera-registration` | `natilleraId` (S) | — |

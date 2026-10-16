@@ -6,11 +6,19 @@
 //  - si la wallet no existe se rechaza (antes se usaba && y pasaba igual)
 //  - devuelve el event (Cognito lo exige) y auto-confirma al usuario (flujo 1 del diagrama)
 //  - usa event.userPoolId en vez de la variable de entorno USER_POOL_ID
+//  - guarda el usuario en DynamoDB (commit fbd01d3 de Duvan): el campo es event.userName (no
+//    event.Username); en Pre sign-up todavía no existe el `sub`, así que la llave es el username
+//    (también viene en el access token, claim `username`). No sobreescribe un registro existente.
 // Runtime: Node.js 22.x · archivo index.mjs · handler index.handler · timeout 5 s.
-// Permiso extra del rol: cognito-idp:ListUsers sobre el user pool.
+// Variable de entorno: USER_VIEW_TABLE (por defecto `Users-info`, PK `username` String).
+// Permisos extra del rol: cognito-idp:ListUsers sobre el user pool y dynamodb:PutItem sobre la tabla.
 import { CognitoIdentityProviderClient, ListUsersCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 
 const cognito = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION });
+const dynamo = DynamoDBDocumentClient.from(new DynamoDBClient({ region: process.env.AWS_REGION }));
+const USERS_TABLE = process.env.USER_VIEW_TABLE || 'Users-info';
 const WALLET_HOST = 'https://ilp.interledger-test.dev';
 
 export const handler = async (event) => {
@@ -29,10 +37,35 @@ export const handler = async (event) => {
     throw new Error('Phone number already registered');
   }
 
+  await saveUser(event.userName, attrs, wallet);
+
   // Auto-confirma la cuenta (diagrama, flujo 1), pero NO marca email/teléfono como verificados:
   // nadie comprobó que le pertenezcan, y un atributo verificado habilita recuperar la cuenta por él.
   event.response.autoConfirmUser = true;
   return event;
+};
+
+// assetCode/assetScale salen de la wallet, no del cliente (regla 0 del diagrama).
+const saveUser = async (username, attrs, wallet) => {
+  try {
+    await dynamo.send(new PutCommand({
+      TableName: USERS_TABLE,
+      Item: {
+        username,
+        email: attrs.email,
+        phone: attrs.phone_number,
+        walletAddress: wallet.id,
+        assetCode: wallet.assetCode,
+        assetScale: wallet.assetScale,
+        createdAt: new Date().toISOString(),
+      },
+      ConditionExpression: 'attribute_not_exists(username)',
+    }));
+  } catch (error) {
+    if (error?.name === 'ConditionalCheckFailedException') throw new Error('Username already registered');
+    console.log('Users table put failed', error);
+    throw error;
+  }
 };
 
 // Acepta la URL completa (https://ilp.interledger-test.dev/abc) o solo el id (abc).

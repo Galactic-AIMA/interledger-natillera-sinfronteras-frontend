@@ -77,6 +77,14 @@ Decisiones técnicas aún sin tomar:
   wallets inexistentes); (5) el trigger debe hacer `return event` y poner
   `event.response.autoConfirmUser = true`; (6) usar `event.userPoolId` en vez de `USER_POOL_ID`;
   (7) `@interledger/open-payments` no viene en el runtime de Lambda: hay que empaquetarlo (esbuild).
+- 2026-10-16 · de infra (david) a duvdev: sobre `saveUserEvent` (commit fbd01d3), ya integrado en
+  `deploy/pre-signup/index.mjs`: (1) el campo es `event.userName`, no `event.Username` (llegaba
+  undefined y el Put fallaba); (2) en Pre sign-up no existe el `sub` → `Users-info` usa PK
+  `username` (el access token trae el claim `username`); (3) se guardan `walletAddress`,
+  `assetCode`, `assetScale` leídos de la wallet en vez de `source`/`id: 1`; (4) `PutItem` con
+  `attribute_not_exists(username)` para no pisar a otro usuario; (5) `saveUserEvent` va después
+  de las validaciones (ya estaba bien). Si prefieren `userId = sub`, hay que moverlo a un trigger
+  Post confirmation.
 - formato: `YYYY-MM-DD · de <carril> a <carril>: <qué se necesita>`
 
 ## Bitácora por carril
@@ -87,6 +95,8 @@ Decisiones técnicas aún sin tomar:
 - 2026-10-16 · Pasos 0, 2 y 3 listos: secreto Open Payments, user pool `us-east-2_2pQzW95IK`,
   app client `20b10a2tnnr69lqlp2sf62orv0`, Lambda `pre-signup` desplegada. Signup + login probados
   de punta a punta (usuario `prueba1`). Requests para el front en `docs/API-AUTH.md`.
+- 2026-10-16 · `pre-signup` ahora también guarda en `Users-info` (PK `username`), basado en el
+  cambio de Duvan. Falta crear la tabla y desplegar.
 
 ### op-core
 - (vacío)
