@@ -35,7 +35,7 @@ App móvil de **Natillera sin Fronteras** para la Hackatón Open Payments de Int
 
 Política: https://interledger.org/hackathon/ai-policy/ — `AI_USAGE.md` en la raíz con herramientas, para qué y en qué archivos; prompts **literales** en `/prompts`.
 
-- **Prompts de Claude Code:** se guardan solos con el hook `.claude/hooks/log-prompt.mjs` en `prompts/AAAA-MM-DD-<persona>.md`. No lo desactives. La persona sale de `git config user.name` (o de la variable `NATILLERA_PERSONA`).
+- **Prompts de Claude Code:** se guardan solos con el hook `.claude/hooks/log-prompt.mjs` en `prompts/AAAA-MM-DD-<persona>-<rama>.md`. No lo desactives. La persona sale de `git config user.name` (o de la variable `NATILLERA_PERSONA`).
 - **Otras herramientas** (ChatGPT, Copilot, Gemini, v0, Figma AI): pega el prompt literal en `prompts/<persona>-<herramienta>.md` en el momento.
 - **Al cerrar cada tarea**, Claude agrega una fila a la tabla "Where and How We Used AI" de [AI_USAGE.md](AI_USAGE.md): fecha, persona, herramienta, qué se hizo, archivos.
 - Commits asistidos con el trailer `Co-Authored-By: Claude …`.
@@ -44,7 +44,7 @@ Política: https://interledger.org/hackathon/ai-policy/ — `AI_USAGE.md` en la 
 ## Trabajo en paralelo
 
 - **Una sesión = un carril = una rama** `feat/<carril>-<tema>` salida de `main`, merge a `main` cada ~3 h. Reclama tu carril en [MEMORY.md](MEMORY.md) antes de empezar.
-- Carriles: `base` (tema, componentes, `src/api`, navegación — Camilo), `cuenta-natillera` (pantallas 01–10, 15, 35 — Camilo), `pagos` (11–14, 26–34 — Henry), `creditos` (16–25 — Henry, con Camilo en la madrugada), `pitch`.
+- Carriles: `base` (tema, componentes, `src/api`, navegación — Camilo), `cuenta-natillera` (pantallas 01–10, 15, 35 — Camilo, ya en `main`), `pagos` (11–14, 26–34 — Camilo en `feat/pagos`; Henry prueba y revisa), `creditos` (16–25 — Henry, con Camilo en la madrugada), `pitch`.
 - Archivos compartidos (`src/theme`, `src/api`, `src/components`, `app/_layout.tsx`): solo el carril `base`. Si necesitas un cambio, anótalo en "Pedidos entre carriles" de MEMORY.md.
 - MEMORY.md: cada carril edita solo su sección.
 

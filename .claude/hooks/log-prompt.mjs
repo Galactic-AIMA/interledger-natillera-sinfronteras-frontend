@@ -31,6 +31,15 @@ function persona(cwd) {
   }
 }
 
+// La rama va en el nombre del archivo para que los worktrees paralelos no choquen al integrar.
+function branch(cwd) {
+  try {
+    return slug(execSync("git branch --show-current", { cwd, encoding: "utf8", stdio: ["ignore", "pipe", "ignore"] }).trim() || "sin-rama");
+  } catch {
+    return "sin-rama";
+  }
+}
+
 function slug(text) {
   return text.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "anonimo";
 }
@@ -57,9 +66,10 @@ function main() {
 
   const { date, time } = bogotaNow();
   const who = persona(root);
-  const file = join(dir, `${date}-${who}.md`);
+  const rama = branch(root);
+  const file = join(dir, `${date}-${who}-${rama}.md`);
   if (!existsSync(file)) {
-    appendFileSync(file, `# Prompts de ${who} · ${date}\n\nRegistro literal y automático (hook de Claude Code). Herramienta: Claude Code.\n`);
+    appendFileSync(file, `# Prompts de ${who} · ${date} · rama ${rama}\n\nRegistro literal y automático (hook de Claude Code). Herramienta: Claude Code.\n`);
   }
   const session = String(input.session_id || "").slice(0, 8);
   appendFileSync(file, `\n## ${time} · sesión ${session}\n\n${redact(prompt).trimEnd()}\n`);

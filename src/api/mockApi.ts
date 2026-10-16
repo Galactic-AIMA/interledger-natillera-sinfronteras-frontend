@@ -199,7 +199,7 @@ export const mockApi: NatilleraApi & { switchUser(username: string): void } = {
   async createNatillera(input) {
     await wait();
     const user = me();
-    const code = `${user.displayName.split(' ').pop()?.toUpperCase() ?? 'NAT'}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const code = `${(user.displayName.split(' ').pop() ?? 'NAT').toUpperCase().replace(/[^A-Z0-9]/g, '') || 'NAT'}-${Math.floor(1000 + Math.random() * 9000)}`;
     const n: NatilleraState = { natilleraId: newId('n'), natilleraName: input.natilleraName, walletAddress: input.walletAddress, adminId: user.userId, memberIds: [user.userId], quota: cop(50000), invitationCode: code, records: [], disbursed: cop(0) };
     natilleras.push(n);
     return toNatillera(n, user.userId);

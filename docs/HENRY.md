@@ -137,3 +137,23 @@ export default function ScreenNatilleraCuota() {
 | Campos | `TextField` (etiqueta siempre visible, `error` junto al campo) |
 | Datos | `useMyNatillera()`, `usePayments()`, `useAccounts()`, `useMyLoans()`; después de un pago, `queryClient.invalidateQueries({ queryKey: keys.natillera })` |
 | Probar como otra persona en demo | Entra con `luz` o `andres` en "Ya tengo cuenta" (cualquier contraseña) cuando la pantalla 03 exista |
+
+## Pendientes de Henry (estado al 2026-10-16 ~12:40)
+
+Camilo cerró en demo los carriles `cuenta-natillera` (ya en `main`) y `pagos` (en la rama `feat/pagos`, sin PR). Esto es lo que queda para ti, en orden. La misma lista vive en [MEMORY.md](../MEMORY.md), sección "Pendientes para Henry".
+
+| # | Pendiente | Cómo | Listo cuando |
+|---|---|---|---|
+| 1 | Probar el camino del pitch **11 → 28 → 30 → 34** en Expo Go y en web | `git switch feat/pagos`, `npm install`, `EXPO_PUBLIC_USE_MOCKS=1 npx expo start`. En web, el diálogo de la billetera demo usa `window.confirm` | Recorrido completo sin errores en consola; fallos en la bitácora `pagos` |
+| 2 | Parte A de esta guía (wallets de prueba, monedas/COP, `natillera://` como finish URI) | Test Wallet | Respuestas en la bitácora `pagos`; avisar a Duvan |
+| 3 | **Préstamos 16–25** (carril `creditos`) | Rama `feat/creditos` desde `main` cuando `pagos` esté integrado. Reutiliza `antesHref` / `volviendoHref` de `src/features/pagos/flow.ts`. Para 19 y 23 agrega `'credito-autorizado'` y `'prestamo-desembolsado'` a `ResultKind` y una entrada en `VARIANTS` de `src/app/resultado.tsx` (TypeScript marca lo que falte); en `src/app/billetera/volviendo.tsx` añade la rama `finishLoanRepaymentGrant` / desembolso | Pantallas 16, 17, 19, 20, 21, 23, 24 y 25 navegables en demo |
+| 4 | Copy: revisar tono "usted" y frases cortas | `docs/copy-henry.md` con propuestas; no tocar el Figma | Lista entregada a Camilo |
+| 5 | Slides en la plantilla oficial y guion de 5 min | Google Slides | Problema, solución, demo, impacto, equipo |
+| 6 | Curso de Platzi o Guide to Open Payments | — | Marcado en el checklist de MEMORY.md |
+| 7 | Mejoras menores de `cuenta-natillera` en celular: instalar `expo-clipboard` para "Copiar el enlace" (hoy solo abre Compartir) y botón volver en pantallas sueltas | Rama nueva desde `main` | Probado en Expo Go |
+
+**Antes de integrar `feat/pagos` a `main`:** chocan `AI_USAGE.md`, `MEMORY.md` y `prompts/2026-10-16-camilo.md`. Conserva las dos versiones de las filas y de la bitácora, y **concatena** los prompts (nunca descartes ninguno). La rama tampoco trae la fusión de `main` (hook de prompts por rama y `Screen` con `headerRight`): haz `git merge main` en `feat/pagos` primero. El PR lo abre Camilo.
+
+**Nota de pagos a base:** `src/api/wallet.ts` ganó un fallback `window.confirm` para que `openWallet` funcione en web; y `mockApi.ts` (~línea 137) devuelve `fee` aunque no haya conversión (la UI ya lo oculta). Ambos están en "Pedidos entre carriles".
+
+**Decisión pendiente de Camilo:** `app.json` `web.output` de `"server"` a `"single"`.
