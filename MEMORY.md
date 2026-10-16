@@ -85,6 +85,14 @@ Decisiones técnicas aún sin tomar:
   `attribute_not_exists(username)` para no pisar a otro usuario; (5) `saveUserEvent` va después
   de las validaciones (ya estaba bien). Si prefieren `userId = sub`, hay que moverlo a un trigger
   Post confirmation.
+- 2026-10-16 · del front (Camilo y equipo) a duvdev + david — prioridad máxima, antes de las
+  2:00 a. m.: (1) desplegar iniciar y finalizar pago con la forma de `docs/openapi.yaml` del repo
+  del front (`POST /payments` + finalización) y pasarles la URL base del HTTP API; (2) iniciar debe
+  devolver además `debitAmount` y `receiveAmount` de la quote; (3) aceptar `returnUrl` del body
+  (`natillera://retorno` o `exp://...`) como `interact.finish.uri`, con allowlist de esos dos
+  esquemas — aplica también a `/recurring`, `/loans/requests/{id}/repayment-grant` y `/decision`;
+  (4) reglas de la hackathon: rama `main` con el código, `AI_USAGE.md` con las 4 secciones (hecho
+  en `david`) y `/prompts` al día.
 - formato: `YYYY-MM-DD · de <carril> a <carril>: <qué se necesita>`
 
 ## Bitácora por carril

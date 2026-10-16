@@ -70,8 +70,11 @@ Guías de Open Payments más relevantes para nuestros flujos:
 
 ## Documentar el uso de IA (obligatorio)
 
-Entregables de la hackathon: `AI_USAGE.md` (raíz) y la carpeta `prompts/` con los prompts
-relevantes usados (un `.md` por tema/sesión).
+Entregables de la hackathon ([política](https://interledger.org/hackathon/ai-policy/)):
+`AI_USAGE.md` en la raíz con las secciones **Tools Used**, **Where and How We Used AI**,
+**What We Did Ourselves** y **Prompt Log**, y la carpeta `prompts/` con los prompts **literales**
+(no resúmenes), un `.md` por persona/tema. Al cerrar cada sesión: agregar sus prompts y
+actualizar las secciones. Nunca pegar secretos en los prompts guardados (`[REDACTED]`).
 
 Cada sesión que produzca código, docs o decisiones con ayuda de IA agrega una entrada a
 [AI_USAGE.md](AI_USAGE.md) con: fecha, persona, herramienta/modelo, carril, qué se pidió,

@@ -1,43 +1,64 @@
-# Uso de IA en Natillera sin Fronteras
+# AI Usage — Natillera sin Fronteras (backend)
 
-Bitácora del uso de herramientas de IA durante la hackathon. Una entrada por sesión de trabajo,
-la más reciente arriba. Ver reglas en [CLAUDE.md](../CLAUDE.md#documentar-el-uso-de-ia-obligatorio).
+Divulgación del uso de IA según la [política de IA de la hackathon](https://interledger.org/hackathon/ai-policy/).
+Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts literales en
+[`/prompts`](prompts/). Última actualización: 2026-10-16.
 
-## Plantilla
+## Tools Used
 
-```markdown
-### YYYY-MM-DD · <carril> · <persona>
-- **Herramienta / modelo:** p. ej. Claude Code (Claude Opus 5.5)
-- **Qué se pidió:** ...
-- **Qué produjo la IA:** archivos, PR, decisiones propuestas
-- **Revisión humana:** qué se verificó, corrigió o descartó
-- **Rama / PR:** ...
-```
+| Herramienta | Modelo | Quién | Plan / créditos |
+|---|---|---|---|
+| Claude Code (app de escritorio) | Claude Opus 5.5 | David Ciro | Plan de pago de Claude (suscripción); consumo de créditos: _por completar_ |
+| _(Duvan: agregar si usó alguna herramienta de IA)_ | | Duvan Jaramillo | |
 
-## Resumen de herramientas usadas
+## Where and How We Used AI
 
-| Herramienta | Modelo | Para qué |
-|---|---|---|
-| Claude Code (app de escritorio) | Claude Opus 5.5 | Setup del repo, documentación, desarrollo del backend en sesiones paralelas |
+**David Ciro · Claude Code (infra AWS, documentación, Lambdas de soporte)**
 
-## Entradas
+- **Lectura de la arquitectura:** Claude extrajo el contenido de la página 3 del draw.io desde
+  Google Drive y lo transcribió a [`docs/ARQUITECTURA.md`](docs/ARQUITECTURA.md).
+- **Coordinación del equipo y de las sesiones de IA:** [`CLAUDE.md`](CLAUDE.md) y [`MEMORY.md`](MEMORY.md).
+  Contienen las reglas, el modelo de ramas, los carriles de trabajo, las decisiones y los pedidos entre carriles.
+- **Guía de montaje en AWS:** [`docs/AWS-SETUP.md`](docs/AWS-SETUP.md). Cubre Secrets Manager, Cognito,
+  DynamoDB, IAM con políticas de mínimo privilegio, Lambda, API Gateway con authorizer JWT y EventBridge.
+  Claude la escribió y guió paso a paso; David ejecutó cada paso a mano en la consola.
+- **Lambda `pre-signup`:** [`deploy/pre-signup/index.mjs`](deploy/pre-signup/index.mjs). Es una versión
+  desplegable del handler TypeScript de Duvan (`app/src/handlers/cognito-pre-signup.handler.ts`).
+  Claude encontró y corrigió errores: región fija, secreto sin `JSON.parse`, `&&` en lugar de `||`,
+  falta de `return event`, `event.Username` en lugar de `event.userName` y una dependencia no
+  incluida en el runtime. Una revisión automática de seguridad marcó además un SSRF y la
+  auto-verificación de email/teléfono, y ambas cosas se corrigieron.
+- **Lambda `natillera-me`:** [`deploy/me/index.mjs`](deploy/me/index.mjs). Es un `GET /me` de prueba
+  para verificar la cadena Cognito → API Gateway → Lambda → DynamoDB.
+- **Requests de auth para el front:** [`docs/API-AUTH.md`](docs/API-AUTH.md). Incluye SignUp e
+  InitiateAuth contra Cognito y un ejemplo con `fetch` para React Native.
+- **Verificaciones automáticas:** consultas a la wallet de prueba (`GET` público), una llamada de
+  prueba al endpoint de Cognito y la validación de sintaxis de las Lambdas con `node --check`.
 
-### 2026-10-16 · infra · David Ciro
-- **Herramienta / modelo:** Claude Code (Claude Opus 5.5)
-- **Qué se pidió:** guía para montar a mano en la consola de AWS la infra de la arquitectura
-  (sin IaC; más adelante con AWS CLI), y registrar las decisiones de TypeScript y del reparto.
-- **Qué produjo la IA:** `docs/AWS-SETUP.md` (pasos 0–8: cuenta, Test Wallet, Secrets Manager,
-  Cognito, 9 tablas DynamoDB, rol IAM con política de mínimo privilegio, Lambdas, HTTP API con
-  authorizer JWT, EventBridge Scheduler); actualizó `MEMORY.md` y `CLAUDE.md`.
-- **Revisión humana:** David ejecuta cada paso en la consola y marca el estado en la guía.
-- **Rama / PR:** `feat/infra-aws-setup` → `david`
+Los commits hechos con IA llevan `Co-Authored-By: Claude` en el historial de git.
 
-### 2026-10-16 · setup · David Ciro
-- **Herramienta / modelo:** Claude Code (Claude Opus 5.5)
-- **Qué se pidió:** clonar el repo, leer la arquitectura (draw.io, página 3) y la doc de Open
-  Payments, y preparar el repo para trabajar con varias sesiones de IA en paralelo.
-- **Qué produjo la IA:** extrajo el contenido del draw.io desde Google Drive y lo transcribió a
-  `docs/ARQUITECTURA.md`; creó `CLAUDE.md` (reglas para las sesiones), `MEMORY.md` (carriles de
-  trabajo, decisiones abiertas, bitácora) y este archivo.
-- **Revisión humana:** pendiente — validar con Duvan la división en carriles.
-- **Rama / PR:** `david`
+## What We Did Ourselves
+
+- **Arquitectura y diseño de flujos** (draw.io, 13 flujos y tablas): el equipo, sin IA.
+- **Handlers de las Lambdas en TypeScript** (`app/src/handlers/*`, rama `duvdev`): Duvan Jaramillo.
+  _(Duvan: confirmar si usó IA en algún archivo.)_
+- **Montaje real en AWS:** David creó a mano en la consola los siguientes recursos y probó el registro y
+  el login de punta a punta:
+  - cuenta, MFA y budget;
+  - secreto en Secrets Manager;
+  - user pool y app client de Cognito;
+  - triggers de Cognito;
+  - tablas DynamoDB;
+  - Lambdas y API Gateway.
+- **Billeteras y llaves de la Test Wallet de Interledger:** Duvan.
+- **Revisión humana:** cada cambio propuesto por la IA se revisó antes de desplegarlo. Las
+  decisiones fueron del equipo: TypeScript, sin IaC, región `us-east-2`, el reparto de trabajo y las
+  llaves de las tablas.
+
+## Prompt Log
+
+Prompts literales en [`/prompts`](prompts/):
+
+| Archivo | Persona | Herramienta | Tema |
+|---|---|---|---|
+| [`prompts/backend-infra-claude-code-2026-10-16.md`](prompts/backend-infra-claude-code-2026-10-16.md) | David | Claude Code | Setup del repo, infra AWS, Cognito, pre-signup, API Gateway |

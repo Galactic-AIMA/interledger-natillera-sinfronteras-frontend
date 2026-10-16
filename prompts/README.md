@@ -1,5 +1,6 @@
 # Prompts
 
-Prompts relevantes usados con IA durante la hackathon (entregable). Un archivo por tema o sesión:
-`YYYY-MM-DD-<carril>-<tema>.md`, con el prompt tal cual y una nota corta de qué produjo.
+Prompts **literales** usados con IA durante la hackathon (entregable obligatorio de la
+[política de IA](https://interledger.org/hackathon/ai-policy/)). Un archivo por persona/tema, p. ej.
+`backend-payments.md`, con cada prompt tal cual (no resumido) y los secretos como `[REDACTED]`.
 El registro general está en [AI_USAGE.md](../AI_USAGE.md).

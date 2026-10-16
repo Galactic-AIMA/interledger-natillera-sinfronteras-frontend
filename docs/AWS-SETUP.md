@@ -264,7 +264,7 @@ curl -i https://<URL>/me -H "Authorization: Bearer <AccessToken>"
 ```
 → **200** con el usuario de `Users-info` (un usuario creado después del cambio de pre-signup).
 
-### 7.5 · `start-payment` (P0) → `POST /payments/start`
+### 7.5 · `start-payment` (P0) → `POST /payments` (ruta según `docs/openapi.yaml` del front)
 
 **Antes, en AWS:**
 1. Tabla **`payments-history`**: PK `paymentId` (String), on-demand. (Confirmar nombre y llaves con Duvan.)
@@ -291,13 +291,18 @@ npx esbuild app/src/handlers/start-payment.handler.ts --bundle --platform=node -
 Comprimir **solo** `index.js` (en la raíz del zip) → Lambda → *Code* → *Upload from* → *.zip file*.
 Handler: `index.handler`. (Ajustar la ruta del `.ts` al nombre real del archivo.)
 
-**En el API:** *Rutas → Crear* → `POST /payments/start` → integración Lambda `start-payment`
+**En el API:** *Rutas → Crear* → `POST /payments` (o la ruta exacta de `openapi.yaml`) → integración Lambda `start-payment`
 (payload 2.0) → adjuntar autorizador `cognito-jwt`.
 
 **Contrato para el código** (HTTP API, payload 2.0):
 - Usuario: `event.requestContext.authorizer.jwt.claims.username` (y `.sub`). Nunca del body.
 - Body: `JSON.parse(event.isBase64Encoded ? Buffer.from(event.body, 'base64').toString() : event.body)`.
-- Respuesta: `{ statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paymentId, redirectUrl }) }`.
+- Respuesta: `{ statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paymentId, redirectUrl, debitAmount, receiveAmount }) }`
+  (`debitAmount` y `receiveAmount` salen de la quote; el front los muestra antes de aprobar).
+- **`returnUrl` del body** (pedido del front): es la dirección a la que vuelve la app tras aprobar
+  en la billetera — `natillera://retorno` (APK) o `exp://...` (Expo Go). Usarla como
+  `interact.finish.uri`, **solo si empieza por `natillera://` o `exp://`**; cualquier otra cosa → 400
+  (si no, cualquiera podría mandar a la persona a un sitio externo con el `interact_ref`).
 - El grant interactivo lleva `interact: { start: ['redirect'], finish: { method: 'redirect', uri: <deep link>, nonce } }`;
   guardar el `nonce` en `payments-history` para verificar el `hash` al volver (flujo 4).
 
