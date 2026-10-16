@@ -176,3 +176,6 @@ Prompts **literales**, en orden. Las capturas de pantalla adjuntas se marcan com
 ### 36
 > [captura: recursos /finish-payment POST, /get-payment GET, /start-payment POST en API Gateway]
 > Como creo los recursos?, asi los tengo actualmente pero no se como crear los otros que estan encerrados por llaves {}
+
+### 37
+> Falto que subieras los curls actualizados al repo, subelos al repo y pasamelos por chat tambien

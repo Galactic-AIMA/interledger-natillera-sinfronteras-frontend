@@ -5,6 +5,7 @@ cómo fluye un pago con Open Payments y cómo probarlo. Detalle por tema:
 
 | Documento | Contenido |
 |---|---|
+| [CURLS.md](CURLS.md) | **Todos los curl** listos para copiar (registro, login, pagos, pruebas negativas) |
 | [API-AUTH.md](API-AUTH.md) | Registro y login contra Cognito (requests, errores, ejemplo React Native) |
 | [API-PAGOS.md](API-PAGOS.md) | Pagos: despliegue de las Lambdas, plantillas VTL, respuestas de error, curl |
 | [AWS-SETUP.md](AWS-SETUP.md) | Montaje de la infra en la consola de AWS y estado de cada recurso |
@@ -168,7 +169,7 @@ todavía es otra: `START_PATH=/start-payment bash scripts/probar-pago.sh`.
 Requisitos: un usuario registrado cuya wallet (`custom:walletId`) sea la que **paga**, la sesión de
 esa wallet en la Test Wallet (para aceptar) y otra wallet que **reciba** (distinta).
 
-Curl paso a paso: [API-PAGOS.md](API-PAGOS.md#probar-el-flujo-completo-curl).
+Curl paso a paso: [CURLS.md](CURLS.md).
 
 ## 7 · Pendiente
 
