@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { ApiError, useApi, useApiContext, type WalletInfo } from '@/api';
 import { AppText, Button, Screen, TextField } from '@/components';
 import { WalletVerifier } from '@/features/natillera/WalletVerifier';
+import { BackButton } from '@/features/navegacion/BackButton';
 
 type Errors = Partial<Record<'username' | 'password' | 'email' | 'phone' | 'wallet', string>>;
 
@@ -57,7 +58,7 @@ export default function ScreenCrearCuenta() {
   const failure = signup.error instanceof ApiError ? signup.error.message : signup.error ? 'No pudimos crear la cuenta. Intente otra vez.' : null;
 
   return (
-    <Screen title="Crear mi cuenta" footer={<Button label="Crear mi cuenta" onPress={submit} loading={signup.isPending} />}>
+    <Screen headerLeft={<BackButton fallback={'/bienvenida'} />} title="Crear mi cuenta" footer={<Button label="Crear mi cuenta" onPress={submit} loading={signup.isPending} />}>
       <TextField label="Usuario" value={username} onChangeText={field('username', setUsername)} error={errors.username} autoCapitalize="none" autoCorrect={false} textContentType="username" />
       <TextField label="Contraseña" value={password} onChangeText={field('password', setPassword)} error={errors.password} secureTextEntry autoCapitalize="none" textContentType="newPassword" />
       <TextField label="Correo" value={email} onChangeText={field('email', setEmail)} error={errors.email} placeholder="rosa@correo.com" keyboardType="email-address" autoCapitalize="none" autoCorrect={false} textContentType="emailAddress" />

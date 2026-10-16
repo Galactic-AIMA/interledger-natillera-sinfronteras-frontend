@@ -11,8 +11,9 @@ import { getLastGrantId, setLastGrantId } from '@/features/pagos/recurrente/last
 import { PasosRecurrente } from '@/features/pagos/recurrente/PasosRecurrente';
 import { palette, space } from '@/theme';
 import { formatAmount } from '@/utils/money';
+import { BackButton } from '@/features/navegacion/BackButton';
 
-// 12 · Pagos recurrentes
+// 12 · Cuota automática (pagos recurrentes)
 export default function ScreenNatilleraRecurrente() {
   const api = useApi();
   const queryClient = useQueryClient();
@@ -98,8 +99,8 @@ export default function ScreenNatilleraRecurrente() {
   const showDemoCharge = api.mode === 'demo' && lastGrant !== null;
 
   return (
-    <Screen
-      title="Pagos recurrentes"
+    <Screen headerLeft={<BackButton />}
+      title="Cuota automática"
       inTabs
       footer={
         <>
@@ -108,7 +109,7 @@ export default function ScreenNatilleraRecurrente() {
               {error}
             </AppText>
           ) : null}
-          <Button label="Activar pagos recurrentes" onPress={activate} loading={starting} disabled={!natillera || !myId} />
+          <Button label="Activar la cuota automática" onPress={activate} loading={starting} disabled={!natillera || !myId} />
           {showDemoCharge ? <Button label="Cobrar ahora (demostración)" variant="secondary" onPress={chargeNow} loading={charging} /> : null}
           {chargeMsg ? (
             <AppText variant="body" tone={chargeMsg.ok ? 'money' : 'danger'} accessibilityRole="alert" accessibilityLiveRegion="polite">
@@ -138,11 +139,11 @@ export default function ScreenNatilleraRecurrente() {
                 <InfoRow label="Cada" value="periodo (por confirmar)" />
                 <InfoRow label="Se repite" value="hasta diciembre" />
                 {quote.isPending ? (
-                  <InfoRow label="Tope por cobro" right={<ActivityIndicator color={palette.primary} accessibilityLabel="Calculando" />} />
+                  <InfoRow label="Lo máximo por cobro" right={<ActivityIndicator color={palette.primary} accessibilityLabel="Calculando" />} />
                 ) : quote.data ? (
-                  <InfoRow label="Tope por cobro" amount={quote.data.debitAmount} />
+                  <InfoRow label="Lo máximo por cobro" amount={quote.data.debitAmount} />
                 ) : (
-                  <InfoRow label="Tope por cobro" value="Se calcula al confirmar" />
+                  <InfoRow label="Lo máximo por cobro" value="Se calcula al confirmar" />
                 )}
               </View>
             </Card>

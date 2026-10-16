@@ -7,6 +7,7 @@ import { AppText, Button, Card, InfoRow, LinkRow, Screen } from '@/components';
 import { planSimHref } from '@/features/creditos/links';
 import { antesHref } from '@/features/pagos/flow';
 import { formatAmount } from '@/utils/money';
+import { BackButton } from '@/features/navegacion/BackButton';
 
 // 21 · Préstamos (tesorera): aprueba o rechaza. Aprobar abre la billetera del fondo para el desembolso (22 → 30 → 23).
 export default function ScreenTesorera() {
@@ -51,7 +52,7 @@ export default function ScreenTesorera() {
 
   if (natillera && !natillera.isAdmin) {
     return (
-      <Screen title="Préstamos" inTabs>
+      <Screen headerLeft={<BackButton fallback={'/natillera/prestamos'} />} title="Préstamos" inTabs>
         <Card tone="soft">
           <AppText>Solo la tesorera aprueba los préstamos.</AppText>
         </Card>
@@ -63,7 +64,7 @@ export default function ScreenTesorera() {
   // Al volver de un desembolso (23) la pila queda en esta pantalla: siempre hay cómo regresar a Préstamos.
   const back = <Button label="Volver a Préstamos" variant="ghost" onPress={() => router.navigate('/natillera/prestamos')} />;
   return (
-    <Screen title="Préstamos" inTabs footer={back}>
+    <Screen headerLeft={<BackButton fallback={'/natillera/prestamos'} />} title="Préstamos" inTabs footer={back}>
       {pending.isLoading ? <AppText tone="muted">Cargando…</AppText> : null}
       {pending.isError ? <AppText tone="danger">No pudimos cargar las solicitudes.</AppText> : null}
       {!pending.isLoading && list.length === 0 ? (

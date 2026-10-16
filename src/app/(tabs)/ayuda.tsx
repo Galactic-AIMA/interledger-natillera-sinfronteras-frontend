@@ -24,7 +24,7 @@ export default function ScreenAyuda() {
     { id: 'llevo', question: '¿Cuánto llevo?', answer: howMuch },
     {
       id: 'comision',
-      question: 'Explícame la comisión',
+      question: 'Explíqueme el costo del envío',
       answer:
         'Es el costo del envío entre billeteras. Antes de pagar, la app le muestra cuánto sale de su billetera, cuánto llega y cuánto cuesta el envío. Nada se cobra sin que usted lo apruebe.',
     },

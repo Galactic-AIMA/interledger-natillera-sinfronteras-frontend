@@ -7,6 +7,7 @@ import { ApiError, keys, useApi, useMyLoans, useMyNatillera, usePendingLoanReque
 import { AppText, Button, Card, Choice, InfoRow, LinkRow, Screen, StatusPill, TextField } from '@/components';
 import { autorizarHref, INSTALLMENT_OPTIONS, planSimHref } from '@/features/creditos/links';
 import { toMinorUnits } from '@/utils/money';
+import { BackButton } from '@/features/navegacion/BackButton';
 
 // 16 Pedir · 20 Esperando a la tesorera · 25 Rechazado (y acceso a 17, 21 y 24).
 export default function ScreenPrestamos() {
@@ -30,7 +31,7 @@ export default function ScreenPrestamos() {
 
   if (loadingNatillera || loans.isLoading) {
     return (
-      <Screen title="Préstamos" inTabs>
+      <Screen headerLeft={<BackButton />} title="Préstamos" inTabs>
         <AppText tone="muted">Cargando…</AppText>
       </Screen>
     );
@@ -38,7 +39,7 @@ export default function ScreenPrestamos() {
 
   if (!natillera) {
     return (
-      <Screen title="Préstamos" inTabs>
+      <Screen headerLeft={<BackButton />} title="Préstamos" inTabs>
         <Card tone="soft">
           <AppText>Para pedir un préstamo primero debe estar en una natillera.</AppText>
         </Card>
@@ -48,7 +49,7 @@ export default function ScreenPrestamos() {
 
   if (loans.isError) {
     return (
-      <Screen title="Préstamos" inTabs>
+      <Screen headerLeft={<BackButton />} title="Préstamos" inTabs>
         <Card tone="danger">
           <AppText tone="danger">No pudimos cargar sus préstamos.</AppText>
         </Card>
@@ -62,9 +63,9 @@ export default function ScreenPrestamos() {
   // Con préstamo desembolsado: resumen y plan de pagos (24).
   if (loan) {
     return (
-      <Screen title="Préstamos" inTabs>
+      <Screen headerLeft={<BackButton />} title="Préstamos" inTabs>
         {adminRow}
-        <Card title="Su crédito">
+        <Card title="Su préstamo">
           <InfoRow label="Monto" amount={loan.request.amount} />
           <InfoRow label="Todavía debe" amount={loan.balance} />
         </Card>
@@ -80,7 +81,7 @@ export default function ScreenPrestamos() {
 function RequestStatus({ request, adminRow, onAskAgain }: { request: LoanRequest; adminRow: ReactNode; onAskAgain: () => void }) {
   if (request.status === 'rejected') {
     return (
-      <Screen title="Préstamos" inTabs footer={<Button label="Pedir otro monto" onPress={onAskAgain} />}>
+      <Screen headerLeft={<BackButton />} title="Préstamos" inTabs footer={<Button label="Pedir otro monto" onPress={onAskAgain} />}>
         {adminRow}
         <Card title="Su solicitud">
           <InfoRow label="Monto" amount={request.amount} />
@@ -93,7 +94,7 @@ function RequestStatus({ request, adminRow, onAskAgain }: { request: LoanRequest
 
   const authorized = request.repaymentAuthorized;
   return (
-    <Screen
+    <Screen headerLeft={<BackButton />}
       title="Préstamos"
       inTabs
       footer={authorized ? undefined : <Button label="Autorizar las cuotas" onPress={() => router.push(autorizarHref(request.requestId))} />}
@@ -154,7 +155,7 @@ function AskLoan({
   }
 
   return (
-    <Screen title="Préstamos" inTabs footer={<Button label="Pedir el préstamo" onPress={ask} loading={sending} disabled={!amount} />}>
+    <Screen headerLeft={<BackButton />} title="Préstamos" inTabs footer={<Button label="Pedir el préstamo" onPress={ask} loading={sending} disabled={!amount} />}>
       {adminRow}
       <TextField label="1. ¿Cuánto necesita?" value={text} onChangeText={setText} keyboardType="decimal-pad" mono placeholder="0" error={error} />
       <Choice label="2. ¿En cuántas cuotas?" options={INSTALLMENT_OPTIONS} value={installments} onChange={setInstallments} />

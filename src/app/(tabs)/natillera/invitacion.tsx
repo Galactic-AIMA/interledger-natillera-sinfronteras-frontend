@@ -1,3 +1,4 @@
+import * as Clipboard from 'expo-clipboard';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Share } from 'react-native';
@@ -6,20 +7,36 @@ import { useMyNatillera } from '@/api';
 import { AppText, Button, Card, Screen } from '@/components';
 import { InviteQr } from '@/features/natillera/InviteQr';
 import { palette } from '@/theme';
+import { BackButton } from '@/features/navegacion/BackButton';
 
 // 09 · Invite a su familia
 export default function ScreenNatilleraInvitacion() {
   const { data: natillera, isLoading, isError, refetch } = useMyNatillera();
   const [shareError, setShareError] = useState(false);
 
+  const [copied, setCopied] = useState(false);
+
+  function inviteText() {
+    return natillera ? `Lo invito a ${natillera.natilleraName}. Código: ${natillera.invitationCode}\n${natillera.joinUrl}` : '';
+  }
+
+  async function copy() {
+    if (!natillera) return;
+    setShareError(false);
+    try {
+      await Clipboard.setStringAsync(inviteText());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } catch {
+      setShareError(true);
+    }
+  }
+
   async function share() {
     if (!natillera) return;
     setShareError(false);
     try {
-      // expo-clipboard no está instalado: el panel de compartir ofrece "Copiar" en el celular.
-      await Share.share({
-        message: `Lo invito a ${natillera.natilleraName}. Código: ${natillera.invitationCode}\n${natillera.joinUrl}`,
-      });
+      await Share.share({ message: inviteText() });
     } catch {
       setShareError(true);
     }
@@ -27,7 +44,7 @@ export default function ScreenNatilleraInvitacion() {
 
   if (isLoading) {
     return (
-      <Screen title="Invite a su familia" inTabs>
+      <Screen headerLeft={<BackButton />} title="Invite a su familia" inTabs>
         <ActivityIndicator size="large" color={palette.primary} accessibilityLabel="Cargando la invitación" />
       </Screen>
     );
@@ -35,7 +52,7 @@ export default function ScreenNatilleraInvitacion() {
 
   if (isError || !natillera) {
     return (
-      <Screen
+      <Screen headerLeft={<BackButton />}
         title="Invite a su familia"
         inTabs
         footer={<Button label={isError ? 'Intentar de nuevo' : 'Ir a mi natillera'} onPress={isError ? () => void refetch() : () => router.replace('/natillera')} />}
@@ -48,13 +65,14 @@ export default function ScreenNatilleraInvitacion() {
   }
 
   return (
-    <Screen
+    <Screen headerLeft={<BackButton />}
       title="Invite a su familia"
       inTabs
       footer={
         <>
-          <Button label="Copiar el enlace" onPress={share} accessibilityHint="Abre las opciones para copiar o compartir el enlace" />
-          <Button label="Ir a mi natillera" variant="secondary" onPress={() => router.replace('/natillera')} />
+          <Button label={copied ? 'Enlace copiado ✓' : 'Copiar el enlace'} onPress={copy} accessibilityHint="Copia la invitación para pegarla en un mensaje" />
+          <Button label="Compartir" variant="secondary" onPress={share} accessibilityHint="Abre las opciones para enviar la invitación" />
+          <Button label="Ir a mi natillera" variant="ghost" onPress={() => router.replace('/natillera')} />
         </>
       }
     >
@@ -70,9 +88,14 @@ export default function ScreenNatilleraInvitacion() {
       <AppText variant="caption" tone="muted" align="center" selectable>
         {natillera.joinUrl}
       </AppText>
+      {copied ? (
+        <AppText variant="body" align="center" accessibilityLiveRegion="polite">
+          Enlace copiado. Péguelo en un mensaje para su familia.
+        </AppText>
+      ) : null}
       {shareError ? (
         <AppText variant="body" tone="danger" accessibilityLiveRegion="polite">
-          No pudimos abrir las opciones para compartir. Intente otra vez.
+          No pudimos copiar ni compartir la invitación. Intente otra vez.
         </AppText>
       ) : null}
     </Screen>

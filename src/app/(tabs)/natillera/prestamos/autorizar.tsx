@@ -7,6 +7,7 @@ import { AppText, Button, Card, InfoRow, Screen } from '@/components';
 import { antesHref } from '@/features/pagos/flow';
 import { param } from '@/features/pagos/flujo/params';
 import { formatAmount } from '@/utils/money';
+import { BackButton } from '@/features/navegacion/BackButton';
 
 // 17 · Pago del crédito: la persona da el permiso una vez (grant recurrente 12B) y abre la pasarela (28).
 export default function ScreenAutorizarCuotas() {
@@ -35,8 +36,8 @@ export default function ScreenAutorizarCuotas() {
           kind: 'credito',
           id: grant.grantId,
           redirectUrl: grant.redirectUrl,
-          demoTitle: 'Cuotas del crédito',
-          demoDetail: `La natillera quiere cobrar las cuotas de un crédito.\nTope por cuota: ${formatAmount(grant.limitPerCharge)}\nSe repite: ${grant.repetitions} veces`,
+          demoTitle: 'Cuotas del préstamo',
+          demoDetail: `La natillera quiere cobrar las cuotas de un préstamo.\nLo máximo por cuota: ${formatAmount(grant.limitPerCharge)}\nSe repite: ${grant.repetitions} veces`,
           origin: '/natillera/prestamos',
         }),
       );
@@ -49,7 +50,7 @@ export default function ScreenAutorizarCuotas() {
 
   if (!loans.isLoading && !request) {
     return (
-      <Screen title="Pago del crédito" inTabs footer={<Button label="Volver" onPress={() => router.navigate('/natillera/prestamos')} />}>
+      <Screen headerLeft={<BackButton fallback={'/natillera/prestamos'} />} title="Permiso para cobrar las cuotas" inTabs footer={<Button label="Volver" onPress={() => router.navigate('/natillera/prestamos')} />}>
         <Card tone="danger">
           <AppText>No encontramos esa solicitud de préstamo.</AppText>
         </Card>
@@ -58,8 +59,8 @@ export default function ScreenAutorizarCuotas() {
   }
 
   return (
-    <Screen
-      title="Pago del crédito"
+    <Screen headerLeft={<BackButton fallback={'/natillera/prestamos'} />}
+      title="Permiso para cobrar las cuotas"
       inTabs
       footer={
         <>
@@ -69,13 +70,13 @@ export default function ScreenAutorizarCuotas() {
       }
     >
       {request ? (
-        <Card title="Su crédito">
+        <Card title="Su préstamo">
           <InfoRow label="Monto" amount={request.amount} />
           <InfoRow label="Cuotas" value={String(request.installments)} />
           {sim.data ? <InfoRow label="Cuota más alta" amount={sim.data.highestInstallment} /> : null}
         </Card>
       ) : null}
-      <AppText tone="muted">Cada cuota tiene dos partes: interés + abono a capital.</AppText>
+      <AppText tone="muted">Cada cuota tiene dos partes: lo que abona al préstamo y un pequeño interés.</AppText>
       <Card tone="soft">
         <AppText>Dé el permiso una vez y las cuotas se cobran solas. Solo se cobra si la tesorera aprueba y usted recibe la plata.</AppText>
       </Card>

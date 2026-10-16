@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 
 import { Button, Screen, TextField } from '@/components';
+import { BackButton } from '@/features/navegacion/BackButton';
 
 // Formato esperado: letras, guion y números (ej. ROSA-4821).
 const CODE_PATTERN = /^[A-Z0-9]+(-[A-Z0-9]+)*$/;
@@ -26,7 +27,7 @@ export default function ScreenNatilleraUnirse() {
   }
 
   return (
-    <Screen title="Invitación" inTabs footer={<Button label="Unirme" onPress={submit} />}>
+    <Screen headerLeft={<BackButton />} title="Invitación" inTabs footer={<Button label="Unirme" onPress={submit} />}>
       <TextField
         label="Código de la invitación"
         placeholder="ROSA-4821"

@@ -5,6 +5,7 @@ import { useMyNatillera } from '@/api';
 import { AppText, Button, Card, Screen } from '@/components';
 import { MemberRow } from '@/features/natillera/MemberRow';
 import { palette } from '@/theme';
+import { BackButton } from '@/features/navegacion/BackButton';
 
 // 15 · ¿Quién pone?
 export default function ScreenNatilleraQuienPone() {
@@ -12,7 +13,7 @@ export default function ScreenNatilleraQuienPone() {
 
   if (isLoading) {
     return (
-      <Screen title="¿Quién pone?" inTabs>
+      <Screen headerLeft={<BackButton />} title="¿Quién pone?" inTabs>
         <View style={{ alignItems: 'center', padding: 24 }}>
           <ActivityIndicator size="large" color={palette.primary} accessibilityLabel="Cargando los socios" />
         </View>
@@ -22,7 +23,7 @@ export default function ScreenNatilleraQuienPone() {
 
   if (isError) {
     return (
-      <Screen title="¿Quién pone?" inTabs footer={<Button label="Intentar de nuevo" onPress={() => refetch()} loading={isFetching} />}>
+      <Screen headerLeft={<BackButton />} title="¿Quién pone?" inTabs footer={<Button label="Intentar de nuevo" onPress={() => refetch()} loading={isFetching} />}>
         <Card tone="danger" title="No pudimos cargar los socios">
           <AppText>Revise su conexión e inténtelo otra vez.</AppText>
         </Card>
@@ -32,7 +33,7 @@ export default function ScreenNatilleraQuienPone() {
 
   if (!natillera) {
     return (
-      <Screen title="¿Quién pone?" inTabs footer={<Button label="Ir a Mi natillera" onPress={() => router.replace('/natillera')} />}>
+      <Screen headerLeft={<BackButton />} title="¿Quién pone?" inTabs footer={<Button label="Ir a Mi natillera" onPress={() => router.replace('/natillera')} />}>
         <Card tone="soft" title="Todavía no tiene natillera">
           <AppText>Cuando cree una o se una a una, aquí verá quién ha puesto su cuota.</AppText>
         </Card>
@@ -41,7 +42,7 @@ export default function ScreenNatilleraQuienPone() {
   }
 
   return (
-    <Screen title="¿Quién pone?" inTabs footer={<Button label="Invitar a alguien" onPress={() => router.push('/natillera/invitacion')} />}>
+    <Screen headerLeft={<BackButton />} title="¿Quién pone?" inTabs footer={<Button label="Invitar a alguien" onPress={() => router.push('/natillera/invitacion')} />}>
       {natillera.members.length === 0 ? (
         <Card tone="soft" title="Aún no hay socios">
           <AppText>Invite a su familia para empezar a ahorrar juntos.</AppText>

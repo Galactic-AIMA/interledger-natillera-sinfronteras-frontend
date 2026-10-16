@@ -6,6 +6,7 @@ import { ApiError, useApiContext } from '@/api';
 import { AppText, Button, Screen, TextField } from '@/components';
 import { FadeIn } from '@/features/auth/FadeIn';
 import { space } from '@/theme';
+import { BackButton } from '@/features/navegacion/BackButton';
 
 // 03 · Entrar. En modo demo sirven rosa.gomez, luz y andres con cualquier contraseña.
 export default function Entrar() {
@@ -38,7 +39,7 @@ export default function Entrar() {
   }
 
   return (
-    <Screen title="Entrar" footer={<Button label="Entrar" onPress={submit} loading={loading} />}>
+    <Screen headerLeft={<BackButton fallback={'/bienvenida'} />} title="Entrar" footer={<Button label="Entrar" onPress={submit} loading={loading} />}>
       <FadeIn>
         <View style={styles.form}>
           <TextField

@@ -88,7 +88,7 @@ export default function ScreenBilleteraAntes() {
       <View style={styles.steps}>
         <PasoAntes n={1} title="Se abre su billetera" caption="Es otra app" />
         <PasoAntes n={2} title="Revise y toque «Aprobar»" caption="Ve cuánto sale y cuánto llega" />
-        <PasoAntes n={3} title="Vuelve aquí sola" caption="Le contamos si se hizo" />
+        <PasoAntes n={3} title="Vuelve aquí sola" caption="Si no vuelve, abra Natillera de nuevo" />
       </View>
 
       {debit || receive ? (

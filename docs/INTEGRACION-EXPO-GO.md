@@ -6,16 +6,16 @@ De Henry a Camilo. Todo lo de Henry está en **una sola rama**, lista para el PR
 
 | Dato | Valor |
 |---|---|
-| Rama | `feat/creditos` en el fork `HenryStark866/interledger-natillera-sinfronteras-frontend` (Henry no tiene escritura en Galactic-AIMA) |
-| PR a `main` | https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/compare/main...HenryStark866:interledger-natillera-sinfronteras-frontend:feat/creditos |
+| Rama | `feat/cuenta-celular` (= `feat/creditos` + pulido en celular) en el fork `HenryStark866/interledger-natillera-sinfronteras-frontend` (Henry no tiene escritura en Galactic-AIMA) |
+| PR a `main` | https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/compare/main...HenryStark866:interledger-natillera-sinfronteras-frontend:feat/cuenta-celular |
 | Base | Contiene tu `main` completo hasta `32eb791`: el PR entra sin conflictos |
 | Rama solo-Cognito | `feat/auth-signup` en el mismo fork, por si prefieres el registro en un PR aparte |
 
 Si prefieres traerla por terminal en vez de PR:
 
 ```bash
-git fetch https://github.com/HenryStark866/interledger-natillera-sinfronteras-frontend feat/creditos:feat/creditos
-git switch main && git merge --no-ff feat/creditos && git push origin main
+git fetch https://github.com/HenryStark866/interledger-natillera-sinfronteras-frontend feat/cuenta-celular:feat/henry
+git switch main && git merge --no-ff feat/henry && git push origin main
 ```
 
 ## Qué trae
@@ -26,6 +26,7 @@ git switch main && git merge --no-ff feat/creditos && git push origin main
 | Seguridad de la pasarela (auditoría) | `src/features/pagos/flow.ts`, 28, 30, `resultado.tsx` · detalle en [auditoria-2026-10-16.md](auditoria-2026-10-16.md) | Demo OK |
 | Préstamos (`creditos`) | 16, 17, 19, 20, 21, 23, 24, 25 · `src/app/(tabs)/natillera/prestamos/*`, `src/features/creditos/` | Demo OK |
 | Registro Cognito (tu encargo) | `src/api/auth.ts`, `httpApi.ts`, `types.ts`, pantalla 02, `.env.example`, `api-contrato.md` | `tsc` OK · **falta Cognito real** |
+| Pulido en celular | `expo-clipboard` en 09, `src/features/navegacion/BackButton.tsx` en las pantallas apiladas, textos de más impacto de `copy-henry.md`, aviso de espera en 30 | Demo OK |
 | Documentos | [copy-henry.md](copy-henry.md), [pruebas-2026-10-16.md](pruebas-2026-10-16.md), [revision-codigo-2026-10-16.md](revision-codigo-2026-10-16.md), [pitch/GUION.md](pitch/GUION.md), [pitch/CONTEXTO.md](pitch/CONTEXTO.md), [SESIONES-HENRY.md](SESIONES-HENRY.md) | Borradores para revisar |
 
 ### Cambios en archivos compartidos (`src/api`) — para que los revises
@@ -84,4 +85,4 @@ En Expo Go la billetera devuelve a `exp://<IP>:8081/--/retorno` (no a `natillera
 | Camilo (`base`) | Pendientes de la [auditoría](auditoria-2026-10-16.md): `RevokeToken` al salir, `.gitignore` con `.env*`, patrones extra en el hook de prompts |
 | Back | `returnUrl` con lista exacta (`natillera://retorno` y `exp://…/--/retorno`); ignorar el `result` del cliente; validar dueño del `paymentId` |
 | Henry | Test Wallet (3 cuentas, ¿COP?, ¿`natillera://` como finish URI?), curso, slides con [pitch/GUION.md](pitch/GUION.md) |
-| Henry / sesión D | Pulido en celular: `expo-clipboard` en 09, botón volver en pantallas sueltas, aplicar [copy-henry.md](copy-henry.md) si Camilo aprueba |
+| Henry | Pulido hecho en `feat/cuenta-celular` (copiar invitación, botón volver, textos de más impacto); el resto de [copy-henry.md](copy-henry.md) queda como propuesta |

@@ -82,6 +82,8 @@ Criterios: tono "usted" en todo, frases cortas (máx. ~12 palabras), nada de jer
 
 ## Los cinco con más impacto (para el pitch y el premio de inclusión)
 
+> **Aplicados el 2026-10-16 ~14:10 en `feat/cuenta-celular`** (12, 14, 35, 17, 19, 23, 24, 32, 33, 28 y 30). El resto de la tabla sigue como propuesta para Camilo.
+
 1. **12**: quitar "La app llama al backend" y "pagos recurrentes"; usar los tres pasos en lenguaje de casa y "Cuota automática".
 2. **35**: "Explícame la comisión" -> "Explíqueme el costo del envío" (único "tú" de la app y vocabulario de 11).
 3. **Préstamos (17, 23, 24)**: una sola palabra ("préstamo"), "entregado", "atrasada" y "abono" en vez de capital/mora/desembolso.

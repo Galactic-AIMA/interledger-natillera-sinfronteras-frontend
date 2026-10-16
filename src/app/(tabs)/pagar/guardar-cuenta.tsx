@@ -1,21 +1,13 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import { useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { ApiError, keys, useApi, type WalletInfo } from '@/api';
 import { AppText, Button, Card, Screen, TextField } from '@/components';
-import { palette, space, touch } from '@/theme';
+import { space } from '@/theme';
+import { BackButton } from '@/features/navegacion/BackButton';
 import { currencyName } from '@/utils/money';
-
-function BackButton() {
-  return (
-    <Pressable accessibilityRole="button" accessibilityLabel="Volver" onPress={() => router.back()} hitSlop={8} style={styles.back}>
-      <Ionicons name="chevron-back" size={28} color={palette.text} />
-    </Pressable>
-  );
-}
 
 // 27 · Guardar cuenta: verifica la billetera y le pone un nombre para reconocerla.
 export default function ScreenPagarGuardarCuenta() {
@@ -84,7 +76,7 @@ export default function ScreenPagarGuardarCuenta() {
   );
 
   return (
-    <Screen title="Guardar cuenta" inTabs headerLeft={<BackButton />} footer={footer}>
+    <Screen title="Guardar cuenta" inTabs headerLeft={<BackButton fallback="/pagar" />} footer={footer}>
       <Card title="1. Dirección de la billetera">
         <TextField
           label="Dirección"
@@ -116,6 +108,5 @@ export default function ScreenPagarGuardarCuenta() {
 }
 
 const styles = StyleSheet.create({
-  back: { minWidth: touch.minHeight, minHeight: touch.minHeight, alignItems: 'center', justifyContent: 'center' },
   found: { gap: space.xs },
 });

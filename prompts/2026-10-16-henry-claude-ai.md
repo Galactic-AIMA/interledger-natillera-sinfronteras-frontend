@@ -37,3 +37,9 @@ debemos aliearnos con esto al pie de la letra: 🔐 Auth de Natillera (Cognito) 
 
 ## 13:31
 deja todo el repo listo y ordenado y actualiza todo el uso de IA y dejemos listo el repo para que Camilo haga la integración en Expo Go
+
+## 13:43
+falta algo de nuestro?
+
+## 13:45
+haz la 1 , 3 y 5

@@ -6,6 +6,7 @@ import { ApiError, keys, useApi, type WalletInfo } from '@/api';
 import { AppText, Button, Card, Screen, TextField } from '@/components';
 import { WalletVerifier } from '@/features/natillera/WalletVerifier';
 import { currencyName } from '@/utils/money';
+import { BackButton } from '@/features/navegacion/BackButton';
 
 // 08 · Crear una natillera
 export default function ScreenNatilleraCrear() {
@@ -35,7 +36,7 @@ export default function ScreenNatilleraCrear() {
   const failure = create.error instanceof ApiError ? create.error.message : create.error ? 'No pudimos crear la natillera. Intente otra vez.' : null;
 
   return (
-    <Screen title="Crear natillera" inTabs footer={<Button label="Crear la natillera" onPress={submit} loading={create.isPending} />}>
+    <Screen headerLeft={<BackButton />} title="Crear natillera" inTabs footer={<Button label="Crear la natillera" onPress={submit} loading={create.isPending} />}>
       <TextField label="Nombre de la natillera" value={name} onChangeText={(v) => { setName(v); setErrors((prev) => ({ ...prev, name: undefined })); }} error={errors.name} placeholder="Familia Rosa" autoCapitalize="words" />
       <WalletVerifier
         label="Dirección de la billetera del fondo"

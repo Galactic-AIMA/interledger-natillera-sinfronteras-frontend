@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BackHandler } from 'react-native';
 
 import { keys, useApi, waitForFinalPayment, type NatilleraApi, type WalletReturn } from '@/api';
@@ -71,6 +71,13 @@ export default function ScreenBilleteraVolviendo() {
   const raw = useLocalSearchParams<Record<string, string | string[]>>();
   const started = useRef(false);
 
+  // Si la confirmación tarda, se le avisa a la persona para que no crea que la app se congeló.
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setSlow(true), 15_000);
+    return () => clearTimeout(timer);
+  }, []);
+
   // Android: el botón atrás no saca a la persona mientras confirmamos (iOS ya lo bloquea en _layout).
   useEffect(() => {
     const sub = BackHandler.addEventListener('hardwareBackPress', () => true);
@@ -105,5 +112,11 @@ export default function ScreenBilleteraVolviendo() {
     void run();
   }, [api, queryClient, raw]);
 
-  return <ResultScreen kind="loading" title="Volviendo de su billetera…" message="Estamos confirmando lo que usted decidió." />;
+  return (
+    <ResultScreen
+      kind="loading"
+      title="Volviendo de su billetera…"
+      message={slow ? 'Está tardando un poco. Un momento, por favor.' : 'Estamos confirmando lo que usted decidió.'}
+    />
+  );
 }

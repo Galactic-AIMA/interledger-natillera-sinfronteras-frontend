@@ -6,6 +6,7 @@ import { demoUsers, useApiContext, useMe } from '@/api';
 import { AppText, Button, Card, Choice, InfoRow, Screen } from '@/components';
 import { palette } from '@/theme';
 import { currencyName } from '@/utils/money';
+import { BackButton } from '@/features/navegacion/BackButton';
 
 // 04 · Su cuenta
 export default function ScreenCuenta() {
@@ -35,7 +36,7 @@ export default function ScreenCuenta() {
   );
 
   return (
-    <Screen title="Su cuenta" footer={footer}>
+    <Screen headerLeft={<BackButton fallback={'/natillera'} />} title="Su cuenta" footer={footer}>
       {isLoading ? (
         <View style={{ alignItems: 'center', padding: 24 }}>
           <ActivityIndicator size="large" color={palette.primary} accessibilityLabel="Cargando sus datos" />

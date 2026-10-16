@@ -19,7 +19,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 | `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | `feat/creditos` (fork de Henry; contiene `main` `32eb791`) | **hecha en demo y probada** 16→24 (2026-10-16 ~13:45); falta back |
 | `pitch` | Slides en la plantilla oficial, guion de 5 min, video | Camilo + Henry | `docs/pitch/` | guion y contexto en borrador ([docs/pitch/GUION.md](docs/pitch/GUION.md)); faltan slides |
 | `auth-signup` | Registro directo a Cognito (encargo de Camilo) | Henry | `feat/auth-signup` (fork) e integrado en `feat/creditos` | **hecho**; falta probar contra Cognito real en Expo Go |
-| `cuenta-celular` | Pulido en celular de 01–10 (`expo-clipboard`, botón volver) + aplicar copy | Henry, sesión D | `feat/cuenta-celular` (por crear desde `main`) | libre; la propuesta de copy ya está en [docs/copy-henry.md](docs/copy-henry.md) |
+| `cuenta-celular` | Pulido en celular (`expo-clipboard`, botón volver) + textos de más impacto | Henry | `feat/cuenta-celular` (fork; sale de `feat/creditos`) | **hecho y probado en demo** (2026-10-16 ~14:10); incluye todo `feat/creditos`: es la rama a integrar |
 
 ## Decisiones tomadas
 
@@ -52,6 +52,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 - 2026-10-16 · de base a Henry: **registro directo a Cognito** (el back no tiene `POST /signup`). Encargo completo en [docs/ENCARGO-SIGNUP-COGNITO.md](docs/ENCARGO-SIGNUP-COGNITO.md). Camilo te autoriza a tocar `auth.ts`, `httpApi.ts` y `types.ts` solo para esto.
 - 2026-10-16 13:35 · de Henry a base: registro Cognito hecho en `feat/auth-signup` (solo `auth.ts`, `httpApi.ts`, `types.ts`, pantalla 02, `.env.example` y `api-contrato.md`). **Pedido:** `src/api/config.ts` tiene `cognitoRegion` por defecto `us-east-1`; el back está en `us-east-2`. Mientras tanto `.env.example` ya trae `us-east-2` y el `ClientId` público.
 - 2026-10-16 13:50 · de Henry a base: **rama lista para integrar** `feat/creditos` (pagos + seguridad + créditos + Cognito, sobre tu `main`). Guía, cambios en `src/api` y lista de pruebas en Expo Go: [docs/INTEGRACION-EXPO-GO.md](docs/INTEGRACION-EXPO-GO.md). Ojo: `verifyWallet` sin sesión ahora consulta la dirección de pago pública (sin eso la 02 no registra en modo real).
+- 2026-10-16 14:10 · de Henry a base: `feat/cuenta-celular` = `feat/creditos` + pulido. Toca `package.json` (solo `expo-clipboard ~58.0.3`) y añade `src/features/navegacion/BackButton.tsx` (no se tocó `src/components`). Si la apruebas, **integra esta rama en vez de `feat/creditos`**.
 - Formato: `AAAA-MM-DD HH:MM · de <carril> a <carril>: <qué>`
 - 2026-10-16 12:45 · de pagos a base: 4 arreglos en archivos compartidos (logout con `RevokeToken`, errores no-JSON en `httpApi`, `.gitignore` con `.env*`, patrones del hook). Lista en [docs/auditoria-2026-10-16.md](docs/auditoria-2026-10-16.md).
 - 2026-10-16 12:45 · de pagos a back (Camilo, reenviar a Duvan y David): el back aún no tiene código y sus rutas tentativas no cuadran con el contrato. Prioridad: `GET /payments/{id}` → `returnUrl` (lista blanca) y `debitAmount`/`receiveAmount` al iniciar → `charge-now`. Opción B con hash obligatorio; ignorar `result` del cliente; `natilleraId`. Detalle en el mismo doc.

@@ -7,11 +7,12 @@ import { AppText, Card, InfoRow, Screen, StatusPill } from '@/components';
 import { param } from '@/features/pagos/flujo/params';
 import { space } from '@/theme';
 import { formatAmount } from '@/utils/money';
+import { BackButton } from '@/features/navegacion/BackButton';
 
 const STATUS: Record<Installment['status'], { label: string; tone: 'ok' | 'pending' | 'danger' }> = {
   pagada: { label: 'Pagada', tone: 'ok' },
   pendiente: { label: 'Pendiente', tone: 'pending' },
-  'en-mora': { label: 'En mora', tone: 'danger' },
+  'en-mora': { label: 'Atrasada', tone: 'danger' },
 };
 
 /** Monto de la simulación si viene por params (16, 20, 21); si no, se muestra el crédito real. */
@@ -44,16 +45,16 @@ export default function ScreenPlanDePagos() {
   const loading = simParams ? sim.isLoading : loans.isLoading;
 
   return (
-    <Screen title={loan ? 'Su crédito' : 'Plan de pagos'} inTabs>
+    <Screen headerLeft={<BackButton fallback={'/natillera/prestamos'} />} title={loan ? 'Su préstamo' : 'Plan de pagos'} inTabs>
       {loading ? <AppText tone="muted">Cargando…</AppText> : null}
       {!loading && !loan && !simParams ? (
         <Card tone="soft">
-          <AppText>Todavía no tiene un crédito desembolsado.</AppText>
+          <AppText>Todavía no tiene un préstamo entregado.</AppText>
         </Card>
       ) : null}
 
       {requested ? (
-        <Card title="Crédito">
+        <Card title="Préstamo">
           <InfoRow label="Monto solicitado" amount={requested} />
           {count ? <InfoRow label="Número de cuotas" value={String(count)} /> : null}
           {loan ? <InfoRow label="Todavía debe" amount={loan.balance} /> : null}
@@ -67,11 +68,11 @@ export default function ScreenPlanDePagos() {
               key={i.n}
               style={styles.row}
               accessible
-              accessibilityLabel={`Cuota ${i.n}: ${formatAmount(i.total)}. Capital ${formatAmount(i.capital)} más interés ${formatAmount(i.interest)}. ${STATUS[i.status].label}.`}
+              accessibilityLabel={`Cuota ${i.n}: ${formatAmount(i.total)}. Abono ${formatAmount(i.capital)} más interés ${formatAmount(i.interest)}. ${STATUS[i.status].label}.`}
             >
               <View style={styles.text}>
                 <AppText variant="bodyStrong">{`Cuota ${i.n} · ${formatAmount(i.total)}`}</AppText>
-                <AppText variant="caption" tone="muted">{`Capital ${formatAmount(i.capital)} + interés ${formatAmount(i.interest)}`}</AppText>
+                <AppText variant="caption" tone="muted">{`Abono ${formatAmount(i.capital)} + interés ${formatAmount(i.interest)}`}</AppText>
               </View>
               <StatusPill label={STATUS[i.status].label} tone={STATUS[i.status].tone} />
             </View>
@@ -80,7 +81,7 @@ export default function ScreenPlanDePagos() {
       ) : null}
 
       <AppText variant="caption" tone="muted">
-        {loan ? 'Estados: pagada, pendiente o en mora.' : 'Valores de ejemplo: la tasa la confirma la natillera. Estados: pagada, pendiente o en mora.'}
+        {loan ? 'Estados: pagada, pendiente o atrasada.' : 'Son valores de ejemplo. El interés final lo confirma la natillera. Estados: pagada, pendiente o atrasada.'}
       </AppText>
     </Screen>
   );

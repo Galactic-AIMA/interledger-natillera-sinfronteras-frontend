@@ -69,9 +69,9 @@ const VARIANTS: Record<ResultKind, (ctx: Ctx) => ReactElement> = {
     </SuccessResult>
   ),
   // 32
-  rechazado: (ctx) => <ResultScreen kind="rejected" title="Permiso rechazado" message="No salió plata." actions={retryActions(ctx)} />,
+  rechazado: (ctx) => <ResultScreen kind="rejected" title="No dio el permiso" message="No salió plata. Si fue sin querer, puede intentarlo de nuevo." actions={retryActions(ctx)} />,
   // 33
-  fallo: (ctx) => <ResultScreen kind="error" title="Algo falló" message="No salió plata. Puede intentarlo otra vez." actions={retryActions(ctx)} />,
+  fallo: (ctx) => <ResultScreen kind="error" title="No pudimos hacer el pago" message="No salió plata. Puede intentarlo otra vez." actions={retryActions(ctx)} />,
   // 33 (variante): pago sin confirmación final tras el tiempo de espera; no es un fallo ni se debe repetir.
   pendiente: (ctx) => (
     <ResultScreen
@@ -83,10 +83,10 @@ const VARIANTS: Record<ResultKind, (ctx: Ctx) => ReactElement> = {
   ),
   // 19: permiso de las cuotas del crédito; el tope y las repeticiones los pone la pantalla 30.
   'credito-autorizado': (ctx) => (
-    <SuccessResult title="Cuotas autorizadas" actions={done('/natillera/prestamos')}>
+    <SuccessResult title="Permiso dado" actions={done('/natillera/prestamos')}>
       <Card title="Resumen">
         {ctx.repetitions ? <InfoRow label="Cuotas" value={ctx.repetitions} /> : null}
-        {ctx.limit ? <InfoRow label="Tope por cuota" right={<AmountValue amount={ctx.limit} />} /> : null}
+        {ctx.limit ? <InfoRow label="Lo máximo por cuota" right={<AmountValue amount={ctx.limit} />} /> : null}
         <AppText variant="body" tone="muted">
           Ahora la tesorera decide si aprueba el préstamo.
         </AppText>
@@ -95,7 +95,7 @@ const VARIANTS: Record<ResultKind, (ctx: Ctx) => ReactElement> = {
   ),
   // 23: la tesorera aprobó y el fondo pagó el préstamo.
   'prestamo-desembolsado': (ctx) => (
-    <SuccessResult title="Préstamo desembolsado" actions={done('/natillera/prestamos/tesorera')}>
+    <SuccessResult title="Préstamo entregado" actions={done('/natillera/prestamos/tesorera')}>
       <Card title="Resumen">
         {ctx.debit ? <InfoRow label="Salió del fondo" right={<AmountValue amount={ctx.debit} />} /> : null}
         {ctx.receive ? (
@@ -108,10 +108,10 @@ const VARIANTS: Record<ResultKind, (ctx: Ctx) => ReactElement> = {
   'recurrente-activada': (ctx) => (
     <SuccessResult title="Cuota automática activada" actions={done('/natillera')}>
       <Card title="Resumen">
-        {ctx.limit ? <InfoRow label="Tope por cobro" right={<AmountValue amount={ctx.limit} />} /> : null}
+        {ctx.limit ? <InfoRow label="Lo máximo por cobro" right={<AmountValue amount={ctx.limit} />} /> : null}
         {ctx.repetitions ? <InfoRow label="Se repite" value={`${ctx.repetitions} veces`} /> : null}
         <AppText variant="body" tone="muted">
-          Desde el próximo periodo se cobra sola.
+          Desde la próxima cuota se cobra sola.
         </AppText>
       </Card>
     </SuccessResult>

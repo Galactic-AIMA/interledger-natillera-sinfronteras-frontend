@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { AppText } from '@/components';
 import { palette, space } from '@/theme';
 
-const STEPS = ['La app llama al backend', 'Se abre la billetera para dar el permiso', 'El backend cobra la cuota en cada periodo'] as const;
+const STEPS = ['Se abre su billetera.', 'Usted da el permiso, una sola vez.', 'Cada mes la cuota sale sola.'] as const;
 
 /** Los 3 pasos de "Qué pasa al tocar el botón" (12). */
 export function PasosRecurrente() {
