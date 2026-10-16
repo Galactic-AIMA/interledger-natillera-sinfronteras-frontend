@@ -22,6 +22,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Camilo | Claude Code | Plan del equipo y guía de delegación para Henry (carriles, orden de pantallas, tareas sin dependencia) | `docs/PLAN.md`, `docs/HENRY.md`, `CLAUDE.md`, `MEMORY.md` |
 | 2026-10-16 | Camilo | Claude Code | Sistema de registro de uso de IA: hook de prompts y script de verificación | `.claude/settings.json`, `.claude/hooks/log-prompt.mjs`, `scripts/ai-usage-check.mjs`, `AI_USAGE.md` |
 | 2026-10-16 | Camilo | Claude Code | Scaffold con `create-expo-app` (SDK 58, plantilla default) ejecutado por la IA; se quitó el código de ejemplo y se dejó una base mínima con la Paleta G | `package.json`, `app.json`, `tsconfig.json`, `assets/`, `src/app/`, `src/theme/colors.ts` |
+| 2026-10-16 | Camilo | Claude Code (+ skill ui-ux-pro-max) | Carril `base`: tokens de diseño, fuentes, escala A+, componentes compartidos, capa de datos (interfaz, mock en memoria, cliente HTTP, login Cognito, apertura de billetera), navegación con pestañas y placeholders de las 31 pantallas; guía de uso para Henry | `src/theme/`, `src/components/`, `src/api/`, `src/utils/money.ts`, `src/app/`, `.env.example`, `.gitattributes`, `docs/HENRY.md`, `docs/api-contrato.md`, `MEMORY.md` |
 
 ## What We Did Ourselves
 

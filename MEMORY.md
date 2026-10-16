@@ -13,7 +13,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 
 | Carril | Alcance | Persona | Sesión / rama | Estado |
 |---|---|---|---|---|
-| `base` | Scaffold Expo, tema, componentes, `src/api` (+ mocks), auth, navegación | Camilo | — | en curso |
+| `base` | Scaffold Expo, tema, componentes, `src/api` (+ mocks), auth, navegación | Camilo | main | **lista** (2026-10-16) |
 | `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo | — | libre |
 | `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Henry | — | libre |
 | `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | — | libre |
@@ -26,6 +26,8 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 - 2026-10-16 — Las 31 pantallas propias navegables y todas conectadas al back (incluidos préstamos).
 - 2026-10-16 — Login con Cognito (JWT). Pitch en español.
 
+- 2026-10-16 — El contrato manda desde `docs/openapi.yaml` del repo back. Front solo con mocks hasta la madrugada. Las decisiones abiertas del back (IaC, JS/TS, periodo, tasa, amortización) las deciden Duvan y David Ciro; el front pinta lo que devuelvan.
+
 ## Propuestas al back (pendientes de respuesta)
 
 1. `finish.uri` https del back que verifique el hash y responda 302 a `natillera://retorno?paymentId=…&result=…` (su flujo 4 manda `interact_ref` desde la app sin verificar el hash). El front soporta ambos.
@@ -37,6 +39,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 ## Pedidos entre carriles
 
 - 2026-10-16 · de base a pagos: Henry, empieza por la Parte A de [docs/HENRY.md](docs/HENRY.md) (wallets de prueba, monedas, `natillera://`, curso, slides). Camilo avisa aquí cuando `base` esté lista para que arranques las pantallas.
+- 2026-10-16 · de base a todos: **`base` lista en `main`.** Ya pueden arrancar pantallas: cada ruta tiene un placeholder con su número; reemplácenlo completo. Guía rápida en "Cómo usar la base" de [docs/HENRY.md](docs/HENRY.md) y en la bitácora `base`.
 - Formato: `AAAA-MM-DD HH:MM · de <carril> a <carril>: <qué>`
 
 ## Checklist de entrega
@@ -54,6 +57,13 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 ### base
 - 2026-10-16 — Setup de contexto y sistema de uso de IA (hook probado: guarda literal y tapa llaves).
 - 2026-10-16 ~11:50 — Scaffold Expo SDK 58 (Expo Router en `src/app/`, RN 0.88, TS 6). Ejemplo de plantilla eliminado; `src/theme/colors.ts` con la Paleta G. `tsc` ok, `expo-doctor` 20/20, bundle Android ok. Sin commit todavía (falta OK de Camilo). Siguiente: tema completo, fuentes, componentes, `src/api` + mocks.
+- 2026-10-16 ~12:40 — **Base lista.** Qué hay y cómo se usa:
+  - `src/theme`: tokens (`palette`, `space`, `radius`, `touch`, `typeScale`), fuentes Gloock/Hanken Grotesk/Martian Mono y `TextScaleProvider` (botón A+, 3 niveles).
+  - `src/components`: `Screen` (título + A+ + scroll + `footer`), `AppText`, `Button`, `Card`, `InfoRow`/`LinkRow`, `TextField`, `Choice`, `StatusPill`, `ResultScreen` (✓ ✕ ! y espera), `Placeholder`.
+  - `src/api`: `useApi()`, hooks `useMe`/`useMyNatillera`/`usePayments`/`useAccounts`/`useMyLoans`/`usePendingLoanRequests`, `keys` para invalidar, `openWallet()` (en demo un diálogo hace de billetera) y `waitForFinalPayment()`.
+  - `src/utils/money.ts`: `formatAmount`, `toMinorUnits`, `currencyName` (12 casos probados).
+  - Rutas: `(auth)` 01–03 · `(tabs)/natillera` 05–12, 15–25 · `(tabs)/pagar` 26–27 · `(tabs)/ayuda` 35 · `cuenta` 04 · `billetera/antes` 28 · `billetera/volviendo` 30 · `resultado` 14/19/23/31–34 · `retorno` (deep link).
+  - Probar: `npm run web` o `npx expo start` → "Empezar con datos de ejemplo" (Doña Rosa; en demo Luz y Andrés también existen, contraseña cualquiera).
 
 ### cuenta-natillera
 - (vacío)

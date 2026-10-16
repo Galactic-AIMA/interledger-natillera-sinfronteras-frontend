@@ -54,10 +54,10 @@ Camilo avisará en el chat del equipo y marcará `base` como lista en MEMORY.md.
 | Regla | Detalle |
 |---|---|
 | Montos | Siempre `{ value: string, assetCode, assetScale }`; se muestran con `formatAmount` |
-| Billetera | `WebBrowser.openAuthSessionAsync(redirectUrl, 'natillera://retorno')`; la app jamás firma ni guarda llaves |
-| Pantalla 30 | Polling a `GET /payments/{id}` hasta un estado final (`completed`, `rejected`, `failed`) con tiempo máximo |
+| Billetera | Usa `openWallet(api, { redirectUrl, demoTitle, demoDetail })` de `@/api` (por dentro hace `openAuthSessionAsync`; en demo un diálogo hace de billetera). La app jamás firma ni guarda llaves |
+| Pantalla 30 | `api.finishPayment(paymentId, ret)` y luego `waitForFinalPayment(api, paymentId)` de `@/api` |
 | Modo demo | Toda pantalla debe funcionar con `mockApi` y con `httpApi`. Si te falta un mock, pídelo (ver abajo) |
-| Archivos compartidos | No edites `src/theme`, `src/api`, `src/components` ni `app/_layout.tsx`. Pídelo en "Pedidos entre carriles" |
+| Archivos compartidos | No edites `src/theme`, `src/api`, `src/components` ni `src/app/_layout.tsx`. Pídelo en "Pedidos entre carriles" |
 | Estilo | TypeScript estricto, sin `any`, `as const` en vez de `enum`; áreas táctiles ≥ 48 px, contraste AA; código en inglés, comentarios y commits en español |
 | Diseño | Paleta G y fuentes en [figma-pantallas.md](figma-pantallas.md). Si usas Claude Code, corre `/ui-ux-pro-max` antes de maquetar |
 
@@ -93,3 +93,47 @@ Empiezan cuando el flujo de la cuota esté funcionando, porque reutilizan la pas
 | Sin errores en consola ni en `npx tsc --noEmit` | Comando |
 | Usable con el botón A+ activo y con una mano | Prueba en el celular |
 | Estados de carga, vacío y error cubiertos | Se fuerzan con el mock |
+
+## Cómo usar la base
+
+Esqueleto de una pantalla con los componentes compartidos. Reemplaza el `Placeholder` del archivo de tu ruta.
+
+```tsx
+import { router } from 'expo-router';
+import { useState } from 'react';
+
+import { openWallet, useApi, useMyNatillera } from '@/api';
+import { Button, Card, InfoRow, Screen } from '@/components';
+import { amount } from '@/utils/money';
+
+export default function ScreenNatilleraCuota() {
+  const api = useApi();
+  const { data: natillera } = useMyNatillera();
+  const [loading, setLoading] = useState(false);
+
+  async function pay() {
+    if (!natillera) return;
+    setLoading(true);
+    const start = await api.startPayment({ kind: 'aporte', natilleraId: natillera.natilleraId, amount: natillera.quota });
+    const outcome = await openWallet(api, { redirectUrl: start.redirectUrl, demoTitle: 'Poner la cuota', demoDetail: 'Sale de su billetera…' });
+    setLoading(false);
+    if (outcome.kind === 'returned') router.replace({ pathname: '/billetera/volviendo', params: { paymentId: start.paymentId, ...outcome.ret } });
+  }
+
+  return (
+    <Screen title="Poner la cuota" inTabs footer={<Button label="Poner la cuota" onPress={pay} loading={loading} />}>
+      <Card title="Resumen">{natillera ? <InfoRow label="Llega a la natillera" amount={natillera.quota} /> : null}</Card>
+    </Screen>
+  );
+}
+```
+
+| Necesitas | Usa |
+|---|---|
+| Estructura de pantalla con título, A+ y botones abajo | `Screen` (`inTabs` si está dentro de las pestañas, `footer` para los botones) |
+| Pantallas ✓ ✕ ! y "volviendo…" | `ResultScreen` con `kind` = `success`, `rejected`, `error` o `loading` |
+| Montos | `InfoRow` con `amount` (verde con `tone="money"` solo si es plata que entra) |
+| Opciones (Mía / Doña Rosa, 2 / 4 / 6 cuotas) | `Choice` |
+| Campos | `TextField` (etiqueta siempre visible, `error` junto al campo) |
+| Datos | `useMyNatillera()`, `usePayments()`, `useAccounts()`, `useMyLoans()`; después de un pago, `queryClient.invalidateQueries({ queryKey: keys.natillera })` |
+| Probar como otra persona en demo | Entra con `luz` o `andres` en "Ya tengo cuenta" (cualquier contraseña) cuando la pantalla 03 exista |
