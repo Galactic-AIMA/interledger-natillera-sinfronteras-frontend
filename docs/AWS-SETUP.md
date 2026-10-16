@@ -4,7 +4,7 @@ Guía para crear a mano en la consola de AWS todo lo que pide [ARQUITECTURA.md](
 Sin IaC: lo que se cree aquí se documenta aquí (nombre + configuración), para poder recrearlo y
 después pasarlo a scripts de AWS CLI en `infra/`.
 
-**Región:** `us-east-1` (N. Virginia) para todo. Revisar el selector de región arriba a la derecha
+**Región:** `us-east-2` (Ohio) para todo. Revisar el selector de región arriba a la derecha
 antes de crear cada recurso; un recurso en otra región "no existe" para los demás.
 
 **Nunca** pegar en este archivo, en el repo ni en el chat: llaves privadas, contraseñas, access
@@ -21,8 +21,8 @@ rutas y el paso 8 (Scheduler, P1) van después de las 15:00.
 | # | Paso | Estado | Fecha | Datos (no secretos) |
 |---|---|---|---|---|
 | 0 | Cuenta segura + alerta de costos | ✅ | 2026-10-16 | Account ID: `349607459198` · usuario `david-admin` · budget creado |
-| 1 | Billeteras y llaves en la Test Wallet | ⬜ | | Wallet cliente: · Wallet fondo: |
-| 2 | Secreto en Secrets Manager | ⬜ | | ARN: |
+| 1 | Billeteras y llaves en la Test Wallet | 🟡 | 2026-10-16 | Wallet cliente (Duvan, EUR): `https://ilp.interledger-test.dev/f9a1abde` · Wallet COP (receptor P0): pendiente · Wallet fondo: pendiente |
+| 2 | Secreto en Secrets Manager | ✅ | 2026-10-16 | ARN: `arn:aws:secretsmanager:us-east-2:349607459198:secret:natillera/open-payments-client-57Rtn0` |
 | 3 | Cognito User Pool + App client | ⬜ | | Pool ID: · Client ID: |
 | 4 | Tablas DynamoDB (9) | ⬜ | | |
 | 5 | Rol IAM de las Lambdas | ⬜ | | ARN: |
@@ -106,7 +106,7 @@ Open Payments no crea billeteras: se crean a mano en la Test Wallet
    no hace falta configurar correo de verificación para la demo. (Alternativa: trigger *Pre sign-up*
    que haga `autoConfirmUser = true`; se decide con Duvan.)
 
-Anotar **User pool ID** (`us-east-1_xxxx`) y **Client ID** en la tabla.
+Anotar **User pool ID** (`us-east-2_xxxx`) y **Client ID** en la tabla.
 
 ## Paso 4 · DynamoDB — 9 tablas
 
@@ -156,29 +156,29 @@ lo confirme, se pueden añadir después sin borrar la tabla):
       "Action": ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem",
                  "dynamodb:DeleteItem", "dynamodb:Query", "dynamodb:BatchGetItem"],
       "Resource": [
-        "arn:aws:dynamodb:us-east-1:349607459198:table/Users-info",
-        "arn:aws:dynamodb:us-east-1:349607459198:table/Saved-accounts",
-        "arn:aws:dynamodb:us-east-1:349607459198:table/Payments-history",
-        "arn:aws:dynamodb:us-east-1:349607459198:table/natillera-registration",
-        "arn:aws:dynamodb:us-east-1:349607459198:table/natillera-records",
-        "arn:aws:dynamodb:us-east-1:349607459198:table/natillera-loan-request",
-        "arn:aws:dynamodb:us-east-1:349607459198:table/Natillera-Loans-Records",
-        "arn:aws:dynamodb:us-east-1:349607459198:table/Recurring-grants",
-        "arn:aws:dynamodb:us-east-1:349607459198:table/Loan-payments",
-        "arn:aws:dynamodb:us-east-1:349607459198:table/*/index/*"
+        "arn:aws:dynamodb:us-east-2:349607459198:table/Users-info",
+        "arn:aws:dynamodb:us-east-2:349607459198:table/Saved-accounts",
+        "arn:aws:dynamodb:us-east-2:349607459198:table/Payments-history",
+        "arn:aws:dynamodb:us-east-2:349607459198:table/natillera-registration",
+        "arn:aws:dynamodb:us-east-2:349607459198:table/natillera-records",
+        "arn:aws:dynamodb:us-east-2:349607459198:table/natillera-loan-request",
+        "arn:aws:dynamodb:us-east-2:349607459198:table/Natillera-Loans-Records",
+        "arn:aws:dynamodb:us-east-2:349607459198:table/Recurring-grants",
+        "arn:aws:dynamodb:us-east-2:349607459198:table/Loan-payments",
+        "arn:aws:dynamodb:us-east-2:349607459198:table/*/index/*"
       ]
     },
     {
       "Sid": "OpenPaymentsKey",
       "Effect": "Allow",
       "Action": "secretsmanager:GetSecretValue",
-      "Resource": "<ARN del secreto natillera/open-payments-client>"
+      "Resource": "arn:aws:secretsmanager:us-east-2:349607459198:secret:natillera/open-payments-client-57Rtn0"
     },
     {
       "Sid": "CognitoSignup",
       "Effect": "Allow",
       "Action": ["cognito-idp:AdminConfirmSignUp", "cognito-idp:AdminGetUser"],
-      "Resource": "arn:aws:cognito-idp:us-east-1:349607459198:userpool/<USER_POOL_ID>"
+      "Resource": "arn:aws:cognito-idp:us-east-2:349607459198:userpool/<USER_POOL_ID>"
     }
   ]
 }
@@ -214,7 +214,7 @@ equipo decide usar VTL (decisión abierta 4), tendría que ser **REST API**.
 
 1. **API Gateway → Create API → HTTP API** → nombre `natillera-api`, stage `$default` con auto-deploy.
 2. **Authorization → Create authorizer → JWT**:
-   - Issuer: `https://cognito-idp.us-east-1.amazonaws.com/<USER_POOL_ID>`
+   - Issuer: `https://cognito-idp.us-east-2.amazonaws.com/<USER_POOL_ID>`
    - Audience: el **Client ID** del paso 3.
 3. Rutas (una integración Lambda por ruta). Todas con el authorizer **excepto** signup y login:
    `POST /signup`, `POST /login`, `POST /payments/start`, `POST /payments/finish`,

@@ -55,11 +55,11 @@ mocks; luego `pagos`, `natillera`, `credito`.
 
 Decisiones técnicas aún sin tomar:
 - API Gateway: HTTP API (recomendado, authorizer JWT de Cognito) o REST API (necesario si se usa VTL).
-- Región AWS: se propone `us-east-1`, un solo entorno para la hackathon.
 
 ## Decisiones tomadas
 
 - 2026-10-16 · Lenguaje: **TypeScript**.
+- 2026-10-16 · Región AWS: **`us-east-2` (Ohio)**, un solo entorno. Cuenta `349607459198`.
 - 2026-10-16 · **Sin herramienta de IaC** (ni CDK, SAM, Terraform). La infra AWS se crea a mano en
   la consola siguiendo [docs/AWS-SETUP.md](docs/AWS-SETUP.md); más adelante se automatiza con
   scripts de **AWS CLI**.
