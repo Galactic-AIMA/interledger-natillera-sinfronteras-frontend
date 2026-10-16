@@ -25,6 +25,27 @@ import type {
 
 type Method = 'GET' | 'POST';
 
+// Dirección de pago pública (GET con Accept: application/json → { id, assetCode, assetScale, … }).
+// Acepta la URL completa, `$ilp.interledger-test.dev/x` o solo el id de la Test Wallet.
+async function lookupPublicWallet(input: string): Promise<WalletInfo> {
+  const raw = input.trim();
+  const url = raw.startsWith('$')
+    ? `https://${raw.slice(1)}`
+    : /^https?:\/\//i.test(raw)
+      ? raw
+      : `https://ilp.interledger-test.dev/${raw.replace(/^\/+/, '')}`;
+  let response: Response;
+  try {
+    response = await fetch(url, { headers: { Accept: 'application/json' } });
+  } catch {
+    throw new ApiError('No hay conexión. Revise su internet e intente de nuevo.', 0, 'network');
+  }
+  if (!response.ok) return { exists: false, walletAddress: raw };
+  const data = (await response.json().catch(() => null)) as { id?: string; assetCode?: string; assetScale?: number } | null;
+  if (!data?.assetCode) return { exists: false, walletAddress: raw };
+  return { exists: true, walletAddress: data.id ?? url, assetCode: data.assetCode, assetScale: data.assetScale };
+}
+
 async function request<T>(method: Method, path: string, body?: unknown, auth = true): Promise<T> {
   if (!config.apiUrl) throw new ApiError('Falta configurar la API (EXPO_PUBLIC_API_URL).', 0, 'config');
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -66,7 +87,12 @@ export const httpApi: NatilleraApi = {
   logout: () => signOut(),
   hasSession: async () => (await getAuthToken()) !== null,
   getMe: () => request<User>('GET', '/me'),
-  verifyWallet: (walletAddress) => request<WalletInfo>('GET', `/wallets/verify?url=${encodeURIComponent(walletAddress)}`),
+  // Con sesión, verifica el back. Sin sesión (pantalla 02, antes del SignUp) se consulta la dirección de
+  // pago pública de Open Payments: no firma ni usa llaves. El back vuelve a validar la wallet en el SignUp.
+  verifyWallet: async (walletAddress) => {
+    if (await getAuthToken()) return request<WalletInfo>('GET', `/wallets/verify?url=${encodeURIComponent(walletAddress)}`);
+    return lookupPublicWallet(walletAddress);
+  },
 
   getMyNatillera: () => request<Natillera | null>('GET', '/natilleras/mine'),
   createNatillera: (input) => request<Natillera>('POST', '/natilleras', input),

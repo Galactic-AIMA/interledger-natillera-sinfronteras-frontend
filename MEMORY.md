@@ -15,10 +15,11 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 |---|---|---|---|---|
 | `base` | Scaffold Expo, tema, componentes, `src/api` (+ mocks), auth, navegación | Camilo | main | **lista** (2026-10-16) |
 | `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo (sesión A) | `feat/cuenta-natillera` · worktree `frontend-cuenta` | **en `main`** (`ffd9917`, 2026-10-16); falta probar en celular |
-| `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Camilo (sesión B) → traspaso a Henry | `feat/pagos` + arreglos de seguridad de Henry, integrados en `feat/creditos` | hecha en demo; falta celular y Test Wallet |
-| `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | `feat/creditos` (desde `main` con `pagos` integrado) | **hecha en demo** (2026-10-16 ~13:20); falta celular y back |
-| `pitch` | Slides en la plantilla oficial, guion de 5 min, video | Camilo + Henry | — | libre |
-| `cuenta-celular` | Pulido en celular de 01–10 (`expo-clipboard`, botón volver) + propuesta de copy | Henry, sesión D | `feat/cuenta-celular` · worktree `frontend-pulido` (desde `main`) | **reclamado** (2026-10-16 ~12:50) |
+| `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Camilo (sesión B) → Henry (auditoría de seguridad) | integrado en `feat/creditos` (fork de Henry) | **hecha en demo y probada** (2026-10-16 ~13:45); falta Expo Go y Test Wallet. PR: ver [docs/INTEGRACION-EXPO-GO.md](docs/INTEGRACION-EXPO-GO.md) |
+| `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | `feat/creditos` (fork de Henry; contiene `main` `32eb791`) | **hecha en demo y probada** 16→24 (2026-10-16 ~13:45); falta back |
+| `pitch` | Slides en la plantilla oficial, guion de 5 min, video | Camilo + Henry | `docs/pitch/` | guion y contexto en borrador ([docs/pitch/GUION.md](docs/pitch/GUION.md)); faltan slides |
+| `auth-signup` | Registro directo a Cognito (encargo de Camilo) | Henry | `feat/auth-signup` (fork) e integrado en `feat/creditos` | **hecho**; falta probar contra Cognito real en Expo Go |
+| `cuenta-celular` | Pulido en celular de 01–10 (`expo-clipboard`, botón volver) + aplicar copy | Henry, sesión D | `feat/cuenta-celular` (por crear desde `main`) | libre; la propuesta de copy ya está en [docs/copy-henry.md](docs/copy-henry.md) |
 
 ## Decisiones tomadas
 
@@ -50,6 +51,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 - 2026-10-16 12:50 · de pagos a base: `main` ya está fusionado en `feat/pagos` (`da44d32`); Camilo dio OK; como HenryStark866 no tiene escritura en Galactic-AIMA, la rama integrada se subió a su fork (ver docs/SESIONES-HENRY.md). Plan de sesiones paralelas de Henry en [docs/SESIONES-HENRY.md](docs/SESIONES-HENRY.md): C (`creditos`) es la única que toca `resultado.tsx`, `volviendo.tsx` y `ResultKind`; D (`cuenta-celular`) es la única que toca `package.json`.
 - 2026-10-16 · de base a Henry: **registro directo a Cognito** (el back no tiene `POST /signup`). Encargo completo en [docs/ENCARGO-SIGNUP-COGNITO.md](docs/ENCARGO-SIGNUP-COGNITO.md). Camilo te autoriza a tocar `auth.ts`, `httpApi.ts` y `types.ts` solo para esto.
 - 2026-10-16 13:35 · de Henry a base: registro Cognito hecho en `feat/auth-signup` (solo `auth.ts`, `httpApi.ts`, `types.ts`, pantalla 02, `.env.example` y `api-contrato.md`). **Pedido:** `src/api/config.ts` tiene `cognitoRegion` por defecto `us-east-1`; el back está en `us-east-2`. Mientras tanto `.env.example` ya trae `us-east-2` y el `ClientId` público.
+- 2026-10-16 13:50 · de Henry a base: **rama lista para integrar** `feat/creditos` (pagos + seguridad + créditos + Cognito, sobre tu `main`). Guía, cambios en `src/api` y lista de pruebas en Expo Go: [docs/INTEGRACION-EXPO-GO.md](docs/INTEGRACION-EXPO-GO.md). Ojo: `verifyWallet` sin sesión ahora consulta la dirección de pago pública (sin eso la 02 no registra en modo real).
 - Formato: `AAAA-MM-DD HH:MM · de <carril> a <carril>: <qué>`
 - 2026-10-16 12:45 · de pagos a base: 4 arreglos en archivos compartidos (logout con `RevokeToken`, errores no-JSON en `httpApi`, `.gitignore` con `.env*`, patrones del hook). Lista en [docs/auditoria-2026-10-16.md](docs/auditoria-2026-10-16.md).
 - 2026-10-16 12:45 · de pagos a back (Camilo, reenviar a Duvan y David): el back aún no tiene código y sus rutas tentativas no cuadran con el contrato. Prioridad: `GET /payments/{id}` → `returnUrl` (lista blanca) y `debitAmount`/`receiveAmount` al iniciar → `charge-now`. Opción B con hash obligatorio; ignorar `result` del cliente; `natilleraId`. Detalle en el mismo doc.
@@ -99,6 +101,8 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 
 - 2026-10-16 ~13:35 — (Henry + Claude) Registro directo a Cognito según el encargo y el mensaje del back: `signUp` en `src/api/auth.ts` (POST a `cognito-idp.us-east-2`, `X-Amz-Target` SignUp, `email`/`phone_number`/`custom:walletId`), `httpApi.signup` = SignUp + login, errores `UserLambdaValidationException` (motivo del back sin el prefijo técnico), `UsernameExistsException`, `InvalidPasswordException`, `InvalidParameterException` en "usted". Pantalla 02 valida `+57` + 10 dígitos (quita espacios) y la política de contraseña. `tsc` limpio. **Falta probar contra Cognito real en Expo Go** (desde la nube no hay salida a AWS).
 
+- 2026-10-16 ~13:50 — (Henry + Claude) Para modo real: `verifyWallet` sin sesión → dirección de pago pública de Open Payments (GET JSON); `getAuthToken` descarta un token vencido sin refresh. `tsc` limpio. Pendiente tuyo: `config.ts` `us-east-2`.
+
 ### cuenta-natillera
 - 2026-10-16 — Sesión A: construidas 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 15 y 35 (5 ejecutores Sonnet + validador Opus). `tsc` limpio; recorrido completo en web con demo, A+ ×1,4 sin cortes. Cambios en archivos compartidos: `Screen` ahora acepta `headerRight`; `enterDemo` hace `resetQueries`; el código de invitación del mock ya es válido en 07. Pendiente: probar en celular/Expo Go, `expo-clipboard` para copiar el enlace, botón volver en pantallas sueltas, `web.output` "server" → "single" (decide Camilo). 04 se abre desde el icono de persona en 10/05.
 
@@ -114,4 +118,4 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 - 2026-10-16 ~12:50 — Carril reclamado por Henry (sesión C). Encargo en [docs/SESIONES-HENRY.md](docs/SESIONES-HENRY.md). Superado: otra sesión de Henry ya construyó el carril (ver línea siguiente).
 
 ### pitch
-- (vacío)
+- 2026-10-16 ~12:45 — (Henry, otra sesión de Claude) Guion de 5 min y contexto con fuentes en [docs/pitch/](docs/pitch/); lo no respaldado por el repo va marcado [CONFIRMAR]. Faltan las slides en la plantilla oficial.

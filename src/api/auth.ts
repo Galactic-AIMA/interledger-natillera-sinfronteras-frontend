@@ -114,6 +114,11 @@ export async function signOut(): Promise<void> {
 export async function getAuthToken(): Promise<string | null> {
   let tokens = await load();
   if (!tokens) return null;
+  // Vencido y sin refresh: no se manda un token muerto (evita 401 en bucle).
+  if (tokens.expiresAt <= Date.now() && !tokens.refreshToken) {
+    await save(null);
+    return null;
+  }
   if (tokens.expiresAt - Date.now() < 60_000 && tokens.refreshToken) {
     try {
       const result = await initiateAuth('REFRESH_TOKEN_AUTH', { REFRESH_TOKEN: tokens.refreshToken });

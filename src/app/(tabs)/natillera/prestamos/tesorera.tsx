@@ -60,8 +60,10 @@ export default function ScreenTesorera() {
   }
 
   const list = pending.data ?? [];
+  // Al volver de un desembolso (23) la pila queda en esta pantalla: siempre hay cómo regresar a Préstamos.
+  const back = <Button label="Volver a Préstamos" variant="ghost" onPress={() => router.navigate('/natillera/prestamos')} />;
   return (
-    <Screen title="Préstamos" inTabs>
+    <Screen title="Préstamos" inTabs footer={back}>
       {pending.isLoading ? <AppText tone="muted">Cargando…</AppText> : null}
       {pending.isError ? <AppText tone="danger">No pudimos cargar las solicitudes.</AppText> : null}
       {!pending.isLoading && list.length === 0 ? (

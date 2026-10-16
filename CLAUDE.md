@@ -18,7 +18,13 @@ App móvil de **Natillera sin Fronteras** para la Hackatón Open Payments de Int
 | [docs/HENRY.md](docs/HENRY.md) | Guía de Henry: tareas sin dependencia, orden de pantallas, reglas, cómo pedir cosas |
 | [docs/figma-pantallas.md](docs/figma-pantallas.md) | Las 35 pantallas, endpoint de cada una, dueño y Paleta G |
 | [docs/open-payments.md](docs/open-payments.md) | Resumen técnico de Open Payments y trampas |
-| [docs/api-contrato.md](docs/api-contrato.md) | Contrato con el back (borrador hasta que el back lo confirme) |
+| [docs/api-contrato.md](docs/api-contrato.md) | Contrato con el back (auth con Cognito ya confirmado por el back) |
+| [docs/INTEGRACION-EXPO-GO.md](docs/INTEGRACION-EXPO-GO.md) | Rama de Henry lista para `main`, cambios en `src/api` y pruebas en Expo Go |
+| [docs/ENCARGO-SIGNUP-COGNITO.md](docs/ENCARGO-SIGNUP-COGNITO.md) | Encargo del registro directo a Cognito (hecho) |
+| [docs/SESIONES-HENRY.md](docs/SESIONES-HENRY.md) | Reparto en sesiones paralelas de Henry y su estado |
+| [docs/auditoria-2026-10-16.md](docs/auditoria-2026-10-16.md) · [docs/revision-codigo-2026-10-16.md](docs/revision-codigo-2026-10-16.md) · [docs/pruebas-2026-10-16.md](docs/pruebas-2026-10-16.md) | Auditoría de seguridad, revisión de código y pruebas del 16/10 |
+| [docs/copy-henry.md](docs/copy-henry.md) | Propuesta de textos (tono "usted", sin jerga) |
+| [docs/pitch/](docs/pitch/) | Guion de 5 min y contexto del pitch |
 | Arquitectura del back | `docs/ARQUITECTURA.md` en la rama `david` del repo back (**fuente de verdad del back**) |
 | Figma | https://www.figma.com/design/hK29vkj23AZZXEN7W2hjmA |
 
@@ -44,7 +50,7 @@ Política: https://interledger.org/hackathon/ai-policy/ — `AI_USAGE.md` en la 
 ## Trabajo en paralelo
 
 - **Una sesión = un carril = una rama** `feat/<carril>-<tema>` salida de `main`, merge a `main` cada ~3 h. Reclama tu carril en [MEMORY.md](MEMORY.md) antes de empezar.
-- Carriles: `base` (tema, componentes, `src/api`, navegación — Camilo), `cuenta-natillera` (pantallas 01–10, 15, 35 — Camilo, ya en `main`), `pagos` (11–14, 26–34 — Camilo en `feat/pagos`; Henry prueba y revisa), `creditos` (16–25 — Henry, con Camilo en la madrugada), `pitch`.
+- Carriles: `base` (tema, componentes, `src/api`, navegación — Camilo), `cuenta-natillera` (pantallas 01–10, 15, 35 — Camilo, ya en `main`), `pagos` (11–14, 26–34) y `creditos` (16–25) — hechos en demo e integrados por Henry en `feat/creditos` (ver docs/INTEGRACION-EXPO-GO.md), `pitch`.
 - Archivos compartidos (`src/theme`, `src/api`, `src/components`, `app/_layout.tsx`): solo el carril `base`. Si necesitas un cambio, anótalo en "Pedidos entre carriles" de MEMORY.md.
 - MEMORY.md: cada carril edita solo su sección.
 
@@ -52,7 +58,7 @@ Política: https://interledger.org/hackathon/ai-policy/ — `AI_USAGE.md` en la 
 
 - Expo + Expo Router + TypeScript estricto (sin `any`, `as const` en vez de `enum`). TanStack Query para datos.
 - `src/api/client.ts` define la interfaz; `httpApi.ts` (AWS) y `mockApi.ts` (Doña Rosa, Luz, Andrés) la implementan. `EXPO_PUBLIC_USE_MOCKS=1` o el botón "Empezar con datos de ejemplo" eligen el modo.
-- Auth: Cognito `InitiateAuth` por `fetch`, tokens en `expo-secure-store`.
+- Auth: Cognito directo por `fetch` (sin Amplify), `us-east-2`: `SignUp` para el registro (confirma al instante) e `InitiateAuth` para login y refresh; `AccessToken` en `Bearer`, tokens en `expo-secure-store`.
 - Billetera: `WebBrowser.openAuthSessionAsync(redirectUrl, 'natillera://retorno')`; la pantalla 30 consulta `GET /payments/{id}` hasta un estado final.
 - Diseño: Paleta G y tipografías Gloock / Hanken Grotesk / Martian Mono (ver `docs/figma-pantallas.md`). Usar `/ui-ux-pro-max` antes de maquetar. Áreas táctiles ≥ 48 px, contraste AA.
 - Código en inglés; comentarios, commits y docs en español.

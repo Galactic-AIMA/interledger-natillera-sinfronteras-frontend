@@ -11,7 +11,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | Claude Code · sesión de auditoría | Claude Sonnet 5.5 | Camilo | Revisar sesiones, ramas, memoria y prompts; documentar el traspaso a Henry |
 | Figma MCP (vía Claude Code) | — | Camilo | Leer los bocetos de Figma (textos y estructura de las 35 pantallas) |
 | Claude (claude.ai con herramientas de código y subagentes) | Claude Opus 5.5 (subagentes: Sonnet 5.5 y Opus 5.5) | Henry | Revisión del repo, auditoría de verificación, pruebas, coordinación y ciberseguridad del carril `pagos`, y sus arreglos |
-| Claude (claude.ai, proyecto del equipo) | Claude Opus 5.5 | Henry | Revisión de pendientes, integración de ramas, plan de sesiones paralelas y encargos para Claude Code |
+| Claude (claude.ai, proyecto del equipo, con acceso al equipo de Henry) | Claude Opus 5.5 | Henry | Revisión de pendientes, integración de ramas, plan de sesiones paralelas, registro Cognito, recorridos automáticos de la app en modo demo (Playwright manejado por la IA), documentación de integración; también ejecutó en el equipo de Henry scripts de git para subir ramas a su fork |
 
 (Agregar aquí cualquier otra herramienta que use el equipo: ChatGPT, Copilot, Gemini, Figma AI…)
 
@@ -37,6 +37,10 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Henry | Claude (claude.ai, Claude Opus 5.5) | Integración de `main` + `feat/pagos` en `feat/creditos` (resolución de choques en docs) y carril `creditos`: pantallas 16, 17, 20, 21, 24, 25 y resultados 19/23; pasarela ampliada a crédito y desembolso | `src/app/(tabs)/natillera/prestamos/*`, `src/features/creditos/links.ts`, `src/features/pagos/flow.ts`, `src/app/billetera/antes.tsx`, `src/app/billetera/volviendo.tsx`, `src/app/resultado.tsx`, `MEMORY.md`, `AI_USAGE.md`, `prompts/2026-10-16-camilo.md` |
 | 2026-10-16 | Henry | Claude (claude.ai) | Revisión de pendientes y ramas; fusión de `main` en `feat/pagos` resolviendo los conflictos de documentación (concatenando prompts); verificación con `tsc`, export web y `ai-usage-check`; plan de sesiones paralelas C/D/H/P con encargos y mensaje para Camilo; tablero al día | `AI_USAGE.md`, `MEMORY.md`, `prompts/2026-10-16-camilo.md`, `docs/SESIONES-HENRY.md`, `docs/HENRY.md`, `prompts/2026-10-16-henry-claude-ai.md` |
 | 2026-10-16 | Henry | Claude (claude.ai) | Registro directo a Cognito (SignUp) alineado con el mensaje del back y el encargo de Camilo: función `signUp`, mapeo de atributos, mensajes de error en "usted", validación de teléfono y contraseña en la pantalla 02, contrato y `.env.example` al día | `src/api/auth.ts`, `src/api/httpApi.ts`, `src/api/types.ts`, `src/app/(auth)/crear-cuenta.tsx`, `.env.example`, `docs/api-contrato.md`, `MEMORY.md` |
+| 2026-10-16 | Henry | Claude (claude.ai) | Integración de la rama de créditos y auditoría de la otra sesión de Henry con `feat/pagos` y el `main` de Camilo (`32eb791`); choques de documentación resueltos conservando todo (prompts de Camilo verificados línea por línea) | `AI_USAGE.md`, `MEMORY.md`, `prompts/` |
+| 2026-10-16 | Henry | Claude (claude.ai) | Recorridos automáticos en web (Playwright escrito y corrido por la IA) del modo demo: pitch, préstamos 16–24, pagar 26→31, recurrente 12→14 y validaciones de la 02; arreglo del botón «Volver a Préstamos» en la 21 que dejaba atrapada a la tesorera después de la 23 | `src/app/(tabs)/natillera/prestamos/tesorera.tsx` |
+| 2026-10-16 | Henry | Claude (claude.ai) | Registro en modo real: verificación de billetera sin sesión contra la dirección de pago pública de Open Payments (antes la 02 no podía registrar a nadie); token vencido sin refresh se descarta | `src/api/httpApi.ts`, `src/api/auth.ts` |
+| 2026-10-16 | Henry | Claude (claude.ai) | Repo ordenado para la integración: guía de Expo Go para Camilo, entregables de la otra sesión llevados a `docs/` (revisión de textos, pruebas, revisión de código, guion y contexto del pitch), índice de documentos, tablero y uso de IA al día | `docs/INTEGRACION-EXPO-GO.md`, `docs/copy-henry.md`, `docs/pruebas-2026-10-16.md`, `docs/revision-codigo-2026-10-16.md`, `docs/pitch/`, `docs/SESIONES-HENRY.md`, `CLAUDE.md`, `MEMORY.md`, `AI_USAGE.md` |
 
 ## What We Did Ourselves
 
@@ -44,6 +48,8 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 - Arquitectura del backend en draw.io (equipo back).
 - Decisiones de alcance, stack, autenticación y reparto del trabajo (Camilo y equipo, respondiendo preguntas de la IA).
 - Revisión humana de todo lo generado antes de cada commit.
+- Henry: decidió alinear el registro con el mensaje del back sobre Cognito «al pie de la letra», el orden de integración (una rama `feat/creditos` para el PR) y dio el OK para subir a su fork; Camilo dio el OK y redactó el encargo de Cognito.
+- Mensaje de autenticación con Cognito (endpoint, cuerpos y errores): lo escribió el equipo back.
 
 (Al cerrar: listar aquí los archivos hechos con poca o ninguna IA.)
 
@@ -55,3 +61,4 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 - Sesión paralela de planeación (sin hook, recuperada de su transcripción): [`prompts/2026-10-16-camilo-sesion-paralela-plan.md`](prompts/2026-10-16-camilo-sesion-paralela-plan.md).
 - Sesión de auditoría (raíz, sin hook): [`prompts/2026-10-16-camilo-auditoria.md`](prompts/2026-10-16-camilo-auditoria.md). Incluye la nota sobre los dos mensajes de solo imagen (capturas de pantalla del emulador) de la sesión del emulador, que no tienen texto.
 - Encargos enviados a otras sesiones: [`prompts/2026-10-16-camilo-encargos-sesiones.md`](prompts/2026-10-16-camilo-encargos-sesiones.md).
+- Sesiones de Henry en claude.ai (sin hook, copiadas a mano): [`prompts/2026-10-16-henry-claude-ai.md`](prompts/2026-10-16-henry-claude-ai.md). Los encargos a los subagentes de la auditoría se resumen en [`docs/auditoria-2026-10-16.md`](docs/auditoria-2026-10-16.md).
