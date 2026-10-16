@@ -14,7 +14,7 @@ keys de IAM ni tokens. Los IDs y ARNs sí se pueden anotar (no son secretos).
 
 | # | Paso | Estado | Fecha | Datos (no secretos) |
 |---|---|---|---|---|
-| 0 | Cuenta segura + alerta de costos | ⬜ | | Account ID: |
+| 0 | Cuenta segura + alerta de costos | ✅ | 2026-10-16 | Account ID: (pendiente de anotar) · usuario `david-admin` · budget creado |
 | 1 | Billeteras y llaves en la Test Wallet | ⬜ | | Wallet cliente: · Wallet fondo: |
 | 2 | Secreto en Secrets Manager | ⬜ | | ARN: |
 | 3 | Cognito User Pool + App client | ⬜ | | Pool ID: · Client ID: |
