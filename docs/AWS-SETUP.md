@@ -23,7 +23,7 @@ rutas y el paso 8 (Scheduler, P1) van después de las 15:00.
 | 0 | Cuenta segura + alerta de costos | ✅ | 2026-10-16 | Account ID: `349607459198` · usuario `david-admin` · budget creado |
 | 1 | Billeteras y llaves en la Test Wallet | 🟡 | 2026-10-16 | Wallet cliente (Duvan, EUR): `https://ilp.interledger-test.dev/f9a1abde` · Wallet COP (receptor P0): pendiente · Wallet fondo: pendiente |
 | 2 | Secreto en Secrets Manager | ✅ | 2026-10-16 | ARN: `arn:aws:secretsmanager:us-east-2:349607459198:secret:natillera/open-payments-client-57Rtn0` |
-| 3 | Cognito User Pool + App client | 🟡 | 2026-10-16 | Pool `User pool - 3hc-ib` · ID `us-east-2_2pQzW95IK` · Client ID `20b10a2tnnr69lqlp2sf62orv0` (falta activar USER_PASSWORD_AUTH) · trigger Pre sign-up → Lambda `pre-signup` (código en `deploy/pre-signup/index.mjs`) |
+| 3 | Cognito User Pool + App client | 🟡 | 2026-10-16 | Pool `User pool - 3hc-ib` · ID `us-east-2_2pQzW95IK` · Client ID `20b10a2tnnr69lqlp2sf62orv0` (sin secreto, USER_PASSWORD_AUTH activo — verificado 2026-10-16) · trigger Pre sign-up → Lambda `pre-signup` (código en `deploy/pre-signup/index.mjs`) |
 | 4 | Tablas DynamoDB (9) | ⬜ | | |
 | 5 | Rol IAM de las Lambdas | ⬜ | | ARN: |
 | 6 | Lambdas (cuando Duvan entregue código) | ⬜ | | |
