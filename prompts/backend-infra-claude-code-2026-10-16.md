@@ -140,3 +140,13 @@ Prompts **literales**, en orden. Las capturas de pantalla adjuntas se marcan com
 ### 25
 > Sí, escribe la versión corregida de start-payment, finish-payment y get-payment siguiendo el contrato del front, lista para empaquetar y subir. Duvan la revisa.
 > Tambien damos el request para probar el flujo de pagos
+
+### 26
+> El archivo de la lambda esta en .mjs y me lo pasasten .ts
+
+### 27
+> [captura: editor de la Lambda start-payment con el .ts pegado en index.mjs]
+
+### 28
+> Subelo al repo con el formato corregido
+> PAra que Duvan lo revise
