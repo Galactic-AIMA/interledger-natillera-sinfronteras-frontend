@@ -41,6 +41,9 @@ Pestañas inferiores: **Mi natillera · Pagar · Ayuda**. Encabezado con título
 | 33 | Algo falló ! | — | Henry |
 | 34 | Cuota puesta ✓ | — | Henry |
 | 35 | Ayuda (respuestas fijas: ¿cuánto llevo?, comisión, permiso de la billetera, préstamo) | local, sin back | Camilo |
+| 36 | Metas (lista de ahorros y colectas; nueva, sin Figma) | solo front (`goalStore`) | Camilo |
+| 37 | Nueva meta (ahorro o colecta, nombre, beneficiario y billetera, monto, fecha; sin Figma) | `GET /wallets/verify` + solo front | Camilo |
+| 38 | Detalle de la meta (avance, días, ¿cuánto le toca?, aportar; sin Figma) | colecta: `POST /payments` p2p con `walletAddress`; ahorro: solo front | Camilo |
 
 ## Paleta G · Índigo + Bosque
 

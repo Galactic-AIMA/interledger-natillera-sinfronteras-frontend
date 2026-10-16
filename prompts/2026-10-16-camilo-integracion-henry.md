@@ -75,3 +75,11 @@ Perfecto, hemos estado probando eh, estamos contentos con el resultado, pero tam
 
 - ¿Dónde va la pantalla de logs? → "Botón en Su cuenta (Recomendado)".
 - ¿Cómo el selector de indicativo? → "Lista con buscador (Recomendado)".
+
+## Prompt 15
+
+Sí, haz push de feat/back-hibrido a main.
+
+## Prompt 16
+
+Perfecto, actualiza todas nuestras memorias. Valida si hay algo nuevo. Y ya todo listo. También veo que Henry dejó un PR por ahí válida todo.

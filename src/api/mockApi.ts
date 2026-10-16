@@ -1,8 +1,10 @@
-import { amount } from '@/utils/money';
+import { amount, formatAmount } from '@/utils/money';
 
 import { ApiError, type NatilleraApi } from './client';
+import { createGoalStore } from './goalStore';
 import type {
   Amount,
+  Goal,
   Installment,
   LoanRequest,
   LoanSimulation,
@@ -87,6 +89,39 @@ const grants: (RecurringGrant & { userId: string; kind: 'aporte' | 'loan'; input
 const loanRequests: (LoanRequest & { userId: string })[] = [];
 const loans: Record<string, { disbursed: boolean; receivedAmount?: Amount; paidCount: number }> = {};
 
+// Metas de ejemplo de la Familia Rosa: una colecta con aportes en tres monedas y un ahorro.
+const goalSeed: Goal[] = [
+  {
+    goalId: 'g-cirugia',
+    mode: 'colecta',
+    name: 'Cirugía de la abuela Carmen',
+    target: cop(3000000),
+    deadline: '2026-11-15',
+    beneficiaryName: 'Abuela Carmen',
+    beneficiaryWallet: 'https://ilp.interledger-test.dev/carmen',
+    raised: cop(1257350),
+    contributions: [
+      { id: 'c-1', authorName: 'Andrés', amount: cop(454500), sent: fromMajor(100, 'EUR'), createdAt: '2026-10-14T18:00:00Z' },
+      { id: 'c-2', authorName: 'Luz', amount: cop(602850), sent: fromMajor(150, 'USD'), createdAt: '2026-10-13T22:00:00Z' },
+      { id: 'c-3', authorName: 'Doña Rosa', amount: cop(200000), createdAt: '2026-10-12T15:00:00Z' },
+    ],
+    createdByName: 'Doña Rosa',
+    createdAt: '2026-10-12T14:00:00Z',
+  },
+  {
+    goalId: 'g-navidad',
+    mode: 'ahorro',
+    name: 'Navidad en familia',
+    target: cop(600000),
+    deadline: '2026-12-20',
+    raised: cop(100000),
+    contributions: [{ id: 'c-4', authorName: 'Doña Rosa', amount: cop(100000), createdAt: '2026-10-15T15:00:00Z' }],
+    createdByName: 'Doña Rosa',
+    createdAt: '2026-10-01T14:00:00Z',
+  },
+];
+const goalStore = createGoalStore(goalSeed);
+
 let currentUserId: string | null = null;
 
 function me(): DemoUser {
@@ -134,7 +169,12 @@ function toNatillera(n: NatilleraState, userId: string): Natillera {
 }
 
 function quoteFor(input: StartPaymentInput, payer: DemoUser) {
-  const receiverAsset = input.kind === 'aporte' ? 'COP' : (accounts[payer.userId]?.find((a) => a.customWalletName === input.customWalletName)?.assetCode ?? 'COP');
+  const receiverAsset =
+    input.kind === 'aporte'
+      ? 'COP'
+      : 'walletAddress' in input
+        ? (users.find((u) => u.walletAddress === input.walletAddress)?.assetCode ?? input.amount.assetCode)
+        : (accounts[payer.userId]?.find((a) => a.customWalletName === input.customWalletName)?.assetCode ?? 'COP');
   const debitBase = convert(input.amount, payer.assetCode);
   const fee = fromMajor(toMajor(debitBase) * FEE_RATE, payer.assetCode);
   const debitAmount = payer.assetCode === input.amount.assetCode ? input.amount : add(debitBase, fee);
@@ -230,7 +270,8 @@ export const mockApi: NatilleraApi & { switchUser(username: string): void } = {
     await wait();
     const user = me();
     const q = quoteFor(input, user);
-    const counterpartName = input.kind === 'aporte' ? (myNatilleraState(user.userId)?.natilleraName ?? 'Natillera') : input.customWalletName;
+    const counterpartName =
+      input.kind === 'aporte' ? (myNatilleraState(user.userId)?.natilleraName ?? 'Natillera') : 'walletAddress' in input ? input.counterpartName : input.customWalletName;
     const payment: PendingPayment = { paymentId: newId('p'), kind: input.kind, status: 'pending', counterpartName, debitAmount: q.debitAmount, receiveAmount: q.receiveAmount, createdAt: now(), userId: user.userId, input };
     payments.unshift(payment);
     return { paymentId: payment.paymentId, redirectUrl: demoRedirect(payment.paymentId), debitAmount: q.debitAmount, receiveAmount: q.receiveAmount };
@@ -374,6 +415,37 @@ export const mockApi: NatilleraApi & { switchUser(username: string): void } = {
     const payment: PendingPayment = { paymentId: newId('p'), kind: 'prestamo', status: 'pending', counterpartName: request.requesterName, debitAmount: request.amount, receiveAmount, createdAt: now(), userId: me().userId, loanRequestId: requestId };
     payments.unshift(payment);
     return { status: 'approved', paymentId: payment.paymentId, redirectUrl: demoRedirect(payment.paymentId), debitAmount: request.amount, receiveAmount };
+  },
+
+  async listGoals() {
+    await wait(200);
+    me();
+    return goalStore.list();
+  },
+  async getGoal(goalId) {
+    await wait(150);
+    me();
+    return goalStore.get(goalId);
+  },
+  async createGoal(input) {
+    await wait();
+    return goalStore.create(input, me().displayName);
+  },
+  async addGoalContribution(goalId, input) {
+    await wait();
+    const user = me();
+    const goal = goalStore.get(goalId);
+    // Ahorro = bolsillo del fondo: solo se aparta lo que el fondo tiene libre.
+    if (goal.mode === 'ahorro' && !input.paymentId) {
+      const n = myNatilleraState(user.userId);
+      const fund = n ? BigInt(totalFor(n).value) - BigInt(n.disbursed.value) : 0n;
+      const reserved = goalStore.list().filter((g) => g.mode === 'ahorro').reduce((acc, g) => acc + BigInt(g.raised.value), 0n);
+      const free = fund - reserved;
+      if (BigInt(input.amount.value) > free) {
+        throw new ApiError(`El fondo solo tiene ${formatAmount(amount(String(free > 0n ? free : 0n), 'COP'))} libres para apartar.`, 400, 'insufficient');
+      }
+    }
+    return goalStore.contribute(goalId, input, user.displayName);
   },
 };
 

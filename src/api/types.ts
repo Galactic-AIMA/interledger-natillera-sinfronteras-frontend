@@ -99,6 +99,8 @@ export type Payment = {
 
 export type StartPaymentInput =
   | { kind: 'p2p'; customWalletName: string; amount: Amount }
+  // Pago directo a una billetera sin cuenta guardada (colectas de Metas). El back lo acepta como `walletAddress`.
+  | { kind: 'p2p'; walletAddress: string; counterpartName: string; amount: Amount }
   | { kind: 'aporte'; natilleraId: string; onBehalfOfUserId?: string; amount: Amount };
 
 // Respuesta de "iniciar": la app abre redirectUrl en la billetera.
@@ -191,4 +193,53 @@ export type WalletReturn = {
   interactRef?: string;
   hash?: string;
   result?: string;
+};
+
+// ── Metas (pantallas 36–38) ──────────────────────────────────────────────────────
+// Por ahora solo viven en el front (decisión de Camilo, 2026-10-16): el back no guarda a qué meta
+// va un pago. Las colectas sí mueven plata real con un pago p2p a la billetera del beneficiario.
+
+/** ahorro = bolsillo del fondo (se aparta plata); colecta = aportes directos a la billetera de alguien. */
+export type GoalMode = 'ahorro' | 'colecta';
+
+export type GoalContribution = {
+  id: string;
+  authorName: string;
+  // Lo que sumó a la meta, en la moneda de la meta.
+  amount: Amount;
+  // Lo que salió de la billetera de quien aportó, si fue en otra moneda.
+  sent?: Amount;
+  createdAt: string;
+};
+
+export type Goal = {
+  goalId: string;
+  mode: GoalMode;
+  name: string;
+  target: Amount;
+  // Fecha límite AAAA-MM-DD.
+  deadline: string;
+  // Solo colectas: a quién le llega la plata.
+  beneficiaryName?: string;
+  beneficiaryWallet?: string;
+  raised: Amount;
+  contributions: GoalContribution[];
+  createdByName: string;
+  createdAt: string;
+};
+
+export type CreateGoalInput = {
+  mode: GoalMode;
+  name: string;
+  target: Amount;
+  deadline: string;
+  beneficiaryName?: string;
+  beneficiaryWallet?: string;
+};
+
+export type AddGoalContributionInput = {
+  amount: Amount;
+  sent?: Amount;
+  // Pago real (colecta) que respalda el aporte.
+  paymentId?: string;
 };

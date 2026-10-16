@@ -3,6 +3,7 @@ import * as Linking from 'expo-linking';
 import { getAuthToken, getIdTokenClaims, normalizeWalletAddress, signIn, signOut, signUp } from './auth';
 import { ApiError, type NatilleraApi } from './client';
 import { config } from './config';
+import { createGoalStore } from './goalStore';
 import { logEvent, pathOnly } from './devLog';
 import type {
   LoanDecisionResult,
@@ -121,6 +122,8 @@ const returnUrl = () => Linking.createURL('retorno');
 
 const walletReturnBody = (ret: WalletReturn) => ({ interact_ref: ret.interactRef, hash: ret.hash, result: ret.result });
 
+const goals = createGoalStore();
+
 export const httpApi: NatilleraApi = {
   mode: 'real',
 
@@ -188,10 +191,17 @@ export const httpApi: NatilleraApi = {
   getMyLoans: () => request<MyLoans>('GET', '/loans/mine'),
   listPendingLoanRequests: () => request<LoanRequest[]>('GET', '/loans/requests?status=pending'),
   decideLoan: (requestId, accepted) => request<LoanDecisionResult>('POST', `/loans/requests/${requestId}/decision`, { accepted, returnUrl: returnUrl() }),
+
+  // Metas: el back aún no las guarda; viven en este celular mientras la app esté abierta.
+  listGoals: async () => goals.list(),
+  getGoal: async (goalId) => goals.get(goalId),
+  createGoal: async (input) => goals.create(input, 'Usted'),
+  addGoalContribution: async (goalId, input) => goals.contribute(goalId, input, 'Usted'),
 };
 
 function toPaymentBody(input: StartPaymentInput) {
-  return input.kind === 'p2p'
-    ? { kind: 'p2p', customWalletName: input.customWalletName, ...input.amount }
-    : { kind: 'aporte', natilleraId: input.natilleraId, author: input.onBehalfOfUserId, ...input.amount };
+  if (input.kind === 'aporte') return { kind: 'aporte', natilleraId: input.natilleraId, author: input.onBehalfOfUserId, ...input.amount };
+  // Colectas de Metas: el back acepta `walletAddress` en lugar de una cuenta guardada (docs/API-PAGOS.md del back).
+  if ('walletAddress' in input) return { kind: 'p2p', walletAddress: input.walletAddress, ...input.amount };
+  return { kind: 'p2p', customWalletName: input.customWalletName, ...input.amount };
 }

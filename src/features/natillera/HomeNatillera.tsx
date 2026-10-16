@@ -2,9 +2,10 @@ import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated';
 
-import { useMyNatillera } from '@/api';
+import { useGoals, useMyNatillera } from '@/api';
 import type { Natillera, NatilleraRecord } from '@/api/types';
 import { AppText, Button, Card, InfoRow, LinkRow, Screen, StatusPill } from '@/components';
+import { GoalCard } from '@/features/metas/GoalCard';
 import { palette, radius, space } from '@/theme';
 import { formatAmount } from '@/utils/money';
 
@@ -40,6 +41,26 @@ function RecentRecord({ record }: { record: NatilleraRecord }) {
         {formatAmount(record.amount, { signed: true })}
       </AppText>
     </View>
+  );
+}
+
+// Hasta dos metas en la portada; el resto en la 36.
+const HOME_GOALS = 2;
+
+function GoalsSection() {
+  const { data: goals } = useGoals();
+  const shown = (goals ?? []).slice(0, HOME_GOALS);
+  return (
+    <Card title="Metas de la familia">
+      {shown.length === 0 ? (
+        <AppText tone="muted">Un viaje, un regalo o ayudar a alguien: pónganse una meta y llénenla entre todos.</AppText>
+      ) : (
+        shown.map((goal) => (
+          <GoalCard key={goal.goalId} goal={goal} onPress={() => router.push({ pathname: '/natillera/metas/[goalId]', params: { goalId: goal.goalId } })} />
+        ))
+      )}
+      <LinkRow label={shown.length === 0 ? 'Crear una meta' : 'Ver todas las metas'} onPress={() => router.push(shown.length === 0 ? '/natillera/metas/nueva' : '/natillera/metas')} />
+    </Card>
   );
 }
 
@@ -111,6 +132,8 @@ export function HomeNatillera() {
         <InfoRow label="Lleva" amount={natillera.myTotal} tone="money" />
         <InfoRow label="Estado" right={<StatusPill label={upToDate ? 'Al día' : 'Debe cuota'} tone={upToDate ? 'ok' : 'danger'} />} />
       </Card>
+
+      <GoalsSection />
 
       <View style={styles.links}>
         <LinkRow label="¿Quién pone?" onPress={() => router.push('/natillera/quien-pone')} />
