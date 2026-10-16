@@ -62,35 +62,68 @@ export const json = (statusCode: number, body: unknown) => ({
   body: JSON.stringify(body),
 });
 
-// Envuelve el handler: convierte errores en { error, message } con su status HTTP.
+// Las Lambdas funcionan con dos tipos de integración de API Gateway:
+//  - Proxy (HTTP API o REST con "Integración de proxy de Lambda"): el evento trae `requestContext`.
+//  - Sin proxy, con plantilla de mapeo VTL (REST): el evento es el JSON que arma la plantilla:
+//      { "username": "...", "paymentId": "...", "body": { ...body del request } }
+//    o los campos del body sueltos junto a `username` (plantilla actual de start-payment).
+//    Ver docs/API-PAGOS.md para las plantillas.
+export const isProxyEvent = (event: any) => !!event?.requestContext;
+
+// Envuelve el handler: el handler devuelve el body de la respuesta 200 o lanza HttpError.
+//  - Proxy: devuelve { statusCode, headers, body } con el status real.
+//  - VTL: devuelve el objeto tal cual (200); en error lanza `[<status>] {"error","message"}`, que la
+//    respuesta de integración del método mapea al status con la expresión `^\[<status>\].*`.
 export const withErrors =
-  (fn: (event: any) => Promise<{ statusCode: number; headers: Record<string, string>; body: string }>) =>
+  (fn: (event: any) => Promise<unknown>) =>
   async (event: any) => {
+    const proxy = isProxyEvent(event);
+    let status: number;
+    let body: { error: string; message: string };
     try {
-      return await fn(event);
+      const result = await fn(event);
+      return proxy ? json(200, result) : result;
     } catch (error: any) {
-      if (error instanceof HttpError) return json(error.statusCode, { error: error.error, message: error.message });
-      if (error instanceof OpenPaymentsClientError) {
+      if (error instanceof HttpError) {
+        status = error.statusCode;
+        body = { error: error.error, message: error.message };
+      } else if (error instanceof OpenPaymentsClientError) {
         console.log('Open Payments error', error.status, error.code, error.description, error.message);
-        return json(502, { error: 'OpenPaymentsError', message: error.description || error.message });
+        status = 502;
+        body = { error: 'OpenPaymentsError', message: error.description || error.message };
+      } else {
+        console.log('Unhandled error', error);
+        status = 500;
+        body = { error: 'InternalError', message: 'Unexpected error' };
       }
-      console.log('Unhandled error', error);
-      return json(500, { error: 'InternalError', message: 'Unexpected error' });
     }
+    if (proxy) return json(status, body);
+    throw new Error(`[${status}] ${JSON.stringify(body)}`);
   };
 
 // El usuario sale del token validado por el authorizer (regla 0), nunca del body.
 // HTTP API (JWT): requestContext.authorizer.jwt.claims.username (access token).
-// REST API (Cognito): requestContext.authorizer.claims, con `cognito:username` (id token) o `username` (access token).
+// REST API proxy (Cognito): requestContext.authorizer.claims, con `cognito:username` (id token) o `username`.
+// REST API con VTL: `username` que pone la plantilla desde $context.authorizer.claims['cognito:username'].
 export const currentUsername = (event: any): string => {
-  const authorizer = event?.requestContext?.authorizer ?? {};
-  const claims = authorizer.jwt?.claims ?? authorizer.claims ?? {};
-  const username = claims.username ?? claims['cognito:username'];
-  if (!username) throw new HttpError(401, 'Unauthorized', 'Missing username claim');
+  let username: unknown;
+  if (isProxyEvent(event)) {
+    const authorizer = event.requestContext.authorizer ?? {};
+    const claims = authorizer.jwt?.claims ?? authorizer.claims ?? {};
+    username = claims.username ?? claims['cognito:username'];
+  } else {
+    username = event?.username;
+  }
+  if (typeof username !== 'string' || !username) throw new HttpError(401, 'Unauthorized', 'Missing username claim');
   return username;
 };
 
 export const parseBody = (event: any): Record<string, any> => {
+  if (!isProxyEvent(event)) {
+    if (event?.body && typeof event.body === 'object') return event.body;
+    const { username, paymentId, id, ...fields } = event ?? {};
+    return fields;
+  }
   if (!event?.body) return {};
   try {
     const raw = event.isBase64Encoded ? Buffer.from(event.body, 'base64').toString('utf8') : event.body;
@@ -98,6 +131,12 @@ export const parseBody = (event: any): Record<string, any> => {
   } catch {
     throw new HttpError(400, 'BadRequest', 'Body must be valid JSON');
   }
+};
+
+// {id} de la ruta: pathParameters en proxy; `paymentId` que pone la plantilla en VTL.
+export const pathPaymentId = (event: any): string | undefined => {
+  const id = isProxyEvent(event) ? event.pathParameters?.id : event?.paymentId ?? event?.id;
+  return typeof id === 'string' && id ? id : undefined;
 };
 
 // Cliente de Open Payments: se crea una vez por contenedor de Lambda.

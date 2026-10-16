@@ -7,7 +7,7 @@ import {
   dynamo,
   env,
   getPaymentOwnedBy,
-  json,
+  pathPaymentId,
   publicPayment,
   withErrors,
   type PaymentRecord,
@@ -17,9 +17,9 @@ const AUTHOR_INDEX = process.env.PAYMENTS_AUTHOR_INDEX || 'author-index';
 
 export const handler = withErrors(async (event) => {
   const username = currentUsername(event);
-  const paymentId = event?.pathParameters?.id;
+  const paymentId = pathPaymentId(event);
 
-  if (paymentId) return json(200, publicPayment(await getPaymentOwnedBy(paymentId, username)));
+  if (paymentId) return publicPayment(await getPaymentOwnedBy(paymentId, username));
 
   const { Items = [] } = await dynamo.send(
     new QueryCommand({
@@ -32,5 +32,5 @@ export const handler = withErrors(async (event) => {
       Limit: 50,
     }),
   );
-  return json(200, (Items as PaymentRecord[]).map(publicPayment));
+  return (Items as PaymentRecord[]).map(publicPayment);
 });

@@ -10,7 +10,7 @@ import {
   getClient,
   getPaymentOwnedBy,
   HttpError,
-  json,
+  pathPaymentId,
   parseBody,
   publicPayment,
   verifyInteractHash,
@@ -67,13 +67,13 @@ const recordSaving = async (p: PaymentRecord) => {
 
 export const handler = withErrors(async (event) => {
   const username = currentUsername(event);
-  const paymentId = event?.pathParameters?.id;
+  const paymentId = pathPaymentId(event);
   if (!paymentId) throw new HttpError(400, 'BadRequest', 'Missing payment id');
   const body = parseBody(event);
   let payment = await getPaymentOwnedBy(paymentId, username);
 
   // Idempotente: si ya terminó (o se está procesando), se devuelve el estado actual.
-  if (payment.status !== 'pending') return json(200, publicPayment(payment));
+  if (payment.status !== 'pending') return publicPayment(payment);
 
   const interactRef = body.interact_ref;
   if (typeof interactRef !== 'string' || !interactRef) {
@@ -98,7 +98,7 @@ export const handler = withErrors(async (event) => {
     );
   } catch (error: any) {
     if (error?.name === 'ConditionalCheckFailedException') {
-      return json(200, publicPayment(await getPaymentOwnedBy(paymentId, username)));
+      return publicPayment(await getPaymentOwnedBy(paymentId, username));
     }
     throw error;
   }
@@ -115,13 +115,13 @@ export const handler = withErrors(async (event) => {
     if (error instanceof OpenPaymentsClientError) {
       console.log('grant continue rejected', error.status, error.description);
       payment = await setStatus(payment, 'rejected');
-      return json(200, publicPayment(payment));
+      return publicPayment(payment);
     }
     throw error;
   }
   if (!isFinalizedGrantWithAccessToken(grant)) {
     payment = await setStatus(payment, 'rejected');
-    return json(200, publicPayment(payment));
+    return publicPayment(payment);
   }
 
   try {
@@ -134,9 +134,9 @@ export const handler = withErrors(async (event) => {
   } catch (error) {
     console.log('outgoing payment failed', error);
     payment = await setStatus(payment, 'failed');
-    return json(200, publicPayment(payment));
+    return publicPayment(payment);
   }
 
   if (payment.status === 'completed') await recordSaving(payment);
-  return json(200, publicPayment(payment));
+  return publicPayment(payment);
 });

@@ -150,3 +150,19 @@ Prompts **literales**, en orden. Las capturas de pantalla adjuntas se marcan com
 ### 28
 > Subelo al repo con el formato corregido
 > PAra que Duvan lo revise
+
+### 29
+> Que bodyrequest deben reciibir cada una de esas lambdas? Y pasanos el curl para probar cada una de ellas
+
+### 30
+> Al crear el API Gateway en la seccion de autorizacion no aparece Cognito, por qué?
+
+### 31
+> https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev/start-payment
+
+### 32
+> [capturas: solicitud de método con cognito_authorizer, autorizador Cognito del pool, plantilla de mapeo VTL de start-payment]
+> Ya con esa url puedes darnos los curls, hemos implementado autorizacion con cognito-autorizer y la user pool, tambien se ha creado los mappings templates y el VTL pra el endpoint de start-payment
+
+### 33
+> Duvan quiere mantener el VTL; adapta las Lambdas para que funcionen con el mapping template.

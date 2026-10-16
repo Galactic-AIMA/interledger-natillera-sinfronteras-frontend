@@ -14,7 +14,6 @@ import {
   getClient,
   getUser,
   HttpError,
-  json,
   parseBody,
   currentUsername,
   validateReturnUrl,
@@ -182,10 +181,10 @@ export const handler = withErrors(async (event) => {
   };
   await dynamo.send(new PutCommand({ TableName: env.paymentsTable, Item: record }));
 
-  return json(200, {
+  return {
     paymentId,
     redirectUrl: outgoingGrant.interact.redirect,
     debitAmount: quote.debitAmount,
     receiveAmount: quote.receiveAmount,
-  });
+  };
 });

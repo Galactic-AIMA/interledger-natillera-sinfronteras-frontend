@@ -17,10 +17,76 @@ del front (`docs/api-contrato.md` del repo del front). **Pendiente de revisión 
 - **Token:** con el autorizador Cognito de un API REST (sin scopes OAuth) se manda el **`IdToken`**
   del login, no el `AccessToken`: `Authorization: Bearer <IdToken>`. En el front:
   `EXPO_PUBLIC_AUTH_TOKEN_TYPE=id`.
-- Las Lambdas leen el usuario de `requestContext.authorizer.claims['cognito:username']` (REST) o de
-  `requestContext.authorizer.jwt.claims.username` (HTTP API): funcionan con los dos tipos.
-- Recursos según el contrato: `/payments` (POST, GET), `/payments/{id}` (GET),
-  `/payments/{id}/finish` (POST), todos con **Integración de proxy de Lambda** y el autorizador.
+- **Integración: sin proxy, con plantillas de mapeo VTL** (decisión de Duvan). Las Lambdas también
+  funcionan con proxy, pero hoy se configuran así:
+
+### Plantillas de solicitud de integración (Content-Type `application/json`)
+
+Recomendado: pasar el body completo en `body` (evita JSON roto si falta un campo o trae comillas,
+y soporta `customWalletName`, `natilleraId` y `author`). El `username` **siempre** sale del
+autorizador, nunca del body.
+
+`POST /payments` → `start-payment`
+```velocity
+{
+  "username": "$context.authorizer.claims['cognito:username']",
+  "body": $input.json('$')
+}
+```
+
+`POST /payments/{id}/finish` → `finish-payment`
+```velocity
+{
+  "username": "$context.authorizer.claims['cognito:username']",
+  "paymentId": "$util.escapeJavaScript($input.params('id'))",
+  "body": $input.json('$')
+}
+```
+
+`GET /payments/{id}` → `get-payment`
+```velocity
+{
+  "username": "$context.authorizer.claims['cognito:username']",
+  "paymentId": "$util.escapeJavaScript($input.params('id'))"
+}
+```
+
+`GET /payments` → `get-payment`
+```velocity
+{
+  "username": "$context.authorizer.claims['cognito:username']"
+}
+```
+
+La plantilla actual de `start-payment` (campos sueltos: `kind`, `walletAddress`, `value`,
+`assetCode`, `assetScale`, `returnUrl`) también funciona, pero no pasa `customWalletName` ni
+`natilleraId`, y si falta `assetScale` el JSON queda inválido.
+
+### Respuestas de error (sin proxy)
+
+Sin proxy, la Lambda devuelve el objeto de la respuesta (200) o falla con
+`[<status>] {"error":"…","message":"…"}`. Para que el front reciba el status real, en **cada método**:
+
+1. **Respuesta de método** → agregar los códigos `400`, `401`, `403`, `404`, `500` y `502`.
+2. **Respuesta de integración** → *Crear respuesta*, una por código:
+   - Expresión regular de error de Lambda: `\[400\].*` (y `\[401\].*`, `\[403\].*`, `\[404\].*`,
+     `\[500\].*`, `\[502\].*`)
+   - Código de estado de respuesta del método: el mismo número.
+   - Plantilla de mapeo `application/json` (quita el prefijo `[400] ` y deja el JSON):
+     ```velocity
+     #set($msg = $input.path('$.errorMessage'))
+     $msg.substring(6)
+     ```
+3. La respuesta **200** por defecto se deja sin plantilla (pasa el objeto tal cual).
+4. **Implementar API** → stage `dev`.
+
+Sin el paso 2, los errores llegan como **200** con `{"errorMessage": "[400] …"}`.
+
+### Rutas
+
+Según el contrato del front: `/payments` (POST → start, GET → get), `/payments/{id}` (GET → get),
+`/payments/{id}/finish` (POST → finish), todos con `cognito_authorizer`. Hoy existe
+`/start-payment`; el front llama `POST /payments`.
 
 ## Contrato
 
