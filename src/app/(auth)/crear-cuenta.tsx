@@ -33,6 +33,10 @@ export default function ScreenCrearCuenta() {
       }
     },
     onSuccess: (next) => router.replace(next === 'logged' ? '/' : '/entrar'),
+    // En desarrollo deja en Metro el __type real de Cognito (dos causas distintas muestran "Ese usuario ya existe").
+    onError: (e) => {
+      if (__DEV__) console.warn('[signup]', e instanceof ApiError ? `${e.status} ${e.code}` : e);
+    },
   });
 
   // Al escribir en un campo se limpia su error.

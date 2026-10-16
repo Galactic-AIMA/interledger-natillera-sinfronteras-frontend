@@ -114,10 +114,9 @@ export const httpApi: NatilleraApi = {
   mode: 'real',
 
   // El registro no pasa por nuestra API: SignUp directo a Cognito y luego login.
-  signup: async (input) => {
-    await signUp(input);
-    await signIn(input.username, input.password);
-  },
+  // Solo SignUp: la pantalla 02 entra después con login(). Si aquí también se entrara y eso fallara,
+  // la 02 mostraría error con la cuenta ya creada y al reintentar saldría "Ese usuario ya existe".
+  signup: (input) => signUp(input),
   login: (username, password) => signIn(username, password),
   logout: () => signOut(),
   hasSession: async () => (await getAuthToken()) !== null,

@@ -60,3 +60,9 @@ No nos acordamos de, de la contraseña, entonces creemos un nuevo usuario.
 ## Prompt 12
 
 (captura de la pantalla 02 con el error "PreSignUp failed with error Invalid wallet address." al usar `$ilp.interledger-test.dev/6e721d02`) estuve creando el usuario tuve este error
+
+## Prompt 13
+
+(dos capturas: "Entrar" con usuario Prueba1 → "No pudimos conectarnos. Revise su internet e intente de nuevo."; "Crear mi cuenta" con Prueba1 y billetera …/melos → "Ese usuario ya existe. Elija otro.") dice que ya creo usuario pero no crea nada, en el backend no hay nada
+
+valida
