@@ -71,9 +71,8 @@ Decisiones técnicas aún sin tomar:
 - 2026-10-16 · de infra (david) a duvdev: arreglos a `cognito-pre-signup.handler.ts` (versión ya
   desplegable en `deploy/pre-signup/index.mjs`): (1) región `us-east-1` fija → usar
   `process.env.AWS_REGION` (estamos en us-east-2); (2) `getSecrets` devuelve el string sin
-  `JSON.parse`; (3) `createAuthenticatedClient` recibe `privateKey` como ruta de archivo o KeyObject,
-  no el PEM en texto → `crypto.createPrivateKey(pem)`; para solo verificar una wallet basta un GET
-  público sin llaves; (4) `if (!walletId && !isWalletCreated)` debe ser `||` (hoy deja pasar
+  `JSON.parse`; (3) [corregido: el SDK 7.4.0 sí acepta el PEM como string] para solo verificar una wallet basta
+  un GET público sin llaves; (4) `if (!walletId && !isWalletCreated)` debe ser `||` (hoy deja pasar
   wallets inexistentes); (5) el trigger debe hacer `return event` y poner
   `event.response.autoConfirmUser = true`; (6) usar `event.userPoolId` en vez de `USER_POOL_ID`;
   (7) `@interledger/open-payments` no viene en el runtime de Lambda: hay que empaquetarlo (esbuild).
@@ -93,6 +92,23 @@ Decisiones técnicas aún sin tomar:
   esquemas — aplica también a `/recurring`, `/loans/requests/{id}/repayment-grant` y `/decision`;
   (4) reglas de la hackathon: rama `main` con el código, `AI_USAGE.md` con las 4 secciones (hecho
   en `david`) y `/prompts` al día.
+- 2026-10-16 · revisión de `start-payment.ts` (commit 87d69a6) de infra (david) a duvdev.
+  Bloqueantes: (1) lee `event.username/walletAddress/amount`, pero en HTTP API el usuario está en
+  `event.requestContext.authorizer.jwt.claims.username` y los datos en `JSON.parse(event.body)`;
+  (2) `getSecrets(userInfo.source)` usa el username como nombre del secreto → debe ser
+  `natillera/open-payments-client`, y falta `JSON.parse(SecretString)`; (3) región `us-east-1`
+  fija (estamos en us-east-2); (4) `userInfo.walletInfo.walletAddress.*` no existe: `user-info`
+  guarda `walletAddress` (URL) → hacer `client.walletAddress.get` de la wallet del que paga;
+  (5) el grant interactivo no tiene `finish` → la billetera no devuelve a la app ni hay
+  `interact_ref`: falta `finish: { method: 'redirect', uri: returnUrl + '?paymentId=…', nonce }` con
+  allowlist de `returnUrl`; (6) no guarda en `payments-history` (paymentId, author, quoteId,
+  incomingPaymentId, continueUri, continueToken, nonce, status pending, montos) → `finish` no
+  podría continuar; (7) no devuelve nada (solo `console.log`): debe responder
+  `{ paymentId, redirectUrl, debitAmount, receiveAmount }`; (8) el export se llama
+  `paymentHandler` (handler en Lambda: `index.paymentHandler` o renombrar a `handler`).
+  Contrato del front (`docs/api-contrato.md`): `POST /payments` recibe `{ kind: 'p2p'|'aporte',
+  customWalletName? | natilleraId?, value, assetCode, assetScale, returnUrl }`, no `walletAddress`.
+  Faltan además `POST /payments/{id}/finish` y `GET /payments/{id}`.
 - formato: `YYYY-MM-DD · de <carril> a <carril>: <qué se necesita>`
 
 ## Bitácora por carril
