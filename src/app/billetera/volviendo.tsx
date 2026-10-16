@@ -1,6 +1,89 @@
-import { Placeholder } from '@/components';
+import { useQueryClient } from '@tanstack/react-query';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useRef } from 'react';
 
-// 30 · Volviendo de su billetera — carril «pagos». Reemplazar por la pantalla real (textos en docs/figma-pantallas.md).
+import { keys, useApi, waitForFinalPayment, type NatilleraApi, type WalletReturn } from '@/api';
+import { ResultScreen } from '@/components';
+import { encodeAmount, resultadoHref, type FlowKind, type ResultadoParams } from '@/features/pagos/flow';
+import { param } from '@/features/pagos/flujo/params';
+
+type Outcome = Omit<ResultadoParams, 'origin'>;
+
+const WALLET_REJECTIONS = ['grant_rejected', 'rejected'];
+
+function isFlowKind(value: string | undefined): value is FlowKind {
+  return value === 'cuota' || value === 'p2p' || value === 'recurrente';
+}
+
+async function settle(
+  api: NatilleraApi,
+  kind: FlowKind,
+  id: string,
+  ret: WalletReturn,
+  fallback: Pick<Outcome, 'debit' | 'receive' | 'counterpart'>,
+): Promise<Outcome> {
+  const rejectedByWallet = ret.result !== undefined && WALLET_REJECTIONS.includes(ret.result);
+  try {
+    if (kind === 'recurrente') {
+      const grant = await api.finishRecurring(id, { ...ret, grantId: id });
+      if (grant.status === 'active' && !rejectedByWallet) {
+        return { tipo: 'recurrente-activada', limit: encodeAmount(grant.limitPerCharge), repetitions: String(grant.repetitions) };
+      }
+      return { tipo: grant.status === 'rejected' || rejectedByWallet ? 'rechazado' : 'fallo' };
+    }
+    try {
+      await api.finishPayment(id, { ...ret, paymentId: id });
+    } catch (e) {
+      // Si la billetera rechazó, no hay nada que confirmar. Si no, el back pudo haber cobrado
+      // aunque la respuesta falló: se consulta el estado real antes de dar el pago por fallido.
+      if (rejectedByWallet) throw e;
+    }
+    const payment = await waitForFinalPayment(api, id);
+    if (payment.status === 'rejected' || rejectedByWallet) return { tipo: 'rechazado' };
+    // pending tras el tiempo de espera: no es fallo, el pago puede seguir en curso
+    if (payment.status === 'pending') return { tipo: 'pendiente' };
+    if (payment.status !== 'completed') return { tipo: 'fallo' };
+    return {
+      tipo: kind === 'cuota' ? 'cuota-puesta' : 'pago-hecho',
+      debit: encodeAmount(payment.debitAmount) ?? fallback.debit,
+      receive: encodeAmount(payment.receiveAmount) ?? fallback.receive,
+      counterpart: fallback.counterpart ?? payment.counterpartName,
+    };
+  } catch {
+    // Si la persona rechazó en la billetera, igual no salió plata: se le dice que rechazó.
+    return { tipo: rejectedByWallet ? 'rechazado' : 'fallo' };
+  }
+}
+
+// 30 · Volviendo de su billetera
 export default function ScreenBilleteraVolviendo() {
-  return <Placeholder screen="30" title="Volviendo de su billetera" lane="pagos" />;
+  const api = useApi();
+  const queryClient = useQueryClient();
+  const raw = useLocalSearchParams<Record<string, string | string[]>>();
+  const started = useRef(false);
+
+  useEffect(() => {
+    // Una sola ejecución aunque el efecto corra dos veces (StrictMode) o la pantalla se renderice de nuevo.
+    if (started.current) return;
+    started.current = true;
+
+    const kind = param(raw.kind);
+    const id = param(raw.id);
+    const origin = param(raw.origin) ?? '/natillera';
+    const ret: WalletReturn = { interactRef: param(raw.interactRef), hash: param(raw.hash), result: param(raw.result) };
+    const fallback = { debit: param(raw.debit), receive: param(raw.receive), counterpart: param(raw.counterpart) };
+
+    async function run() {
+      const outcome: Outcome = isFlowKind(kind) && id ? await settle(api, kind, id, ret, fallback) : { tipo: 'fallo' };
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: keys.natillera }),
+        queryClient.invalidateQueries({ queryKey: keys.payments }),
+        kind === 'p2p' ? queryClient.invalidateQueries({ queryKey: keys.accounts }) : Promise.resolve(),
+      ]);
+      router.replace(resultadoHref({ ...outcome, origin }));
+    }
+    void run();
+  }, [api, queryClient, raw]);
+
+  return <ResultScreen kind="loading" title="Volviendo de su billetera…" message="Estamos confirmando lo que usted decidió." />;
 }

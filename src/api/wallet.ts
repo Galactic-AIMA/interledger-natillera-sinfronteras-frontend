@@ -1,6 +1,6 @@
 import * as Linking from 'expo-linking';
 import * as WebBrowser from 'expo-web-browser';
-import { Alert } from 'react-native';
+import { Alert, Platform } from 'react-native';
 
 import type { NatilleraApi } from './client';
 import type { WalletReturn } from './types';
@@ -29,6 +29,15 @@ export function parseWalletReturn(url: string): WalletReturn {
  * Modo real: navegador del sistema con openAuthSessionAsync. Modo demo: un diálogo hace de billetera.
  */
 export async function openWallet(api: NatilleraApi, req: WalletRequest): Promise<WalletOutcome> {
+  if (api.mode === 'demo' && Platform.OS === 'web') {
+    // react-native-web no implementa Alert con botones: sin esto la promesa nunca se resolvería.
+    const approved = window.confirm(`Billetera de prueba · ${req.demoTitle}
+
+${req.demoDetail}
+
+Aceptar = Aprobar · Cancelar = Rechazar`);
+    return { kind: 'returned', ret: approved ? { result: 'ok', interactRef: 'demo' } : { result: 'grant_rejected' } };
+  }
   if (api.mode === 'demo') {
     return new Promise((resolve) => {
       Alert.alert(`Billetera de prueba · ${req.demoTitle}`, req.demoDetail, [
