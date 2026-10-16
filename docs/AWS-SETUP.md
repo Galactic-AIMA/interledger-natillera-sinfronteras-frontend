@@ -48,6 +48,11 @@ Anotar el **Account ID** (12 dígitos) en la tabla de estado.
 Open Payments no crea billeteras: se crean a mano en la Test Wallet
 (https://wallet.interledger-test.dev). Es dinero de prueba.
 
+> **Decisión 2026-10-16:** se usa la Test Wallet de **Duvan**. Él genera las llaves y nos pasa,
+> por un canal seguro (link que expira, no texto plano en el chat del grupo): URL de la wallet del
+> cliente, Key ID y `private.key`; más las URLs de las wallets EUR, COP y del fondo. David carga
+> la llave en Secrets Manager (paso 2) y borra su copia local al terminar.
+
 1. Crear cuenta en la Test Wallet y completar el KYC de prueba.
 2. Crear (o reutilizar) una cuenta y **dos wallet addresses**:
    - **Wallet del cliente (backend):** la identidad con la que el backend firma las peticiones de
@@ -75,6 +80,11 @@ Open Payments no crea billeteras: se crean a mano en la Test Wallet
 ```
 
 - `privateKey`: el contenido de `private.key` en una sola línea, con los saltos de línea como `\n`.
+  Para no hacerlo a mano, en PowerShell en la carpeta donde está el archivo (lo deja en el
+  portapapeles, no lo imprime):
+  `((Get-Content .\private.key -Raw).Trim() -replace "\r?\n", '\n') | Set-Clipboard`
+- En la Lambda, la llave se carga con `crypto.createPrivateKey(secret.privateKey)` y se pasa a
+  `createAuthenticatedClient({ walletAddressUrl, keyId, privateKey })`.
 - Nombre del secreto: **`natillera/open-payments-client`**. Sin rotación automática.
 - Anotar el **ARN** en la tabla (lo necesita el rol IAM del paso 5).
 
