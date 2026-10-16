@@ -43,3 +43,6 @@ falta algo de nuestro?
 
 ## 13:45
 haz la 1 , 3 y 5
+
+## 15:04
+recopila todo en un promt para pasarme a trabajar en code ya mismo
