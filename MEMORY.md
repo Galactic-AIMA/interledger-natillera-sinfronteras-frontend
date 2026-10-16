@@ -20,6 +20,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 | `pitch` | Slides en la plantilla oficial, guion de 5 min, video | Camilo + Henry | `docs/pitch/` | guion y contexto en borrador ([docs/pitch/GUION.md](docs/pitch/GUION.md)); faltan slides |
 | `auth-signup` | Registro directo a Cognito (encargo de Camilo) | Henry | `feat/auth-signup` (fork) e integrado en `feat/creditos` | **hecho**; falta probar contra Cognito real en Expo Go |
 | `cuenta-celular` | Pulido en celular (`expo-clipboard`, botón volver) + textos de más impacto | Henry | `feat/cuenta-celular` (fork; sale de `feat/creditos`) | **hecho y probado en demo** (2026-10-16 ~14:10); el 2026-10-16 ~15:30 se le fusionó `feat/creditos` `4e4d5b1` (arreglos de `base`, `npm test`, región `us-east-2`, `web.output` estático): `tsc` limpio, `npm test` 8/8. **Es la rama a integrar**; desde las 15:40 está en el repo del equipo (`origin/feat/cuenta-celular`, `b7729fa`). Falta: PR y pruebas en Expo Go (Camilo) |
+| `metas` | Pantallas 36–38 (Metas: ahorro y colecta) + sección en la 10 + fecha en los movimientos | Camilo | `feat/metas` → `main` | **en `main`** (`47213b6`; fechas en `7c01a6e`); probado en web en modo demo; falta celular y una billetera real de beneficiario. Diseño: [docs/superpowers/specs/2026-10-16-metas-design.md](docs/superpowers/specs/2026-10-16-metas-design.md) |
 
 ## Decisiones tomadas
 
@@ -27,6 +28,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 - 2026-10-16 — Contrato + mocks: el front no espera al back. **Por qué:** quedan menos de 24 h.
 - 2026-10-16 — Las 31 pantallas propias navegables y todas conectadas al back (incluidos préstamos).
 - 2026-10-16 — Login con Cognito (JWT). Pitch en español.
+- 2026-10-16 — Metas solo en el front: ahorro = apartar del fondo; colecta = pago p2p real con `walletAddress` a la billetera del beneficiario. El progreso es por celular hasta que el back guarde `goalId` (propuesta para después de la entrega).
 
 - 2026-10-16 — El contrato manda desde `docs/openapi.yaml` del repo back. Front solo con mocks hasta la madrugada. Las decisiones abiertas del back (IaC, JS/TS, periodo, tasa, amortización) las deciden Duvan y David Ciro; el front pinta lo que devuelvan.
 
