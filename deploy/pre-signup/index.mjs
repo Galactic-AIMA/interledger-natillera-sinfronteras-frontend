@@ -36,10 +36,23 @@ export const handler = async (event) => {
 };
 
 // Acepta la URL completa (https://ilp.interledger-test.dev/abc) o solo el id (abc).
+// Solo consulta el host de la Test Wallet, para no hacer peticiones a URLs arbitrarias (SSRF).
 const getWalletAddress = async (walletId) => {
-  const url = walletId.startsWith('https://') ? walletId : `${WALLET_HOST}/${walletId}`;
+  let url;
   try {
-    const res = await fetch(url, { headers: { Accept: 'application/json' }, signal: AbortSignal.timeout(3000) });
+    url = walletId.startsWith('https://')
+      ? new URL(walletId)
+      : /^[A-Za-z0-9_-]+$/.test(walletId) ? new URL(`${WALLET_HOST}/${walletId}`) : null;
+  } catch {
+    return null;
+  }
+  if (!url || url.origin !== WALLET_HOST || url.username || url.password) return null;
+  try {
+    const res = await fetch(url, {
+      headers: { Accept: 'application/json' },
+      redirect: 'manual',
+      signal: AbortSignal.timeout(3000),
+    });
     if (!res.ok) return null;
     const body = await res.json();
     return body?.id && body?.assetCode ? body : null;
