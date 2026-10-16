@@ -123,6 +123,10 @@ Decisiones técnicas aún sin tomar:
   (TS + esbuild → 3 zips) con `start-payment`, `finish-payment`, `get-payment` según el contrato del
   front; guía de despliegue y curl de prueba en `docs/API-PAGOS.md`. Probado local: tipos, bundle,
   validaciones y conexión firmada del SDK a la Test Wallet. Sin probar en AWS.
+- 2026-10-16 · API REST `lofoyfhz52` (stage `dev`) con `cognito_authorizer` e integración **VTL**
+  (Duvan). Lambdas de pagos en modo `INTEGRATION_MODE=vtl`: identidad solo en `auth.username`,
+  body en `body`, transferencia del cuerpo = Nunca. Errores `[status] {json}` mapeados en la
+  respuesta de integración. Token: IdToken.
 - 2026-10-16 · `pre-signup` ahora también guarda en `user-info` (PK `source` + `id`), basado en el
   cambio de Duvan. Falta crear la tabla y desplegar.
 

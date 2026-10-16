@@ -62,13 +62,16 @@ export const json = (statusCode: number, body: unknown) => ({
   body: JSON.stringify(body),
 });
 
-// Las Lambdas funcionan con dos tipos de integración de API Gateway:
-//  - Proxy (HTTP API o REST con "Integración de proxy de Lambda"): el evento trae `requestContext`.
-//  - Sin proxy, con plantilla de mapeo VTL (REST): el evento es el JSON que arma la plantilla:
-//      { "username": "...", "paymentId": "...", "body": { ...body del request } }
-//    o los campos del body sueltos junto a `username` (plantilla actual de start-payment).
-//    Ver docs/API-PAGOS.md para las plantillas.
-export const isProxyEvent = (event: any) => !!event?.requestContext;
+// Las Lambdas funcionan con dos tipos de integración de API Gateway, elegidos por CONFIGURACIÓN
+// (variable de entorno INTEGRATION_MODE), nunca por la forma del evento, que el cliente podría imitar:
+//  - `proxy` (por defecto): HTTP API o REST con "Integración de proxy de Lambda".
+//  - `vtl`: REST sin proxy, con plantilla de mapeo. El evento DEBE tener esta forma:
+//      { "auth": { "username": "<del autorizador>" }, "paymentId": "<de la ruta>", "body": <body> }
+//    La identidad solo se lee de `auth.username`; el body nunca se mezcla con ella. En cada método,
+//    "Transferencia del cuerpo de la solicitud" = Nunca (si no, un body crudo podría llegar como evento).
+//    Ver docs/API-PAGOS.md.
+const INTEGRATION_MODE = process.env.INTEGRATION_MODE === 'vtl' ? 'vtl' : 'proxy';
+export const isProxyEvent = (_event?: unknown) => INTEGRATION_MODE === 'proxy';
 
 // Envuelve el handler: el handler devuelve el body de la respuesta 200 o lanza HttpError.
 //  - Proxy: devuelve { statusCode, headers, body } con el status real.
@@ -104,15 +107,15 @@ export const withErrors =
 // El usuario sale del token validado por el authorizer (regla 0), nunca del body.
 // HTTP API (JWT): requestContext.authorizer.jwt.claims.username (access token).
 // REST API proxy (Cognito): requestContext.authorizer.claims, con `cognito:username` (id token) o `username`.
-// REST API con VTL: `username` que pone la plantilla desde $context.authorizer.claims['cognito:username'].
+// REST API con VTL: `auth.username` que pone la plantilla desde $context.authorizer.claims['cognito:username'].
 export const currentUsername = (event: any): string => {
   let username: unknown;
   if (isProxyEvent(event)) {
-    const authorizer = event.requestContext.authorizer ?? {};
+    const authorizer = event?.requestContext?.authorizer ?? {};
     const claims = authorizer.jwt?.claims ?? authorizer.claims ?? {};
     username = claims.username ?? claims['cognito:username'];
   } else {
-    username = event?.username;
+    username = event?.auth?.username;
   }
   if (typeof username !== 'string' || !username) throw new HttpError(401, 'Unauthorized', 'Missing username claim');
   return username;
@@ -120,9 +123,7 @@ export const currentUsername = (event: any): string => {
 
 export const parseBody = (event: any): Record<string, any> => {
   if (!isProxyEvent(event)) {
-    if (event?.body && typeof event.body === 'object') return event.body;
-    const { username, paymentId, id, ...fields } = event ?? {};
-    return fields;
+    return event?.body && typeof event.body === 'object' && !Array.isArray(event.body) ? event.body : {};
   }
   if (!event?.body) return {};
   try {
@@ -134,8 +135,9 @@ export const parseBody = (event: any): Record<string, any> => {
 };
 
 // {id} de la ruta: pathParameters en proxy; `paymentId` que pone la plantilla en VTL.
+// (Igual se verifica que el pago sea de quien llama: getPaymentOwnedBy.)
 export const pathPaymentId = (event: any): string | undefined => {
-  const id = isProxyEvent(event) ? event.pathParameters?.id : event?.paymentId ?? event?.id;
+  const id = isProxyEvent(event) ? event?.pathParameters?.id : event?.paymentId;
   return typeof id === 'string' && id ? id : undefined;
 };
 

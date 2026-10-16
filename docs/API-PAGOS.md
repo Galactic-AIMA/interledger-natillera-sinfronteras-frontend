@@ -18,18 +18,24 @@ del front (`docs/api-contrato.md` del repo del front). **Pendiente de revisión 
   del login, no el `AccessToken`: `Authorization: Bearer <IdToken>`. En el front:
   `EXPO_PUBLIC_AUTH_TOKEN_TYPE=id`.
 - **Integración: sin proxy, con plantillas de mapeo VTL** (decisión de Duvan). Las Lambdas también
-  funcionan con proxy, pero hoy se configuran así:
+  funcionan con proxy; el modo se elige **por configuración**, no por la forma del evento.
+
+### Seguridad: obligatorio en modo VTL
+
+1. En las 3 Lambdas, variable de entorno **`INTEGRATION_MODE=vtl`** (sin ella esperan proxy y
+   responden 401).
+2. En **cada método** → *Solicitud de integración* → **Transferencia del cuerpo de la solicitud:
+   Nunca**. Si no, una petición con un `Content-Type` sin plantilla pasaría el body crudo como
+   evento, y alguien podría mandar `{"auth":{"username":"otra-persona"}}` y actuar como ella.
+3. La identidad va **solo** en `auth.username` desde el autorizador; el body va completo en `body`.
+   Nunca poner campos del body sueltos al lado de la identidad.
 
 ### Plantillas de solicitud de integración (Content-Type `application/json`)
-
-Recomendado: pasar el body completo en `body` (evita JSON roto si falta un campo o trae comillas,
-y soporta `customWalletName`, `natilleraId` y `author`). El `username` **siempre** sale del
-autorizador, nunca del body.
 
 `POST /payments` → `start-payment`
 ```velocity
 {
-  "username": "$context.authorizer.claims['cognito:username']",
+  "auth": { "username": "$context.authorizer.claims['cognito:username']" },
   "body": $input.json('$')
 }
 ```
@@ -37,7 +43,7 @@ autorizador, nunca del body.
 `POST /payments/{id}/finish` → `finish-payment`
 ```velocity
 {
-  "username": "$context.authorizer.claims['cognito:username']",
+  "auth": { "username": "$context.authorizer.claims['cognito:username']" },
   "paymentId": "$util.escapeJavaScript($input.params('id'))",
   "body": $input.json('$')
 }
@@ -46,7 +52,7 @@ autorizador, nunca del body.
 `GET /payments/{id}` → `get-payment`
 ```velocity
 {
-  "username": "$context.authorizer.claims['cognito:username']",
+  "auth": { "username": "$context.authorizer.claims['cognito:username']" },
   "paymentId": "$util.escapeJavaScript($input.params('id'))"
 }
 ```
@@ -54,13 +60,12 @@ autorizador, nunca del body.
 `GET /payments` → `get-payment`
 ```velocity
 {
-  "username": "$context.authorizer.claims['cognito:username']"
+  "auth": { "username": "$context.authorizer.claims['cognito:username']" }
 }
 ```
 
-La plantilla actual de `start-payment` (campos sueltos: `kind`, `walletAddress`, `value`,
-`assetCode`, `assetScale`, `returnUrl`) también funciona, pero no pasa `customWalletName` ni
-`natilleraId`, y si falta `assetScale` el JSON queda inválido.
+**La plantilla actual de `start-payment` (campos sueltos con `username` arriba) ya no sirve:**
+hay que reemplazarla por la de arriba.
 
 ### Respuestas de error (sin proxy)
 
