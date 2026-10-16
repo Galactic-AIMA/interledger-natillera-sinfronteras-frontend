@@ -46,6 +46,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 - 2026-10-16 · de base a todos: **`base` lista en `main`.** Ya pueden arrancar pantallas: cada ruta tiene un placeholder con su número; reemplácenlo completo. Guía rápida en "Cómo usar la base" de [docs/HENRY.md](docs/HENRY.md) y en la bitácora `base`.
 - 2026-10-16 · de base a todos: **estado real de las ramas:** `main` = base + cuenta-natillera (`ffd9917`); `feat/pagos` = pagos sin integrar; `creditos` sin empezar. Quien toque `src/api`, `src/components` o `Screen` lo pide aquí.
 - 2026-10-16 · de base a Henry: **registro directo a Cognito** (el back no tiene `POST /signup`). Encargo completo en [docs/ENCARGO-SIGNUP-COGNITO.md](docs/ENCARGO-SIGNUP-COGNITO.md). Camilo te autoriza a tocar `auth.ts`, `httpApi.ts` y `types.ts` solo para esto.
+- 2026-10-16 13:35 · de Henry a base: registro Cognito hecho en `feat/auth-signup` (solo `auth.ts`, `httpApi.ts`, `types.ts`, pantalla 02, `.env.example` y `api-contrato.md`). **Pedido:** `src/api/config.ts` tiene `cognitoRegion` por defecto `us-east-1`; el back está en `us-east-2`. Mientras tanto `.env.example` ya trae `us-east-2` y el `ClientId` público.
 - Formato: `AAAA-MM-DD HH:MM · de <carril> a <carril>: <qué>`
 
 ## Pendientes para Henry (2026-10-16 ~12:40)
@@ -88,6 +89,8 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
   - Probar: `npm run web` o `npx expo start` → "Empezar con datos de ejemplo" (Doña Rosa; en demo Luz y Andrés también existen, contraseña cualquiera).
 - 2026-10-16 ~12:40 — Auditoría de sesiones: memoria, tablero, `AI_USAGE.md` y prompts al día; traspaso a Henry documentado. Hallazgo: `feat/pagos` choca con `main` en 3 archivos de documentación.
 - 2026-10-16 ~13:15 — Plan de ejecución (`docs/EJECUCION-PANTALLAS.md`), worktrees `frontend-cuenta` y `frontend-pagos` creados, encargos de las sesiones en `prompts/2026-10-16-camilo-encargos-sesiones.md`, prompts de la sesión paralela recuperados de su transcripción, hook con la rama en el nombre. Sesión del emulador Android instalando el SDK.
+
+- 2026-10-16 ~13:35 — (Henry + Claude) Registro directo a Cognito según el encargo y el mensaje del back: `signUp` en `src/api/auth.ts` (POST a `cognito-idp.us-east-2`, `X-Amz-Target` SignUp, `email`/`phone_number`/`custom:walletId`), `httpApi.signup` = SignUp + login, errores `UserLambdaValidationException` (motivo del back sin el prefijo técnico), `UsernameExistsException`, `InvalidPasswordException`, `InvalidParameterException` en "usted". Pantalla 02 valida `+57` + 10 dígitos (quita espacios) y la política de contraseña. `tsc` limpio. **Falta probar contra Cognito real en Expo Go** (desde la nube no hay salida a AWS).
 
 ### cuenta-natillera
 - 2026-10-16 — Sesión A: construidas 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 15 y 35 (5 ejecutores Sonnet + validador Opus). `tsc` limpio; recorrido completo en web con demo, A+ ×1,4 sin cortes. Cambios en archivos compartidos: `Screen` ahora acepta `headerRight`; `enterDemo` hace `resetQueries`; el código de invitación del mock ya es válido en 07. Pendiente: probar en celular/Expo Go, `expo-clipboard` para copiar el enlace, botón volver en pantallas sueltas, `web.output` "server" → "single" (decide Camilo). 04 se abre desde el icono de persona en 10/05.

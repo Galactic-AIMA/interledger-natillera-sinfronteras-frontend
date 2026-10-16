@@ -30,6 +30,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Camilo | Claude Code | Encargos (prompts) para las sesiones paralelas de pantallas y del emulador; worktrees por rama; hook de prompts con la rama en el nombre; prompts de la sesión paralela recuperados literalmente de su transcripción local | `prompts/`, `.claude/hooks/log-prompt.mjs`, `MEMORY.md`, `CLAUDE.md` |
 | 2026-10-16 | Camilo | Claude Code (sesión aparte) | Instalación del Android SDK y emulador en el equipo de Camilo para probar la app (no toca el código) | — |
 | 2026-10-16 | Camilo | Claude Code (Sonnet 5.5) | Auditoría de las 5 sesiones, los 3 worktrees y los prompts: tablero y memoria al día, sección de pendientes de Henry, registro de los prompts que el hook no capturó (sesiones abiertas en la raíz); verificación de que `feat/pagos` choca con `main` en documentación | `MEMORY.md`, `CLAUDE.md`, `docs/HENRY.md`, `AI_USAGE.md`, `prompts/2026-10-16-camilo-auditoria.md` |
+| 2026-10-16 | Henry | Claude (claude.ai) | Registro directo a Cognito (SignUp) alineado con el mensaje del back y el encargo de Camilo: función `signUp`, mapeo de atributos, mensajes de error en "usted", validación de teléfono y contraseña en la pantalla 02, contrato y `.env.example` al día | `src/api/auth.ts`, `src/api/httpApi.ts`, `src/api/types.ts`, `src/app/(auth)/crear-cuenta.tsx`, `.env.example`, `docs/api-contrato.md`, `MEMORY.md` |
 
 ## What We Did Ourselves
 

@@ -1,6 +1,6 @@
 import * as Linking from 'expo-linking';
 
-import { getAuthToken, signIn, signOut } from './auth';
+import { getAuthToken, signIn, signOut, signUp } from './auth';
 import { ApiError, type NatilleraApi } from './client';
 import { config } from './config';
 import type {
@@ -57,7 +57,11 @@ const walletReturnBody = (ret: WalletReturn) => ({ interact_ref: ret.interactRef
 export const httpApi: NatilleraApi = {
   mode: 'real',
 
-  signup: (input) => request<void>('POST', '/signup', input, false),
+  // El registro no pasa por nuestra API: SignUp directo a Cognito y luego login.
+  signup: async (input) => {
+    await signUp(input);
+    await signIn(input.username, input.password);
+  },
   login: (username, password) => signIn(username, password),
   logout: () => signOut(),
   hasSession: async () => (await getAuthToken()) !== null,
