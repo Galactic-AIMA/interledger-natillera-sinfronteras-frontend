@@ -17,8 +17,9 @@ const json = (statusCode, body) => ({
 });
 
 export const handler = async (event) => {
-  const claims = event?.requestContext?.authorizer?.jwt?.claims ?? {};
-  const username = claims.username;
+  const authorizer = event?.requestContext?.authorizer ?? {};
+  const claims = authorizer.jwt?.claims ?? authorizer.claims ?? {}; // HTTP API (JWT) o REST API (Cognito)
+  const username = claims.username ?? claims['cognito:username'];
   if (!username) return json(401, { error: 'Unauthorized', message: 'Missing username claim' });
 
   const { Item } = await dynamo.send(new GetCommand({ TableName: USERS_TABLE, Key: { source: username, id: 1 } }));

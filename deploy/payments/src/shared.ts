@@ -79,9 +79,13 @@ export const withErrors =
     }
   };
 
-// El usuario sale del token validado por el authorizer JWT (regla 0), nunca del body.
+// El usuario sale del token validado por el authorizer (regla 0), nunca del body.
+// HTTP API (JWT): requestContext.authorizer.jwt.claims.username (access token).
+// REST API (Cognito): requestContext.authorizer.claims, con `cognito:username` (id token) o `username` (access token).
 export const currentUsername = (event: any): string => {
-  const username = event?.requestContext?.authorizer?.jwt?.claims?.username;
+  const authorizer = event?.requestContext?.authorizer ?? {};
+  const claims = authorizer.jwt?.claims ?? authorizer.claims ?? {};
+  const username = claims.username ?? claims['cognito:username'];
   if (!username) throw new HttpError(401, 'Unauthorized', 'Missing username claim');
   return username;
 };

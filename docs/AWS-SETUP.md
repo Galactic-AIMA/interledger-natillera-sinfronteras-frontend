@@ -27,7 +27,7 @@ rutas y el paso 8 (Scheduler, P1) van después de las 15:00.
 | 4 | Tablas DynamoDB (9) | ⬜ | | |
 | 5 | Rol IAM de las Lambdas | ⬜ | | ARN: |
 | 6 | Lambdas (cuando Duvan entregue código) | ⬜ | | |
-| 7 | API Gateway + authorizer Cognito | ⬜ | | URL: |
+| 7 | API Gateway + authorizer Cognito | 🟡 | 2026-10-16 | API **REST**, stage `dev`, autorizador Cognito · URL `https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev` · token: `IdToken` |
 | 8 | EventBridge Scheduler (flujos 12 / 12B) | ⬜ | | Rol: |
 
 ---

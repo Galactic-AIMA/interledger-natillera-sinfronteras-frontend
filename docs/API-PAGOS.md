@@ -10,6 +10,18 @@ del front (`docs/api-contrato.md` del repo del front). **Pendiente de revisión 
 | `GET /payments/{id}` | `get-payment` | Estado del pago (polling de la pantalla 30) |
 | `GET /payments` | `get-payment` | Historial de la persona (necesita el GSI `author-index`) |
 
+## API desplegado (2026-10-16)
+
+- **Tipo:** API **REST** con autorizador **Cognito user pool**, stage `dev`.
+- **URL base:** `https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev`
+- **Token:** con el autorizador Cognito de un API REST (sin scopes OAuth) se manda el **`IdToken`**
+  del login, no el `AccessToken`: `Authorization: Bearer <IdToken>`. En el front:
+  `EXPO_PUBLIC_AUTH_TOKEN_TYPE=id`.
+- Las Lambdas leen el usuario de `requestContext.authorizer.claims['cognito:username']` (REST) o de
+  `requestContext.authorizer.jwt.claims.username` (HTTP API): funcionan con los dos tipos.
+- Recursos según el contrato: `/payments` (POST, GET), `/payments/{id}` (GET),
+  `/payments/{id}/finish` (POST), todos con **Integración de proxy de Lambda** y el autorizador.
+
 ## Contrato
 
 **`POST /payments`**
@@ -150,17 +162,17 @@ Necesitas: la **URL del API**, un usuario registrado cuya wallet (`custom:wallet
 otra wallet que **reciba** (p. ej. la COP).
 
 ```bash
-API=https://xxxx.execute-api.us-east-2.amazonaws.com
+API=https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev
 ```
 
-**1. Login** (copiar `AccessToken`):
+**1. Login** (copiar el **`IdToken`**, porque el API es REST con autorizador Cognito):
 
 ```bash
 curl -s https://cognito-idp.us-east-2.amazonaws.com/ -H 'Content-Type: application/x-amz-json-1.1' -H 'X-Amz-Target: AWSCognitoIdentityProviderService.InitiateAuth' -d '{"ClientId":"20b10a2tnnr69lqlp2sf62orv0","AuthFlow":"USER_PASSWORD_AUTH","AuthParameters":{"USERNAME":"prueba1","PASSWORD":"<clave>"}}'
 ```
 
 ```bash
-TOKEN=<AccessToken>
+TOKEN=<IdToken>
 ```
 
 **2. Iniciar pago** (10,00 EUR desde la wallet de `prueba1` a la wallet que recibe):

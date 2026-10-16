@@ -80,7 +80,8 @@ Respuesta OK (200):
 }
 ```
 
-- **`AccessToken`** va en toda petición al backend: `Authorization: Bearer <AccessToken>`.
+- **Al backend va el `IdToken`** (`Authorization: Bearer <IdToken>`): el API es REST con autorizador
+  Cognito, que valida el id token. URL base: `https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev`.
 - Guardar `RefreshToken` de forma segura (p. ej. `expo-secure-store`), no en AsyncStorage.
 - Error típico: `NotAuthorizedException` → usuario o contraseña incorrectos.
 
