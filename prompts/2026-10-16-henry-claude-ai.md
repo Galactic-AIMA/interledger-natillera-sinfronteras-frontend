@@ -16,3 +16,6 @@ Lanza un grupo de agentes asi. Uno con Sonnet para verificar y otro para las pru
 
 ## 12:34
 si hazlo, recuerda no pisarnos los trabajos y mantener el contexto y la info actualizada a mis compañeros
+
+## 12:40
+adelante

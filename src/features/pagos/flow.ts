@@ -6,10 +6,24 @@ import type { Amount, WalletReturn } from '@/api/types';
 // Expo Router solo lleva strings en los params: los montos viajan como JSON.
 
 /** Qué se está autorizando en la billetera. */
-export type FlowKind = 'cuota' | 'p2p' | 'recurrente';
+// credito = permiso de las cuotas del préstamo (17 → 19); desembolso = billetera del fondo (21 → 23).
+export const FLOW_KINDS = ['cuota', 'p2p', 'recurrente', 'credito', 'desembolso'] as const;
+export type FlowKind = (typeof FLOW_KINDS)[number];
+
+export function isFlowKind(value: string | undefined): value is FlowKind {
+  return FLOW_KINDS.some((k) => k === value);
+}
 
 /** Variante de la pantalla de resultado. 19 y 23 los agrega el carril de préstamos. */
-export type ResultKind = 'cuota-puesta' | 'pago-hecho' | 'rechazado' | 'fallo' | 'pendiente' | 'recurrente-activada';
+export type ResultKind =
+  | 'cuota-puesta'
+  | 'pago-hecho'
+  | 'rechazado'
+  | 'fallo'
+  | 'pendiente'
+  | 'recurrente-activada'
+  | 'credito-autorizado'
+  | 'prestamo-desembolsado';
 
 /** Params de /billetera/antes (28). `id` = paymentId (cuota, p2p) o grantId (recurrente). */
 export type AntesParams = {
@@ -108,7 +122,7 @@ export function settledOutcome(id: string | undefined) {
 }
 
 // Rutas a las que pueden volver «Ahora no», «Intentar de nuevo» y «Volver».
-const SAFE_ORIGINS = ['/natillera', '/natillera/cuota', '/natillera/recurrente', '/pagar'] as const;
+const SAFE_ORIGINS = ['/natillera', '/natillera/cuota', '/natillera/recurrente', '/natillera/prestamos', '/natillera/prestamos/tesorera', '/pagar'] as const;
 export type SafeOrigin = (typeof SAFE_ORIGINS)[number];
 
 /** `origin` viene por params: solo se aceptan rutas conocidas. */

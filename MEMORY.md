@@ -16,7 +16,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 | `base` | Scaffold Expo, tema, componentes, `src/api` (+ mocks), auth, navegación | Camilo | main | **lista** (2026-10-16) |
 | `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo (sesión A) | `feat/cuenta-natillera` · worktree `frontend-cuenta` | **en `main`** (`ffd9917`, 2026-10-16); falta probar en celular |
 | `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Camilo (sesión B) → traspaso a Henry | `feat/pagos` + arreglos de seguridad de Henry, integrados en `feat/creditos` | hecha en demo; falta celular y Test Wallet |
-| `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | `feat/creditos` (desde `main` con `pagos` integrado) | **en curso** (2026-10-16 ~12:50) |
+| `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | `feat/creditos` (desde `main` con `pagos` integrado) | **hecha en demo** (2026-10-16 ~13:20); falta celular y back |
 | `pitch` | Slides en la plantilla oficial, guion de 5 min, video | Camilo + Henry | — | libre |
 
 ## Decisiones tomadas
@@ -101,6 +101,8 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 - 2026-10-16 ~12:45 (Henry) — Henry descarta su versión paralela de 11/26/27/28/30/resultado (duplicaba la de la sesión B) y trabaja sobre `feat/pagos`. Arreglos de seguridad y de mensajes de la auditoría en `src/features/pagos/flow.ts`, `billetera/antes.tsx`, `billetera/volviendo.tsx` y `resultado.tsx`: registro en memoria de flujos (`antesHref` registra, la 30 hace `settleFlow`), URL de billetera solo https de `*.interledger-test.dev`, éxitos solo si los confirmó la 30, `safeOrigin`, error de red → «sigue en proceso», atrás bloqueado en la 30 (Android). `tsc`, bundle y pruebas ok. Detalle: [docs/auditoria-2026-10-16.md](docs/auditoria-2026-10-16.md).
 
 ### creditos
+- 2026-10-16 ~13:20 (Henry) — `feat/creditos` = `main` + `feat/pagos` + arreglos de seguridad (choques de docs resueltos conservando ambas versiones; prompts de Camilo unidos por sección, 17 de 17). Pantallas 16/20/25 (`prestamos/index`), 17 (`autorizar`), 21 (`tesorera`), 24 (`plan`, real o simulado por params) y resultados 19 `credito-autorizado` y 23 `prestamo-desembolsado`. Pasarela ampliada con `FlowKind` `credito` (`finishLoanRepaymentGrant`) y `desembolso` (pago del fondo). `tsc` y bundle ok; ciclo pedir → autorizar → aprobar → desembolsar → plan y rechazo probados contra `mockApi`. Para probar: entrar como `luz` (pide), luego `rosa.gomez` (tesorera aprueba).
+  - Pendiente: botón «Ver el plan de pagos» de la 23 (la tesorera no tiene endpoint para el plan de otra persona; se dejó solo «Listo»). Tasa/amortización/periodo: se pintan como lleguen del back.
 - (vacío)
 
 ### pitch

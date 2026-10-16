@@ -4,14 +4,14 @@ import { StyleSheet, View } from 'react-native';
 
 import { openWallet, useApi } from '@/api';
 import { AppText, Button, Card, InfoRow, Screen } from '@/components';
-import { decodeAmount, isTrustedWalletUrl, resultadoHref, returnToParams, safeOrigin, startedFlow, volviendoHref, type FlowKind } from '@/features/pagos/flow';
+import { decodeAmount, isFlowKind, isTrustedWalletUrl, resultadoHref, returnToParams, safeOrigin, startedFlow, volviendoHref, type FlowKind } from '@/features/pagos/flow';
 import { PasoAntes } from '@/features/pagos/flujo/PasoAntes';
 import { param } from '@/features/pagos/flujo/params';
 import { Reveal } from '@/features/pagos/flujo/Reveal';
 import { space } from '@/theme';
 
 function asFlowKind(value: string | undefined): FlowKind | undefined {
-  return value === 'cuota' || value === 'p2p' || value === 'recurrente' ? value : undefined;
+  return isFlowKind(value) ? value : undefined;
 }
 
 // 28 · Antes de la billetera

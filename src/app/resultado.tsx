@@ -81,6 +81,29 @@ const VARIANTS: Record<ResultKind, (ctx: Ctx) => ReactElement> = {
       actions={done(tabRoot(ctx.origin))}
     />
   ),
+  // 19: permiso de las cuotas del crédito; el tope y las repeticiones los pone la pantalla 30.
+  'credito-autorizado': (ctx) => (
+    <SuccessResult title="Cuotas autorizadas" actions={done('/natillera/prestamos')}>
+      <Card title="Resumen">
+        {ctx.repetitions ? <InfoRow label="Cuotas" value={ctx.repetitions} /> : null}
+        {ctx.limit ? <InfoRow label="Tope por cuota" right={<AmountValue amount={ctx.limit} />} /> : null}
+        <AppText variant="body" tone="muted">
+          Ahora la tesorera decide si aprueba el préstamo.
+        </AppText>
+      </Card>
+    </SuccessResult>
+  ),
+  // 23: la tesorera aprobó y el fondo pagó el préstamo.
+  'prestamo-desembolsado': (ctx) => (
+    <SuccessResult title="Préstamo desembolsado" actions={done('/natillera/prestamos/tesorera')}>
+      <Card title="Resumen">
+        {ctx.debit ? <InfoRow label="Salió del fondo" right={<AmountValue amount={ctx.debit} />} /> : null}
+        {ctx.receive ? (
+          <InfoRow label={`${ctx.counterpart ?? 'La persona'} recibió`} right={<AmountValue amount={ctx.receive} tone="money" />} />
+        ) : null}
+      </Card>
+    </SuccessResult>
+  ),
   // 14: el tope viene en `limit` y las repeticiones en `repetitions`, puestos por la pantalla 30.
   'recurrente-activada': (ctx) => (
     <SuccessResult title="Cuota automática activada" actions={done('/natillera')}>
@@ -95,7 +118,7 @@ const VARIANTS: Record<ResultKind, (ctx: Ctx) => ReactElement> = {
   ),
 };
 
-const SUCCESS: ReadonlySet<ResultKind> = new Set<ResultKind>(['cuota-puesta', 'pago-hecho', 'recurrente-activada']);
+const SUCCESS: ReadonlySet<ResultKind> = new Set<ResultKind>(['cuota-puesta', 'pago-hecho', 'recurrente-activada', 'credito-autorizado', 'prestamo-desembolsado']);
 
 function isResultKind(value: string | undefined): value is ResultKind {
   return value !== undefined && Object.hasOwn(VARIANTS, value);

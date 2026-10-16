@@ -5,16 +5,13 @@ import { BackHandler } from 'react-native';
 
 import { keys, useApi, waitForFinalPayment, type NatilleraApi, type WalletReturn } from '@/api';
 import { ResultScreen } from '@/components';
-import { encodeAmount, resultadoHref, safeOrigin, settleFlow, startedFlow, type FlowKind, type ResultadoParams } from '@/features/pagos/flow';
+import { encodeAmount, isFlowKind, resultadoHref, safeOrigin, settleFlow, startedFlow, type FlowKind, type ResultadoParams } from '@/features/pagos/flow';
 import { param } from '@/features/pagos/flujo/params';
 
 type Outcome = Omit<ResultadoParams, 'origin'>;
 
 const WALLET_REJECTIONS = ['grant_rejected', 'rejected'];
 
-function isFlowKind(value: string | undefined): value is FlowKind {
-  return value === 'cuota' || value === 'p2p' || value === 'recurrente';
-}
 
 async function settle(
   api: NatilleraApi,
@@ -32,6 +29,14 @@ async function settle(
       }
       return { tipo: grant.status === 'rejected' || rejectedByWallet ? 'rechazado' : 'fallo' };
     }
+    if (kind === 'credito') {
+      // 17 → 19: permiso para cobrar las cuotas del préstamo (grant recurrente, flujo 12B).
+      const grant = await api.finishLoanRepaymentGrant(id, { ...ret, grantId: id });
+      if (grant.status === 'active' && !rejectedByWallet) {
+        return { tipo: 'credito-autorizado', limit: encodeAmount(grant.limitPerCharge), repetitions: String(grant.repetitions) };
+      }
+      return { tipo: grant.status === 'rejected' || rejectedByWallet ? 'rechazado' : 'fallo' };
+    }
     try {
       await api.finishPayment(id, { ...ret, paymentId: id });
     } catch (e) {
@@ -45,7 +50,7 @@ async function settle(
     if (payment.status === 'pending') return { tipo: 'pendiente' };
     if (payment.status !== 'completed') return { tipo: 'fallo' };
     return {
-      tipo: kind === 'cuota' ? 'cuota-puesta' : 'pago-hecho',
+      tipo: kind === 'cuota' ? 'cuota-puesta' : kind === 'desembolso' ? 'prestamo-desembolsado' : 'pago-hecho',
       debit: encodeAmount(payment.debitAmount) ?? fallback.debit,
       receive: encodeAmount(payment.receiveAmount) ?? fallback.receive,
       counterpart: fallback.counterpart ?? payment.counterpartName,
@@ -54,7 +59,8 @@ async function settle(
     // Si la persona rechazó en la billetera, igual no salió plata: se le dice que rechazó.
     if (rejectedByWallet) return { tipo: 'rechazado' };
     // Sin respuesta del back no sabemos si cobró: «sigue en proceso» (revisar «Sus pagos»), nunca «No salió plata».
-    return { tipo: kind === 'recurrente' ? 'fallo' : 'pendiente' };
+    // Los permisos (recurrente, crédito) no mueven plata al fallar; los pagos sí pueden haber salido.
+    return { tipo: kind === 'recurrente' || kind === 'credito' ? 'fallo' : 'pendiente' };
   }
 }
 
@@ -91,6 +97,7 @@ export default function ScreenBilleteraVolviendo() {
       void Promise.all([
         queryClient.invalidateQueries({ queryKey: keys.natillera }),
         queryClient.invalidateQueries({ queryKey: keys.payments }),
+        queryClient.invalidateQueries({ queryKey: ['loans'] }),
         kind === 'p2p' ? queryClient.invalidateQueries({ queryKey: keys.accounts }) : Promise.resolve(),
       ]);
       router.replace(resultadoHref({ ...outcome, id, origin: safeOrigin(origin) }));
