@@ -9,7 +9,7 @@ ni firma de AWS). El resto de endpoints irá por API Gateway con el `AccessToken
 | Método | `POST` |
 | `Content-Type` | `application/x-amz-json-1.1` |
 | `X-Amz-Target` | `AWSCognitoIdentityProviderService.SignUp` o `...InitiateAuth` |
-| `ClientId` | `<CLIENT_ID>` (app client del pool `us-east-2_2pQzW95IK`) |
+| `ClientId` | `20b10a2tnnr69lqlp2sf62orv0` (app client del pool `us-east-2_2pQzW95IK`) |
 
 ## 1 · Crear cuenta (SignUp)
 
@@ -23,7 +23,7 @@ Content-Type: application/x-amz-json-1.1
 X-Amz-Target: AWSCognitoIdentityProviderService.SignUp
 
 {
-  "ClientId": "<CLIENT_ID>",
+  "ClientId": "20b10a2tnnr69lqlp2sf62orv0",
   "Username": "customUniqueName",
   "Password": "Natillera#2026",
   "UserAttributes": [
@@ -59,7 +59,7 @@ Content-Type: application/x-amz-json-1.1
 X-Amz-Target: AWSCognitoIdentityProviderService.InitiateAuth
 
 {
-  "ClientId": "<CLIENT_ID>",
+  "ClientId": "20b10a2tnnr69lqlp2sf62orv0",
   "AuthFlow": "USER_PASSWORD_AUTH",
   "AuthParameters": { "USERNAME": "customUniqueName", "PASSWORD": "Natillera#2026" }
 }
@@ -88,7 +88,7 @@ Respuesta OK (200):
 
 ```json
 {
-  "ClientId": "<CLIENT_ID>",
+  "ClientId": "20b10a2tnnr69lqlp2sf62orv0",
   "AuthFlow": "REFRESH_TOKEN_AUTH",
   "AuthParameters": { "REFRESH_TOKEN": "<RefreshToken>" }
 }
@@ -100,7 +100,7 @@ Respuesta OK (200):
 
 ```ts
 const COGNITO_URL = 'https://cognito-idp.us-east-2.amazonaws.com/';
-const CLIENT_ID = '<CLIENT_ID>';
+const CLIENT_ID = '20b10a2tnnr69lqlp2sf62orv0';
 
 async function cognito<T>(action: 'SignUp' | 'InitiateAuth', body: object): Promise<T> {
   const res = await fetch(COGNITO_URL, {
@@ -137,7 +137,7 @@ export const login = (username: string, password: string) =>
 ## curl (para probar desde terminal)
 
 ```bash
-curl -s https://cognito-idp.us-east-2.amazonaws.com/ -H 'Content-Type: application/x-amz-json-1.1' -H 'X-Amz-Target: AWSCognitoIdentityProviderService.InitiateAuth' -d '{"ClientId":"<CLIENT_ID>","AuthFlow":"USER_PASSWORD_AUTH","AuthParameters":{"USERNAME":"customUniqueName","PASSWORD":"Natillera#2026"}}'
+curl -s https://cognito-idp.us-east-2.amazonaws.com/ -H 'Content-Type: application/x-amz-json-1.1' -H 'X-Amz-Target: AWSCognitoIdentityProviderService.InitiateAuth' -d '{"ClientId":"20b10a2tnnr69lqlp2sf62orv0","AuthFlow":"USER_PASSWORD_AUTH","AuthParameters":{"USERNAME":"customUniqueName","PASSWORD":"Natillera#2026"}}'
 ```
 
 Pendiente: guardar el usuario en `Users-info` (flujo 1, `assetCode`/`assetScale` leídos de la
