@@ -1,5 +1,11 @@
 # Sesiones en paralelo de Henry (16–17 oct 2026)
 
+> **Estado al 2026-10-16 ~13:40 (manda sobre lo de abajo):**
+> - `feat/creditos` (fork de Henry) = `main` de Camilo (`32eb791`) + pagos + arreglos de seguridad + créditos 16–25 + registro Cognito. `tsc` limpio, `ai-usage-check` ok, recorrido demo 01→10→11→28→34 y 16→17→19→20→21→23 sin errores en consola. **Es la rama para el PR a `main`.**
+> - `feat/auth-signup` (fork de Henry) = solo el encargo de Cognito sobre `main`, por si Camilo lo prefiere en un PR aparte.
+> - La **sesión C ya no hace falta**: otra sesión de Henry construyó los préstamos. La sesión D (pulido en celular) sigue vigente; `docs/copy-henry.md` ya existe en borrador (Descargas de Henry).
+> - Pendientes de Henry en persona: probar en Expo Go el registro contra Cognito real (los 4 errores) y la pantalla 24; Test Wallet (cuentas, COP, `natillera://`); curso; slides con el guion que ya existe en borrador.
+
 Plan de trabajo de Henry desde el viernes 16/10 ~13:00 hasta la entrega del sábado 17/10 a las 11:00. Rebasa los pendientes de [HENRY.md](HENRY.md) con el estado real de las ramas. El tablero vivo sigue en [MEMORY.md](../MEMORY.md).
 
 ## Estado de partida (verificado 2026-10-16 ~12:50)
