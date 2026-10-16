@@ -36,10 +36,11 @@ export function ApiProvider({ children }: { children: ReactNode }) {
 
   const enterDemo = useCallback(
     async (username = 'rosa.gomez') => {
-      queryClient.clear();
       mockApi.switchUser(username);
       setApi(mockApi);
       setSession('signed-in');
+      // Vuelve a pedir lo que está en pantalla con el usuario nuevo.
+      await queryClient.resetQueries();
     },
     [queryClient],
   );

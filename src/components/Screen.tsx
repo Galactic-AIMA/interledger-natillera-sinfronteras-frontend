@@ -15,6 +15,8 @@ type ScreenProps = {
   inTabs?: boolean;
   // Encabezado propio a la izquierda del título (p. ej. volver).
   headerLeft?: ReactNode;
+  // Acción a la derecha del título, antes del A+ (p. ej. «Su cuenta»).
+  headerRight?: ReactNode;
 };
 
 /** Botón A+ del encabezado: agranda el texto de toda la app (3 niveles). */
@@ -35,7 +37,7 @@ export function TextSizeButton() {
 }
 
 /** Estructura de toda pantalla: encabezado (título + A+), contenido con scroll y pie opcional. */
-export function Screen({ title, children, footer, inTabs = false, headerLeft }: ScreenProps) {
+export function Screen({ title, children, footer, inTabs = false, headerLeft, headerRight }: ScreenProps) {
   return (
     <SafeAreaView style={styles.safe} edges={inTabs ? ['top'] : ['top', 'bottom']}>
       <View style={styles.header}>
@@ -43,6 +45,7 @@ export function Screen({ title, children, footer, inTabs = false, headerLeft }: 
         <AppText variant="title" accessibilityRole="header" style={styles.title} numberOfLines={2}>
           {title}
         </AppText>
+        {headerRight}
         <TextSizeButton />
       </View>
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>

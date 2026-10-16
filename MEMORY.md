@@ -14,7 +14,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 | Carril | Alcance | Persona | Sesión / rama | Estado |
 |---|---|---|---|---|
 | `base` | Scaffold Expo, tema, componentes, `src/api` (+ mocks), auth, navegación | Camilo | main | **lista** (2026-10-16) |
-| `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo | — | libre |
+| `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo | sesión A · `feat/cuenta-natillera` (frontend-cuenta) | **en curso** (2026-10-16) |
 | `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Henry | — | libre |
 | `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | — | libre |
 | `pitch` | Slides en la plantilla oficial, guion de 5 min, video | Camilo + Henry | — | libre |
@@ -68,7 +68,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
   - Probar: `npm run web` o `npx expo start` → "Empezar con datos de ejemplo" (Doña Rosa; en demo Luz y Andrés también existen, contraseña cualquiera).
 
 ### cuenta-natillera
-- (vacío)
+- 2026-10-16 — Sesión A: construidas 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 15 y 35 (5 ejecutores Sonnet + validador Opus). `tsc` limpio; recorrido completo en web con demo, A+ ×1,4 sin cortes. Cambios en archivos compartidos: `Screen` ahora acepta `headerRight`; `enterDemo` hace `resetQueries`; el código de invitación del mock ya es válido en 07. Pendiente: probar en celular/Expo Go, `expo-clipboard` para copiar el enlace, botón volver en pantallas sueltas, `web.output` "server" → "single" (decide Camilo). 04 se abre desde el icono de persona en 10/05.
 
 ### pagos
 - (vacío)
