@@ -8,6 +8,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 |---|---|---|---|
 | Claude Code (app de escritorio) | Claude Opus 5.5 | Camilo | Investigación de Open Payments, lectura de Figma y del diagrama de arquitectura, planeación, documentación, código del front |
 | Figma MCP (vía Claude Code) | — | Camilo | Leer los bocetos de Figma (textos y estructura de las 35 pantallas) |
+| Claude (claude.ai con herramientas de código y subagentes) | Claude Opus 5.5 (subagentes: Sonnet 5.5 y Opus 5.5) | Henry | Revisión del repo, auditoría de verificación, pruebas, coordinación y ciberseguridad del carril `pagos`, y sus arreglos |
 
 (Agregar aquí cualquier otra herramienta que use el equipo: ChatGPT, Copilot, Gemini, Figma AI…)
 
@@ -25,6 +26,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Camilo | Claude Code (+ skill ui-ux-pro-max) | Carril `base`: tokens de diseño, fuentes, escala A+, componentes compartidos, capa de datos (interfaz, mock en memoria, cliente HTTP, login Cognito, apertura de billetera), navegación con pestañas y placeholders de las 31 pantallas; guía de uso para Henry | `src/theme/`, `src/components/`, `src/api/`, `src/utils/money.ts`, `src/app/`, `.env.example`, `.gitattributes`, `docs/HENRY.md`, `docs/api-contrato.md`, `MEMORY.md` |
 | 2026-10-16 | Camilo | Claude Code | Plan de ejecución de pantallas por sesiones paralelas, a partir de las respuestas de Camilo | `docs/EJECUCION-PANTALLAS.md`, `MEMORY.md` |
 | 2026-10-16 | Camilo | Claude Code (agentes Sonnet ejecutores + Opus validador) | Carril `pagos`: pantallas 11, 28, 30, resultado (14, 31–34), 26, 27 y 12 con modo demo; contrato del flujo; validación y correcciones; fallback de billetera demo en web | `src/features/pagos/`, `src/app/(tabs)/natillera/cuota.tsx`, `src/app/(tabs)/natillera/recurrente.tsx`, `src/app/(tabs)/pagar/`, `src/app/billetera/`, `src/app/resultado.tsx`, `src/api/wallet.ts` |
+| 2026-10-16 | Henry | Claude (claude.ai) + subagentes Sonnet 5.5 (verificación, pruebas) y Opus 5.5 (coordinación, ciberseguridad) | Auditoría del carril `pagos` y arreglos de seguridad: registro de flujos en memoria, validación de la URL de la billetera, resultados confirmados, `safeOrigin`, mensajes ante error de red, atrás en Android | `src/features/pagos/flow.ts`, `src/app/billetera/antes.tsx`, `src/app/billetera/volviendo.tsx`, `src/app/resultado.tsx`, `docs/auditoria-2026-10-16.md`, `MEMORY.md` |
 
 ## What We Did Ourselves
 

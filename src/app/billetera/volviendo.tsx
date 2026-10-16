@@ -1,10 +1,11 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef } from 'react';
+import { BackHandler } from 'react-native';
 
 import { keys, useApi, waitForFinalPayment, type NatilleraApi, type WalletReturn } from '@/api';
 import { ResultScreen } from '@/components';
-import { encodeAmount, resultadoHref, type FlowKind, type ResultadoParams } from '@/features/pagos/flow';
+import { encodeAmount, resultadoHref, safeOrigin, settleFlow, startedFlow, type FlowKind, type ResultadoParams } from '@/features/pagos/flow';
 import { param } from '@/features/pagos/flujo/params';
 
 type Outcome = Omit<ResultadoParams, 'origin'>;
@@ -51,7 +52,9 @@ async function settle(
     };
   } catch {
     // Si la persona rechazó en la billetera, igual no salió plata: se le dice que rechazó.
-    return { tipo: rejectedByWallet ? 'rechazado' : 'fallo' };
+    if (rejectedByWallet) return { tipo: 'rechazado' };
+    // Sin respuesta del back no sabemos si cobró: «sigue en proceso» (revisar «Sus pagos»), nunca «No salió plata».
+    return { tipo: kind === 'recurrente' ? 'fallo' : 'pendiente' };
   }
 }
 
@@ -61,6 +64,12 @@ export default function ScreenBilleteraVolviendo() {
   const queryClient = useQueryClient();
   const raw = useLocalSearchParams<Record<string, string | string[]>>();
   const started = useRef(false);
+
+  // Android: el botón atrás no saca a la persona mientras confirmamos (iOS ya lo bloquea en _layout).
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => true);
+    return () => sub.remove();
+  }, []);
 
   useEffect(() => {
     // Una sola ejecución aunque el efecto corra dos veces (StrictMode) o la pantalla se renderice de nuevo.
@@ -74,13 +83,17 @@ export default function ScreenBilleteraVolviendo() {
     const fallback = { debit: param(raw.debit), receive: param(raw.receive), counterpart: param(raw.counterpart) };
 
     async function run() {
-      const outcome: Outcome = isFlowKind(kind) && id ? await settle(api, kind, id, ret, fallback) : { tipo: 'fallo' };
-      await Promise.all([
+      // Solo se confirma un flujo que inició esta sesión: un enlace externo no puede disparar el finish.
+      const own = isFlowKind(kind) && id && startedFlow(id)?.kind === kind;
+      const outcome: Outcome = own ? await settle(api, kind, id, ret, fallback) : { tipo: 'pendiente' };
+      if (own) settleFlow(id, outcome);
+      // Sin await: el refetch de lo que queda debajo no debe demorar el resultado.
+      void Promise.all([
         queryClient.invalidateQueries({ queryKey: keys.natillera }),
         queryClient.invalidateQueries({ queryKey: keys.payments }),
         kind === 'p2p' ? queryClient.invalidateQueries({ queryKey: keys.accounts }) : Promise.resolve(),
       ]);
-      router.replace(resultadoHref({ ...outcome, origin }));
+      router.replace(resultadoHref({ ...outcome, id, origin: safeOrigin(origin) }));
     }
     void run();
   }, [api, queryClient, raw]);
