@@ -162,3 +162,7 @@ Revisa el repo del backend ya que tenemos un error y aun no lo solucionamos.   y
 ## 18:28 · sesión 2594d34c
 
 El equipo no le parece que el código sea tan largo. Entonces, valida si, si es eso, ¿qué? Y si no, pues hagámosle el, el push, el commit del push.
+
+## 18:33 · sesión 2594d34c
+
+Revisa entonces en el repo del backend bien la, las líneas de código, en la ruta Dígale que la archivos que subimos son esos, en deploy/ payments/  dist y los archivos zip que es un código de 30.000 líneas. Entonces, imagínate, papá.

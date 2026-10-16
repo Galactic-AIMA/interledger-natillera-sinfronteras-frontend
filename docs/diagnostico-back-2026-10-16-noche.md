@@ -74,6 +74,13 @@ comentarios. Es normal: un pago con Open Payments son 3 grants, un incoming paym
 continuación y el outgoing payment, más validaciones. Unas 40 líneas existen solo para soportar los dos
 modos (proxy y VTL); si se queda en proxy, sobran, pero no estorban. `tsc --noEmit` limpio.
 
+**Los zips de `deploy/payments/dist` (~30.400 líneas cada uno) no son código escrito por el equipo.** Cada
+zip trae un solo `index.js` que arma esbuild (`build.mjs`): mete adentro el SDK `@interledger/open-payments`
+y todo lo que este usa (`ajv`, `jose`, `js-yaml`, `json-schema-ref-parser`, `uuid`, `ky`, firmas HTTP,
+`pino`…), porque Lambda no trae esas librerías. En `start-payment.zip` las líneas 1–30.151 son librerías y el
+código propio empieza en la 30.152 (`// src/start-payment.ts`, ~285 líneas). Por eso los tres zips pesan
+casi lo mismo. Es lo normal; se revisa y se edita en `deploy/payments/src`, nunca el `index.js`.
+
 **Coherencia con el flujo de Open Payments: correcta.** `start-payment` hace incoming payment en la wallet
 de quien recibe → quote en la de quien paga → grant interactivo con `limits.debitAmount` de la quote y
 `finish` con nonce → guarda en `payments-history`. `finish-payment` verifica que el pago sea de quien llama,
