@@ -1,6 +1,6 @@
 # Sesiones en paralelo de Henry (16–17 oct 2026)
 
-> **Estado al 2026-10-16 ~13:50 (manda sobre lo de abajo):** la integración con Camilo está en [INTEGRACION-EXPO-GO.md](INTEGRACION-EXPO-GO.md). `feat/creditos` (fork de Henry) = `main` `32eb791` + pagos + seguridad + créditos 16–25 + Cognito, probada en demo. La sesión C ya no hace falta (créditos hecho). Sigue la sesión D (pulido en celular). Henry en persona: Expo Go contra Cognito real, Test Wallet, curso y slides con [pitch/GUION.md](pitch/GUION.md).
+> **Estado al 2026-10-16 ~13:50 (manda sobre lo de abajo):** la integración con Camilo está en [INTEGRACION-EXPO-GO.md](INTEGRACION-EXPO-GO.md). `feat/creditos` (fork de Henry) = `main` `32eb791` + pagos + seguridad + créditos 16–25 + Cognito, probada en demo. La sesión C ya no hace falta (créditos hecho). Sigue la sesión D (pulido en celular). Henry en persona: Test Wallet, curso y slides con [pitch/GUION.md](pitch/GUION.md). **15:45:** Expo Go contra Cognito real y el back lo prueba Camilo en su PC (Henry no tiene Expo Go); la rama a integrar es `origin/feat/cuenta-celular`.
 
 Plan de trabajo de Henry desde el viernes 16/10 ~13:00 hasta la entrega del sábado 17/10 a las 11:00. Rebasa los pendientes de [HENRY.md](HENRY.md) con el estado real de las ramas. El tablero vivo sigue en [MEMORY.md](../MEMORY.md).
 

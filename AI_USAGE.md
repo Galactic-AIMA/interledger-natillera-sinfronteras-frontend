@@ -49,6 +49,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Henry | Claude (claude.ai, Claude Opus 5.5) | Región Cognito por defecto y `web.output` estático, con prueba del export web en navegador sin interfaz | `src/api/config.ts`, `app.json`, `MEMORY.md`, `docs/HENRY.md`, `docs/INTEGRACION-EXPO-GO.md` |
 | 2026-10-16 | Henry | Claude Code (Opus 5.5, escritorio) | Detectó que `feat/creditos` tenía 6 commits que no estaban en `feat/cuenta-celular` (arreglos de base, pruebas `npm test`, guion); fusión en `feat/cuenta-celular` con los choques de documentación resueltos concatenando; verificación con `tsc`, `npm test` y `ai-usage-check` | `AI_USAGE.md`, `prompts/2026-10-16-henry-claude-ai.md`, `MEMORY.md` |
 | 2026-10-16 | Camilo | Claude Code (Opus 5.5, escritorio) | Revisión del fork de Henry y del back; integración local de `feat/cuenta-celular` en la rama `integracion/henry`; `tsc`, `npm test` (8/8) y recorrido en el emulador Android (01 → 10 → 11 → 28 → billetera demo → 34, y préstamos); contraste de `src/api/auth.ts` con las instrucciones de login del back. Sin cambios de código | `prompts/2026-10-16-camilo-integracion-henry.md`, `AI_USAGE.md`, `MEMORY.md` |
+| 2026-10-16 | Henry | Claude Code (Opus 5.5, escritorio) | Subida de `feat/cuenta-celular` al repo del equipo y al fork, `main` del fork sincronizado, borrador del mensaje para Camilo; docs al día con el reparto nuevo (Expo Go lo prueba Camilo) | `docs/INTEGRACION-EXPO-GO.md`, `docs/SESIONES-HENRY.md`, `MEMORY.md`, `AI_USAGE.md` |
 
 ## What We Did Ourselves
 
