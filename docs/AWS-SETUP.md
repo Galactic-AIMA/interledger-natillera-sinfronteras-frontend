@@ -23,7 +23,7 @@ rutas y el paso 8 (Scheduler, P1) van después de las 15:00.
 | 0 | Cuenta segura + alerta de costos | ✅ | 2026-10-16 | Account ID: `349607459198` · usuario `david-admin` · budget creado |
 | 1 | Billeteras y llaves en la Test Wallet | 🟡 | 2026-10-16 | Wallet cliente (Duvan, EUR): `https://ilp.interledger-test.dev/f9a1abde` · Wallet COP (receptor P0): pendiente · Wallet fondo: pendiente |
 | 2 | Secreto en Secrets Manager | ✅ | 2026-10-16 | ARN: `arn:aws:secretsmanager:us-east-2:349607459198:secret:natillera/open-payments-client-57Rtn0` |
-| 3 | Cognito User Pool + App client | ⬜ | | Pool ID: · Client ID: |
+| 3 | Cognito User Pool + App client | 🟡 | 2026-10-16 | Pool `User pool - 3hc-ib` · ID `us-east-2_2pQzW95IK` · Client ID: pendiente · trigger Pre sign-up → Lambda `pre-signup` (código en `deploy/pre-signup/index.mjs`) |
 | 4 | Tablas DynamoDB (9) | ⬜ | | |
 | 5 | Rol IAM de las Lambdas | ⬜ | | ARN: |
 | 6 | Lambdas (cuando Duvan entregue código) | ⬜ | | |
@@ -102,9 +102,13 @@ Open Payments no crea billeteras: se crean a mano en la Test Wallet
    - Authentication flows: activar **`ALLOW_USER_PASSWORD_AUTH`** (login del flujo 2 con
      `InitiateAuth`) y `ALLOW_REFRESH_TOKEN_AUTH`.
    - Duración del access token: 60 min está bien.
-7. Auto-confirmación (flujo 1): el backend llama `SignUp` y luego `AdminConfirmSignUp`, así que
-   no hace falta configurar correo de verificación para la demo. (Alternativa: trigger *Pre sign-up*
-   que haga `autoConfirmUser = true`; se decide con Duvan.)
+7. Auto-confirmación (flujo 1): **trigger Pre sign-up** → Lambda `pre-signup`
+   ([deploy/pre-signup/index.mjs](../deploy/pre-signup/index.mjs)), que verifica la wallet
+   (`custom:walletId`), rechaza email/teléfono repetidos y pone `autoConfirmUser = true`.
+   - Atributo personalizado requerido en el pool: **`custom:walletId`** (String, mutable), con
+     permiso de escritura en el app client.
+   - Lambda: Node.js 22.x, timeout 5 s (Cognito corta a los 5 s), rol con `cognito-idp:ListUsers`
+     sobre el pool.
 
 Anotar **User pool ID** (`us-east-2_xxxx`) y **Client ID** en la tabla.
 
@@ -144,7 +148,7 @@ lo confirme, se pueden añadir después sin borrar la tabla):
 1. Adjuntar la política administrada `AWSLambdaBasicExecutionRole` (logs en CloudWatch).
 2. Nombre: **`natillera-lambda-role`**.
 3. Abrir el rol → *Add permissions* → *Create inline policy* → JSON (reemplazar `349607459198`,
-   `<USER_POOL_ID>` y el ARN del secreto), nombre `natillera-lambda-access`:
+   `us-east-2_2pQzW95IK` y el ARN del secreto), nombre `natillera-lambda-access`:
 
 ```json
 {
@@ -177,8 +181,8 @@ lo confirme, se pueden añadir después sin borrar la tabla):
     {
       "Sid": "CognitoSignup",
       "Effect": "Allow",
-      "Action": ["cognito-idp:AdminConfirmSignUp", "cognito-idp:AdminGetUser"],
-      "Resource": "arn:aws:cognito-idp:us-east-2:349607459198:userpool/<USER_POOL_ID>"
+      "Action": ["cognito-idp:AdminConfirmSignUp", "cognito-idp:AdminGetUser", "cognito-idp:ListUsers"],
+      "Resource": "arn:aws:cognito-idp:us-east-2:349607459198:userpool/us-east-2_2pQzW95IK"
     }
   ]
 }
@@ -214,7 +218,7 @@ equipo decide usar VTL (decisión abierta 4), tendría que ser **REST API**.
 
 1. **API Gateway → Create API → HTTP API** → nombre `natillera-api`, stage `$default` con auto-deploy.
 2. **Authorization → Create authorizer → JWT**:
-   - Issuer: `https://cognito-idp.us-east-2.amazonaws.com/<USER_POOL_ID>`
+   - Issuer: `https://cognito-idp.us-east-2.amazonaws.com/us-east-2_2pQzW95IK`
    - Audience: el **Client ID** del paso 3.
 3. Rutas (una integración Lambda por ruta). Todas con el authorizer **excepto** signup y login:
    `POST /signup`, `POST /login`, `POST /payments/start`, `POST /payments/finish`,

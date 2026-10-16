@@ -68,7 +68,16 @@ Decisiones técnicas aún sin tomar:
 
 ## Pedidos entre carriles
 
-- (vacío) — formato: `YYYY-MM-DD · de <carril> a <carril>: <qué se necesita>`
+- 2026-10-16 · de infra (david) a duvdev: arreglos a `cognito-pre-signup.handler.ts` (versión ya
+  desplegable en `deploy/pre-signup/index.mjs`): (1) región `us-east-1` fija → usar
+  `process.env.AWS_REGION` (estamos en us-east-2); (2) `getSecrets` devuelve el string sin
+  `JSON.parse`; (3) `createAuthenticatedClient` recibe `privateKey` como ruta de archivo o KeyObject,
+  no el PEM en texto → `crypto.createPrivateKey(pem)`; para solo verificar una wallet basta un GET
+  público sin llaves; (4) `if (!walletId && !isWalletCreated)` debe ser `||` (hoy deja pasar
+  wallets inexistentes); (5) el trigger debe hacer `return event` y poner
+  `event.response.autoConfirmUser = true`; (6) usar `event.userPoolId` en vez de `USER_POOL_ID`;
+  (7) `@interledger/open-payments` no viene en el runtime de Lambda: hay que empaquetarlo (esbuild).
+- formato: `YYYY-MM-DD · de <carril> a <carril>: <qué se necesita>`
 
 ## Bitácora por carril
 
