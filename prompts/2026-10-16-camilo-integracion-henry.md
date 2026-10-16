@@ -105,3 +105,11 @@ Puedes hacer tú las pruebas, hacételas.
 ## Prompt 20
 
 No, sabes que entonces perfecto. Revisa el repo mira qué actualizaciones han hecho Henry por ahí eh, nos dejó comentario algo alguna actualización eh, luego me dejas un prompt para continuar en otra sesión con las pruebas y guarda todas las memorias yo hago las pruebas manualmente muévete con esto
+
+## Prompt 21
+
+Pásame entonces el detalle paso a paso con plastilina para hacer las pruebas de los pagos. En el backend.
+
+## Prompt 22
+
+Guarda memoria y déjame el prompt para continuar en otra edición. Con las pruebas.
