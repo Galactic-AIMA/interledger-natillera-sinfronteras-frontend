@@ -110,3 +110,17 @@ Sí. Redáctame el mensaje para Duvan y David con el link a docs/COORDINACION-BA
 
 ## 16:30 · esta sesión (a mano: el hook no la registra)
 Ahora deberás poner todos los archivos y carpetas en una sola principal para este  proyecto, fíjate que no quede nada suelto. y dime en que punto estamos
+
+## 15:51 · sesión 2fa70ba0
+
+Sí, sube feat/cuenta-celular a origin con los 4 commits.
+
+## 15:53 · sesión 6902c76c
+
+cual es la contraseña del usuario que creaste para lña prueba front
+
+## 16:50 · esta sesión (a mano: el hook no la registra)
+Ya terminó la sesión del pitch. Mueve natillera-front a Desktop\Natillera-sin-Fronteras y cambia esta sesión a la nueva ruta.
+
+## 16:55 · esta sesión (a mano: el hook no la registra)
+Ya archivé la sesión del pitch. Mueve natillera-front ahora.
