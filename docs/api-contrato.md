@@ -8,6 +8,8 @@ Basado en `docs/ARQUITECTURA.md` (rama `david` del back, transcripción del draw
 
 Estado 2026-10-16 ~15:50: en el back solo existe `GET /me` (URL del API sin publicar). `start-payment` está documentado como `POST /payments/start` (el front usa `POST /payments`: alinear). Mientras tanto el front corre en modo híbrido (`src/api/hybridApi.ts`).
 
+Estado 2026-10-16 ~17:15 (verificado sin token): API REST `https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev`, autorizador Cognito con **IdToken**. `POST /start-payment` responde `401` (desplegada); `/payments`, `/payments/{id}`, `/payments/{id}/finish`, `/me` y `/natilleras/mine` responden `403 Missing Authentication Token` (sin desplegar). El front usa `EXPO_PUBLIC_PAYMENTS_START_PATH=/start-payment` hasta que exista `POST /payments`, y solo manda pagos P2P al back (`walletAddress` directo).
+
 Reglas comunes: `Authorization: Bearer <accessToken de Cognito>` en todo salvo signup y login. `author` / `paymentAuthor` los pone el back desde el `sub`. Montos `{ value: string, assetCode, assetScale }`. Errores `{ error, message }` con su status HTTP.
 
 ## Endpoints

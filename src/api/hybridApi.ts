@@ -1,4 +1,5 @@
 import type { NatilleraApi } from './client';
+import type { StartPaymentInput } from './types';
 import { logEvent } from './devLog';
 import { httpApi } from './httpApi';
 import { mockApi } from './mockApi';
@@ -13,8 +14,8 @@ type Method = Exclude<keyof NatilleraApi, 'mode'>;
 
 const extra = (process.env.EXPO_PUBLIC_REAL_METHODS ?? '')
   .split(',')
-  .map((name) => name.trim())
-  .filter((name): name is Method => name in httpApi && name !== 'mode');
+  .map((name: string) => name.trim())
+  .filter((name: string): name is Method => name in httpApi && name !== 'mode');
 
 export const realMethods: ReadonlySet<Method> = new Set<Method>([...ALWAYS_REAL, ...extra]);
 
@@ -48,10 +49,35 @@ const methods = Object.fromEntries(
   (Object.keys(httpApi) as (keyof NatilleraApi)[]).filter((name): name is Method => name !== 'mode').map((name) => [name, pick(name)]),
 ) as Omit<NatilleraApi, 'mode'>;
 
+// Pagos reales: solo P2P (pagar a una persona y colectas de Metas). La cuota (`aporte`) necesita una
+// natillera que el back todavía no tiene, así que sigue de ejemplo. Se activa con `startPayment` en
+// EXPO_PUBLIC_REAL_METHODS; finish y get van al back solo para los pagos que él creó.
+const realPayments = realMethods.has('startPayment');
+const realPaymentIds = new Set<string>();
+
+async function startHybridPayment(input: StartPaymentInput) {
+  if (!realPayments || input.kind !== 'p2p') return methods.startPayment(input);
+  let body: StartPaymentInput = input;
+  if ('customWalletName' in input) {
+    // Las cuentas guardadas siguen de ejemplo: el back recibe la billetera directa (extensión de P0).
+    const account = (await mockApi.listAccounts()).find((a) => a.customWalletName === input.customWalletName);
+    if (account) body = { kind: 'p2p', walletAddress: account.walletAddress, counterpartName: account.customWalletName, amount: input.amount };
+  }
+  const start = await httpApi.startPayment(body);
+  realPaymentIds.add(start.paymentId);
+  return start;
+}
+
+const demoFinish = demo('finishPayment');
+const demoGet = demo('getPayment');
+
 export const hybridApi: NatilleraApi = {
   ...methods,
-  // La billetera solo es real cuando el pago lo inicia el back; si no, el diálogo de prueba hace de billetera.
-  mode: realMethods.has('startPayment') ? 'real' : 'demo',
+  // 'demo' porque conviven datos de ejemplo; la billetera real se decide por pago en openWallet.
+  mode: 'demo',
+  startPayment: startHybridPayment,
+  finishPayment: (paymentId, ret) => (realPaymentIds.has(paymentId) ? httpApi.finishPayment(paymentId, ret) : demoFinish(paymentId, ret)),
+  getPayment: (paymentId) => (realPaymentIds.has(paymentId) ? httpApi.getPayment(paymentId) : demoGet(paymentId)),
   async login(username, password) {
     await httpApi.login(username, password);
     mockApi.switchUser(DEMO_DATA_USER);

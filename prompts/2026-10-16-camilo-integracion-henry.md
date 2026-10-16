@@ -83,3 +83,13 @@ Sí, haz push de feat/back-hibrido a main.
 ## Prompt 16
 
 Perfecto, actualiza todas nuestras memorias. Valida si hay algo nuevo. Y ya todo listo. También veo que Henry dejó un PR por ahí válida todo.
+
+## Prompt 17
+
+Listo, sí, ya la URL de la API ya existe, ya está Melo. 
+
+https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev
+
+(Pegó la guía de curls del back: login con InitiateAuth copiando el IdToken, `POST /start-payment` con `kind: p2p`, `walletAddress`, `value`, `assetCode`, `assetScale` y `returnUrl` `exp://…/--/retorno`, aprobar en la Test Wallet, `POST /payments/<paymentId>/finish` con `interact_ref` y `hash`, y `GET /payments/<paymentId>` y `GET /payments`. La contraseña iba como `<clave>`, sin valor real.)
+
+integralo al front
