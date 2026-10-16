@@ -68,13 +68,13 @@ Camino: **01 → 03 → 10 → 11 → 28 → billetera → 30 → 34 → 10**. L
 |---|---|---|---|
 | 1:40 | 01 Bienvenida — "Ahorre en familia. Aunque vivan en países distintos." | Tocar **A+** una vez, mostrar la letra grande, volver | "Así abre. Una sola idea. Y este botón agranda la letra, para Doña Rosa." |
 | 1:55 | 03 Entrar | Entrar como Andrés [CONFIRMAR cómo: 03 con `andres` o selector demo] | "Entra Andrés, desde España." |
-| 2:05 | 10 Mi natillera — "Entre todos llevan $150.000" | Señalar fondo, estado y "Lo último que pasó" | "Aquí está todo: el fondo, lo que lleva cada uno. Andrés va atrasado." [CONFIRMAR que el estado de Andrés diga "Falta…"] |
-| 2:20 | 11 Poner la cuota — "Llega a la natillera $50.000 · Sale de su billetera 11,00 € · Costo del envío 0,13 €" | Elegir "¿A nombre de quién?" y tocar **Poner la cuota** | "Andrés pone en euros. A la natillera le llegan pesos. Antes de tocar nada ya sabe cuánto sale, cuánto llega y cuánto cuesta." [CONFIRMAR cifra: 11,00 € o 11,13 €] |
+| 2:05 | 10 Mi natillera — "Entre todos llevan $150.000" | Señalar fondo, estado y "Lo último que pasó" | "Aquí está todo: el fondo, lo que lleva cada uno. Andrés va atrasado." (Andrés sale "Falta 1") |
+| 2:20 | 11 Poner la cuota — "Llega a la natillera $50.000 · Sale de su billetera 11,13 € · Costo del envío 0,13 €" | Elegir "¿A nombre de quién?" y tocar **Poner la cuota** | "Andrés pone en euros. A la natillera le llegan pesos. Antes de tocar nada ya sabe cuánto sale, cuánto llega y cuánto cuesta." (11,13 € = 11,00 € de cuota + 0,13 € de costo; lo mismo en la 34) |
 | 2:40 | 28 "Va a su billetera" — 1. Se abre · 2. Aprobar · 3. Vuelve sola | Leer los tres pasos con el dedo; **Ir a la billetera** | "Le contamos qué va a pasar, en tres pasos. Nadie se pierde." |
 | 2:50 | Billetera (Test Wallet o diálogo de demo) — "Aprobar / Rechazar" | **Aprobar** | "La app nunca toca la plata. Andrés da el permiso en su propia billetera. Por debajo va **Interledger, con Open Payments: la tubería** que mueve la plata entre billeteras y entre monedas." *(única mención)* |
 | 3:10 | 30 "Volviendo de su billetera… Estamos confirmando lo que usted decidió." | Esperar | (pausa corta) |
-| 3:15 | 34 ✓ "Cuota puesta · Llegó a la natillera $50.000 · Salió de su billetera 11,00 €" | **Listo** | "Cuota puesta. Desde España, en menos de un minuto." [CONFIRMAR tiempo] |
-| 3:22 | 10 otra vez — "Lo último que pasó": Andrés +$50.000 | Señalar el nuevo aporte | "Y Doña Rosa lo ve de una. Sin cuaderno, sin pantallazos." |
+| 3:15 | 34 ✓ "Cuota puesta · Llegó a la natillera $50.000 · Salió de su billetera 11,13 €" | **Listo** | "Cuota puesta. Desde España, en menos de un minuto." [CONFIRMAR tiempo] |
+| 3:22 | 10 otra vez — "Lo último que pasó": Andrés +$50.000, fondo $200.000, Andrés "Al día" | Señalar el nuevo aporte y el "Al día" | "Y Doña Rosa lo ve de una. Sin cuaderno, sin pantallazos." |
 
 Si se demo en modo ejemplo, decirlo sin pena en 1:40: *"Les mostramos la app con datos de ejemplo; el pago real con billetera de prueba está en el video."* [CONFIRMAR modo de la demo]
 

@@ -1,0 +1,469 @@
+openapi: 3.1.0
+info:
+  title: Natillera sin Fronteras — API que consume la app
+  version: 2026-10-16
+  description: |
+    Contrato que implementa el front en src/api/httpApi.ts (tipos en src/api/types.ts).
+    Escrito por el front el 2026-10-16 ~16:30 a partir de docs/api-contrato.md y de los tipos reales;
+    el back lo citaba como fuente de verdad pero no existía. Si el back cambia una ruta o un nombre,
+    se corrige aquí y en httpApi.ts (nunca en las pantallas).
+
+    Reglas:
+    - Registro y login NO pasan por esta API: van directo a Cognito (docs/api-contrato.md).
+    - Todo lleva `Authorization: Bearer <AccessToken de Cognito>`. El usuario sale de
+      `requestContext.authorizer.jwt.claims` (`sub`, `username`), nunca del body.
+    - Montos: `Amount` en unidades menores, `value` siempre string.
+    - Errores: `{ error, message }` con su status. La app muestra su propio texto según el status.
+    - P0 (pago real del video): /me, /natilleras/mine, POST /payments, /payments/{id}/finish, GET /payments/{id}.
+servers:
+  - url: https://{apiId}.execute-api.us-east-2.amazonaws.com
+    variables:
+      apiId: { default: pendiente }
+security:
+  - cognitoJwt: []
+
+paths:
+  /me:
+    get:
+      summary: "[P0] Usuario que entró (flujo 13)"
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/User" } } } }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /wallets/verify:
+    get:
+      summary: Verificar una billetera (con sesión). Sin sesión la app consulta la dirección pública
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/WalletInfo" } } } }
+
+  /natilleras/mine:
+    get:
+      summary: "[P0] Mi natillera (flujo 13). null si no está en ninguna"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: { oneOf: [ { $ref: "#/components/schemas/Natillera" }, { type: "null" } ] }
+
+  /natilleras:
+    post:
+      summary: Crear natillera (flujo 7)
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/CreateNatilleraInput" } } }
+      responses:
+        "201": { description: Creada, content: { application/json: { schema: { $ref: "#/components/schemas/Natillera" } } } }
+
+  /invitations/{code}:
+    get:
+      summary: Vista previa de una invitación (flujo 8)
+      parameters: [ { name: code, in: path, required: true, schema: { type: string } } ]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/InvitationPreview" } } } }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /natilleras/join:
+    post:
+      summary: Unirse con el código (flujo 8)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [natilleraInvitation], properties: { natilleraInvitation: { type: string } } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Natillera" } } } }
+
+  /payments/preview:
+    post:
+      summary: (Opcional) Cotizar sin crear grant. Si responde 404, la app dice «se calcula al confirmar»
+      requestBody:
+        required: true
+        content: { application/json: { schema: { $ref: "#/components/schemas/PaymentBody" } } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/QuotePreview" } } } }
+
+  /payments:
+    post:
+      summary: "[P0] Iniciar pago (flujo 3): incoming + quote + grant interactivo"
+      description: |
+        `returnUrl` va como `interact.finish.uri` agregándole `?paymentId=<id>`. Aceptar solo
+        `natillera://retorno` y `exp://<host>:<puerto>/--/retorno`; cualquier otra → 400.
+        Guardar en payments-history: paymentId, sub, quoteId, incomingPaymentId, continueUri,
+        continueToken, nonce, status pending y montos.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/PaymentBody"
+                - type: object
+                  required: [returnUrl]
+                  properties: { returnUrl: { type: string, examples: ["natillera://retorno"] } }
+      responses:
+        "201": { description: Creado, content: { application/json: { schema: { $ref: "#/components/schemas/WalletRedirect" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+    get:
+      summary: Mi historial (flujo 13)
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/Payment" } } } } }
+
+  /payments/{paymentId}/finish:
+    post:
+      summary: "[P0] Finalizar (flujo 4): continue con interact_ref + outgoing payment"
+      description: |
+        Validar que el paymentId sea del `sub` del token y verificar el `hash` con el nonce guardado.
+        La app también manda `result`: ignorarlo. Idempotente: si ya terminó, devolver el estado guardado.
+      parameters: [ { $ref: "#/components/parameters/PaymentId" } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                interact_ref: { type: string }
+                hash: { type: string }
+                result: { type: string, description: Ignorar }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Payment" } } } }
+
+  /payments/{paymentId}:
+    get:
+      summary: "[P0] Estado del pago (la pantalla 30 consulta hasta un estado final)"
+      parameters: [ { $ref: "#/components/parameters/PaymentId" } ]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Payment" } } } }
+        "404": { $ref: "#/components/responses/Error" }
+
+  /accounts:
+    get:
+      summary: Cuentas guardadas (flujo 13)
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/SavedAccount" } } } } }
+    post:
+      summary: Guardar cuenta con nombre amigable (flujo 5)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [walletAddress, customWalletName], properties: { walletAddress: { type: string }, customWalletName: { type: string } } }
+      responses:
+        "201": { description: Creada, content: { application/json: { schema: { $ref: "#/components/schemas/SavedAccount" } } } }
+
+  /recurring:
+    post:
+      summary: Cuota automática (flujo 12) — grant interactivo con limits + interval
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Amount"
+                - type: object
+                  required: [natilleraId, returnUrl]
+                  properties:
+                    natilleraId: { type: string }
+                    author: { type: string, description: sub del socio a cuyo nombre queda (opcional) }
+                    returnUrl: { type: string }
+      responses:
+        "201": { description: Creado, content: { application/json: { schema: { $ref: "#/components/schemas/RecurringGrant" } } } }
+
+  /recurring/{grantId}/finish:
+    post:
+      summary: Activar la cuota automática (flujo 12)
+      parameters: [ { $ref: "#/components/parameters/GrantId" } ]
+      requestBody: { content: { application/json: { schema: { $ref: "#/components/schemas/WalletReturnBody" } } } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/RecurringGrant" } } } }
+
+  /recurring/{grantId}/charge-now:
+    post:
+      summary: (Demo) Cobrar ya una cuota con el grant guardado
+      parameters: [ { $ref: "#/components/parameters/GrantId" } ]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/Payment" } } } }
+
+  /loans/simulate:
+    get:
+      summary: Simular préstamo (flujo 10)
+      parameters:
+        - { name: value, in: query, required: true, schema: { type: string } }
+        - { name: assetCode, in: query, required: true, schema: { type: string } }
+        - { name: assetScale, in: query, required: true, schema: { type: integer } }
+        - { name: installments, in: query, required: true, schema: { type: integer } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/LoanSimulation" } } } }
+
+  /loans/requests:
+    post:
+      summary: Pedir préstamo (flujo 10)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Amount"
+                - type: object
+                  required: [natilleraId, installments]
+                  properties: { natilleraId: { type: string }, installments: { type: integer } }
+      responses:
+        "201": { description: Creada, content: { application/json: { schema: { $ref: "#/components/schemas/LoanRequest" } } } }
+    get:
+      summary: Solicitudes pendientes (tesorera, flujo 13)
+      parameters: [ { name: status, in: query, schema: { type: string, enum: [pending] } } ]
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/LoanRequest" } } } } }
+
+  /loans/requests/{requestId}/repayment-grant:
+    post:
+      summary: Autorizar el cobro de las cuotas antes del desembolso (flujo 12B)
+      parameters: [ { $ref: "#/components/parameters/RequestId" } ]
+      requestBody:
+        required: true
+        content: { application/json: { schema: { type: object, required: [returnUrl], properties: { returnUrl: { type: string } } } } }
+      responses:
+        "201": { description: Creado, content: { application/json: { schema: { $ref: "#/components/schemas/RecurringGrant" } } } }
+
+  /loans/repayment/{grantId}/finish:
+    post:
+      summary: Activar el cobro de cuotas (flujo 12B)
+      parameters: [ { $ref: "#/components/parameters/GrantId" } ]
+      requestBody: { content: { application/json: { schema: { $ref: "#/components/schemas/WalletReturnBody" } } } }
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/RecurringGrant" } } } }
+
+  /loans/requests/{requestId}/decision:
+    post:
+      summary: La tesorera aprueba (y desembolsa) o rechaza (flujo 11)
+      parameters: [ { $ref: "#/components/parameters/RequestId" } ]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [accepted, returnUrl], properties: { accepted: { type: boolean }, returnUrl: { type: string } } }
+      responses:
+        "200":
+          description: "Rechazada → { status: rejected }. Aprobada → WalletRedirect del desembolso"
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - { type: object, required: [status], properties: { status: { const: rejected } } }
+                  - allOf:
+                      - { type: object, required: [status], properties: { status: { const: approved } } }
+                      - $ref: "#/components/schemas/WalletRedirect"
+
+  /loans/mine:
+    get:
+      summary: Mi solicitud y mi préstamo (flujo 13)
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/MyLoans" } } } }
+
+components:
+  securitySchemes:
+    cognitoJwt: { type: http, scheme: bearer, bearerFormat: JWT, description: AccessToken de Cognito (us-east-2_2pQzW95IK) }
+  parameters:
+    PaymentId: { name: paymentId, in: path, required: true, schema: { type: string } }
+    GrantId: { name: grantId, in: path, required: true, schema: { type: string } }
+    RequestId: { name: requestId, in: path, required: true, schema: { type: string } }
+  responses:
+    Error:
+      description: Error
+      content:
+        application/json:
+          schema: { type: object, required: [error], properties: { error: { type: string }, message: { type: string } } }
+  schemas:
+    Amount:
+      type: object
+      required: [value, assetCode, assetScale]
+      properties:
+        value: { type: string, description: Unidades menores, examples: ["5000000"] }
+        assetCode: { type: string, examples: [COP] }
+        assetScale: { type: integer, examples: [2] }
+    User:
+      type: object
+      required: [userId, username, walletAddress, assetCode, assetScale]
+      properties:
+        userId: { type: string, description: sub de Cognito }
+        username: { type: string }
+        displayName: { type: string, description: Opcional; si falta, la app usa username }
+        email: { type: string }
+        phone: { type: string }
+        walletAddress: { type: string }
+        assetCode: { type: string }
+        assetScale: { type: integer }
+    WalletInfo:
+      type: object
+      required: [exists, walletAddress]
+      properties:
+        exists: { type: boolean }
+        walletAddress: { type: string }
+        assetCode: { type: string }
+        assetScale: { type: integer }
+    Member:
+      type: object
+      required: [userId, name, isAdmin, total, status, pendingCount]
+      properties:
+        userId: { type: string, description: El mismo sub que GET /me devuelve en userId }
+        name: { type: string }
+        isAdmin: { type: boolean }
+        total: { $ref: "#/components/schemas/Amount" }
+        status: { type: string, enum: [al-dia, debe] }
+        pendingCount: { type: integer }
+    NatilleraRecord:
+      type: object
+      required: [id, authorName, paidByName, amount, createdAt]
+      properties:
+        id: { type: string }
+        authorName: { type: string, description: A nombre de quién quedó el aporte }
+        paidByName: { type: string, description: Quién lo pagó }
+        amount: { $ref: "#/components/schemas/Amount" }
+        createdAt: { type: string, format: date-time }
+    Natillera:
+      type: object
+      required: [natilleraId, natilleraName, walletAddress, asset, quota, invitationCode, joinUrl, isAdmin, fundTotal, myTotal, myStatus, members, lastRecords]
+      properties:
+        natilleraId: { type: string }
+        natilleraName: { type: string }
+        walletAddress: { type: string, description: Billetera del fondo }
+        asset: { type: object, properties: { assetCode: { type: string }, assetScale: { type: integer } } }
+        quota: { $ref: "#/components/schemas/Amount" }
+        invitationCode: { type: string, description: En ARQUITECTURA.md natilleraInvitation }
+        joinUrl: { type: string, description: En ARQUITECTURA.md joinNatilleraUrl }
+        isAdmin: { type: boolean }
+        fundTotal: { $ref: "#/components/schemas/Amount" }
+        myTotal: { $ref: "#/components/schemas/Amount" }
+        myStatus: { type: string, enum: [al-dia, debe] }
+        members: { type: array, items: { $ref: "#/components/schemas/Member" } }
+        lastRecords: { type: array, items: { $ref: "#/components/schemas/NatilleraRecord" }, description: Más reciente primero }
+    CreateNatilleraInput:
+      type: object
+      required: [natilleraName, walletAddress]
+      properties: { natilleraName: { type: string }, walletAddress: { type: string } }
+    InvitationPreview:
+      type: object
+      required: [code, natilleraName, adminName, quota]
+      properties:
+        code: { type: string }
+        natilleraName: { type: string }
+        adminName: { type: string }
+        quota: { $ref: "#/components/schemas/Amount" }
+    PaymentBody:
+      description: El monto va aplanado (value, assetCode, assetScale) junto a los demás campos
+      oneOf:
+        - allOf:
+            - $ref: "#/components/schemas/Amount"
+            - type: object
+              required: [kind, natilleraId]
+              properties:
+                kind: { const: aporte }
+                natilleraId: { type: string }
+                author: { type: string, description: sub del socio a cuyo nombre queda (opcional; por defecto quien paga) }
+        - allOf:
+            - $ref: "#/components/schemas/Amount"
+            - type: object
+              required: [kind, customWalletName]
+              properties:
+                kind: { const: p2p }
+                customWalletName: { type: string }
+    QuotePreview:
+      type: object
+      required: [debitAmount, receiveAmount]
+      properties:
+        debitAmount: { $ref: "#/components/schemas/Amount" }
+        receiveAmount: { $ref: "#/components/schemas/Amount" }
+        fee: { $ref: "#/components/schemas/Amount" }
+    WalletRedirect:
+      type: object
+      required: [paymentId, redirectUrl]
+      properties:
+        paymentId: { type: string }
+        redirectUrl: { type: string, description: grant.interact.redirect (https de *.interledger-test.dev) }
+        debitAmount: { $ref: "#/components/schemas/Amount" }
+        receiveAmount: { $ref: "#/components/schemas/Amount" }
+    Payment:
+      type: object
+      required: [paymentId, kind, status, counterpartName, createdAt]
+      properties:
+        paymentId: { type: string }
+        kind: { type: string, enum: [p2p, aporte, prestamo] }
+        status: { type: string, enum: [pending, completed, rejected, failed] }
+        counterpartName: { type: string, description: A quién se pagó (natillera o cuenta) }
+        debitAmount: { $ref: "#/components/schemas/Amount" }
+        receiveAmount: { $ref: "#/components/schemas/Amount" }
+        createdAt: { type: string, format: date-time }
+    SavedAccount:
+      type: object
+      required: [customWalletName, walletAddress, assetCode, assetScale]
+      properties:
+        customWalletName: { type: string }
+        walletAddress: { type: string }
+        assetCode: { type: string }
+        assetScale: { type: integer }
+    RecurringGrant:
+      type: object
+      required: [grantId, redirectUrl, limitPerCharge, repetitions, status]
+      properties:
+        grantId: { type: string }
+        redirectUrl: { type: string }
+        limitPerCharge: { $ref: "#/components/schemas/Amount" }
+        repetitions: { type: integer }
+        status: { type: string, enum: [pending, active, rejected] }
+    WalletReturnBody:
+      type: object
+      properties:
+        interact_ref: { type: string }
+        hash: { type: string }
+        result: { type: string, description: Ignorar }
+    Installment:
+      type: object
+      required: [n, capital, interest, total, status]
+      properties:
+        n: { type: integer }
+        capital: { $ref: "#/components/schemas/Amount" }
+        interest: { $ref: "#/components/schemas/Amount" }
+        total: { $ref: "#/components/schemas/Amount" }
+        status: { type: string, enum: [pagada, pendiente, en-mora] }
+    LoanSimulation:
+      type: object
+      required: [amount, installments, receiveAmount, highestInstallment, schedule]
+      properties:
+        amount: { $ref: "#/components/schemas/Amount" }
+        installments: { type: integer }
+        receiveAmount: { $ref: "#/components/schemas/Amount" }
+        highestInstallment: { $ref: "#/components/schemas/Amount" }
+        schedule: { type: array, items: { $ref: "#/components/schemas/Installment" } }
+    LoanRequest:
+      type: object
+      required: [requestId, natilleraId, requesterName, amount, installments, repaymentAuthorized, status, createdAt]
+      properties:
+        requestId: { type: string }
+        natilleraId: { type: string }
+        requesterName: { type: string }
+        amount: { $ref: "#/components/schemas/Amount" }
+        installments: { type: integer }
+        repaymentAuthorized: { type: boolean }
+        status: { type: string, enum: [pending, approved, rejected] }
+        createdAt: { type: string, format: date-time }
+    Loan:
+      type: object
+      required: [loanId, request, disbursed, balance, schedule]
+      properties:
+        loanId: { type: string }
+        request: { $ref: "#/components/schemas/LoanRequest" }
+        disbursed: { type: boolean }
+        receivedAmount: { $ref: "#/components/schemas/Amount" }
+        balance: { $ref: "#/components/schemas/Amount" }
+        schedule: { type: array, items: { $ref: "#/components/schemas/Installment" } }
+    MyLoans:
+      type: object
+      required: [request, loan]
+      properties:
+        request: { oneOf: [ { $ref: "#/components/schemas/LoanRequest" }, { type: "null" } ] }
+        loan: { oneOf: [ { $ref: "#/components/schemas/Loan" }, { type: "null" } ] }

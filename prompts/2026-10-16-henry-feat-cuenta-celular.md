@@ -78,3 +78,49 @@ Ya acepté la invitación. Sube feat/cuenta-celular a origin (y a mi fork) y red
 
 ## 15:45
 actualiza el repo y el expo go no lo hago ni lo tengo yo, ese lo hace camilo en su pc
+
+## 15:21 · sesión 2fa70ba0
+
+Debes dame en html didáctico para el picht y todo lo que me sea de ayuda para prepara la presentacion mañana
+
+## 15:25 · sesión 2fa70ba0
+
+Sí, arregla en mockApi.ts que Andrés quede Al día después de pagar y que la cifra que sale coincida en las pantallas 11 y 34.
+
+## 15:29 · sesión 2fa70ba0
+
+hazlo
+
+## 15:30 · sesión 2fa70ba0
+
+Sí, sube feat/cuenta-celular a origin.
+
+## 15:50 · esta sesión (a mano: el hook no la registra)
+Mejor las slides primero (T4). Te paso el link de la plantilla oficial.
+
+## 15:55 · esta sesión (a mano: el hook no la registra)
+enfócate tu en lo del front, verifica la documentación que este al dia y en que le podemos ayudar a los del back para coordinar y llevarlos a mismo nivel,  además  todo este en orden y que no halla nada suelto o que nos pueda fallar despues.
+
+## 15:47 · sesión 2fa70ba0
+
+mejora esta parte y haz que yo pueda editar los texto o agregarle mas
+
+## 16:05 · esta sesión (a mano: el hook no la registra)
+Sí. Redáctame el mensaje para Duvan y David con el link a docs/COORDINACION-BACK.md, ofreciendo escribir las Lambdas de natillera y GET /payments/{id}.
+
+## 16:30 · esta sesión (a mano: el hook no la registra)
+Ahora deberás poner todos los archivos y carpetas en una sola principal para este  proyecto, fíjate que no quede nada suelto. y dime en que punto estamos
+
+## 15:51 · sesión 2fa70ba0
+
+Sí, sube feat/cuenta-celular a origin con los 4 commits.
+
+## 15:53 · sesión 6902c76c
+
+cual es la contraseña del usuario que creaste para lña prueba front
+
+## 16:50 · esta sesión (a mano: el hook no la registra)
+Ya terminó la sesión del pitch. Mueve natillera-front a Desktop\Natillera-sin-Fronteras y cambia esta sesión a la nueva ruta.
+
+## 16:55 · esta sesión (a mano: el hook no la registra)
+Ya archivé la sesión del pitch. Mueve natillera-front ahora.

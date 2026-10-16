@@ -51,3 +51,16 @@ test('p2p con cuenta guardada', async () => {
   assert.equal((await api.getPayment(s2.paymentId)).status,'rejected');
   await assert.rejects(()=>api.saveAccount('luz-sin-https','X'));
 });
+test('camino del pitch: Andrés debe una cuota, la pone en euros y queda al día', async () => {
+  await api.login('andres','x');
+  const before = await api.getMyNatillera();
+  assert.equal(before.myStatus,'debe');
+  const input={kind:'aporte',natilleraId:before.natilleraId,amount:cop(50000)};
+  const s=await api.startPayment(input);
+  assert.equal(s.debitAmount.assetCode,'EUR');
+  assert.equal(s.receiveAmount.assetCode,'COP');
+  await api.finishPayment(s.paymentId,{result:'ok',interactRef:'demo'});
+  const after = await api.getMyNatillera();
+  assert.equal(after.myStatus,'al-dia');
+  assert.equal(after.members.find(m=>m.name==='Andrés').status,'al-dia');
+});

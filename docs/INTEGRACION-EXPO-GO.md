@@ -75,7 +75,7 @@ En Expo Go la billetera devuelve a `exp://<IP>:8081/--/retorno` (no a `natillera
 | 2 | 02 · billetera real de la Test Wallet → "Verificar la billetera" | Muestra la moneda. Si falla, revisar que la URL responda JSON al `GET` |
 | 3 | 02 · registro real (usuario nuevo, `+57` + 10 dígitos, contraseña tipo `Clave#2026`) | Entra solo a la app |
 | 4 | 02 · usuario repetido | "Ese usuario ya existe. Elija otro." |
-| 5 | 02 · wallet falsa (si pasa la verificación) o correo/teléfono ya usados | Motivo del back, **sin** "PreSignUp failed…" |
+| 5 | 02 · wallet falsa (si pasa la verificación) o correo/teléfono ya usados | «No encontramos esa billetera…», «Ese correo ya tiene una cuenta.» o «Ese teléfono ya tiene una cuenta.» (nunca "PreSignUp failed…"; probado por terminal el 16/10 ~16:00) |
 | 6 | 03 · login con clave mala | "Usuario o contraseña incorrectos." |
 | 7 | 11 → 28 → Test Wallet → 30 → 34 con el back | Cuota puesta y aporte en "Lo último que pasó" |
 | 8 | Préstamo completo con dos usuarios (uno pide, la tesorera aprueba) | 16 → 17 → 19 · 21 → 23 · 24 |
@@ -86,7 +86,8 @@ En Expo Go la billetera devuelve a `exp://<IP>:8081/--/retorno` (no a `natillera
 |---|---|
 | ~~Camilo (`base`)~~ | ~~`config.ts` región~~ **Hecho por Henry:** `us-east-2` por defecto |
 | ~~Camilo (`base`)~~ | ~~`web.output`~~ **Hecho por Henry:** `"single"` (estático, probado); reversible |
-| Camilo (`base`) | Pendientes de la [auditoría](auditoria-2026-10-16.md): `RevokeToken` al salir, `.gitignore` con `.env*`, patrones extra en el hook de prompts |
-| Back | `returnUrl` con lista exacta (`natillera://retorno` y `exp://…/--/retorno`); ignorar el `result` del cliente; validar dueño del `paymentId` |
+| ~~Camilo (`base`)~~ | ~~Pendientes de la auditoría~~ **Hechos por Henry:** `RevokeToken` al salir, `.gitignore` con `.env*`, patrones extra en el hook |
+| Back | Todo lo del back, priorizado y con formatos JSON: [COORDINACION-BACK.md](COORDINACION-BACK.md) |
+| Camilo | APK: `eas.json` (perfil `preview`) ya está; `npx eas-cli build -p android --profile preview` con su cuenta de Expo |
 | Henry | Test Wallet (3 cuentas, ¿COP?, ¿`natillera://` como finish URI?), curso, slides con [pitch/GUION.md](pitch/GUION.md) |
 | Henry | Pulido hecho en `feat/cuenta-celular` (copiar invitación, botón volver, textos de más impacto); el resto de [copy-henry.md](copy-henry.md) queda como propuesta |

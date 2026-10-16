@@ -1,6 +1,6 @@
 import * as Linking from 'expo-linking';
 
-import { getAuthToken, getIdTokenClaims, signIn, signOut, signUp } from './auth';
+import { getAuthToken, getIdTokenClaims, normalizeWalletAddress, signIn, signOut, signUp } from './auth';
 import { ApiError, type NatilleraApi } from './client';
 import { config } from './config';
 import type {
@@ -29,11 +29,7 @@ type Method = 'GET' | 'POST';
 // Acepta la URL completa, `$ilp.interledger-test.dev/x` o solo el id de la Test Wallet.
 async function lookupPublicWallet(input: string): Promise<WalletInfo> {
   const raw = input.trim();
-  const url = raw.startsWith('$')
-    ? `https://${raw.slice(1)}`
-    : /^https?:\/\//i.test(raw)
-      ? raw
-      : `https://ilp.interledger-test.dev/${raw.replace(/^\/+/, '')}`;
+  const url = normalizeWalletAddress(raw);
   let response: Response;
   try {
     response = await fetch(url, { headers: { Accept: 'application/json' } });
@@ -125,6 +121,7 @@ export const httpApi: NatilleraApi = {
   login: (username, password) => signIn(username, password),
   logout: () => signOut(),
   hasSession: async () => (await getAuthToken()) !== null,
+  // El GET /me del back trae la fila de Users-info (sin displayName): toUser lo completa con el usuario.
   getMe: async () => {
     if (!config.apiUrl) return profileFromToken();
     return toUser(await request<BackUser>('GET', '/me'), await getIdTokenClaims());

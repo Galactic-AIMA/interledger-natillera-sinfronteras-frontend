@@ -2,6 +2,8 @@
 
 Basado en `docs/ARQUITECTURA.md` (rama `david` del back, transcripción del draw.io página 3). Las rutas son **propuesta del front** hasta que Duvan y David las confirmen; cuando el back publique las suyas, se actualiza este archivo y `src/api/httpApi.ts`, nunca las pantallas.
 
+> **Actualización 2026-10-16 ~16:45 (Henry):** `openapi.yaml` no existía en ningún repo, aunque el back lo cita como fuente de verdad. Ahora está en este repo: [openapi.yaml](openapi.yaml), escrito a partir de este archivo y de `src/api/types.ts`, con las 20 rutas y las P0 marcadas. Camino mínimo para el pago real y estado del back: [COORDINACION-BACK.md](COORDINACION-BACK.md).
+>
 > **Fuente de verdad (decisión de Camilo, 2026-10-16):** `docs/openapi.yaml` en el repo back; este archivo es el resumen del front. Si difieren, manda el OpenAPI. El proceso conjunto está en `docs/INTEGRACION.md` del back (rama `docs/integracion-front`, por subir). Hasta que el back apruebe el borrador, nada es definitivo. Mientras tanto el front trabaja solo con mocks hasta la madrugada.
 
 Estado 2026-10-16 ~15:50: en el back solo existe `GET /me` (URL del API sin publicar). `start-payment` está documentado como `POST /payments/start` (el front usa `POST /payments`: alinear). Mientras tanto el front corre en modo híbrido (`src/api/hybridApi.ts`).

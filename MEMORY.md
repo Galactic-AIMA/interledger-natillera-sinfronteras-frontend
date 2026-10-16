@@ -34,6 +34,8 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 
 ## Propuestas al back (pendientes de respuesta)
 
+> **2026-10-16 ~16:00:** estado real del back verificado (solo Cognito + pre-signup desplegados; pagos sin código) y pedidos priorizados con formatos JSON en [docs/COORDINACION-BACK.md](docs/COORDINACION-BACK.md). Esa lista manda sobre la de abajo.
+
 1. `finish.uri` https del back que verifique el hash y responda 302 a `natillera://retorno?paymentId=…&result=…` (su flujo 4 manda `interact_ref` desde la app sin verificar el hash). El front soporta ambos.
 2. Que "iniciar pago" devuelva también `debitAmount` y `receiveAmount` de la quote (pantallas 11, 16, 26, 28).
 3. Endpoint demo `charge-now` para mostrar el cobro recurrente en vivo.
@@ -55,6 +57,8 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 - 2026-10-16 14:10 · de Henry a base: `feat/cuenta-celular` = `feat/creditos` + pulido. Toca `package.json` (solo `expo-clipboard ~58.0.3`) y añade `src/features/navegacion/BackButton.tsx` (no se tocó `src/components`). Si la apruebas, **integra esta rama en vez de `feat/creditos`**.
 - 2026-10-16 15:30 · de Henry a base: `feat/creditos` había seguido avanzando (6 commits) después de abrir `feat/cuenta-celular`; ya están fusionados en `feat/cuenta-celular`. Incluye cambios en tus archivos (`config.ts` → `us-east-2`, `app.json` `web.output` → `single`, `RevokeToken`/`friendlyError` en `auth.ts`/`httpApi.ts`, `.gitignore`, hook): revísalos en el PR, todos reversibles.
 - 2026-10-16 15:45 · de Henry a base: Henry aceptó la invitación y subió **`feat/cuenta-celular` al repo del equipo** (`b7729fa`, 22 commits por delante de `main` y 0 por detrás). PR: https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/compare/main...feat/cuenta-celular. **Henry no tiene Expo Go:** las 8 pruebas en celular de [docs/INTEGRACION-EXPO-GO.md](docs/INTEGRACION-EXPO-GO.md) (Cognito real, Test Wallet, back) las haces tú en tu PC. Henry sigue con Test Wallet, slides y la entrega.
+- 2026-10-16 16:00 · de Henry a base: tres cambios en tus archivos, todos para que la demo y el registro real no fallen: (1) `mockApi.ts`: cuotas exigidas a la fecha = 1 (antes 2), así Andrés queda «al día» al poner la cuota en el camino del pitch (prueba nueva en `tests/e2e.test.mjs`); (2) `auth.ts`: la billetera va a Cognito como URL https (el pre-signup rechazaba `$ilp…`, probado) y los 5 motivos en inglés del pre-signup se traducen a «usted»; (3) `httpApi.ts`: `getMe` usa `username` si el back no manda `displayName`. Además `eas.json` (perfil `preview`, APK) para el build. `tsc` limpio, `npm test` 9/9.
+- 2026-10-16 16:45 · de Henry a base y back: **`docs/openapi.yaml` no existía** (el back lo cita como fuente de verdad). Creado desde `api-contrato.md` + `types.ts`: 20 rutas, P0 marcadas. `main` (`b5f40ac`) traía la rama solo hasta `b7729fa`; ya se fusionó en `feat/cuenta-celular` sin conflictos. Falta llevar a `main` lo de después (`879a239`, `4ce0df4` y esto): mismo PR `main...feat/cuenta-celular`.
 - Formato: `AAAA-MM-DD HH:MM · de <carril> a <carril>: <qué>`
 - ~~2026-10-16 12:45 · de pagos a base: 4 arreglos en archivos compartidos~~ **Hecho por Henry 13:00 (Camilo descansando)**: (logout con `RevokeToken`, errores no-JSON en `httpApi`, `.gitignore` con `.env*`, patrones del hook). Lista en [docs/auditoria-2026-10-16.md](docs/auditoria-2026-10-16.md).
 - 2026-10-16 12:45 · de pagos a back (Camilo, reenviar a Duvan y David): el back aún no tiene código y sus rutas tentativas no cuadran con el contrato. Prioridad: `GET /payments/{id}` → `returnUrl` (lista blanca) y `debitAmount`/`receiveAmount` al iniciar → `charge-now`. Opción B con hash obligatorio; ignorar `result` del cliente; `natilleraId`. Detalle en el mismo doc.
@@ -132,4 +136,5 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 ### pitch
 - 2026-10-16 ~12:45 — (Henry, otra sesión de Claude) Guion de 5 min y contexto con fuentes en [docs/pitch/](docs/pitch/); lo no respaldado por el repo va marcado [CONFIRMAR]. Faltan las slides en la plantilla oficial.
 - 2026-10-16 ~13:10 (Henry) — Borrador de guion de otra sesión fusionado en [docs/pitch/GUION.md](docs/pitch/GUION.md) (canónico); el duplicado `docs/pitch-guion.md` se quitó.
+- 2026-10-16 ~15:30 (Henry) — Página de preparación del pitch: [docs/pitch/preparacion.html](docs/pitch/preparacion.html) (ábrala en el navegador). Andrés ya queda «Al día» tras pagar (arreglo de `mockApi.ts` en la sesión de integración); las pantallas 11 y 34 coinciden en «sale 11,13 €» (cuota 11,00 € + costo 0,13 €), y así quedó en el guion.
 - (vacío)

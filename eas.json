@@ -1,0 +1,18 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "local"
+  },
+  "build": {
+    "preview": {
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "env": {
+        "EXPO_PUBLIC_COGNITO_REGION": "us-east-2",
+        "EXPO_PUBLIC_COGNITO_CLIENT_ID": "20b10a2tnnr69lqlp2sf62orv0"
+      }
+    }
+  }
+}

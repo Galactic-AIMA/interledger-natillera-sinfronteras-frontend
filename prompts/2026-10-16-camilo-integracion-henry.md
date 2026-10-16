@@ -32,3 +32,31 @@ Dale, pitch de la por un momento y enfoquémonos entonces en dejar listo todo el
 
 - ¿Cómo conecto la app? → "Híbrido (Recomendado)".
 - URL del HTTP API → "Te la pego"; luego: "esta la tengo que preguntar … todavia no esta".
+
+## Prompt 6
+
+Primero pruebo el login en el emulador y te cuento.
+
+## Prompt 7
+
+Dame el paso a paso para yo hacer la prueba manual.
+
+## Prompt 8
+
+cual fue el usuario y la contraseña qu eintroduciste DE PRUEBA FRONT
+
+## Prompt 9
+
+Entonces, ¿cómo nos damos cuenta cuál fue el usuario? El, si lo creó Henry, entonces, ¿dónde, dónde quedó? ¿En qué, en qué parte del repo?
+
+## Prompt 10
+
+si no colocamos bien la contraseña no ingresa?
+
+## Prompt 11
+
+No nos acordamos de, de la contraseña, entonces creemos un nuevo usuario.
+
+## Prompt 12
+
+(captura de la pantalla 02 con el error "PreSignUp failed with error Invalid wallet address." al usar `$ilp.interledger-test.dev/6e721d02`) estuve creando el usuario tuve este error
