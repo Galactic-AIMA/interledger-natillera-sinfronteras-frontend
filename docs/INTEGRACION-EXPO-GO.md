@@ -2,6 +2,9 @@
 
 De Henry a Camilo. Todo lo de Henry está en **una sola rama**, lista para el PR a `main`. Este documento dice qué trae, cómo probarla en Expo Go y qué queda abierto.
 
+
+> **14:05:** las dos sesiones de Henry quedaron sincronizadas en `feat/creditos` (`093986f`): entraron los arreglos de `base` de la auditoría (`RevokeToken`, `friendlyError`, `.env*`, hook), `npm test` (8/8), región Cognito `us-east-2` por defecto y `web.output` estático. `tsc` limpio.
+
 ## La rama
 
 | Dato | Valor |
