@@ -158,4 +158,4 @@ Camilo cerró en demo los carriles `cuenta-natillera` (ya en `main`) y `pagos` (
 
 **Nota de pagos a base:** `src/api/wallet.ts` ganó un fallback `window.confirm` para que `openWallet` funcione en web; y `mockApi.ts` (~línea 137) devuelve `fee` aunque no haya conversión (la UI ya lo oculta). Ambos están en "Pedidos entre carriles".
 
-**Decisión pendiente de Camilo:** `app.json` `web.output` de `"server"` a `"single"`.
+**Hecho (Henry, 14:05):** `app.json` `web.output` pasó de `"server"` a `"single"`; reversible si Camilo prefiere SSR.

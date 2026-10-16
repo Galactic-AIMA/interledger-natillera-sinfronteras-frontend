@@ -46,3 +46,17 @@ haz la 1 , 3 y 5
 
 ## 15:04
 recopila todo en un promt para pasarme a trabajar en code ya mismo
+
+<!-- Prompts de la otra sesión de claude.ai (rama feat/creditos), unidos al fusionar el 2026-10-16. Literales, sin cambios. -->
+
+## 12:46
+ya nos debemos encargar nosostris por el momento camilo va a descansar, apropiate y continua
+
+## 12:51
+todos los archivos deben quedar en la carpeta del proyecto, y ponla en mi escritorio por favor
+
+## 13:25
+ya tenemos todas las pántallas listas? hazlo sin gastar tokens
+
+## 13:44
+yo creo que la otra sesion lo hizo revisa y actualizate

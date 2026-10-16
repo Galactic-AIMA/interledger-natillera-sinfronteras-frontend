@@ -2,6 +2,9 @@
 
 De Henry a Camilo. Todo lo de Henry está en **una sola rama**, lista para el PR a `main`. Este documento dice qué trae, cómo probarla en Expo Go y qué queda abierto.
 
+
+> **14:05:** las dos sesiones de Henry quedaron sincronizadas en `feat/creditos` (`093986f`): entraron los arreglos de `base` de la auditoría (`RevokeToken`, `friendlyError`, `.env*`, hook), `npm test` (8/8), región Cognito `us-east-2` por defecto y `web.output` estático. `tsc` limpio.
+
 ## La rama
 
 | Dato | Valor |
@@ -80,8 +83,8 @@ En Expo Go la billetera devuelve a `exp://<IP>:8081/--/retorno` (no a `natillera
 
 | Quién | Qué |
 |---|---|
-| Camilo (`base`) | `src/api/config.ts`: `cognitoRegion` por defecto es `us-east-1`; el back está en `us-east-2` (`.env.example` ya lo trae) |
-| Camilo (`base`) | `app.json` `web.output`: `"server"` → `"single"` (decisión pendiente) |
+| ~~Camilo (`base`)~~ | ~~`config.ts` región~~ **Hecho por Henry:** `us-east-2` por defecto |
+| ~~Camilo (`base`)~~ | ~~`web.output`~~ **Hecho por Henry:** `"single"` (estático, probado); reversible |
 | Camilo (`base`) | Pendientes de la [auditoría](auditoria-2026-10-16.md): `RevokeToken` al salir, `.gitignore` con `.env*`, patrones extra en el hook de prompts |
 | Back | `returnUrl` con lista exacta (`natillera://retorno` y `exp://…/--/retorno`); ignorar el `result` del cliente; validar dueño del `paymentId` |
 | Henry | Test Wallet (3 cuentas, ¿COP?, ¿`natillera://` como finish URI?), curso, slides con [pitch/GUION.md](pitch/GUION.md) |
