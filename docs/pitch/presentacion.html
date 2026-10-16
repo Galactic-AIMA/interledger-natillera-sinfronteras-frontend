@@ -1,0 +1,462 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Natillera sin Fronteras · Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Gloock&family=Hanken+Grotesk:wght@400;500;700&family=Martian+Mono:wght@500;700&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+/* ---------- Temas (la apariencia final aún no está decidida) ---------- */
+:root,[data-tema="paleta-g"]{
+  --bg:#F5F6FA; --surface:#FFFFFF; --ink:#1A1B4B; --muted:#5F626B; --accent:#3F4C9A; --accent-ink:#FFFFFF;
+  --money:#2F6F63; --soft:#A7C9B9; --soft2:#E6EFEA; --warn:#B5543F; --line:#DDE1EA; --wallet:#4A0E68;
+  --f-title:"Gloock",Georgia,serif; --f-body:"Hanken Grotesk",system-ui,sans-serif; --f-num:"Martian Mono",ui-monospace,monospace;
+  --title-w:400; --ui-bg:#1A1B4B; --ui-ink:#FFFFFF;
+}
+[data-tema="calido"]{
+  --bg:#FBF4E9; --surface:#FFFDF8; --ink:#3B2416; --muted:#7A5E4B; --accent:#C2562B; --accent-ink:#FFFFFF;
+  --money:#4E7A3A; --soft:#F1D7B8; --soft2:#F7E8D3; --warn:#A3361C; --line:#E8D6BF; --wallet:#5B2A86;
+  --f-title:"Fraunces",Georgia,serif; --f-body:"Nunito",system-ui,sans-serif; --f-num:"Nunito",system-ui,sans-serif;
+  --title-w:800; --ui-bg:#3B2416; --ui-ink:#FFFFFF;
+}
+[data-tema="noche"]{
+  --bg:#12133A; --surface:#1D1F55; --ink:#F3F4FB; --muted:#B4B8D6; --accent:#A7C9B9; --accent-ink:#12133A;
+  --money:#8FD6BF; --soft:#2E5E50; --soft2:#22264F; --warn:#F2A28E; --line:#33367A; --wallet:#6A2C90;
+  --f-title:"Gloock",Georgia,serif; --f-body:"Hanken Grotesk",system-ui,sans-serif; --f-num:"Martian Mono",ui-monospace,monospace;
+  --title-w:400; --ui-bg:#000000; --ui-ink:#FFFFFF;
+}
+[data-tema="alto-contraste"]{
+  --bg:#000000; --surface:#111111; --ink:#FFFFFF; --muted:#E6E6E6; --accent:#FFD400; --accent-ink:#000000;
+  --money:#7CFFB2; --soft:#333333; --soft2:#1A1A1A; --warn:#FF9E80; --line:#FFFFFF; --wallet:#7B2FB0;
+  --f-title:"Atkinson Hyperlegible",system-ui,sans-serif; --f-body:"Atkinson Hyperlegible",system-ui,sans-serif; --f-num:"Atkinson Hyperlegible",system-ui,sans-serif;
+  --title-w:700; --ui-bg:#FFD400; --ui-ink:#000000;
+}
+[data-tema="sencillo"]{
+  --bg:#FFFFFF; --surface:#F4F6FB; --ink:#111111; --muted:#444444; --accent:#0B57D0; --accent-ink:#FFFFFF;
+  --money:#0B7A43; --soft:#D6E4FF; --soft2:#EEF3FF; --warn:#B3261E; --line:#C9CED8; --wallet:#4A0E68;
+  --f-title:"Atkinson Hyperlegible",system-ui,sans-serif; --f-body:"Atkinson Hyperlegible",system-ui,sans-serif; --f-num:"Atkinson Hyperlegible",system-ui,sans-serif;
+  --title-w:700; --ui-bg:#111111; --ui-ink:#FFFFFF;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:#0B0C1E;color:#fff;font-family:"Hanken Grotesk",system-ui,sans-serif;overflow:hidden}
+button,select,input,textarea{font:inherit}
+:focus-visible{outline:3px solid #FFD400;outline-offset:2px}
+
+/* ---------- Escenario 16:9 que se ajusta a la pantalla ---------- */
+#app{display:flex;height:100%}
+#stagewrap{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;min-width:0}
+#stage{width:1280px;height:720px;position:absolute;left:50%;top:50%;transform-origin:center center}
+.slide{position:absolute;inset:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);padding:64px 80px;display:none;overflow:hidden}
+.slide.on{display:block}
+.slide h1,.slide h2{font-family:var(--f-title);font-weight:var(--title-w);margin:0;line-height:1.05;letter-spacing:-.01em}
+.slide h1{font-size:96px}
+.slide h2{font-size:64px;max-width:900px}
+.kicker{font-size:22px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
+.sub{font-size:32px;color:var(--muted);margin-top:18px;max-width:860px;line-height:1.3}
+.num{font-family:var(--f-num);font-weight:700}
+.pageno{position:absolute;right:40px;bottom:28px;font-size:18px;color:var(--muted);font-family:var(--f-num)}
+.brand{position:absolute;left:80px;bottom:28px;font-size:18px;color:var(--muted)}
+.brand b{color:var(--ink)}
+
+/* teléfono */
+.phone{width:262px;aspect-ratio:390/844;border-radius:38px;background:#0E0F24;padding:10px;box-shadow:0 24px 50px rgba(0,0,0,.25);flex:0 0 auto;position:relative}
+.phone img,.phone .wallet{width:100%;height:100%;border-radius:30px;display:block;object-fit:cover;object-position:top}
+.phone.sm{width:182px;border-radius:26px;padding:7px}
+.phone.sm img,.phone.sm .wallet{border-radius:20px}
+.phone.xs{width:196px;border-radius:28px;padding:8px}
+.phone.xs img{border-radius:21px}
+.wallet{background:var(--wallet);color:#fff;display:flex!important;flex-direction:column;padding:26px 18px;font-family:var(--f-body);text-align:left}
+.wallet .wl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.75}
+.wallet .wt{font-size:17px;font-weight:700;margin:14px 0 18px;line-height:1.2}
+.wallet .wr{display:flex;justify-content:space-between;gap:8px;font-size:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.2)}
+.wallet .wr b{font-family:var(--f-num)}
+.wallet .wb{margin-top:auto;display:grid;gap:8px}
+.wallet .wb span{display:block;text-align:center;border-radius:10px;padding:9px;font-weight:700;font-size:13px}
+.wallet .ok{background:#fff;color:var(--wallet)}
+.wallet .no{border:2px solid rgba(255,255,255,.6)}
+.wallet .wnote{font-size:10px;opacity:.6;text-align:center;margin-top:8px}
+
+/* layouts */
+.slide.on.L-portada{display:flex}
+.L-portada{align-items:center;gap:56px}
+.L-portada .txt{flex:1}
+.L-portada .vis{flex:0 0 470px}
+.L-cifras .stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px;margin-top:56px}
+.stat{background:var(--surface);border:2px solid var(--line);border-radius:28px;padding:34px 30px}
+.stat .v{font-family:var(--f-num);font-weight:700;font-size:44px;white-space:nowrap;color:var(--money);line-height:1}
+.stat .l{font-size:26px;margin-top:16px;line-height:1.3}
+.slide.on.L-telefono{display:flex}
+.L-telefono{gap:64px;align-items:center}
+.L-telefono .txt{flex:1}
+.bul{list-style:none;padding:0;margin:34px 0 0;display:grid;gap:18px}
+.bul li{font-size:32px;line-height:1.3;padding-left:46px;position:relative}
+.bul li::before{content:"";position:absolute;left:0;top:.38em;width:24px;height:24px;border-radius:50%;background:var(--soft);box-shadow:inset 0 0 0 5px var(--money)}
+.caption{font-size:20px;color:var(--muted);text-align:center;margin-top:12px;max-width:300px}
+.L-camino .row{display:flex;gap:30px;justify-content:center;align-items:flex-start;margin-top:34px}
+.L-camino .step{display:flex;flex-direction:column;align-items:center;width:210px;position:relative}
+.L-camino .step .n{width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;font-size:22px;margin-bottom:12px}
+.L-camino .step .cap{font-size:20px;text-align:center;margin-top:12px;line-height:1.25}
+.L-camino h2,.L-antes h2{font-size:52px;max-width:none}
+.L-camino .row{margin-top:24px}
+.L-antes .row{display:flex;gap:90px;justify-content:center;align-items:center;margin-top:18px}
+.L-antes .col{display:flex;flex-direction:column;align-items:center}
+.L-antes .arrow{font-size:70px;color:var(--money);font-family:var(--f-num)}
+.L-antes .tag{font-size:22px;font-weight:700;padding:6px 16px;border-radius:999px;margin-bottom:14px;background:var(--soft2)}
+.L-tuberia .pipe{display:grid;grid-template-columns:1fr 70px 1fr 70px 1fr;align-items:center;margin-top:60px}
+.L-tuberia .node{background:var(--surface);border:2px solid var(--line);border-radius:26px;padding:28px;text-align:center;min-height:200px;display:flex;flex-direction:column;justify-content:center}
+.L-tuberia .node b{font-size:30px;display:block}
+.L-tuberia .node span{font-size:22px;color:var(--muted);margin-top:8px;display:block}
+.L-tuberia .node.w{background:var(--wallet);color:#fff;border-color:var(--wallet)}
+.L-tuberia .node.w span{color:#E6D6F2}
+.L-tuberia .node.f{border-color:var(--money)}
+.L-tuberia .ar{text-align:center;font-size:44px;color:var(--accent)}
+.L-tuberia .band{margin-top:34px;padding:20px 26px;border-radius:20px;background:var(--soft2);font-size:26px;text-align:center}
+.L-tuberia .band b{color:var(--money)}
+.slide.on.L-inclusion{display:flex}
+.L-inclusion{gap:56px;align-items:center}
+.L-inclusion .txt{flex:1}
+.L-inclusion .phones{display:flex;gap:22px}
+.L-inclusion .bul{gap:12px;margin-top:26px}
+.L-inclusion .bul li{font-size:26px}
+.L-inclusion h2{font-size:58px}
+.L-equipo .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;margin-top:40px}
+.L-equipo .people{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.person{background:var(--surface);border:2px solid var(--line);border-radius:22px;padding:22px}
+.person .av{width:58px;height:58px;border-radius:50%;background:var(--soft);display:grid;place-items:center;font-size:26px;font-weight:700;color:var(--ink);margin-bottom:10px}
+.person b{font-size:26px;display:block}
+.person span{font-size:20px;color:var(--muted)}
+.slide.on.L-cierre{display:flex}
+.L-cierre{flex-direction:column;justify-content:center;text-align:center;align-items:center}
+.L-cierre h1{font-size:84px;max-width:1050px}
+.L-cierre .sub{margin-left:auto;margin-right:auto;text-align:center}
+.L-cierre .final{margin-top:44px;font-family:var(--f-title);font-weight:var(--title-w);font-size:40px;color:var(--accent)}
+.L-texto .bul li{font-size:34px}
+
+/* ---------- Barra de controles: grande y con palabras ---------- */
+#bar{position:fixed;left:0;right:0;bottom:0;display:flex;gap:10px;align-items:center;justify-content:center;padding:12px;background:rgba(11,12,30,.92);backdrop-filter:blur(6px);z-index:30;transition:transform .25s,opacity .25s;flex-wrap:wrap}
+#bar.hide{transform:translateY(110%);opacity:0}
+#bar button,#bar select{min-height:52px;min-width:52px;padding:0 18px;border-radius:14px;border:2px solid rgba(255,255,255,.25);background:#24264F;color:#fff;font-weight:700;font-size:17px;cursor:pointer}
+#bar button.big{background:#fff;color:#1A1B4B;border-color:#fff;min-width:150px;font-size:19px}
+#bar button[aria-pressed="true"]{background:#A7C9B9;color:#14352D;border-color:#A7C9B9}
+#bar .count{font-family:"Martian Mono",monospace;font-size:17px;min-width:76px;text-align:center}
+#bar select{appearance:none;padding-right:18px}
+#bar .sep{width:1px;height:34px;background:rgba(255,255,255,.2)}
+
+/* notas del presentador */
+#notes{position:fixed;left:0;right:0;bottom:76px;z-index:25;background:#FFFDF2;color:#1A1B4B;padding:16px 24px 18px;font-size:22px;line-height:1.45;max-height:34vh;overflow:auto;border-top:4px solid #A7C9B9;display:none}
+#notes.on{display:block}
+#notes .nh{display:flex;justify-content:space-between;align-items:center;font-family:"Martian Mono",monospace;font-size:15px;color:#5F626B;margin-bottom:6px;gap:12px;flex-wrap:wrap}
+#notes .nh b{font-size:22px;color:#1A1B4B}
+#notes p{margin:.2em 0}
+
+/* ---------- Panel de edición ---------- */
+#edit{width:400px;flex:0 0 400px;background:#F5F6FA;color:#1A1B4B;overflow-y:auto;padding:18px 18px 110px;display:none;border-left:1px solid #DDE1EA}
+#app.editing #edit{display:block}
+#edit h3{font-family:"Gloock",serif;font-weight:400;font-size:24px;margin:4px 0 12px}
+#edit label{display:block;font-size:14px;font-weight:700;margin:12px 0 4px}
+#edit label small{font-weight:400;color:#5F626B}
+#edit input,#edit textarea,#edit select{width:100%;min-height:48px;border:2px solid #DDE1EA;border-radius:12px;padding:10px 12px;background:#fff;color:#1A1B4B;font-size:16px}
+#edit textarea{resize:vertical;line-height:1.45}
+#edit input:focus,#edit textarea:focus,#edit select:focus{outline:none;border-color:#3F4C9A}
+#edit .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+#edit .btns button{min-height:48px;padding:0 14px;border-radius:12px;border:2px solid #DDE1EA;background:#fff;color:#1A1B4B;font-weight:700;cursor:pointer}
+#edit .btns button.pri{background:#3F4C9A;border-color:#3F4C9A;color:#fff}
+#edit .btns button.danger{color:#B5543F;border-color:#EBC2B8}
+#edit .help{font-size:14px;color:#5F626B;background:#fff;border:1px solid #DDE1EA;border-radius:12px;padding:10px 12px;margin:10px 0}
+#edit .saved{font-family:"Martian Mono",monospace;font-size:13px;color:#2F6F63;min-height:18px;margin-top:8px}
+#edit hr{border:0;border-top:1px solid #DDE1EA;margin:20px 0}
+.slide [data-f]{outline:none}
+#app.editing .slide [data-f]:hover{box-shadow:0 0 0 3px rgba(63,76,154,.35);border-radius:6px;cursor:text}
+#app.editing .slide [data-f]:focus{box-shadow:0 0 0 3px #3F4C9A;border-radius:6px}
+
+/* ayuda inicial */
+#help{position:fixed;inset:0;z-index:40;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:16px}
+#help.on{display:flex}
+#help .box{background:#fff;color:#1A1B4B;border-radius:24px;max-width:620px;width:100%;padding:28px;font-size:19px;line-height:1.45;max-height:90vh;overflow:auto}
+#help h3{font-family:"Gloock",serif;font-weight:400;font-size:30px;margin:0 0 10px}
+#help li{margin:6px 0}
+#help kbd{font-family:"Martian Mono",monospace;background:#EEF0F6;border-radius:6px;padding:2px 7px;font-size:16px}
+#help button{margin-top:16px;min-height:56px;width:100%;border-radius:14px;border:0;background:#1A1B4B;color:#fff;font-weight:700;font-size:20px;cursor:pointer}
+
+@media (max-width:820px){
+  #app.editing{flex-direction:column}
+  #app.editing #stagewrap{flex:0 0 42vh}
+  #edit{width:auto;flex:1;border-left:0;border-top:1px solid #DDE1EA}
+  #bar button,#bar select{padding:0 12px;font-size:15px}
+  #bar .opt{display:none}
+}
+
+/* ---------- Imprimir / guardar como PDF: una diapositiva por hoja ---------- */
+@page{size:1280px 720px;margin:0}
+@media print{
+  html,body{overflow:visible;height:auto;background:#fff}
+  #bar,#notes,#edit,#help{display:none!important}
+  #app,#stagewrap{display:block;height:auto;overflow:visible}
+  #stage{position:static;transform:none!important;width:1280px;height:auto}
+  .slide{position:relative;display:block!important;width:1280px;height:720px;page-break-after:always;break-after:page;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .L-portada,.L-telefono,.L-inclusion{display:flex!important}
+  .L-cierre{display:flex!important}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="stagewrap"><div id="stage" aria-live="polite"></div></div>
+  <aside id="edit" aria-label="Editar diapositiva"></aside>
+</div>
+
+<div id="notes" aria-live="polite"></div>
+
+<nav id="bar" aria-label="Controles de la presentación">
+  <button id="prev" aria-label="Diapositiva anterior">← Atrás</button>
+  <span class="count" id="count">1 / 1</span>
+  <button id="next" class="big" aria-label="Diapositiva siguiente">Siguiente →</button>
+  <span class="sep"></span>
+  <button id="fs">⛶ Pantalla completa</button>
+  <button id="nt" aria-pressed="false">Notas</button>
+  <select id="tema" aria-label="Apariencia">
+    <option value="paleta-g">Tema: Paleta G (la app)</option>
+    <option value="calido">Tema: Cálido</option>
+    <option value="noche">Tema: Noche</option>
+    <option value="alto-contraste">Tema: Alto contraste</option>
+    <option value="sencillo">Tema: Sencillo (letra clara)</option>
+  </select>
+  <button id="ed" aria-pressed="false">✎ Editar</button>
+  <button id="pr" class="opt">Guardar PDF</button>
+  <button id="hp" aria-label="Ayuda">?</button>
+</nav>
+
+<div id="help" role="dialog" aria-modal="true" aria-labelledby="help-t">
+  <div class="box">
+    <h3 id="help-t">Cómo se usa</h3>
+    <ul>
+      <li><b>Pasar diapositiva:</b> botón <b>Siguiente →</b>, flecha <kbd>→</kbd>, <kbd>espacio</kbd> o el control remoto (clicker). En el celular, deslice el dedo.</li>
+      <li><b>Volver:</b> <b>← Atrás</b> o <kbd>←</kbd>.</li>
+      <li><b>Pantalla completa:</b> <kbd>F</kbd>. Los botones se esconden solos; mueva el mouse para verlos.</li>
+      <li><b>Notas</b> (<kbd>N</kbd>): lo que se dice en cada diapositiva y un cronómetro.</li>
+      <li><b>Tema:</b> cambie la apariencia completa. Hay cinco para decidir con el equipo.</li>
+      <li><b>✎ Editar</b> (<kbd>E</kbd>): cambie textos, imágenes, notas y el orden; agregue o quite diapositivas. También puede escribir directo sobre la diapositiva. Se guarda solo en este navegador.</li>
+      <li><b>Guardar PDF:</b> una diapositiva por hoja, para subir al Drive o a Google Slides.</li>
+    </ul>
+    <button id="help-ok">Entendido</button>
+  </div>
+</div>
+
+<script>
+const IMG={
+  "01-bienvenida":"01 · Bienvenida","01-letra-grande":"01 · Letra grande (A+)","03-entrar":"03 · Entrar",
+  "10-mi-natillera":"10 · Mi natillera (antes)","11-poner-cuota":"11 · Poner la cuota","28-va-a-su-billetera":"28 · Va a su billetera",
+  "billetera":"Billetera (ilustración)","34-cuota-puesta":"34 · Cuota puesta","10-despues":"10 · Mi natillera (después)","32-permiso-rechazado":"32 · Permiso rechazado"
+};
+const LAYOUTS={
+  portada:{n:"Portada",f:["kicker","title","sub"]},
+  cifras:{n:"Tres cifras",f:["kicker","title","stats"]},
+  telefono:{n:"Texto + celular",f:["kicker","title","items","img","cap"]},
+  camino:{n:"Camino en celulares",f:["title","steps"]},
+  antes:{n:"Antes y después",f:["title","img","cap","img2","cap2"]},
+  tuberia:{n:"Cómo viaja la plata",f:["kicker","title","nodes","band"]},
+  inclusion:{n:"Inclusión + 2 celulares",f:["kicker","title","items","img","img2"]},
+  equipo:{n:"Qué sigue + equipo",f:["kicker","title","items","people"]},
+  texto:{n:"Título y viñetas",f:["kicker","title","items"]},
+  cierre:{n:"Cierre",f:["title","sub","final"]}
+};
+const FIELD={kicker:"Antetítulo (pequeño, arriba)",title:"Título",sub:"Subtítulo",items:"Viñetas · una por línea",img:"Imagen",img2:"Segunda imagen",cap:"Pie de imagen",cap2:"Pie de la segunda imagen",
+  stats:"Cifras · una por línea: cifra | explicación",steps:"Pasos · uno por línea: imagen | texto",nodes:"Cajas · tres líneas: título | detalle",band:"Frase de abajo",people:"Personas · una por línea: nombre | papel",final:"Frase final"};
+const DEFAULT=[
+ {layout:"portada",kicker:"Hackatón Open Payments · Medellín",title:"Doña Rosa",sub:"Una natillera. Tres países. Tres monedas.",notes:"Ella es Doña Rosa. Vive en Colombia.\nToda la vida ha hecho natillera con la familia.\nPero hoy la familia está regada: Luz vive en Estados Unidos, Andrés en España.\nCada uno gana en otra moneda.\nY la natillera… sigue en un cuaderno.",t:30},
+ {layout:"cifras",kicker:"El problema",title:"La plata sí cruza. La natillera no.",stats:"US$13.098 M | en remesas a Colombia en 2025 (+10,6 %)\n~18 % | de los hogares recibe plata de afuera\nDiciembre | fue el mes récord… y es cuando se reparte la natillera",notes:"En 2025 entraron a Colombia más de 13 mil millones de dólares en remesas.\nCasi uno de cada cinco hogares recibe plata de afuera.\n¿Y saben cuál fue el mes récord? Diciembre. (pausa)\nEl mismo mes en que se reparte la natillera.\nPero esa plata llega suelta: nadie sabe quién puso, quién debe, cuánto hay.\nFuente: Banco de la República.",t:40},
+ {layout:"telefono",kicker:"La solución",title:"La natillera de siempre, en el celular",items:"Cada uno pone su cuota en su moneda\nAl fondo le llegan pesos\nTodos ven lo mismo: cuánto hay y quién está al día",img:"10-mi-natillera",cap:"Pantalla real de la app",notes:"Natillera sin Fronteras es la natillera de toda la vida, pero en el celular.\nCada uno pone su cuota desde su billetera, en su moneda.\nAl fondo le llegan pesos.\nY todos ven lo mismo: cuánto hay, quién está al día y quién pidió prestado.\nSe lo mostramos. (Camilo proyecta el celular)",t:30},
+ {layout:"camino",title:"Andrés pone la cuota desde España",steps:"11-poner-cuota | Ve antes cuánto sale y cuánto llega\n28-va-a-su-billetera | Le contamos qué va a pasar\nbilletera | Da el permiso en su billetera\n34-cuota-puesta | Listo: cuota puesta",notes:"DEMO EN VIVO. Si algo falla: \"Les muestro el mismo camino grabado esta mañana\" y al video.\n11: Andrés pone en euros. A la natillera le llegan pesos. Sale 11,13 € (once con trece), llegan 50.000 pesos.\n28: Le contamos qué va a pasar, en tres pasos. Nadie se pierde.\nBilletera: La app nunca toca la plata. Andrés da el permiso en su propia billetera. Por debajo va Interledger, con Open Payments: la tubería que mueve la plata entre billeteras y entre monedas.\n34: Cuota puesta. Desde España, en menos de un minuto.",t:70},
+ {layout:"antes",title:"Y Doña Rosa lo ve de una",img:"10-mi-natillera",cap:"Antes: $150.000 · Andrés debe la cuota",img2:"10-despues",cap2:"Después: $200.000 · Andrés al día",notes:"Y Doña Rosa lo ve de una. El fondo pasó de 150 a 200 mil.\nAndrés quedó al día.\nSin cuaderno, sin pantallazos.",t:20},
+ {layout:"tuberia",kicker:"Por debajo",title:"La app nunca toca la plata",nodes:"La app | Muestra y pide permiso\nBilletera de Andrés | Él aprueba: sale en euros\nFondo de la natillera | Llega en pesos",band:"<b>Interledger · Open Payments</b>: la tubería entre billeteras y monedas",notes:"(Solo si hay tiempo o si el jurado técnico pregunta.)\nLa app no guarda llaves ni plata. Nuestra API arma el pago; la persona da el permiso en su billetera.\nLa cotización trae cuánto sale y cuánto llega, antes de pagar.",t:20},
+ {layout:"inclusion",kicker:"Inclusión financiera",title:"Hecha para Doña Rosa",items:"Le hablamos de \"usted\", con frases cortas\nBotón A+ para agrandar la letra\nBotones grandes, para el dedo\nSiempre pide permiso. Si dice que no, no sale plata\nEl costo, antes de pagar. Sin letra menuda",img:"01-letra-grande",img2:"32-permiso-rechazado",notes:"La hicimos pensando en Doña Rosa, no en un banquero.\nLe hablamos de \"usted\". Frases cortas. Nada de palabras raras.\nUn botón para agrandar la letra en todas las pantallas.\nBotones grandes, para el dedo.\nSu billetera siempre le pide permiso antes. Si rechaza, no sale ni un peso.\nY le decimos antes cuánto cuesta.",t:40},
+ {layout:"equipo",kicker:"Lo que viene",title:"La natillera completa",items:"La cuota que se cobra sola cada mes\nPréstamos del fondo que aprueba la tesorera\nYa funcionan con datos de ejemplo",people:"Henry | App y pitch\nCamilo | App\nDuvan | Servidor\nDavid Ciro | Servidor",notes:"La natillera completa ya funciona con datos de ejemplo:\nla cuota que se cobra sola cada mes,\ny los préstamos del fondo, que aprueba la tesorera.\nSomos cuatro: Duvan y David por detrás, Camilo y Henry en la app.\n(Si va tarde, este bloque es el que se recorta.)",t:25},
+ {layout:"cierre",title:"Este diciembre, Doña Rosa no va a sacar el cuaderno.",sub:"Va a abrir el celular. Va a ver que Luz puso. Que Andrés puso.",final:"Ahorre en familia, aunque vivan en países distintos.",notes:"Este diciembre, Doña Rosa no va a sacar el cuaderno.\nVa a abrir el celular.\nVa a ver que Luz puso. Que Andrés puso.\nY va a repartir la natillera con toda la familia… aunque estén lejos.\nNatillera sin Fronteras. Ahorre en familia, aunque vivan en países distintos.\nGracias. (quieto dos segundos)",t:25}
+];
+
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const KEY="nsf-deck-v1";
+const clone=o=>JSON.parse(JSON.stringify(o));
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// texto con negritas simples: <b>…</b> permitido, lo demás escapado
+const rich=s=>esc(s).replace(/&lt;b&gt;/g,"<b>").replace(/&lt;\/b&gt;/g,"</b>");
+const lines=s=>String(s||"").split("\n").map(x=>x.trim()).filter(Boolean);
+const pair=s=>{const i=s.indexOf("|");return i<0?[s.trim(),""]:[s.slice(0,i).trim(),s.slice(i+1).trim()]};
+let S=(()=>{const s=store.get(KEY,null);return Array.isArray(s)&&s.length?s:clone(DEFAULT)})();
+let cur=Math.min(+(location.hash.slice(1)||1)-1||0,S.length-1);if(cur<0)cur=0;
+const $=id=>document.getElementById(id);
+const stage=$("stage");
+
+function phone(key,cls=""){
+  if(key==="billetera") return `<div class="phone ${cls}"><div class="wallet"><div class="wl">Billetera · otra app</div><div class="wt">La natillera quiere hacer un pago</div><div class="wr"><span>Sale</span><b>11,13 €</b></div><div class="wr"><span>Llega</span><b>$50.000</b></div><div class="wr"><span>Para</span><b style="font-family:var(--f-body)">Natillera Familia Rosa</b></div><div class="wb"><span class="ok">Aprobar</span><span class="no">Rechazar</span></div><div class="wnote">Ilustración de la billetera de prueba</div></div></div>`;
+  if(!key||!IMG[key]) return "";
+  return `<div class="phone ${cls}"><img src="pantallas/${key}.png" alt="Pantalla ${esc(IMG[key])}"></div>`;
+}
+function mapVis(){
+  return `<svg viewBox="0 0 470 420" width="470" height="420" role="img" aria-label="Doña Rosa en Colombia, Luz en Estados Unidos y Andrés en España, alrededor de un frasco de ahorro">
+  <path d="M95,120 C200,30 300,40 380,110" fill="none" stroke="var(--soft)" stroke-width="5" stroke-dasharray="3 12" stroke-linecap="round"/>
+  <path d="M95,140 C130,250 180,300 225,300" fill="none" stroke="var(--soft)" stroke-width="5" stroke-dasharray="3 12" stroke-linecap="round"/>
+  <path d="M380,130 C350,250 290,300 245,300" fill="none" stroke="var(--soft)" stroke-width="5" stroke-dasharray="3 12" stroke-linecap="round"/>
+  <g transform="translate(180,215)"><rect x="12" y="0" width="66" height="16" rx="5" fill="var(--accent)"/><path d="M8,22 h74 q10,0 10,12 v86 q0,22 -22,22 h-50 q-22,0 -22,-22 v-86 q0,-12 10,-12z" fill="var(--surface)" stroke="var(--ink)" stroke-width="6"/><path d="M4,88 h82 v32 q0,16 -16,16 h-50 q-16,0 -16,-16z" fill="var(--soft)"/><ellipse cx="32" cy="108" rx="16" ry="6" fill="var(--money)"/><ellipse cx="56" cy="100" rx="16" ry="6" fill="var(--money)" opacity=".8"/></g>
+  <g font-family="var(--f-body)" font-weight="700" font-size="22" fill="var(--ink)" text-anchor="middle">
+   <circle cx="95" cy="130" r="22" fill="var(--accent)"/><text x="95" y="182">Luz</text><text x="95" y="206" font-weight="400" font-size="17" fill="var(--muted)">EE. UU. · dólares</text>
+   <circle cx="380" cy="120" r="22" fill="var(--money)"/><text x="380" y="172">Andrés</text><text x="380" y="196" font-weight="400" font-size="17" fill="var(--muted)">España · euros</text>
+   <circle cx="235" cy="392" r="0"/><text x="235" y="392">Doña Rosa</text><text x="235" y="414" font-weight="400" font-size="17" fill="var(--muted)">Colombia · pesos</text>
+  </g></svg>`;
+}
+function body(s,i){
+  const k=s.kicker?`<div class="kicker" data-f="kicker">${esc(s.kicker)}</div>`:"";
+  const T=(tag="h2")=>`<${tag} data-f="title">${esc(s.title)}</${tag}>`;
+  const items=()=>`<ul class="bul">${lines(s.items).map(l=>`<li>${esc(l)}</li>`).join("")}</ul>`;
+  switch(s.layout){
+    case "portada": return `<div class="txt">${k}${T("h1")}${s.sub?`<p class="sub" data-f="sub">${esc(s.sub)}</p>`:""}</div><div class="vis">${mapVis()}</div>`;
+    case "cifras": return `${k}${T()}<div class="stats">${lines(s.stats).map(l=>{const[v,t]=pair(l);return `<div class="stat"><div class="v">${esc(v)}</div><div class="l">${esc(t)}</div></div>`}).join("")}</div>`;
+    case "telefono": return `<div class="txt">${k}${T()}${items()}</div><div>${phone(s.img)}${s.cap?`<div class="caption" data-f="cap">${esc(s.cap)}</div>`:""}</div>`;
+    case "camino": return `${T()}<div class="row">${lines(s.steps).slice(0,5).map((l,j)=>{const[im,t]=pair(l);return `<div class="step"><div class="n">${j+1}</div>${phone(im,"sm")}<div class="cap">${esc(t)}</div></div>`}).join("")}</div>`;
+    case "antes": return `${T()}<div class="row"><div class="col"><div class="tag">Antes</div>${phone(s.img,"sm")}<div class="caption" data-f="cap">${esc(s.cap)}</div></div><div class="arrow" aria-hidden="true">→</div><div class="col"><div class="tag">Después</div>${phone(s.img2,"sm")}<div class="caption" data-f="cap2">${esc(s.cap2)}</div></div></div>`;
+    case "tuberia": {const n=lines(s.nodes).map(pair);while(n.length<3)n.push(["",""]);const cls=["","w","f"];
+      return `${k}${T()}<div class="pipe">${n.slice(0,3).map((x,j)=>`<div class="node ${cls[j]}"><b>${esc(x[0])}</b><span>${esc(x[1])}</span></div>${j<2?'<div class="ar" aria-hidden="true">→</div>':""}`).join("")}</div>${s.band?`<div class="band">${rich(s.band)}</div>`:""}`;}
+    case "inclusion": return `<div class="txt">${k}${T()}${items()}</div><div class="phones">${phone(s.img,"xs")}${phone(s.img2,"xs")}</div>`;
+    case "equipo": return `${k}${T()}<div class="grid"><div>${items()}</div><div class="people">${lines(s.people).map(l=>{const[n,r]=pair(l);return `<div class="person"><div class="av">${esc(n.charAt(0))}</div><b>${esc(n)}</b><span>${esc(r)}</span></div>`}).join("")}</div></div>`;
+    case "cierre": return `${T("h1")}${s.sub?`<p class="sub" data-f="sub">${esc(s.sub)}</p>`:""}${s.final?`<div class="final" data-f="final">${esc(s.final)}</div>`:""}`;
+    default: return `${k}${T()}${items()}`;
+  }
+}
+function renderAll(){
+  stage.innerHTML=S.map((s,i)=>`<section class="slide L-${s.layout}" data-i="${i}" aria-label="Diapositiva ${i+1} de ${S.length}">${body(s,i)}${!["portada","cierre","camino","antes"].includes(s.layout)?`<div class="brand"><b>Natillera</b> sin Fronteras</div>`:""}<div class="pageno">${i+1}/${S.length}</div></section>`).join("");
+  stage.querySelectorAll("[data-f]").forEach(el=>{
+    el.addEventListener("input",()=>{const i=+el.closest(".slide").dataset.i;S[i][el.dataset.f]=el.innerText.replace(/\n+/g," ").trim();persist();if(editing)fillPanel(true)});
+    el.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();el.blur()}});
+  });
+  setEditable();show(cur,true);
+}
+function show(i,quiet){
+  cur=Math.max(0,Math.min(S.length-1,i));
+  stage.querySelectorAll(".slide").forEach((el,j)=>el.classList.toggle("on",j===cur));
+  $("count").textContent=(cur+1)+" / "+S.length;
+  $("prev").disabled=cur===0;$("next").disabled=cur===S.length-1;
+  history.replaceState(null,"","#"+(cur+1));
+  paintNotes();
+  if(editing&&!quiet) fillPanel();
+}
+function fit(){
+  const w=$("stagewrap"),bar=$("bar").classList.contains("hide")||document.fullscreenElement?0:$("bar").offsetHeight;
+  const notes=$("notes").classList.contains("on")?$("notes").offsetHeight:0;
+  const W=w.clientWidth-24,H=w.clientHeight-bar-notes-24;
+  const k=Math.max(.1,Math.min(W/1280,H/720));
+  stage.style.transform=`translate(-50%,calc(-50% - ${(bar+notes)/2}px)) scale(${k})`;
+}
+addEventListener("resize",fit);
+
+// notas y cronómetro
+let t0=null,timer=0;
+function paintNotes(){
+  const s=S[cur],el=$("notes");
+  const el2=t0?Math.floor((Date.now()-t0)/1000):0,meta=S.reduce((a,x)=>a+(+x.t||0),0);
+  el.innerHTML=`<div class="nh"><b>${cur+1}. ${esc(s.title)}</b><span>~${+s.t||0} s · ⏱ ${Math.floor(el2/60)}:${String(el2%60).padStart(2,"0")} de ${Math.floor(meta/60)}:${String(meta%60).padStart(2,"0")}</span></div>${lines(s.notes).map(l=>`<p>${esc(l)}</p>`).join("")||"<p><i>Sin notas. Agréguelas con ✎ Editar.</i></p>"}`;
+}
+function toggleNotes(on){
+  const n=$("notes");on=on??!n.classList.contains("on");n.classList.toggle("on",on);$("nt").setAttribute("aria-pressed",on);
+  if(on&&!t0){t0=Date.now();timer=setInterval(paintNotes,1000)}
+  paintNotes();fit();
+}
+
+// navegación
+$("prev").onclick=()=>show(cur-1);
+$("next").onclick=()=>show(cur+1);
+$("fs").onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();else document.documentElement.requestFullscreen?.()};
+document.addEventListener("fullscreenchange",()=>{$("fs").textContent=document.fullscreenElement?"✕ Salir de pantalla completa":"⛶ Pantalla completa";wake();setTimeout(fit,60)});
+$("nt").onclick=()=>toggleNotes();
+$("pr").onclick=()=>print();
+$("hp").onclick=()=>$("help").classList.add("on");
+$("help-ok").onclick=()=>{$("help").classList.remove("on");store.set("nsf-deck-help",1)};
+document.addEventListener("keydown",e=>{
+  if(e.target.isContentEditable||/INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+  if($("help").classList.contains("on")){if(e.key==="Escape"||e.key==="Enter")$("help-ok").click();return}
+  const k=e.key;
+  if(["ArrowRight","PageDown"," ","Enter"].includes(k)&&!(k==="Enter"&&e.target.tagName==="BUTTON")){e.preventDefault();show(cur+1)}
+  else if(["ArrowLeft","PageUp","Backspace"].includes(k)){e.preventDefault();show(cur-1)}
+  else if(k==="Home")show(0); else if(k==="End")show(S.length-1);
+  else if(k==="f"||k==="F")$("fs").click();
+  else if(k==="n"||k==="N")toggleNotes();
+  else if(k==="e"||k==="E")setEditing(!editing);
+  else if(k==="?")$("hp").click();
+  wake();
+});
+// deslizar con el dedo
+let tx=null;
+stage.addEventListener("touchstart",e=>{tx=e.touches[0].clientX},{passive:true});
+stage.addEventListener("touchend",e=>{if(tx==null||editing)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>50)show(cur+(dx<0?1:-1));tx=null});
+// barra que se esconde en pantalla completa
+let hideT=0;
+function wake(){$("bar").classList.remove("hide");clearTimeout(hideT);if(document.fullscreenElement&&!editing)hideT=setTimeout(()=>{$("bar").classList.add("hide");fit()},2500);fit()}
+addEventListener("mousemove",wake);addEventListener("touchstart",wake,{passive:true});
+
+// temas
+const temaSel=$("tema");
+function setTema(t){document.documentElement.dataset.tema=t;temaSel.value=t;store.set("nsf-deck-tema",t)}
+temaSel.onchange=()=>setTema(temaSel.value);
+setTema(store.get("nsf-deck-tema","paleta-g"));
+
+// edición
+let editing=false;
+function persist(msg){store.set(KEY,S);const el=$("saved");if(el)el.textContent=msg||"Guardado en este navegador ✓"}
+function setEditable(){stage.querySelectorAll("[data-f]").forEach(el=>{el.contentEditable=editing?"true":"false";el.spellcheck=editing})}
+function setEditing(on){editing=on;$("app").classList.toggle("editing",on);$("ed").setAttribute("aria-pressed",on);$("ed").textContent=on?"✓ Listo":"✎ Editar";setEditable();if(on)fillPanel();wake();setTimeout(fit,30)}
+$("ed").onclick=()=>setEditing(!editing);
+function imgOptions(v){return `<option value="">(sin imagen)</option>`+Object.entries(IMG).map(([k,n])=>`<option value="${k}"${k===v?" selected":""}>${esc(n)}</option>`).join("")}
+function fillPanel(keepFocus){
+  if(keepFocus&&document.activeElement&&$("edit").contains(document.activeElement))return;
+  const s=S[cur],L=LAYOUTS[s.layout]||LAYOUTS.texto;
+  let h=`<h3>Diapositiva ${cur+1} de ${S.length}</h3>
+  <div class="help">Escriba aquí o directo sobre la diapositiva. Los cambios se ven al momento y se guardan solos.</div>
+  <label for="f-layout">Tipo de diapositiva</label><select id="f-layout">${Object.entries(LAYOUTS).map(([k,v])=>`<option value="${k}"${k===s.layout?" selected":""}>${v.n}</option>`).join("")}</select>`;
+  L.f.forEach(f=>{
+    const lab=FIELD[f]||f,v=s[f]??"";
+    if(f==="img"||f==="img2") h+=`<label for="f-${f}">${lab}</label><select id="f-${f}" data-k="${f}">${imgOptions(v)}</select>`;
+    else if(["items","stats","steps","nodes","people","sub","band","title"].includes(f)) h+=`<label for="f-${f}">${lab}</label><textarea id="f-${f}" data-k="${f}" rows="${f==="title"?2:Math.max(3,lines(v).length+1)}">${esc(v)}</textarea>`;
+    else h+=`<label for="f-${f}">${lab}</label><input id="f-${f}" data-k="${f}" value="${esc(v)}">`;
+  });
+  if(L.f.includes("steps")) h+=`<div class="help">Imágenes disponibles: ${Object.keys(IMG).map(k=>`<code>${k}</code>`).join(" · ")}</div>`;
+  h+=`<label for="f-notes">Notas: lo que se dice <small>· una frase por línea</small></label><textarea id="f-notes" data-k="notes" rows="6">${esc(s.notes||"")}</textarea>
+  <label for="f-t">Segundos para esta diapositiva</label><input id="f-t" data-k="t" type="number" min="0" max="300" step="5" value="${+s.t||0}">
+  <div class="btns"><button id="a-add" class="pri">＋ Nueva diapositiva</button><button id="a-dup">Duplicar</button><button id="a-up">↑ Antes</button><button id="a-dn">↓ Después</button><button id="a-del" class="danger">Eliminar</button></div>
+  <hr>
+  <div class="btns"><button id="a-exp">⤓ Descargar copia</button><button id="a-imp">⤒ Cargar copia</button><button id="a-rst" class="danger">Restaurar original</button></div>
+  <input type="file" id="a-file" accept="application/json,.json" hidden>
+  <div class="help">La copia (.json) sirve para pasarle sus cambios a Camilo o para no perderlos si cambia de computador.</div>
+  <div class="saved" id="saved"></div>`;
+  $("edit").innerHTML=h;
+  $("edit").querySelectorAll("[data-k]").forEach(el=>{
+    const k=el.dataset.k;
+    const upd=()=>{S[cur][k]=k==="t"?(+el.value||0):el.value;rerenderCurrent();persist()};
+    el.addEventListener(el.tagName==="SELECT"?"change":"input",upd);
+  });
+  $("f-layout").onchange=e=>{S[cur].layout=e.target.value;const L2=LAYOUTS[S[cur].layout];L2.f.forEach(f=>{if(S[cur][f]==null)S[cur][f]=f==="title"?"Título":""});renderAll();fillPanel();persist()};
+  $("a-add").onclick=()=>{S.splice(cur+1,0,{layout:"texto",kicker:"",title:"Diapositiva nueva",items:"Primera idea\nSegunda idea",notes:"",t:20});cur++;renderAll();fillPanel();persist();$("f-title").focus();$("f-title").select()};
+  $("a-dup").onclick=()=>{S.splice(cur+1,0,clone(S[cur]));cur++;renderAll();fillPanel();persist()};
+  $("a-up").onclick=()=>{if(cur<1)return;[S[cur-1],S[cur]]=[S[cur],S[cur-1]];cur--;renderAll();fillPanel();persist()};
+  $("a-dn").onclick=()=>{if(cur>=S.length-1)return;[S[cur+1],S[cur]]=[S[cur],S[cur+1]];cur++;renderAll();fillPanel();persist()};
+  $("a-del").onclick=()=>{if(S.length<2||!confirm("¿Eliminar la diapositiva “"+S[cur].title+"”?"))return;S.splice(cur,1);cur=Math.min(cur,S.length-1);renderAll();fillPanel();persist()};
+  $("a-rst").onclick=()=>{if(!confirm("¿Volver a la presentación original? Se pierden sus cambios."))return;S=clone(DEFAULT);store.del(KEY);cur=0;renderAll();fillPanel();$("saved").textContent="Original restaurado ✓"};
+  $("a-exp").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([JSON.stringify({version:1,tema:temaSel.value,diapositivas:S},null,2)],{type:"application/json"}));a.download="presentacion-natillera.json";document.body.appendChild(a);a.click();a.remove();$("saved").textContent="Copia descargada ✓"};
+  $("a-imp").onclick=()=>$("a-file").click();
+  $("a-file").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());const arr=Array.isArray(d)?d:d.diapositivas;if(!Array.isArray(arr)||!arr.length)throw 0;S=arr;if(d.tema)setTema(d.tema);cur=0;renderAll();fillPanel();persist("Copia cargada ✓")}catch(_){$("saved").textContent="Ese archivo no es una copia válida"}};
+}
+function rerenderCurrent(){
+  const el=stage.querySelector(`.slide[data-i="${cur}"]`);if(!el)return;
+  const s=S[cur];
+  el.className=`slide L-${s.layout} on`;
+  el.innerHTML=`${body(s,cur)}${!["portada","cierre","camino","antes"].includes(s.layout)?`<div class="brand"><b>Natillera</b> sin Fronteras</div>`:""}<div class="pageno">${cur+1}/${S.length}</div>`;
+  el.querySelectorAll("[data-f]").forEach(x=>{x.addEventListener("input",()=>{S[cur][x.dataset.f]=x.innerText.replace(/\n+/g," ").trim();persist()});x.addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();x.blur()}})});
+  setEditable();paintNotes();
+}
+
+renderAll();fit();
+if(!store.get("nsf-deck-help",0)) $("help").classList.add("on");
+</script>
+</body>
+</html>

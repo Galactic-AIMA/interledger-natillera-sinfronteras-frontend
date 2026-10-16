@@ -124,3 +124,7 @@ Ya terminó la sesión del pitch. Mueve natillera-front a Desktop\Natillera-sin-
 
 ## 16:55 · esta sesión (a mano: el hook no la registra)
 Ya archivé la sesión del pitch. Mueve natillera-front ahora.
+
+## 16:05 · sesión 2fa70ba0 (agregado a mano: el hook no lo guardó tras mover el repo de carpeta)
+
+Ahora las diapositivas con las pantallas reales y ponme la presentación completa también editable y teniendo en cuenta que aún no decidimos cuál será el tema o apariencia final, además dame ideas para que sea muy intuitiva y superfácil de manejar para cualquier persona especialmente las mayores quienes se les dificulta en manejo de esta tecnología, debemos ser muy inclusivos
