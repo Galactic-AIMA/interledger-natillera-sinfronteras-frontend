@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
 import { demoUsers, useApiContext, useMe } from '@/api';
+import { isHybrid } from '@/api/hybridApi';
 import { AppText, Button, Card, Choice, InfoRow, Screen } from '@/components';
 import { palette } from '@/theme';
 import { currencyName } from '@/utils/money';
@@ -61,7 +62,7 @@ export default function ScreenCuenta() {
         </Card>
       ) : null}
 
-      {api.mode === 'demo' ? (
+      {api.mode === 'demo' && !isHybrid(api) ? (
         <Card title="Entrar como…" tone="soft">
           <AppText variant="caption" tone="muted">
             Solo en el modo de ejemplo: pruebe la app como otra persona de la familia.

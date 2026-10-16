@@ -1,6 +1,6 @@
 import * as Linking from 'expo-linking';
 
-import { getAuthToken, signIn, signOut, signUp } from './auth';
+import { getAuthToken, getIdTokenClaims, signIn, signOut, signUp } from './auth';
 import { ApiError, type NatilleraApi } from './client';
 import { config } from './config';
 import type {
@@ -44,6 +44,32 @@ async function lookupPublicWallet(input: string): Promise<WalletInfo> {
   const data = (await response.json().catch(() => null)) as { id?: string; assetCode?: string; assetScale?: number } | null;
   if (!data?.assetCode) return { exists: false, walletAddress: raw };
   return { exists: true, walletAddress: data.id ?? url, assetCode: data.assetCode, assetScale: data.assetScale };
+}
+
+// GET /me del back devuelve la fila de `user-info` (llave `source` = username) más `userId`.
+type BackUser = Partial<User> & { source?: string };
+
+function toUser(data: BackUser, claims: Record<string, string> | null): User {
+  const username = data.username ?? data.source ?? claims?.['cognito:username'] ?? '';
+  return {
+    userId: data.userId ?? claims?.sub ?? '',
+    username,
+    displayName: data.displayName ?? username,
+    email: data.email ?? claims?.email ?? '',
+    phone: data.phone ?? claims?.phone_number ?? '',
+    walletAddress: data.walletAddress ?? claims?.['custom:walletId'] ?? '',
+    assetCode: data.assetCode ?? '',
+    assetScale: data.assetScale ?? 2,
+  };
+}
+
+// Mientras no haya URL del API, el perfil sale del IdToken y la moneda de la wallet pública.
+async function profileFromToken(): Promise<User> {
+  const claims = await getIdTokenClaims();
+  if (!claims) throw new ApiError('Su sesión se cerró. Vuelva a entrar.', 401, 'unauthorized');
+  const walletId = claims['custom:walletId'] ?? '';
+  const wallet = walletId ? await lookupPublicWallet(walletId).catch(() => null) : null;
+  return toUser({ walletAddress: wallet?.exists ? wallet.walletAddress : walletId, assetCode: wallet?.assetCode, assetScale: wallet?.assetScale }, claims);
 }
 
 /** Mensajes en «usted» por status: no se muestra el `message` crudo del back (puede filtrar detalles internos). */
@@ -99,11 +125,21 @@ export const httpApi: NatilleraApi = {
   login: (username, password) => signIn(username, password),
   logout: () => signOut(),
   hasSession: async () => (await getAuthToken()) !== null,
-  getMe: () => request<User>('GET', '/me'),
+  getMe: async () => {
+    if (!config.apiUrl) return profileFromToken();
+    return toUser(await request<BackUser>('GET', '/me'), await getIdTokenClaims());
+  },
   // Con sesión, verifica el back. Sin sesión (pantalla 02, antes del SignUp) se consulta la dirección de
   // pago pública de Open Payments: no firma ni usa llaves. El back vuelve a validar la wallet en el SignUp.
   verifyWallet: async (walletAddress) => {
-    if (await getAuthToken()) return request<WalletInfo>('GET', `/wallets/verify?url=${encodeURIComponent(walletAddress)}`);
+    if (config.apiUrl && (await getAuthToken())) {
+      try {
+        return await request<WalletInfo>('GET', `/wallets/verify?url=${encodeURIComponent(walletAddress)}`);
+      } catch (error) {
+        // El back aún no publica /wallets/verify: se usa la consulta pública.
+        if (!(error instanceof ApiError && error.status === 404)) throw error;
+      }
+    }
     return lookupPublicWallet(walletAddress);
   },
 

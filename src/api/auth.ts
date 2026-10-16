@@ -123,6 +123,23 @@ export async function signOut(): Promise<void> {
   await save(null);
 }
 
+/** Datos del usuario en el IdToken de Cognito (sub, cognito:username, email, phone_number, custom:walletId). */
+export async function getIdTokenClaims(): Promise<Record<string, string> | null> {
+  if (!(await getAuthToken())) return null;
+  const tokens = await load();
+  const payload = tokens?.idToken.split('.')[1];
+  if (!payload) return null;
+  try {
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const binary = atob(base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '='));
+    // atob devuelve bytes: se decodifican como UTF-8 para no dañar tildes ni eñes.
+    const utf8 = decodeURIComponent(Array.from(binary, (c) => `%${c.charCodeAt(0).toString(16).padStart(2, '0')}`).join(''));
+    return JSON.parse(utf8) as Record<string, string>;
+  } catch {
+    return null;
+  }
+}
+
 /** Token para el header Authorization; lo renueva si vence en menos de un minuto. */
 export async function getAuthToken(): Promise<string | null> {
   let tokens = await load();

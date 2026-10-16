@@ -19,3 +19,16 @@ y aca estan las intrucciones para usar el login Recuerda documentar todo el uso 
 estas son las intrucciones del login
 
 (Pegó el mensaje del back "Auth de Natillera (Cognito) — cómo usarlo": endpoint `https://cognito-idp.us-east-2.amazonaws.com/`, headers, cuerpos de SignUp e InitiateAuth con ClientId público y contraseña de ejemplo `Clave#2026`, refresh con `REFRESH_TOKEN_AUTH`, tokens en `expo-secure-store` y la tabla de errores. El texto completo está en `docs/API-AUTH.md` de la rama `david` del repo back.)
+
+## Prompt 4
+
+Sí, haz push de integracion/henry a main en Galactic-AIMA.
+
+## Prompt 5
+
+Dale, pitch de la por un momento y enfoquémonos entonces en dejar listo todo el simulador. Y, integrar. Lo que ya hizo el equipo, el login que ya esta listo el backend, yo aquí en el backend detectamos que iniciaste sesión con un usuario prueba front. Eh, inicia sesión. Enfoquémonos en esta parte. En dejar lista integrado todo el backend. Y todas las pantallas me las en el simulador.
+
+## Respuestas a preguntas de Claude (selector)
+
+- ¿Cómo conecto la app? → "Híbrido (Recomendado)".
+- URL del HTTP API → "Te la pego"; luego: "esta la tengo que preguntar … todavia no esta".

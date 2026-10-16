@@ -3,7 +3,7 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 
 import type { NatilleraApi } from './client';
 import { config } from './config';
-import { httpApi } from './httpApi';
+import { hybridApi } from './hybridApi';
 import { mockApi } from './mockApi';
 
 type SessionState = 'checking' | 'signed-out' | 'signed-in';
@@ -13,7 +13,7 @@ type ApiContextValue = {
   session: SessionState;
   // "Empezar con datos de ejemplo" (pantalla 01): modo demo con Doña Rosa.
   enterDemo: (username?: string) => Promise<void>;
-  // Cambia a la API real (AWS), p. ej. desde la pantalla 04.
+  // Cambia a la API real (AWS, en modo híbrido mientras el back sale por partes).
   useRealApi: () => void;
   login: (username: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
@@ -23,7 +23,7 @@ const ApiContext = createContext<ApiContextValue | null>(null);
 
 export function ApiProvider({ children }: { children: ReactNode }) {
   const queryClient = useQueryClient();
-  const [api, setApi] = useState<NatilleraApi>(config.startInDemo ? mockApi : httpApi);
+  const [api, setApi] = useState<NatilleraApi>(config.startInDemo ? mockApi : hybridApi);
   const [session, setSession] = useState<SessionState>('checking');
 
   useEffect(() => {
@@ -52,7 +52,7 @@ export function ApiProvider({ children }: { children: ReactNode }) {
       enterDemo,
       useRealApi: () => {
         queryClient.clear();
-        setApi(httpApi);
+        setApi(hybridApi);
       },
       login: async (username, password) => {
         await api.login(username, password);
@@ -62,6 +62,8 @@ export function ApiProvider({ children }: { children: ReactNode }) {
       logout: async () => {
         await api.logout();
         queryClient.clear();
+        // Al salir de la demo, "Ya tengo cuenta" debe entrar contra Cognito, no contra los datos de ejemplo.
+        setApi(config.startInDemo ? mockApi : hybridApi);
         setSession('signed-out');
       },
     }),
