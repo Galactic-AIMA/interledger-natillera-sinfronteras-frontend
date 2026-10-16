@@ -46,7 +46,8 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "ai-usage-check": "node scripts/ai-usage-check.mjs",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node --import ./tests/register.mjs --experimental-transform-types --no-warnings --test tests/*.test.*"
   },
   "private": true
 }

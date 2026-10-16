@@ -36,6 +36,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Henry | Claude (claude.ai, Claude Opus 5.5) | Integración de `main` + `feat/pagos` en `feat/creditos` (resolución de choques en docs) y carril `creditos`: pantallas 16, 17, 20, 21, 24, 25 y resultados 19/23; pasarela ampliada a crédito y desembolso | `src/app/(tabs)/natillera/prestamos/*`, `src/features/creditos/links.ts`, `src/features/pagos/flow.ts`, `src/app/billetera/antes.tsx`, `src/app/billetera/volviendo.tsx`, `src/app/resultado.tsx`, `MEMORY.md`, `AI_USAGE.md`, `prompts/2026-10-16-camilo.md` |
 | 2026-10-16 | Henry | Claude (claude.ai, Claude Opus 5.5) | Arreglos de seguridad en archivos compartidos (cubriendo a Camilo): revocación del token al salir, errores no JSON y mensajes por status, `.gitignore` de `.env*`, patrones nuevos de redacción en el hook | `src/api/auth.ts`, `src/api/httpApi.ts`, `.gitignore`, `.claude/hooks/log-prompt.mjs`, `MEMORY.md`, `docs/auditoria-2026-10-16.md` |
 | 2026-10-16 | Henry | Claude (claude.ai, Claude Opus 5.5) | Borrador del guion del pitch y revisión de textos para inclusión | `docs/pitch-guion.md`, `docs/copy-henry.md`, `MEMORY.md` |
+| 2026-10-16 | Henry | Claude (claude.ai) + subagente Sonnet 5.5 (pruebas) | Pruebas con `node:test` contra `mockApi` (cuota, p2p, préstamo completo, rechazo) y de las funciones de seguridad de la pasarela; script `npm test` | `tests/`, `package.json` |
 
 ## What We Did Ourselves
 

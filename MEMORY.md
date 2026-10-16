@@ -93,6 +93,8 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 
 - 2026-10-16 ~13:00 (Henry, cubriendo a Camilo) — Arreglos de la auditoría en archivos compartidos: `auth.ts` revoca el refresh token en Cognito al salir (y tolera respuestas no JSON); `httpApi.ts` ya no revienta con HTML/502 y muestra mensajes en «usted» por status en vez del `message` crudo del back; `.gitignore` ignora `.env*` salvo `.env.example`; el hook tapa `clave`/`pwd`/`pass`/`access_token`, secretos AWS sin etiqueta y cadenas largas (probado: no toca URLs ni hashes de commit). `tsc` ok.
 
+- 2026-10-16 ~13:00 (Henry) — Pruebas en `tests/` (8 casos: cuota y p2p ok/rechazo, préstamo completo y rechazo, seguridad de la pasarela). Correr con `npm test` (Node 22+).
+
 ### cuenta-natillera
 - 2026-10-16 — Sesión A: construidas 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 15 y 35 (5 ejecutores Sonnet + validador Opus). `tsc` limpio; recorrido completo en web con demo, A+ ×1,4 sin cortes. Cambios en archivos compartidos: `Screen` ahora acepta `headerRight`; `enterDemo` hace `resetQueries`; el código de invitación del mock ya es válido en 07. Pendiente: probar en celular/Expo Go, `expo-clipboard` para copiar el enlace, botón volver en pantallas sueltas, `web.output` "server" → "single" (decide Camilo). 04 se abre desde el icono de persona en 10/05.
 

@@ -22,3 +22,6 @@ adelante
 
 ## 12:46
 ya nos debemos encargar nosostris por el momento camilo va a descansar, apropiate y continua
+
+## 12:51
+todos los archivos deben quedar en la carpeta del proyecto, y ponla en mi escritorio por favor
