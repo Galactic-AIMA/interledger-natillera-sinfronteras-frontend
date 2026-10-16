@@ -93,3 +93,15 @@ https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev
 (Pegó la guía de curls del back: login con InitiateAuth copiando el IdToken, `POST /start-payment` con `kind: p2p`, `walletAddress`, `value`, `assetCode`, `assetScale` y `returnUrl` `exp://…/--/retorno`, aprobar en la Test Wallet, `POST /payments/<paymentId>/finish` con `interact_ref` y `hash`, y `GET /payments/<paymentId>` y `GET /payments`. La contraseña iba como `<clave>`, sin valor real.)
 
 integralo al front
+
+## Prompt 18
+
+Primero pruebo el pago en el emulador y te cuento.
+
+## Prompt 19
+
+Puedes hacer tú las pruebas, hacételas.
+
+## Prompt 20
+
+No, sabes que entonces perfecto. Revisa el repo mira qué actualizaciones han hecho Henry por ahí eh, nos dejó comentario algo alguna actualización eh, luego me dejas un prompt para continuar en otra sesión con las pruebas y guarda todas las memorias yo hago las pruebas manualmente muévete con esto
