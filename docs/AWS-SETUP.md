@@ -20,7 +20,7 @@ rutas y el paso 8 (Scheduler, P1) van después de las 15:00.
 
 | # | Paso | Estado | Fecha | Datos (no secretos) |
 |---|---|---|---|---|
-| 0 | Cuenta segura + alerta de costos | ✅ | 2026-10-16 | Account ID: (pendiente de anotar) · usuario `david-admin` · budget creado |
+| 0 | Cuenta segura + alerta de costos | ✅ | 2026-10-16 | Account ID: `349607459198` · usuario `david-admin` · budget creado |
 | 1 | Billeteras y llaves en la Test Wallet | ⬜ | | Wallet cliente: · Wallet fondo: |
 | 2 | Secreto en Secrets Manager | ⬜ | | ARN: |
 | 3 | Cognito User Pool + App client | ⬜ | | Pool ID: · Client ID: |
@@ -143,7 +143,7 @@ lo confirme, se pueden añadir después sin borrar la tabla):
 
 1. Adjuntar la política administrada `AWSLambdaBasicExecutionRole` (logs en CloudWatch).
 2. Nombre: **`natillera-lambda-role`**.
-3. Abrir el rol → *Add permissions* → *Create inline policy* → JSON (reemplazar `<ACCOUNT_ID>`,
+3. Abrir el rol → *Add permissions* → *Create inline policy* → JSON (reemplazar `349607459198`,
    `<USER_POOL_ID>` y el ARN del secreto), nombre `natillera-lambda-access`:
 
 ```json
@@ -156,16 +156,16 @@ lo confirme, se pueden añadir después sin borrar la tabla):
       "Action": ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem",
                  "dynamodb:DeleteItem", "dynamodb:Query", "dynamodb:BatchGetItem"],
       "Resource": [
-        "arn:aws:dynamodb:us-east-1:<ACCOUNT_ID>:table/Users-info",
-        "arn:aws:dynamodb:us-east-1:<ACCOUNT_ID>:table/Saved-accounts",
-        "arn:aws:dynamodb:us-east-1:<ACCOUNT_ID>:table/Payments-history",
-        "arn:aws:dynamodb:us-east-1:<ACCOUNT_ID>:table/natillera-registration",
-        "arn:aws:dynamodb:us-east-1:<ACCOUNT_ID>:table/natillera-records",
-        "arn:aws:dynamodb:us-east-1:<ACCOUNT_ID>:table/natillera-loan-request",
-        "arn:aws:dynamodb:us-east-1:<ACCOUNT_ID>:table/Natillera-Loans-Records",
-        "arn:aws:dynamodb:us-east-1:<ACCOUNT_ID>:table/Recurring-grants",
-        "arn:aws:dynamodb:us-east-1:<ACCOUNT_ID>:table/Loan-payments",
-        "arn:aws:dynamodb:us-east-1:<ACCOUNT_ID>:table/*/index/*"
+        "arn:aws:dynamodb:us-east-1:349607459198:table/Users-info",
+        "arn:aws:dynamodb:us-east-1:349607459198:table/Saved-accounts",
+        "arn:aws:dynamodb:us-east-1:349607459198:table/Payments-history",
+        "arn:aws:dynamodb:us-east-1:349607459198:table/natillera-registration",
+        "arn:aws:dynamodb:us-east-1:349607459198:table/natillera-records",
+        "arn:aws:dynamodb:us-east-1:349607459198:table/natillera-loan-request",
+        "arn:aws:dynamodb:us-east-1:349607459198:table/Natillera-Loans-Records",
+        "arn:aws:dynamodb:us-east-1:349607459198:table/Recurring-grants",
+        "arn:aws:dynamodb:us-east-1:349607459198:table/Loan-payments",
+        "arn:aws:dynamodb:us-east-1:349607459198:table/*/index/*"
       ]
     },
     {
@@ -178,7 +178,7 @@ lo confirme, se pueden añadir después sin borrar la tabla):
       "Sid": "CognitoSignup",
       "Effect": "Allow",
       "Action": ["cognito-idp:AdminConfirmSignUp", "cognito-idp:AdminGetUser"],
-      "Resource": "arn:aws:cognito-idp:us-east-1:<ACCOUNT_ID>:userpool/<USER_POOL_ID>"
+      "Resource": "arn:aws:cognito-idp:us-east-1:349607459198:userpool/<USER_POOL_ID>"
     }
   ]
 }
