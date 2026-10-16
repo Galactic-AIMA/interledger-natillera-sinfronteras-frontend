@@ -63,11 +63,13 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Henry | Claude Code (Opus 5.5, escritorio) | Auditoría del estado de front y back (ramas, PR, `tsc`, pruebas, rutas desplegadas del API probadas sin token) y lista priorizada de lo que falta para la entrega | `docs/estado-2026-10-16-tarde.md`, `AI_USAGE.md`, `prompts/2026-10-16-henry-feat-cuenta-celular.md` |
 | 2026-10-16 | Camilo | Claude Code (Opus 5.5, escritorio) | Lluvia de ideas y diseño de «Metas» (ahorro y colecta) solo en el front; implementación de las pantallas 36–38, sección en la 10, almacén en memoria, pago p2p real a la billetera del beneficiario y prueba en web en modo demo | `docs/superpowers/specs/2026-10-16-metas-design.md`, `src/api/{types,client,mockApi,httpApi,queries,index,goalStore}.ts`, `src/features/metas/`, `src/app/(tabs)/natillera/metas/`, `src/app/billetera/volviendo.tsx`, `src/app/resultado.tsx`, `src/features/pagos/flow.ts`, `src/features/natillera/HomeNatillera.tsx`, `prompts/2026-10-16-camilo-metas.md` |
 | 2026-10-16 | Camilo | Claude Code (Opus 5.5, escritorio) | Fecha y hora pequeñas en gris en «Lo último que pasó» (10) y en los aportes de cada meta (38); prueba en web | `src/utils/dates.ts`, `src/features/natillera/HomeNatillera.tsx`, `src/app/(tabs)/natillera/metas/[goalId].tsx`, `prompts/2026-10-16-camilo-metas.md` |
+| 2026-10-16 | Camilo | Claude Code (Opus 5.5, escritorio) | Diagnóstico del API del back para el equipo: lectura del registro técnico de la app en el emulador (con `adb`, sin tokens ni contraseñas; el login lo hizo Camilo) y prueba sin token de las rutas GET; informe con lo que falta desplegar | `docs/logs-back-2026-10-16.md`, `prompts/2026-10-16-camilo-metas.md` |
 
 ## What We Did Ourselves
 
 - Idea del producto, reglas de la natillera y bocetos de las 35 pantallas en Figma (equipo). *Por confirmar: si los bocetos usaron IA.*
 - Arquitectura del backend en draw.io (equipo back).
+- Idea de «Metas» (sugerencia recibida en la hackatón) y sus decisiones: dos modos, solo en el front, colecta con pago real y alcance (Camilo, respondiendo preguntas de la IA).
 - Decisiones de alcance, stack, autenticación y reparto del trabajo (Camilo y equipo, respondiendo preguntas de la IA).
 - Revisión humana de todo lo generado antes de cada commit.
 - Henry: decidió alinear el registro con el mensaje del back sobre Cognito «al pie de la letra», el orden de integración (una rama `feat/creditos` para el PR) y dio el OK para subir a su fork; Camilo dio el OK y redactó el encargo de Cognito.
