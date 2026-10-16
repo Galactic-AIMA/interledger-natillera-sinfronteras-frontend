@@ -44,7 +44,7 @@ Política: https://interledger.org/hackathon/ai-policy/ — `AI_USAGE.md` en la 
 ## Trabajo en paralelo
 
 - **Una sesión = un carril = una rama** `feat/<carril>-<tema>` salida de `main`, merge a `main` cada ~3 h. Reclama tu carril en [MEMORY.md](MEMORY.md) antes de empezar.
-- Carriles: `base` (tema, componentes, `src/api`, navegación — Camilo), `cuenta-natillera` (pantallas 01–10, 15, 35 — Camilo), `pagos` (11–14, 26–34 — Henry), `creditos` (16–25 — Henry, con Camilo en la madrugada), `pitch`.
+- Carriles: `base` (tema, componentes, `src/api`, navegación — Camilo), `cuenta-natillera` (pantallas 01–10, 15, 35 — Camilo, ya en `main`), `pagos` (11–14, 26–34 — Camilo en `feat/pagos`; Henry prueba y revisa), `creditos` (16–25 — Henry, con Camilo en la madrugada), `pitch`.
 - Archivos compartidos (`src/theme`, `src/api`, `src/components`, `app/_layout.tsx`): solo el carril `base`. Si necesitas un cambio, anótalo en "Pedidos entre carriles" de MEMORY.md.
 - MEMORY.md: cada carril edita solo su sección.
 

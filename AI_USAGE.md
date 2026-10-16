@@ -7,6 +7,8 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | Herramienta | Modelo | Quién | Para qué |
 |---|---|---|---|
 | Claude Code (app de escritorio) | Claude Opus 5.5 | Camilo | Investigación de Open Payments, lectura de Figma y del diagrama de arquitectura, planeación, documentación, código del front |
+| Claude Code · subagentes (sesiones A y B de pantallas) | Claude Sonnet 5.5 (ejecutores) y Claude Opus 5.5 (validador) | Camilo | Construir y validar las pantallas de `cuenta-natillera` y `pagos` en paralelo |
+| Claude Code · sesión de auditoría | Claude Sonnet 5.5 | Camilo | Revisar sesiones, ramas, memoria y prompts; documentar el traspaso a Henry |
 | Figma MCP (vía Claude Code) | — | Camilo | Leer los bocetos de Figma (textos y estructura de las 35 pantallas) |
 
 (Agregar aquí cualquier otra herramienta que use el equipo: ChatGPT, Copilot, Gemini, Figma AI…)
@@ -27,6 +29,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Camilo | Claude Code (Sonnet 5.5 ejecutores + Opus validador) | Pantallas del carril cuenta-natillera: 01 Bienvenida, 03 Entrar, 10 Mi natillera (frasco + camino del año), 05/06/07 (invitaciones), 02/08/09 (cuenta, crear natillera, QR), 15, 04, 35; dependencia `react-native-qrcode-svg`; ajustes tras validación (acceso a Su cuenta, `resetQueries` al cambiar de usuario demo) | `src/app/(auth)/*`, `src/app/(tabs)/natillera/*`, `src/app/(tabs)/ayuda.tsx`, `src/app/cuenta.tsx`, `src/features/**`, `src/components/Screen.tsx`, `src/api/ApiProvider.tsx`, `src/api/mockApi.ts`, `package.json` |
 | 2026-10-16 | Camilo | Claude Code | Encargos (prompts) para las sesiones paralelas de pantallas y del emulador; worktrees por rama; hook de prompts con la rama en el nombre; prompts de la sesión paralela recuperados literalmente de su transcripción local | `prompts/`, `.claude/hooks/log-prompt.mjs`, `MEMORY.md`, `CLAUDE.md` |
 | 2026-10-16 | Camilo | Claude Code (sesión aparte) | Instalación del Android SDK y emulador en el equipo de Camilo para probar la app (no toca el código) | — |
+| 2026-10-16 | Camilo | Claude Code (Sonnet 5.5) | Auditoría de las 5 sesiones, los 3 worktrees y los prompts: tablero y memoria al día, sección de pendientes de Henry, registro de los prompts que el hook no capturó (sesiones abiertas en la raíz); verificación de que `feat/pagos` choca con `main` en documentación | `MEMORY.md`, `CLAUDE.md`, `docs/HENRY.md`, `AI_USAGE.md`, `prompts/2026-10-16-camilo-auditoria.md` |
 
 ## What We Did Ourselves
 
@@ -43,4 +46,5 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 - Manual: los prompts de otras herramientas van en `prompts/<persona>-<herramienta>.md`.
 - Sesión de planeación (antes del hook): [`prompts/2026-10-16-camilo-planeacion.md`](prompts/2026-10-16-camilo-planeacion.md).
 - Sesión paralela de planeación (sin hook, recuperada de su transcripción): [`prompts/2026-10-16-camilo-sesion-paralela-plan.md`](prompts/2026-10-16-camilo-sesion-paralela-plan.md).
+- Sesión de auditoría (raíz, sin hook): [`prompts/2026-10-16-camilo-auditoria.md`](prompts/2026-10-16-camilo-auditoria.md). Incluye la nota sobre los dos mensajes de solo imagen (capturas de pantalla del emulador) de la sesión del emulador, que no tienen texto.
 - Encargos enviados a otras sesiones: [`prompts/2026-10-16-camilo-encargos-sesiones.md`](prompts/2026-10-16-camilo-encargos-sesiones.md).

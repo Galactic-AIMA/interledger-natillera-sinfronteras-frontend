@@ -14,9 +14,9 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 | Carril | Alcance | Persona | Sesión / rama | Estado |
 |---|---|---|---|---|
 | `base` | Scaffold Expo, tema, componentes, `src/api` (+ mocks), auth, navegación | Camilo | main | **lista** (2026-10-16) |
-| `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo (sesión A) | `feat/cuenta-natillera` · worktree `frontend-cuenta` | **hecha en demo** (2026-10-16); falta probar en celular |
-| `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Camilo (sesión B); Henry prueba y revisa | `feat/pagos` · worktree `frontend-pagos` | en curso |
-| `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | — | libre |
+| `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo (sesión A) | `feat/cuenta-natillera` · worktree `frontend-cuenta` | **en `main`** (`ffd9917`, 2026-10-16); falta probar en celular |
+| `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Camilo (sesión B); Henry prueba y revisa | `feat/pagos` · worktree `frontend-pagos` | **hecha en demo, subida a `feat/pagos` (`7d4c5e8`), sin PR ni merge a `main`** |
+| `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | `feat/creditos` (por crear, desde `main` con `pagos` ya integrado) | libre |
 | `pitch` | Slides en la plantilla oficial, guion de 5 min, video | Camilo + Henry | — | libre |
 
 ## Decisiones tomadas
@@ -44,7 +44,24 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 
 - 2026-10-16 · de base a pagos: Henry, empieza por la Parte A de [docs/HENRY.md](docs/HENRY.md) (wallets de prueba, monedas, `natillera://`, curso, slides). Camilo avisa aquí cuando `base` esté lista para que arranques las pantallas.
 - 2026-10-16 · de base a todos: **`base` lista en `main`.** Ya pueden arrancar pantallas: cada ruta tiene un placeholder con su número; reemplácenlo completo. Guía rápida en "Cómo usar la base" de [docs/HENRY.md](docs/HENRY.md) y en la bitácora `base`.
+- 2026-10-16 · de base a todos: **estado real de las ramas:** `main` = base + cuenta-natillera (`ffd9917`); `feat/pagos` = pagos sin integrar; `creditos` sin empezar. Quien toque `src/api`, `src/components` o `Screen` lo pide aquí.
 - Formato: `AAAA-MM-DD HH:MM · de <carril> a <carril>: <qué>`
+
+## Pendientes para Henry (2026-10-16 ~12:40)
+
+Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs/HENRY.md](docs/HENRY.md).
+
+| # | Pendiente | Dónde | Listo cuando |
+|---|---|---|---|
+| 1 | Probar 11 → 28 → 30 → 34 en Expo Go (celular) y en web, en modo demo | rama `feat/pagos` | Recorrido sin errores; fallos anotados en bitácora `pagos` |
+| 2 | Parte A: wallets de prueba, monedas (¿COP?), `natillera://` como finish URI | Test Wallet | Respuesta en bitácora `pagos` y aviso a Duvan |
+| 3 | Préstamos 16–25 (carril `creditos`), reutilizando `antesHref`/`volviendoHref` de `src/features/pagos/flow.ts` | rama `feat/creditos` | 19 y 23 en `resultado.tsx`; rama de préstamo en `volviendo.tsx` |
+| 4 | Pulido de copy ("usted", frases cortas) | `docs/copy-henry.md` | Lista de cambios propuestos, sin tocar el Figma |
+| 5 | Slides en la plantilla oficial + guion de 5 min | Google Slides | Esqueleto con problema, solución, demo, impacto, equipo |
+| 6 | Curso de Platzi o Guide to Open Payments | — | Marcado en el checklist de abajo |
+| 7 | Cuenta-natillera en celular: `expo-clipboard` para "Copiar el enlace" y botón volver en pantallas sueltas | rama nueva desde `main` | Probado en Expo Go |
+
+**Aviso de integración:** `feat/pagos` y `main` chocan en `AI_USAGE.md`, `MEMORY.md` y `prompts/2026-10-16-camilo.md` (verificado con `git merge-tree` el 2026-10-16). Se resuelven conservando las dos versiones y **concatenando** los prompts. `feat/pagos` además no trae la fusión de `main` (hook de prompts por rama, `Screen` con `headerRight`).
 
 ## Checklist de entrega
 
@@ -68,6 +85,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
   - `src/utils/money.ts`: `formatAmount`, `toMinorUnits`, `currencyName` (12 casos probados).
   - Rutas: `(auth)` 01–03 · `(tabs)/natillera` 05–12, 15–25 · `(tabs)/pagar` 26–27 · `(tabs)/ayuda` 35 · `cuenta` 04 · `billetera/antes` 28 · `billetera/volviendo` 30 · `resultado` 14/19/23/31–34 · `retorno` (deep link).
   - Probar: `npm run web` o `npx expo start` → "Empezar con datos de ejemplo" (Doña Rosa; en demo Luz y Andrés también existen, contraseña cualquiera).
+- 2026-10-16 ~12:40 — Auditoría de sesiones: memoria, tablero, `AI_USAGE.md` y prompts al día; traspaso a Henry documentado. Hallazgo: `feat/pagos` choca con `main` en 3 archivos de documentación.
 - 2026-10-16 ~13:15 — Plan de ejecución (`docs/EJECUCION-PANTALLAS.md`), worktrees `frontend-cuenta` y `frontend-pagos` creados, encargos de las sesiones en `prompts/2026-10-16-camilo-encargos-sesiones.md`, prompts de la sesión paralela recuperados de su transcripción, hook con la rama en el nombre. Sesión del emulador Android instalando el SDK.
 
 ### cuenta-natillera
