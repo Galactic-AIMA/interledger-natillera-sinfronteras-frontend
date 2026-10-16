@@ -28,6 +28,8 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 
 - 2026-10-16 — El contrato manda desde `docs/openapi.yaml` del repo back. Front solo con mocks hasta la madrugada. Las decisiones abiertas del back (IaC, JS/TS, periodo, tasa, amortización) las deciden Duvan y David Ciro; el front pinta lo que devuelvan.
 
+- 2026-10-16 — Ejecución de pantallas: 2 sesiones en paralelo (`feat/cuenta-natillera`, `feat/pagos`), camino del pitch primero, pulido solo en 01/10/11/28/34, celular con Expo Go + emulador de respaldo. Plan: [docs/EJECUCION-PANTALLAS.md](docs/EJECUCION-PANTALLAS.md).
+
 ## Propuestas al back (pendientes de respuesta)
 
 1. `finish.uri` https del back que verifique el hash y responda 302 a `natillera://retorno?paymentId=…&result=…` (su flujo 4 manda `interact_ref` desde la app sin verificar el hash). El front soporta ambos.

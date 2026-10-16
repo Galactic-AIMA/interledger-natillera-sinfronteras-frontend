@@ -82,3 +82,14 @@ Sí, haz el primer commit y el push a main del front y sigue con el carril base 
 ## Nota
 
 Hubo una segunda sesión de Claude Code en paralelo, también abierta en la carpeta raíz del workspace, que escribió `docs/PLAN.md` y `docs/HENRY.md`. Sus prompts están pendientes de copiarse aquí, literales: el hook solo corre en las sesiones abiertas dentro de `frontend/`.
+
+## Prompt 3
+
+Tenemos entonces todo documentado, todo, todo melo. Entonces, déjame eh, el plan para seguir en otra sesión y empezar a ejecutar el front. Hazme preguntas estratégicas. Recuerda que entonces ahí está mi parte y la parte de ejemplo. Empecemos a hacer las pantallas entonces. Eh, si necesitamos sacar un simulador de Android, lo sacamos acá en mi equipo.
+
+## Respuestas a la ronda 3 de preguntas
+
+- ¿Cómo probamos en Android? → "Ambos"
+- ¿Cómo repartimos la construcción de pantallas entre sesiones? → "2 sesiones paralelas (Recomendado)"
+- ¿Qué nivel visual buscamos? → "Pulido en flujo del pitch (Recomendado)"
+- ¿Qué orden de pantallas priorizamos? → "Camino del pitch primero (Recomendado)"
