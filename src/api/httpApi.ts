@@ -125,6 +125,25 @@ async function request<T>(method: Method, path: string, body?: unknown, auth = t
     logEvent({ kind: 'api', label, ok: false, status, ms, detail: [parsed.error, parsed.message].filter(Boolean).join(': ') || 'error de Lambda' });
     throw new ApiError(friendlyError(status), status, parsed.error ?? 'error');
   }
+  // Lambda en modo proxy detrás de una integración sin proxy: la respuesta entera de la Lambda llega
+  // como 200 con {"statusCode": 401, "body": "{…}"} (visto el 2026-10-16). Se desenvuelve.
+  const wrapped = data as { statusCode?: unknown; body?: unknown } | null;
+  if (response.ok && typeof wrapped?.statusCode === 'number' && typeof wrapped.body === 'string') {
+    const status = wrapped.statusCode;
+    let inner: unknown = null;
+    try {
+      inner = JSON.parse(wrapped.body) as unknown;
+    } catch {
+      inner = { message: wrapped.body };
+    }
+    if (status >= 400) {
+      const innerError = (inner as { error?: string; message?: string } | null) ?? {};
+      logEvent({ kind: 'api', label, ok: false, status, ms, detail: `${[innerError.error, innerError.message].filter(Boolean).join(': ')} (respuesta proxy envuelta en 200)` });
+      throw new ApiError(friendlyError(status), status, innerError.error ?? 'error');
+    }
+    logEvent({ kind: 'api', label, ok: true, status, ms, detail: 'respuesta proxy envuelta en 200' });
+    return inner as T;
+  }
   const backError = (data as { error?: string; message?: string } | null) ?? null;
   logEvent({ kind: 'api', label, ok: response.ok, status: response.status, ms, detail: response.ok ? undefined : [backError?.error, backError?.message].filter(Boolean).join(': ') || undefined });
   if (!response.ok) throw new ApiError(friendlyError(response.status), response.status, backError?.error ?? 'error');
@@ -189,7 +208,15 @@ export const httpApi: NatilleraApi = {
       throw error;
     }
   },
-  startPayment: (input) => request<WalletRedirect>('POST', config.paymentsStartPath, { ...toPaymentBody(input), returnUrl: returnUrl() }),
+  async startPayment(input) {
+    const start = await request<WalletRedirect>('POST', config.paymentsStartPath, { ...toPaymentBody(input), returnUrl: returnUrl() });
+    // Sin estos dos campos no hay billetera que abrir: mejor un error claro que una pantalla en blanco.
+    if (!start?.paymentId || !start.redirectUrl) {
+      logEvent({ kind: 'api', label: `POST ${pathOnly(config.paymentsStartPath)}`, ok: false, detail: 'respuesta sin paymentId o redirectUrl' });
+      throw new ApiError('Recibimos una respuesta rara del servidor. Intente de nuevo.', 502, 'bad_response');
+    }
+    return start;
+  },
   finishPayment: async (paymentId, ret) => {
     // Opción B del contrato: el back ya finalizó y solo consultamos el estado.
     if (!ret.interactRef) return request<Payment>('GET', `/payments/${paymentId}`);

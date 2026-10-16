@@ -13,3 +13,7 @@ Y suéjame bien el paso a paso entonces de qué tiene que hacer el equipo se lo 
 ## Prompt 3
 
 No hay tiempo para leer todo ese artefacto, papá. Qué plan más largo. Valida lo que tenemos nosotros. Y podemos probar con lo que hay ya creado el paquete. Y si nos falta integrar algo de lo creado en el paquete, intégralo.
+
+## Prompt 4
+
+(Salida pegada del script `probar-pago.sh` del back: login OK; `POST /start-payment` [HTTP 200] con cuerpo `{"statusCode": 401, "headers": {...}, "body": "{\"error\":\"Unauthorized\",\"message\":\"Missing username claim\"}"}` y `KeyError: 'paymentId'`.)
