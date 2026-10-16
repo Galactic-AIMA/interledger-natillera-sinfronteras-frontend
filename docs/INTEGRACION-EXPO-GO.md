@@ -79,8 +79,8 @@ En Expo Go la billetera devuelve a `exp://<IP>:8081/--/retorno` (no a `natillera
 
 | Quién | Qué |
 |---|---|
-| Camilo (`base`) | `src/api/config.ts`: `cognitoRegion` por defecto es `us-east-1`; el back está en `us-east-2` (`.env.example` ya lo trae) |
-| Camilo (`base`) | `app.json` `web.output`: `"server"` → `"single"` (decisión pendiente) |
+| ~~Camilo (`base`)~~ | ~~`config.ts` región~~ **Hecho por Henry:** `us-east-2` por defecto |
+| ~~Camilo (`base`)~~ | ~~`web.output`~~ **Hecho por Henry:** `"single"` (estático, probado); reversible |
 | Camilo (`base`) | Pendientes de la [auditoría](auditoria-2026-10-16.md): `RevokeToken` al salir, `.gitignore` con `.env*`, patrones extra en el hook de prompts |
 | Back | `returnUrl` con lista exacta (`natillera://retorno` y `exp://…/--/retorno`); ignorar el `result` del cliente; validar dueño del `paymentId` |
 | Henry | Test Wallet (3 cuentas, ¿COP?, ¿`natillera://` como finish URI?), curso, slides con [pitch/GUION.md](pitch/GUION.md) |

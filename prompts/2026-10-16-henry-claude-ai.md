@@ -42,3 +42,9 @@ ya nos debemos encargar nosostris por el momento camilo va a descansar, apropiat
 
 ## 12:51
 todos los archivos deben quedar en la carpeta del proyecto, y ponla en mi escritorio por favor
+
+## 13:25
+ya tenemos todas las pántallas listas? hazlo sin gastar tokens
+
+## 13:44
+yo creo que la otra sesion lo hizo revisa y actualizate
