@@ -15,8 +15,8 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 |---|---|---|---|---|
 | `base` | Scaffold Expo, tema, componentes, `src/api` (+ mocks), auth, navegación | Camilo | main | **lista** (2026-10-16) |
 | `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo (sesión A) | `feat/cuenta-natillera` · worktree `frontend-cuenta` | **en `main`** (`ffd9917`, 2026-10-16); falta probar en celular |
-| `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Camilo (sesión B); Henry prueba y revisa | `feat/pagos` · worktree `frontend-pagos` | **hecha en demo, subida a `feat/pagos` (`7d4c5e8`), sin PR ni merge a `main`** |
-| `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | `feat/creditos` (por crear, desde `main` con `pagos` ya integrado) | libre |
+| `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Camilo (sesión B) → traspaso a Henry | `feat/pagos` + arreglos de seguridad de Henry, integrados en `feat/creditos` | hecha en demo; falta celular y Test Wallet |
+| `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | `feat/creditos` (desde `main` con `pagos` integrado) | **en curso** (2026-10-16 ~12:50) |
 | `pitch` | Slides en la plantilla oficial, guion de 5 min, video | Camilo + Henry | — | libre |
 
 ## Decisiones tomadas
@@ -45,7 +45,10 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 - 2026-10-16 · de base a pagos: Henry, empieza por la Parte A de [docs/HENRY.md](docs/HENRY.md) (wallets de prueba, monedas, `natillera://`, curso, slides). Camilo avisa aquí cuando `base` esté lista para que arranques las pantallas.
 - 2026-10-16 · de base a todos: **`base` lista en `main`.** Ya pueden arrancar pantallas: cada ruta tiene un placeholder con su número; reemplácenlo completo. Guía rápida en "Cómo usar la base" de [docs/HENRY.md](docs/HENRY.md) y en la bitácora `base`.
 - 2026-10-16 · de base a todos: **estado real de las ramas:** `main` = base + cuenta-natillera (`ffd9917`); `feat/pagos` = pagos sin integrar; `creditos` sin empezar. Quien toque `src/api`, `src/components` o `Screen` lo pide aquí.
+- 2026-10-16 · de pagos a base: `openWallet` en demo no funcionaba en web (`Alert` sin botones en react-native-web). Con OK de Camilo, pagos agregó un fallback `window.confirm` en `src/api/wallet.ts`; base, revísalo al mergear. Pendiente de base: el mock devuelve `fee` aunque no haya conversión (`mockApi.ts` ~137), la UI ya lo oculta.
 - Formato: `AAAA-MM-DD HH:MM · de <carril> a <carril>: <qué>`
+- 2026-10-16 12:45 · de pagos a base: 4 arreglos en archivos compartidos (logout con `RevokeToken`, errores no-JSON en `httpApi`, `.gitignore` con `.env*`, patrones del hook). Lista en [docs/auditoria-2026-10-16.md](docs/auditoria-2026-10-16.md).
+- 2026-10-16 12:45 · de pagos a back (Camilo, reenviar a Duvan y David): el back aún no tiene código y sus rutas tentativas no cuadran con el contrato. Prioridad: `GET /payments/{id}` → `returnUrl` (lista blanca) y `debitAmount`/`receiveAmount` al iniciar → `charge-now`. Opción B con hash obligatorio; ignorar `result` del cliente; `natilleraId`. Detalle en el mismo doc.
 
 ## Pendientes para Henry (2026-10-16 ~12:40)
 
@@ -92,7 +95,10 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 - 2026-10-16 — Sesión A: construidas 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 15 y 35 (5 ejecutores Sonnet + validador Opus). `tsc` limpio; recorrido completo en web con demo, A+ ×1,4 sin cortes. Cambios en archivos compartidos: `Screen` ahora acepta `headerRight`; `enterDemo` hace `resetQueries`; el código de invitación del mock ya es válido en 07. Pendiente: probar en celular/Expo Go, `expo-clipboard` para copiar el enlace, botón volver en pantallas sueltas, `web.output` "server" → "single" (decide Camilo). 04 se abre desde el icono de persona en 10/05.
 
 ### pagos
-- (vacío)
+- 2026-10-16 — Sesión B arranca con agentes: contrato del flujo en `src/features/pagos/flow.ts`; ejecutores Sonnet, validación Opus. Orden: 11→28→30→resultado, luego 26/27, luego 12/14.
+- 2026-10-16 — Hechas 11, 28, 30, resultado (14, 31–34), 26, 27 y 12 (+ «Cobrar ahora» demo). `tsc` y export web ok; validación Opus encontró y se corrigieron 10 defectos. **Sin probar en celular/Expo Go** (pendiente). Faltan préstamos 16–25 (`resultado.tsx` admite 19 y 23 con un caso más).
+- 2026-10-16 — **Traspaso a Henry (pagos → préstamos):** `feat/pagos` tiene 11, 12, 26, 27, 28, 30 y resultado. Falta: (1) probar 11→28→30→34 en Expo Go y web (el diálogo demo en web usa `window.confirm`); (2) préstamos 16–25: reutilizan `antesHref`/`volviendoHref` de `src/features/pagos/flow.ts`; para 19 y 23 agregar `'credito-autorizado'`/`'prestamo-desembolsado'` a `ResultKind` y una entrada en `VARIANTS` de `src/app/resultado.tsx` (TypeScript marca lo que falte); en `volviendo.tsx` añadir la rama `finishLoanRepaymentGrant`/desembolso. (3) PR de `feat/pagos` a `main` (pendiente de Camilo).
+- 2026-10-16 ~12:45 (Henry) — Henry descarta su versión paralela de 11/26/27/28/30/resultado (duplicaba la de la sesión B) y trabaja sobre `feat/pagos`. Arreglos de seguridad y de mensajes de la auditoría en `src/features/pagos/flow.ts`, `billetera/antes.tsx`, `billetera/volviendo.tsx` y `resultado.tsx`: registro en memoria de flujos (`antesHref` registra, la 30 hace `settleFlow`), URL de billetera solo https de `*.interledger-test.dev`, éxitos solo si los confirmó la 30, `safeOrigin`, error de red → «sigue en proceso», atrás bloqueado en la 30 (Android). `tsc`, bundle y pruebas ok. Detalle: [docs/auditoria-2026-10-16.md](docs/auditoria-2026-10-16.md).
 
 ### creditos
 - (vacío)

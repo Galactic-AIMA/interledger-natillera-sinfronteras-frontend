@@ -10,6 +10,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | Claude Code · subagentes (sesiones A y B de pantallas) | Claude Sonnet 5.5 (ejecutores) y Claude Opus 5.5 (validador) | Camilo | Construir y validar las pantallas de `cuenta-natillera` y `pagos` en paralelo |
 | Claude Code · sesión de auditoría | Claude Sonnet 5.5 | Camilo | Revisar sesiones, ramas, memoria y prompts; documentar el traspaso a Henry |
 | Figma MCP (vía Claude Code) | — | Camilo | Leer los bocetos de Figma (textos y estructura de las 35 pantallas) |
+| Claude (claude.ai con herramientas de código y subagentes) | Claude Opus 5.5 (subagentes: Sonnet 5.5 y Opus 5.5) | Henry | Revisión del repo, auditoría de verificación, pruebas, coordinación y ciberseguridad del carril `pagos`, y sus arreglos |
 
 (Agregar aquí cualquier otra herramienta que use el equipo: ChatGPT, Copilot, Gemini, Figma AI…)
 
@@ -30,6 +31,8 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Camilo | Claude Code | Encargos (prompts) para las sesiones paralelas de pantallas y del emulador; worktrees por rama; hook de prompts con la rama en el nombre; prompts de la sesión paralela recuperados literalmente de su transcripción local | `prompts/`, `.claude/hooks/log-prompt.mjs`, `MEMORY.md`, `CLAUDE.md` |
 | 2026-10-16 | Camilo | Claude Code (sesión aparte) | Instalación del Android SDK y emulador en el equipo de Camilo para probar la app (no toca el código) | — |
 | 2026-10-16 | Camilo | Claude Code (Sonnet 5.5) | Auditoría de las 5 sesiones, los 3 worktrees y los prompts: tablero y memoria al día, sección de pendientes de Henry, registro de los prompts que el hook no capturó (sesiones abiertas en la raíz); verificación de que `feat/pagos` choca con `main` en documentación | `MEMORY.md`, `CLAUDE.md`, `docs/HENRY.md`, `AI_USAGE.md`, `prompts/2026-10-16-camilo-auditoria.md` |
+| 2026-10-16 | Camilo | Claude Code (agentes Sonnet ejecutores + Opus validador) | Carril `pagos`: pantallas 11, 28, 30, resultado (14, 31–34), 26, 27 y 12 con modo demo; contrato del flujo; validación y correcciones; fallback de billetera demo en web | `src/features/pagos/`, `src/app/(tabs)/natillera/cuota.tsx`, `src/app/(tabs)/natillera/recurrente.tsx`, `src/app/(tabs)/pagar/`, `src/app/billetera/`, `src/app/resultado.tsx`, `src/api/wallet.ts` |
+| 2026-10-16 | Henry | Claude (claude.ai) + subagentes Sonnet 5.5 (verificación, pruebas) y Opus 5.5 (coordinación, ciberseguridad) | Auditoría del carril `pagos` y arreglos de seguridad: registro de flujos en memoria, validación de la URL de la billetera, resultados confirmados, `safeOrigin`, mensajes ante error de red, atrás en Android | `src/features/pagos/flow.ts`, `src/app/billetera/antes.tsx`, `src/app/billetera/volviendo.tsx`, `src/app/resultado.tsx`, `docs/auditoria-2026-10-16.md`, `MEMORY.md` |
 
 ## What We Did Ourselves
 
