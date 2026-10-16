@@ -2,6 +2,12 @@
 
 Revisión de Henry con Claude Code. Se trajeron front y back de GitHub; nada se subió ni se borró.
 
+> **Actualización 2026-10-16 ~17:15 (manda sobre lo de abajo):**
+> - **Front:** el PR #1 (`feat/cuenta-celular` → `main`) **se fusionó a las 16:39**. Después Camilo subió a `main` (`47213b6`, 16:52): modo híbrido (`src/api/hybridApi.ts`, `EXPO_PUBLIC_REAL_METHODS`), arreglos de la 02/03, registro técnico, selector de indicativo de país y la función **Metas** (36–38). `feat/cuenta-celular` ya tiene todo `main` (fusión `a912952`). `npm test` **12/12** y `ai-usage-check` OK. **`tsc` NO está limpio en `main`:** 2 errores TS7006 en `src/api/hybridApi.ts:16-17` (parámetro `name` sin tipo); no afectan la app, pero hay que arreglarlos antes de las 11:00 (Camilo).
+> - **Decisión 16/10 ~17:00:** el diseño del front se queda como está; no se hacen más cambios de pantallas.
+> - **Back:** `david` `4d38582` (16:49) tiene start/finish/get payment según el contrato del front, con modo VTL. **Desplegada solo `/start-payment`** (401 sin token); `/payments`, `/payments/{id}`, `/payments/{id}/finish`, `/me` y `/natilleras/mine` siguen en 403 (no existen). El front llama `POST /payments`, no `/start-payment`: el back debe crear las rutas del contrato o avisar para mapearlas. Detalle: [COORDINACION-BACK.md](COORDINACION-BACK.md).
+> - Los puntos 9 (PR) y la parte de `tsc` limpio de la tabla de abajo quedaron superados por esto.
+
 ## Front (`Galactic-AIMA/...-frontend`, público, rama por defecto `main`)
 
 | Qué | Estado |

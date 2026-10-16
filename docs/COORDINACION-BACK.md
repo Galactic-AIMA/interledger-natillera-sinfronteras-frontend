@@ -1,5 +1,7 @@
 # Coordinación front ↔ back (2026-10-16 ~16:00)
 
+> **Actualización ~17:15:** el PR del front ya está en `main` y la app tiene modo híbrido: cada función pasa a real cuando su ruta exista (`EXPO_PUBLIC_REAL_METHODS`). Para el pago real hacen falta, con estos nombres exactos, `POST /payments`, `POST /payments/{id}/finish` y `GET /payments/{id}` (hoy solo existe `/start-payment`). Si prefieren otros nombres, avisen: se cambian solo en `src/api/httpApi.ts`.
+>
 > **Actualización ~17:00 (rama `david` `4d38582`, API probada por curl):**
 > - **Código de pagos listo:** `deploy/payments` con `start-payment`, `finish-payment` y `get-payment` cumple la §3 y la §5 (allowlist de `returnUrl`, `?paymentId=` en el `finish.uri`, dueño del pago, hash verificado, `result` ignorado, idempotente). Zips en `deploy/payments/dist`.
 > - **API desplegada:** REST `https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev`, autorizador Cognito, **IdToken** (en el front: `EXPO_PUBLIC_AUTH_TOKEN_TYPE=id`, ya soportado).

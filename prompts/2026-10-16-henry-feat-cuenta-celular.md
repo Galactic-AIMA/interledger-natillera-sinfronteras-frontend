@@ -144,3 +144,9 @@ verifica el back y dime en que podemos apoyarlos
 ## 16:57 · sesión e6c1aee4
 
 no, dejalos trabajar por ahora
+
+## 17:05 · esta sesión (a mano: el hook no la registra)
+Es que nos vamos a quedar con la con la actual. no Vamos a mover más con el front.
+
+## 17:10 · esta sesión (a mano: el hook no la registra)
+mira las actualizaciones y documentacion esten al dia en todo
