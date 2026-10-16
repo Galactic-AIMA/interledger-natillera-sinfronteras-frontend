@@ -128,3 +128,15 @@ Prompts **literales**, en orden. Las capturas de pantalla adjuntas se marcan com
 > Política: https://interledger.org/hackathon/ai-policy/
 >
 > ¡Gracias! Cualquier cambio de ruta o campo, por favor actualícenlo en openapi.yaml para no romper el front 🙏"
+
+### 23
+> Duvan crea main y la pone como rama por defecto; nosotros abrimos PR de david a main.
+
+### 24
+> https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend.git
+>
+> Duvan acaba de subir el codigo del start-payment para que lo revisemos antes de subirlo a la lambda
+
+### 25
+> Sí, escribe la versión corregida de start-payment, finish-payment y get-payment siguiendo el contrato del front, lista para empaquetar y subir. Duvan la revisa.
+> Tambien damos el request para probar el flujo de pagos
