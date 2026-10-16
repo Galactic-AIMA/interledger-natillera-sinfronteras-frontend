@@ -23,7 +23,9 @@ export type ResultKind =
   | 'pendiente'
   | 'recurrente-activada'
   | 'credito-autorizado'
-  | 'prestamo-desembolsado';
+  | 'prestamo-desembolsado'
+  // 38 → aporte real a una colecta de Metas.
+  | 'meta-aporte';
 
 /** Params de /billetera/antes (28). `id` = paymentId (cuota, p2p) o grantId (recurrente). */
 export type AntesParams = {
@@ -122,7 +124,7 @@ export function settledOutcome(id: string | undefined) {
 }
 
 // Rutas a las que pueden volver «Ahora no», «Intentar de nuevo» y «Volver».
-const SAFE_ORIGINS = ['/natillera', '/natillera/cuota', '/natillera/recurrente', '/natillera/prestamos', '/natillera/prestamos/tesorera', '/pagar'] as const;
+const SAFE_ORIGINS = ['/natillera', '/natillera/cuota', '/natillera/recurrente', '/natillera/prestamos', '/natillera/prestamos/tesorera', '/natillera/metas', '/pagar'] as const;
 export type SafeOrigin = (typeof SAFE_ORIGINS)[number];
 
 /** `origin` viene por params: solo se aceptan rutas conocidas. */

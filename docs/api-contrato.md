@@ -6,6 +6,8 @@ Basado en `docs/ARQUITECTURA.md` (rama `david` del back, transcripción del draw
 >
 > **Fuente de verdad (decisión de Camilo, 2026-10-16):** `docs/openapi.yaml` en el repo back; este archivo es el resumen del front. Si difieren, manda el OpenAPI. El proceso conjunto está en `docs/INTEGRACION.md` del back (rama `docs/integracion-front`, por subir). Hasta que el back apruebe el borrador, nada es definitivo. Mientras tanto el front trabaja solo con mocks hasta la madrugada.
 
+Estado 2026-10-16 ~15:50: en el back solo existe `GET /me` (URL del API sin publicar). `start-payment` está documentado como `POST /payments/start` (el front usa `POST /payments`: alinear). Mientras tanto el front corre en modo híbrido (`src/api/hybridApi.ts`).
+
 Reglas comunes: `Authorization: Bearer <accessToken de Cognito>` en todo salvo signup y login. `author` / `paymentAuthor` los pone el back desde el `sub`. Montos `{ value: string, assetCode, assetScale }`. Errores `{ error, message }` con su status HTTP.
 
 ## Endpoints
@@ -14,7 +16,7 @@ Reglas comunes: `Authorization: Bearer <accessToken de Cognito>` en todo salvo s
 |---|---|---|---|
 | 1 | Cognito `SignUp` directo (no pasa por nuestra API) | {ClientId, Username, Password, UserAttributes: email, phone_number (+57…), custom:walletId} → {UserConfirmed: true, UserSub} | 02 |
 | 2 | Cognito `InitiateAuth` (USER_PASSWORD_AUTH; renovar con REFRESH_TOKEN_AUTH) | → {AccessToken, RefreshToken, ExpiresIn: 3600} | 03 |
-| 13 | `GET /me` | → {username, email, phone, walletAddress, assetCode, assetScale} | 04, 26 |
+| 13 | `GET /me` | → {username, email, phone, walletAddress, assetCode, assetScale}. **Desplegado (2026-10-16)**: devuelve la fila de `user-info` (`source` = username, sin `displayName`) + `userId`; el front lo normaliza en `httpApi.ts` | 04, 26 |
 | — | `GET /wallets/verify?url=` | → {exists, assetCode, assetScale} | 02, 08, 27 |
 | 3 | `POST /payments` | {kind: "p2p"\|"aporte", customWalletName? \| natilleraId?, author?, value, assetCode, assetScale} → {paymentId, redirectUrl, debitAmount?, receiveAmount?} | 11, 26, 28 |
 | 4 | `POST /payments/{id}/finish` | {interact_ref, hash?} → {status, debitAmount, receiveAmount} | 30 |

@@ -10,6 +10,7 @@ export const keys = {
   accounts: ['accounts'] as const,
   myLoans: ['loans', 'mine'] as const,
   pendingLoans: ['loans', 'pending'] as const,
+  goals: ['goals'] as const,
 };
 
 export function useMe() {
@@ -40,4 +41,14 @@ export function useMyLoans() {
 export function usePendingLoanRequests() {
   const api = useApi();
   return useQuery({ queryKey: [...keys.pendingLoans, api.mode], queryFn: () => api.listPendingLoanRequests() });
+}
+
+export function useGoals() {
+  const api = useApi();
+  return useQuery({ queryKey: [...keys.goals, api.mode], queryFn: () => api.listGoals() });
+}
+
+export function useGoal(goalId: string | undefined) {
+  const api = useApi();
+  return useQuery({ queryKey: [...keys.goals, api.mode, goalId], queryFn: () => api.getGoal(goalId ?? ''), enabled: Boolean(goalId) });
 }

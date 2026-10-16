@@ -57,6 +57,17 @@ const VARIANTS: Record<ResultKind, (ctx: Ctx) => ReactElement> = {
       </Card>
     </SuccessResult>
   ),
+  // 38 → colecta de Metas: el aporte llegó directo a la billetera del beneficiario.
+  'meta-aporte': (ctx) => (
+    <SuccessResult title="Aporte enviado" actions={done('/natillera/metas')}>
+      <Card title="Resumen">
+        {ctx.receive ? (
+          <InfoRow label={`Le llegó a ${ctx.counterpart ?? 'quien recibe'}`} right={<AmountValue amount={ctx.receive} tone="money" />} />
+        ) : null}
+        {ctx.debit ? <InfoRow label="Salió de su billetera" right={<AmountValue amount={ctx.debit} />} /> : null}
+      </Card>
+    </SuccessResult>
+  ),
   // 31
   'pago-hecho': (ctx) => (
     <SuccessResult title="Pago hecho" actions={done('/pagar')}>
@@ -118,7 +129,7 @@ const VARIANTS: Record<ResultKind, (ctx: Ctx) => ReactElement> = {
   ),
 };
 
-const SUCCESS: ReadonlySet<ResultKind> = new Set<ResultKind>(['cuota-puesta', 'pago-hecho', 'recurrente-activada', 'credito-autorizado', 'prestamo-desembolsado']);
+const SUCCESS: ReadonlySet<ResultKind> = new Set<ResultKind>(['cuota-puesta', 'pago-hecho', 'meta-aporte', 'recurrente-activada', 'credito-autorizado', 'prestamo-desembolsado']);
 
 function isResultKind(value: string | undefined): value is ResultKind {
   return value !== undefined && Object.hasOwn(VARIANTS, value);

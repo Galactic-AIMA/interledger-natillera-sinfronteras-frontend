@@ -1,8 +1,10 @@
 import * as Linking from 'expo-linking';
 
-import { getAuthToken, normalizeWalletAddress, signIn, signOut, signUp } from './auth';
+import { getAuthToken, getIdTokenClaims, normalizeWalletAddress, signIn, signOut, signUp } from './auth';
 import { ApiError, type NatilleraApi } from './client';
 import { config } from './config';
+import { createGoalStore } from './goalStore';
+import { logEvent, pathOnly } from './devLog';
 import type {
   LoanDecisionResult,
   LoanRequest,
@@ -30,16 +32,46 @@ type Method = 'GET' | 'POST';
 async function lookupPublicWallet(input: string): Promise<WalletInfo> {
   const raw = input.trim();
   const url = normalizeWalletAddress(raw);
+  const label = `GET ${pathOnly(url)}`;
+  const started = Date.now();
   let response: Response;
   try {
     response = await fetch(url, { headers: { Accept: 'application/json' } });
   } catch {
+    logEvent({ kind: 'billetera', label, ok: false, ms: Date.now() - started, detail: 'sin conexión' });
     throw new ApiError('No hay conexión. Revise su internet e intente de nuevo.', 0, 'network');
   }
+  logEvent({ kind: 'billetera', label, ok: response.ok, status: response.status, ms: Date.now() - started });
   if (!response.ok) return { exists: false, walletAddress: raw };
   const data = (await response.json().catch(() => null)) as { id?: string; assetCode?: string; assetScale?: number } | null;
   if (!data?.assetCode) return { exists: false, walletAddress: raw };
   return { exists: true, walletAddress: data.id ?? url, assetCode: data.assetCode, assetScale: data.assetScale };
+}
+
+// GET /me del back devuelve la fila de `user-info` (llave `source` = username) más `userId`.
+type BackUser = Partial<User> & { source?: string };
+
+function toUser(data: BackUser, claims: Record<string, string> | null): User {
+  const username = data.username ?? data.source ?? claims?.['cognito:username'] ?? '';
+  return {
+    userId: data.userId ?? claims?.sub ?? '',
+    username,
+    displayName: data.displayName ?? username,
+    email: data.email ?? claims?.email ?? '',
+    phone: data.phone ?? claims?.phone_number ?? '',
+    walletAddress: data.walletAddress ?? claims?.['custom:walletId'] ?? '',
+    assetCode: data.assetCode ?? '',
+    assetScale: data.assetScale ?? 2,
+  };
+}
+
+// Mientras no haya URL del API, el perfil sale del IdToken y la moneda de la wallet pública.
+async function profileFromToken(): Promise<User> {
+  const claims = await getIdTokenClaims();
+  if (!claims) throw new ApiError('Su sesión se cerró. Vuelva a entrar.', 401, 'unauthorized');
+  const walletId = claims['custom:walletId'] ?? '';
+  const wallet = walletId ? await lookupPublicWallet(walletId).catch(() => null) : null;
+  return toUser({ walletAddress: wallet?.exists ? wallet.walletAddress : walletId, assetCode: wallet?.assetCode, assetScale: wallet?.assetScale }, claims);
 }
 
 /** Mensajes en «usted» por status: no se muestra el `message` crudo del back (puede filtrar detalles internos). */
@@ -60,12 +92,16 @@ async function request<T>(method: Method, path: string, body?: unknown, auth = t
     if (!token) throw new ApiError('Su sesión se cerró. Vuelva a entrar.', 401, 'unauthorized');
     headers.Authorization = `Bearer ${token}`;
   }
+  const label = `${method} ${pathOnly(path)}`;
+  const started = Date.now();
   let response: Response;
   try {
     response = await fetch(`${config.apiUrl}${path}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
   } catch {
+    logEvent({ kind: 'api', label, ok: false, ms: Date.now() - started, detail: 'sin conexión' });
     throw new ApiError('No hay conexión. Revise su internet e intente de nuevo.', 0, 'network');
   }
+  const ms = Date.now() - started;
   const text = await response.text();
   let data: unknown = null;
   try {
@@ -74,7 +110,9 @@ async function request<T>(method: Method, path: string, body?: unknown, auth = t
     // Auditoría 2026-10-16: un 502/HTML de API Gateway no debe reventar la app.
     if (response.ok) throw new ApiError('Recibimos una respuesta rara del servidor. Intente de nuevo.', response.status, 'bad_response');
   }
-  if (!response.ok) throw new ApiError(friendlyError(response.status), response.status, (data as { error?: string } | null)?.error ?? 'error');
+  const backError = (data as { error?: string; message?: string } | null) ?? null;
+  logEvent({ kind: 'api', label, ok: response.ok, status: response.status, ms, detail: response.ok ? undefined : [backError?.error, backError?.message].filter(Boolean).join(': ') || undefined });
+  if (!response.ok) throw new ApiError(friendlyError(response.status), response.status, backError?.error ?? 'error');
   return data as T;
 }
 
@@ -84,26 +122,34 @@ const returnUrl = () => Linking.createURL('retorno');
 
 const walletReturnBody = (ret: WalletReturn) => ({ interact_ref: ret.interactRef, hash: ret.hash, result: ret.result });
 
+const goals = createGoalStore();
+
 export const httpApi: NatilleraApi = {
   mode: 'real',
 
   // El registro no pasa por nuestra API: SignUp directo a Cognito y luego login.
-  signup: async (input) => {
-    await signUp(input);
-    await signIn(input.username, input.password);
-  },
+  // Solo SignUp: la pantalla 02 entra después con login(). Si aquí también se entrara y eso fallara,
+  // la 02 mostraría error con la cuenta ya creada y al reintentar saldría "Ese usuario ya existe".
+  signup: (input) => signUp(input),
   login: (username, password) => signIn(username, password),
   logout: () => signOut(),
   hasSession: async () => (await getAuthToken()) !== null,
-  // El GET /me del back (Users-info + userId = sub) no trae displayName: se usa el usuario.
+  // El GET /me del back trae la fila de Users-info (sin displayName): toUser lo completa con el usuario.
   getMe: async () => {
-    const me = await request<Omit<User, 'displayName'> & { displayName?: string }>('GET', '/me');
-    return { ...me, displayName: me.displayName ?? me.username };
+    if (!config.apiUrl) return profileFromToken();
+    return toUser(await request<BackUser>('GET', '/me'), await getIdTokenClaims());
   },
   // Con sesión, verifica el back. Sin sesión (pantalla 02, antes del SignUp) se consulta la dirección de
   // pago pública de Open Payments: no firma ni usa llaves. El back vuelve a validar la wallet en el SignUp.
   verifyWallet: async (walletAddress) => {
-    if (await getAuthToken()) return request<WalletInfo>('GET', `/wallets/verify?url=${encodeURIComponent(walletAddress)}`);
+    if (config.apiUrl && (await getAuthToken())) {
+      try {
+        return await request<WalletInfo>('GET', `/wallets/verify?url=${encodeURIComponent(walletAddress)}`);
+      } catch (error) {
+        // El back aún no publica /wallets/verify: se usa la consulta pública.
+        if (!(error instanceof ApiError && error.status === 404)) throw error;
+      }
+    }
     return lookupPublicWallet(walletAddress);
   },
 
@@ -145,10 +191,17 @@ export const httpApi: NatilleraApi = {
   getMyLoans: () => request<MyLoans>('GET', '/loans/mine'),
   listPendingLoanRequests: () => request<LoanRequest[]>('GET', '/loans/requests?status=pending'),
   decideLoan: (requestId, accepted) => request<LoanDecisionResult>('POST', `/loans/requests/${requestId}/decision`, { accepted, returnUrl: returnUrl() }),
+
+  // Metas: el back aún no las guarda; viven en este celular mientras la app esté abierta.
+  listGoals: async () => goals.list(),
+  getGoal: async (goalId) => goals.get(goalId),
+  createGoal: async (input) => goals.create(input, 'Usted'),
+  addGoalContribution: async (goalId, input) => goals.contribute(goalId, input, 'Usted'),
 };
 
 function toPaymentBody(input: StartPaymentInput) {
-  return input.kind === 'p2p'
-    ? { kind: 'p2p', customWalletName: input.customWalletName, ...input.amount }
-    : { kind: 'aporte', natilleraId: input.natilleraId, author: input.onBehalfOfUserId, ...input.amount };
+  if (input.kind === 'aporte') return { kind: 'aporte', natilleraId: input.natilleraId, author: input.onBehalfOfUserId, ...input.amount };
+  // Colectas de Metas: el back acepta `walletAddress` en lugar de una cuenta guardada (docs/API-PAGOS.md del back).
+  if ('walletAddress' in input) return { kind: 'p2p', walletAddress: input.walletAddress, ...input.amount };
+  return { kind: 'p2p', customWalletName: input.customWalletName, ...input.amount };
 }

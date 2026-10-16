@@ -1,5 +1,8 @@
 import type {
+  AddGoalContributionInput,
   Amount,
+  CreateGoalInput,
+  Goal,
   CreateNatilleraInput,
   InvitationPreview,
   LoanDecisionResult,
@@ -64,6 +67,12 @@ export interface NatilleraApi {
   getMyLoans(): Promise<MyLoans>;
   listPendingLoanRequests(): Promise<LoanRequest[]>;
   decideLoan(requestId: string, accepted: boolean): Promise<LoanDecisionResult>;
+
+  // Metas (36–38): solo en el front por ahora; ver goalStore.ts.
+  listGoals(): Promise<Goal[]>;
+  getGoal(goalId: string): Promise<Goal>;
+  createGoal(input: CreateGoalInput): Promise<Goal>;
+  addGoalContribution(goalId: string, input: AddGoalContributionInput): Promise<Goal>;
 }
 
 /** Error con mensaje listo para mostrar en pantalla (en "usted", sin jerga). */

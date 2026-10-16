@@ -32,8 +32,12 @@ export default function Entrar() {
       await login(username.trim(), password);
       router.replace('/natillera');
     } catch (e) {
-      if (e instanceof ApiError && e.status === 401) setFormError('Su usuario o su contraseña no son correctos. Revíselos e intente de nuevo.');
-      else setFormError('No pudimos conectarnos. Revise su internet e intente de nuevo.');
+      // Cognito responde los errores de login con 400 (NotAuthorizedException), no 401: se muestra el
+      // mensaje ya traducido de auth.ts y solo se habla de internet cuando de verdad no hubo conexión.
+      if (e instanceof ApiError && e.code === 'network') setFormError('No pudimos conectarnos. Revise su internet e intente de nuevo.');
+      else if (e instanceof ApiError) setFormError(e.status === 401 ? 'Su usuario o su contraseña no son correctos. Revíselos e intente de nuevo.' : e.message);
+      else setFormError('No pudimos entrar. Intente de nuevo.');
+      if (__DEV__) console.warn('[login]', e instanceof ApiError ? `${e.status} ${e.code}` : e);
       setLoading(false);
     }
   }

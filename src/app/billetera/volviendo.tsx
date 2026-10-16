@@ -5,8 +5,9 @@ import { BackHandler } from 'react-native';
 
 import { keys, useApi, waitForFinalPayment, type NatilleraApi, type WalletReturn } from '@/api';
 import { ResultScreen } from '@/components';
-import { encodeAmount, isFlowKind, resultadoHref, safeOrigin, settleFlow, startedFlow, type FlowKind, type ResultadoParams } from '@/features/pagos/flow';
+import { decodeAmount, encodeAmount, isFlowKind, resultadoHref, safeOrigin, settleFlow, startedFlow, type FlowKind, type ResultadoParams } from '@/features/pagos/flow';
 import { param } from '@/features/pagos/flujo/params';
+import { takeGoalPayment } from '@/features/metas/goalPayments';
 
 type Outcome = Omit<ResultadoParams, 'origin'>;
 
@@ -98,13 +99,25 @@ export default function ScreenBilleteraVolviendo() {
     async function run() {
       // Solo se confirma un flujo que inició esta sesión: un enlace externo no puede disparar el finish.
       const own = isFlowKind(kind) && id && startedFlow(id)?.kind === kind;
-      const outcome: Outcome = own ? await settle(api, kind, id, ret, fallback) : { tipo: 'pendiente' };
+      let outcome: Outcome = own ? await settle(api, kind, id, ret, fallback) : { tipo: 'pendiente' };
+      // Colecta de Metas: el pago confirmado se suma a la meta (en el front; el back no guarda metas).
+      const goalId = own ? takeGoalPayment(id) : undefined;
+      const arrived = decodeAmount(outcome.receive);
+      if (goalId && outcome.tipo === 'pago-hecho' && arrived) {
+        try {
+          await api.addGoalContribution(goalId, { amount: arrived, sent: decodeAmount(outcome.debit), paymentId: id });
+          outcome = { ...outcome, tipo: 'meta-aporte' };
+        } catch {
+          // El pago sí salió: se muestra como pago hecho aunque la meta no se haya actualizado.
+        }
+      }
       if (own) settleFlow(id, outcome);
       // Sin await: el refetch de lo que queda debajo no debe demorar el resultado.
       void Promise.all([
         queryClient.invalidateQueries({ queryKey: keys.natillera }),
         queryClient.invalidateQueries({ queryKey: keys.payments }),
         queryClient.invalidateQueries({ queryKey: ['loans'] }),
+        queryClient.invalidateQueries({ queryKey: keys.goals }),
         kind === 'p2p' ? queryClient.invalidateQueries({ queryKey: keys.accounts }) : Promise.resolve(),
       ]);
       router.replace(resultadoHref({ ...outcome, id, origin: safeOrigin(origin) }));
