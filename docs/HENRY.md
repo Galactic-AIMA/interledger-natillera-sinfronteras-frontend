@@ -140,6 +140,8 @@ export default function ScreenNatilleraCuota() {
 
 ## Pendientes de Henry (estado al 2026-10-16 ~12:40)
 
+> **12:50:** los pendientes ya están repartidos en sesiones paralelas con horario y encargos en [SESIONES-HENRY.md](SESIONES-HENRY.md). La fusión de `main` en `feat/pagos` ya está hecha (`da44d32`).
+
 Camilo cerró en demo los carriles `cuenta-natillera` (ya en `main`) y `pagos` (en la rama `feat/pagos`, sin PR). Esto es lo que queda para ti, en orden. La misma lista vive en [MEMORY.md](../MEMORY.md), sección "Pendientes para Henry".
 
 | # | Pendiente | Cómo | Listo cuando |

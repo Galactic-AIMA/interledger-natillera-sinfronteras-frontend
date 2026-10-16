@@ -10,6 +10,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | Claude Code · subagentes (sesiones A y B de pantallas) | Claude Sonnet 5.5 (ejecutores) y Claude Opus 5.5 (validador) | Camilo | Construir y validar las pantallas de `cuenta-natillera` y `pagos` en paralelo |
 | Claude Code · sesión de auditoría | Claude Sonnet 5.5 | Camilo | Revisar sesiones, ramas, memoria y prompts; documentar el traspaso a Henry |
 | Figma MCP (vía Claude Code) | — | Camilo | Leer los bocetos de Figma (textos y estructura de las 35 pantallas) |
+| Claude (claude.ai, proyecto del equipo) | Claude Opus 5.5 | Henry | Revisión de pendientes, integración de ramas, plan de sesiones paralelas y encargos para Claude Code |
 
 (Agregar aquí cualquier otra herramienta que use el equipo: ChatGPT, Copilot, Gemini, Figma AI…)
 
@@ -31,6 +32,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Camilo | Claude Code (sesión aparte) | Instalación del Android SDK y emulador en el equipo de Camilo para probar la app (no toca el código) | — |
 | 2026-10-16 | Camilo | Claude Code (Sonnet 5.5) | Auditoría de las 5 sesiones, los 3 worktrees y los prompts: tablero y memoria al día, sección de pendientes de Henry, registro de los prompts que el hook no capturó (sesiones abiertas en la raíz); verificación de que `feat/pagos` choca con `main` en documentación | `MEMORY.md`, `CLAUDE.md`, `docs/HENRY.md`, `AI_USAGE.md`, `prompts/2026-10-16-camilo-auditoria.md` |
 | 2026-10-16 | Camilo | Claude Code (agentes Sonnet ejecutores + Opus validador) | Carril `pagos`: pantallas 11, 28, 30, resultado (14, 31–34), 26, 27 y 12 con modo demo; contrato del flujo; validación y correcciones; fallback de billetera demo en web | `src/features/pagos/`, `src/app/(tabs)/natillera/cuota.tsx`, `src/app/(tabs)/natillera/recurrente.tsx`, `src/app/(tabs)/pagar/`, `src/app/billetera/`, `src/app/resultado.tsx`, `src/api/wallet.ts` |
+| 2026-10-16 | Henry | Claude (claude.ai) | Revisión de pendientes y ramas; fusión de `main` en `feat/pagos` resolviendo los conflictos de documentación (concatenando prompts); verificación con `tsc`, export web y `ai-usage-check`; plan de sesiones paralelas C/D/H/P con encargos y mensaje para Camilo; tablero al día | `AI_USAGE.md`, `MEMORY.md`, `prompts/2026-10-16-camilo.md`, `docs/SESIONES-HENRY.md`, `docs/HENRY.md`, `prompts/2026-10-16-henry-claude-ai.md` |
 
 ## What We Did Ourselves
 

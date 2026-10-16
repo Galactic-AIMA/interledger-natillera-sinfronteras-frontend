@@ -15,9 +15,10 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 |---|---|---|---|---|
 | `base` | Scaffold Expo, tema, componentes, `src/api` (+ mocks), auth, navegación | Camilo | main | **lista** (2026-10-16) |
 | `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo (sesión A) | `feat/cuenta-natillera` · worktree `frontend-cuenta` | **en `main`** (`ffd9917`, 2026-10-16); falta probar en celular |
-| `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Camilo (sesión B); Henry prueba y revisa | `feat/pagos` · worktree `frontend-pagos` | **hecha en demo, subida a `feat/pagos` (`7d4c5e8`), sin PR ni merge a `main`** |
-| `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | `feat/creditos` (por crear, desde `main` con `pagos` ya integrado) | libre |
+| `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Camilo (sesión B); Henry prueba y revisa | `feat/pagos` · worktree `frontend-pagos` | **hecha en demo; `main` fusionado en `feat/pagos` (`da44d32`, Henry, 2026-10-16 ~12:50), `tsc` y export web limpios. Falta push (OK de Camilo) y PR a `main`** |
+| `creditos` | Pantallas 16–25 | Henry, sesión C (+ Camilo en la madrugada) | `feat/creditos` · worktree `frontend-creditos` (desde `feat/pagos` integrada) | **reclamado** (2026-10-16 ~12:50); arranca al empujar `feat/pagos` |
 | `pitch` | Slides en la plantilla oficial, guion de 5 min, video | Camilo + Henry | — | libre |
+| `cuenta-celular` | Pulido en celular de 01–10 (`expo-clipboard`, botón volver) + propuesta de copy | Henry, sesión D | `feat/cuenta-celular` · worktree `frontend-pulido` (desde `main`) | **reclamado** (2026-10-16 ~12:50) |
 
 ## Decisiones tomadas
 
@@ -46,9 +47,12 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 - 2026-10-16 · de base a todos: **`base` lista en `main`.** Ya pueden arrancar pantallas: cada ruta tiene un placeholder con su número; reemplácenlo completo. Guía rápida en "Cómo usar la base" de [docs/HENRY.md](docs/HENRY.md) y en la bitácora `base`.
 - 2026-10-16 · de base a todos: **estado real de las ramas:** `main` = base + cuenta-natillera (`ffd9917`); `feat/pagos` = pagos sin integrar; `creditos` sin empezar. Quien toque `src/api`, `src/components` o `Screen` lo pide aquí.
 - 2026-10-16 · de pagos a base: `openWallet` en demo no funcionaba en web (`Alert` sin botones en react-native-web). Con OK de Camilo, pagos agregó un fallback `window.confirm` en `src/api/wallet.ts`; base, revísalo al mergear. Pendiente de base: el mock devuelve `fee` aunque no haya conversión (`mockApi.ts` ~137), la UI ya lo oculta.
+- 2026-10-16 12:50 · de pagos a base: `main` ya está fusionado en `feat/pagos` (`da44d32`); Camilo, falta tu OK para el push y el PR. Plan de sesiones paralelas de Henry en [docs/SESIONES-HENRY.md](docs/SESIONES-HENRY.md): C (`creditos`) es la única que toca `resultado.tsx`, `volviendo.tsx` y `ResultKind`; D (`cuenta-celular`) es la única que toca `package.json`.
 - Formato: `AAAA-MM-DD HH:MM · de <carril> a <carril>: <qué>`
 
 ## Pendientes para Henry (2026-10-16 ~12:40)
+
+**Actualización 12:50:** el reparto en sesiones paralelas, la hora de cada pendiente y los encargos listos para pegar están en [docs/SESIONES-HENRY.md](docs/SESIONES-HENRY.md). El aviso de integración de abajo ya está resuelto en `feat/pagos` (`da44d32`).
 
 Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs/HENRY.md](docs/HENRY.md).
 
@@ -98,7 +102,7 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 - 2026-10-16 — **Traspaso a Henry (pagos → préstamos):** `feat/pagos` tiene 11, 12, 26, 27, 28, 30 y resultado. Falta: (1) probar 11→28→30→34 en Expo Go y web (el diálogo demo en web usa `window.confirm`); (2) préstamos 16–25: reutilizan `antesHref`/`volviendoHref` de `src/features/pagos/flow.ts`; para 19 y 23 agregar `'credito-autorizado'`/`'prestamo-desembolsado'` a `ResultKind` y una entrada en `VARIANTS` de `src/app/resultado.tsx` (TypeScript marca lo que falte); en `volviendo.tsx` añadir la rama `finishLoanRepaymentGrant`/desembolso. (3) PR de `feat/pagos` a `main` (pendiente de Camilo).
 
 ### creditos
-- (vacío)
+- 2026-10-16 ~12:50 — Carril reclamado por Henry (sesión C). Encargo en [docs/SESIONES-HENRY.md](docs/SESIONES-HENRY.md). Arranca desde `feat/pagos` integrada.
 
 ### pitch
 - (vacío)
