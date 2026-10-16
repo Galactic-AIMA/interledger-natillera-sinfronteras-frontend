@@ -25,6 +25,16 @@ import type {
 
 type Method = 'GET' | 'POST';
 
+/** Mensajes en «usted» por status: no se muestra el `message` crudo del back (puede filtrar detalles internos). */
+function friendlyError(status: number): string {
+  if (status === 401 || status === 403) return 'Su sesión se cerró o no tiene permiso. Vuelva a entrar.';
+  if (status === 404) return 'No encontramos lo que buscaba.';
+  if (status === 409) return 'Eso ya se hizo antes.';
+  if (status === 400 || status === 422) return 'Revise los datos e intente de nuevo.';
+  if (status === 429) return 'Hay muchas solicitudes. Espere un momento.';
+  return 'Algo falló en el servidor. Intente de nuevo.';
+}
+
 async function request<T>(method: Method, path: string, body?: unknown, auth = true): Promise<T> {
   if (!config.apiUrl) throw new ApiError('Falta configurar la API (EXPO_PUBLIC_API_URL).', 0, 'config');
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -40,11 +50,14 @@ async function request<T>(method: Method, path: string, body?: unknown, auth = t
     throw new ApiError('No hay conexión. Revise su internet e intente de nuevo.', 0, 'network');
   }
   const text = await response.text();
-  const data = text ? (JSON.parse(text) as unknown) : null;
-  if (!response.ok) {
-    const message = (data as { message?: string } | null)?.message;
-    throw new ApiError(message ?? 'Algo falló. Intente de nuevo.', response.status, (data as { error?: string } | null)?.error ?? 'error');
+  let data: unknown = null;
+  try {
+    data = text ? (JSON.parse(text) as unknown) : null;
+  } catch {
+    // Auditoría 2026-10-16: un 502/HTML de API Gateway no debe reventar la app.
+    if (response.ok) throw new ApiError('Recibimos una respuesta rara del servidor. Intente de nuevo.', response.status, 'bad_response');
   }
+  if (!response.ok) throw new ApiError(friendlyError(response.status), response.status, (data as { error?: string } | null)?.error ?? 'error');
   return data as T;
 }
 

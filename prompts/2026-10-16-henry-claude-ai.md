@@ -19,3 +19,6 @@ si hazlo, recuerda no pisarnos los trabajos y mantener el contexto y la info act
 
 ## 12:40
 adelante
+
+## 12:46
+ya nos debemos encargar nosostris por el momento camilo va a descansar, apropiate y continua

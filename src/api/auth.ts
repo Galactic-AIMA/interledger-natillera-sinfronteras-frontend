@@ -44,7 +44,7 @@ async function initiateAuth(authFlow: 'USER_PASSWORD_AUTH' | 'REFRESH_TOKEN_AUTH
     },
     body: JSON.stringify({ AuthFlow: authFlow, ClientId: config.cognitoClientId, AuthParameters: params }),
   });
-  const data = (await response.json()) as CognitoAuthResult;
+  const data = ((await response.json().catch(() => ({}))) ?? {}) as CognitoAuthResult;
   if (!response.ok || !data.AuthenticationResult) {
     const notAuthorized = data.__type?.includes('NotAuthorized') || data.__type?.includes('UserNotFound');
     throw new ApiError(notAuthorized ? 'Usuario o contraseña incorrectos.' : 'No pudimos entrar. Intente de nuevo.', response.status, data.__type ?? 'auth');
@@ -58,6 +58,19 @@ export async function signIn(username: string, password: string): Promise<void> 
 }
 
 export async function signOut(): Promise<void> {
+  // Auditoría 2026-10-16: revocar el refresh token en Cognito; borrar solo lo local lo deja vivo.
+  const tokens = await load();
+  if (tokens?.refreshToken && config.cognitoClientId) {
+    try {
+      await fetch(`https://cognito-idp.${config.cognitoRegion}.amazonaws.com/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-amz-json-1.1', 'X-Amz-Target': 'AWSCognitoIdentityProviderService.RevokeToken' },
+        body: JSON.stringify({ Token: tokens.refreshToken, ClientId: config.cognitoClientId }),
+      });
+    } catch {
+      // Sin conexión: igual se cierra la sesión en el teléfono.
+    }
+  }
   await save(null);
 }
 

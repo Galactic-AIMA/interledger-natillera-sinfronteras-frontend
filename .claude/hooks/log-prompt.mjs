@@ -14,7 +14,11 @@ const REDACTIONS = [
   [/\beyJ[\w-]{10,}\.eyJ[\w-]{10,}\.[\w-]{10,}\b/g, "[JWT REDACTADO]"],
   [/\b(sk|pk|rk)[-_](live|test|ant|proj)?[-_]?[A-Za-z0-9_-]{20,}\b/g, "[API KEY REDACTADA]"],
   [/\bgh[pousr]_[A-Za-z0-9]{30,}\b/g, "[TOKEN GITHUB REDACTADO]"],
-  [/((?:aws_secret_access_key|secret|password|contraseña|token)\s*[:=]\s*)\S+/gi, "$1[REDACTADO]"],
+  [/((?:aws_secret_access_key|secret|password|passwd|pwd|pass|contraseña|clave|token|access_token)\s*[:=]\s*)\S+/gi, "$1[REDACTADO]"],
+  // Secretos AWS sin etiqueta (40 caracteres) y cadenas base64 largas (tokens GNAP, llaves).
+  // (exige mayúsculas y minúsculas: un hash de commit, solo hex en minúscula, no se tapa).
+  [/(?<![A-Za-z0-9/+=])(?=[A-Za-z0-9/+]{0,39}[A-Z])(?=[A-Za-z0-9/+]{0,39}[a-z])[A-Za-z0-9/+]{40}(?![A-Za-z0-9/+=])/g, "[POSIBLE SECRETO REDACTADO]"],
+  [/\b[A-Za-z0-9+_]{60,}={0,2}/g, "[CADENA LARGA REDACTADA]"],
 ];
 
 export function redact(text) {
