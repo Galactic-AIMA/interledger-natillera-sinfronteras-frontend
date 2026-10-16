@@ -78,6 +78,8 @@ export default function ScreenCuenta() {
           />
         </Card>
       ) : null}
+
+      <Button label="Registro técnico" variant="ghost" onPress={() => router.push('/registro')} accessibilityHint="Para el equipo: muestra las llamadas al servidor" />
     </Screen>
   );
 }

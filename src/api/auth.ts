@@ -1,8 +1,9 @@
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
 
-import { config } from './config';
 import { ApiError } from './client';
+import { config } from './config';
+import { logEvent } from './devLog';
 import type { SignupInput } from './types';
 
 // Registro y login directos a Cognito (SignUp e InitiateAuth) por fetch, sin Amplify ni token ni API key.
@@ -40,6 +41,9 @@ type CognitoTarget = 'SignUp' | 'InitiateAuth';
 
 // Las dos operaciones son POST al mismo endpoint de Cognito; solo cambia X-Amz-Target.
 async function cognito<T>(target: CognitoTarget, body: Record<string, unknown>): Promise<{ response: Response; data: T }> {
+  // En el registro solo va el nombre de la operación y el flujo: nunca usuario, contraseña ni tokens.
+  const label = typeof body.AuthFlow === 'string' ? `${target} · ${body.AuthFlow}` : target;
+  const started = Date.now();
   let response: Response;
   try {
     response = await fetch(`https://cognito-idp.${config.cognitoRegion}.amazonaws.com/`, {
@@ -51,9 +55,19 @@ async function cognito<T>(target: CognitoTarget, body: Record<string, unknown>):
       body: JSON.stringify(body),
     });
   } catch {
+    logEvent({ kind: 'cognito', label, ok: false, ms: Date.now() - started, detail: 'sin conexión' });
     throw new ApiError('No hay conexión. Revise su internet e intente de nuevo.', 0, 'network');
   }
   const data = (await response.json().catch(() => ({}))) as T;
+  const failure = data as { __type?: string; message?: string };
+  logEvent({
+    kind: 'cognito',
+    label,
+    ok: response.ok,
+    status: response.status,
+    ms: Date.now() - started,
+    detail: response.ok ? undefined : [failure.__type?.split('#').pop(), failure.message].filter(Boolean).join(': ') || undefined,
+  });
   return { response, data };
 }
 

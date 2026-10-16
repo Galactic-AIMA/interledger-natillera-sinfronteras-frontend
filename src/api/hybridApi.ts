@@ -1,4 +1,5 @@
 import type { NatilleraApi } from './client';
+import { logEvent } from './devLog';
 import { httpApi } from './httpApi';
 import { mockApi } from './mockApi';
 
@@ -20,8 +21,27 @@ export const realMethods: ReadonlySet<Method> = new Set<Method>([...ALWAYS_REAL,
 // Usuario de ejemplo cuyos datos (natillera, pagos, préstamos) se ven mientras esas rutas no existan.
 const DEMO_DATA_USER = 'rosa.gomez';
 
+type AnyMethod = (...args: unknown[]) => Promise<unknown>;
+
+// Lo que todavía es de ejemplo también queda en el registro técnico, para saber qué no tocó el back.
+function demo<K extends Method>(name: K): NatilleraApi[K] {
+  const fn = mockApi[name] as unknown as AnyMethod;
+  const wrapped: AnyMethod = async (...args) => {
+    const started = Date.now();
+    try {
+      const result = await fn.apply(mockApi, args);
+      logEvent({ kind: 'demo', label: name, ok: true, ms: Date.now() - started });
+      return result;
+    } catch (error) {
+      logEvent({ kind: 'demo', label: name, ok: false, ms: Date.now() - started, detail: error instanceof Error ? error.message : undefined });
+      throw error;
+    }
+  };
+  return wrapped as unknown as NatilleraApi[K];
+}
+
 function pick<K extends Method>(name: K): NatilleraApi[K] {
-  return (realMethods.has(name) ? httpApi[name] : mockApi[name]) as NatilleraApi[K];
+  return realMethods.has(name) ? httpApi[name] : demo(name);
 }
 
 const methods = Object.fromEntries(

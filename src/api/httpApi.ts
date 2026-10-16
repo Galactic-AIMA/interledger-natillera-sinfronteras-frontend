@@ -3,6 +3,7 @@ import * as Linking from 'expo-linking';
 import { getAuthToken, getIdTokenClaims, normalizeWalletAddress, signIn, signOut, signUp } from './auth';
 import { ApiError, type NatilleraApi } from './client';
 import { config } from './config';
+import { logEvent, pathOnly } from './devLog';
 import type {
   LoanDecisionResult,
   LoanRequest,
@@ -30,12 +31,16 @@ type Method = 'GET' | 'POST';
 async function lookupPublicWallet(input: string): Promise<WalletInfo> {
   const raw = input.trim();
   const url = normalizeWalletAddress(raw);
+  const label = `GET ${pathOnly(url)}`;
+  const started = Date.now();
   let response: Response;
   try {
     response = await fetch(url, { headers: { Accept: 'application/json' } });
   } catch {
+    logEvent({ kind: 'billetera', label, ok: false, ms: Date.now() - started, detail: 'sin conexión' });
     throw new ApiError('No hay conexión. Revise su internet e intente de nuevo.', 0, 'network');
   }
+  logEvent({ kind: 'billetera', label, ok: response.ok, status: response.status, ms: Date.now() - started });
   if (!response.ok) return { exists: false, walletAddress: raw };
   const data = (await response.json().catch(() => null)) as { id?: string; assetCode?: string; assetScale?: number } | null;
   if (!data?.assetCode) return { exists: false, walletAddress: raw };
@@ -86,12 +91,16 @@ async function request<T>(method: Method, path: string, body?: unknown, auth = t
     if (!token) throw new ApiError('Su sesión se cerró. Vuelva a entrar.', 401, 'unauthorized');
     headers.Authorization = `Bearer ${token}`;
   }
+  const label = `${method} ${pathOnly(path)}`;
+  const started = Date.now();
   let response: Response;
   try {
     response = await fetch(`${config.apiUrl}${path}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
   } catch {
+    logEvent({ kind: 'api', label, ok: false, ms: Date.now() - started, detail: 'sin conexión' });
     throw new ApiError('No hay conexión. Revise su internet e intente de nuevo.', 0, 'network');
   }
+  const ms = Date.now() - started;
   const text = await response.text();
   let data: unknown = null;
   try {
@@ -100,7 +109,9 @@ async function request<T>(method: Method, path: string, body?: unknown, auth = t
     // Auditoría 2026-10-16: un 502/HTML de API Gateway no debe reventar la app.
     if (response.ok) throw new ApiError('Recibimos una respuesta rara del servidor. Intente de nuevo.', response.status, 'bad_response');
   }
-  if (!response.ok) throw new ApiError(friendlyError(response.status), response.status, (data as { error?: string } | null)?.error ?? 'error');
+  const backError = (data as { error?: string; message?: string } | null) ?? null;
+  logEvent({ kind: 'api', label, ok: response.ok, status: response.status, ms, detail: response.ok ? undefined : [backError?.error, backError?.message].filter(Boolean).join(': ') || undefined });
+  if (!response.ok) throw new ApiError(friendlyError(response.status), response.status, backError?.error ?? 'error');
   return data as T;
 }
 

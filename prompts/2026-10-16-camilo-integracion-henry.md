@@ -66,3 +66,12 @@ No nos acordamos de, de la contraseña, entonces creemos un nuevo usuario.
 (dos capturas: "Entrar" con usuario Prueba1 → "No pudimos conectarnos. Revise su internet e intente de nuevo."; "Crear mi cuenta" con Prueba1 y billetera …/melos → "Ese usuario ya existe. Elija otro.") dice que ya creo usuario pero no crea nada, en el backend no hay nada
 
 valida
+
+## Prompt 14
+
+Perfecto, hemos estado probando eh, estamos contentos con el resultado, pero también queremos eh, ver los logs. Entonces, eh, valida si en una pantallita podemos ir revisando los logs. También eh, para una renovación en crear cuenta, el indicativo de país, quiero que agregues otra casillita para que entonces eh, se pueda seleccionar el indicativo personalizado. Pon ahí los de todos los países, listo. Hazme preguntas si lo es necesario. Ahorita al inicio de sesión y, y demás, la parte del backend está funcionando.
+
+## Respuestas a preguntas de Claude (selector)
+
+- ¿Dónde va la pantalla de logs? → "Botón en Su cuenta (Recomendado)".
+- ¿Cómo el selector de indicativo? → "Lista con buscador (Recomendado)".
