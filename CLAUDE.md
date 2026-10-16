@@ -35,7 +35,7 @@ App móvil de **Natillera sin Fronteras** para la Hackatón Open Payments de Int
 
 Política: https://interledger.org/hackathon/ai-policy/ — `AI_USAGE.md` en la raíz con herramientas, para qué y en qué archivos; prompts **literales** en `/prompts`.
 
-- **Prompts de Claude Code:** se guardan solos con el hook `.claude/hooks/log-prompt.mjs` en `prompts/AAAA-MM-DD-<persona>.md`. No lo desactives. La persona sale de `git config user.name` (o de la variable `NATILLERA_PERSONA`).
+- **Prompts de Claude Code:** se guardan solos con el hook `.claude/hooks/log-prompt.mjs` en `prompts/AAAA-MM-DD-<persona>-<rama>.md`. No lo desactives. La persona sale de `git config user.name` (o de la variable `NATILLERA_PERSONA`).
 - **Otras herramientas** (ChatGPT, Copilot, Gemini, v0, Figma AI): pega el prompt literal en `prompts/<persona>-<herramienta>.md` en el momento.
 - **Al cerrar cada tarea**, Claude agrega una fila a la tabla "Where and How We Used AI" de [AI_USAGE.md](AI_USAGE.md): fecha, persona, herramienta, qué se hizo, archivos.
 - Commits asistidos con el trailer `Co-Authored-By: Claude …`.

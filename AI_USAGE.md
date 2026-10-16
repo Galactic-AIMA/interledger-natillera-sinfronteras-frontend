@@ -25,6 +25,8 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Camilo | Claude Code (+ skill ui-ux-pro-max) | Carril `base`: tokens de diseño, fuentes, escala A+, componentes compartidos, capa de datos (interfaz, mock en memoria, cliente HTTP, login Cognito, apertura de billetera), navegación con pestañas y placeholders de las 31 pantallas; guía de uso para Henry | `src/theme/`, `src/components/`, `src/api/`, `src/utils/money.ts`, `src/app/`, `.env.example`, `.gitattributes`, `docs/HENRY.md`, `docs/api-contrato.md`, `MEMORY.md` |
 | 2026-10-16 | Camilo | Claude Code | Plan de ejecución de pantallas por sesiones paralelas, a partir de las respuestas de Camilo | `docs/EJECUCION-PANTALLAS.md`, `MEMORY.md` |
 | 2026-10-16 | Camilo | Claude Code (Sonnet 5.5 ejecutores + Opus validador) | Pantallas del carril cuenta-natillera: 01 Bienvenida, 03 Entrar, 10 Mi natillera (frasco + camino del año), 05/06/07 (invitaciones), 02/08/09 (cuenta, crear natillera, QR), 15, 04, 35; dependencia `react-native-qrcode-svg`; ajustes tras validación (acceso a Su cuenta, `resetQueries` al cambiar de usuario demo) | `src/app/(auth)/*`, `src/app/(tabs)/natillera/*`, `src/app/(tabs)/ayuda.tsx`, `src/app/cuenta.tsx`, `src/features/**`, `src/components/Screen.tsx`, `src/api/ApiProvider.tsx`, `src/api/mockApi.ts`, `package.json` |
+| 2026-10-16 | Camilo | Claude Code | Encargos (prompts) para las sesiones paralelas de pantallas y del emulador; worktrees por rama; hook de prompts con la rama en el nombre; prompts de la sesión paralela recuperados literalmente de su transcripción local | `prompts/`, `.claude/hooks/log-prompt.mjs`, `MEMORY.md`, `CLAUDE.md` |
+| 2026-10-16 | Camilo | Claude Code (sesión aparte) | Instalación del Android SDK y emulador en el equipo de Camilo para probar la app (no toca el código) | — |
 
 ## What We Did Ourselves
 
@@ -37,6 +39,8 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 
 ## Prompt Log
 
-- Automático: el hook `UserPromptSubmit` de Claude Code (`.claude/hooks/log-prompt.mjs`) guarda cada prompt literal en `prompts/AAAA-MM-DD-<persona>.md`, con hora de Colombia y la sesión. Antes de escribir, tapa llaves privadas, API keys y tokens.
+- Automático: el hook `UserPromptSubmit` de Claude Code (`.claude/hooks/log-prompt.mjs`) guarda cada prompt literal en `prompts/AAAA-MM-DD-<persona>-<rama>.md`, con hora de Colombia y la sesión. Antes de escribir, tapa llaves privadas, API keys y tokens.
 - Manual: los prompts de otras herramientas van en `prompts/<persona>-<herramienta>.md`.
 - Sesión de planeación (antes del hook): [`prompts/2026-10-16-camilo-planeacion.md`](prompts/2026-10-16-camilo-planeacion.md).
+- Sesión paralela de planeación (sin hook, recuperada de su transcripción): [`prompts/2026-10-16-camilo-sesion-paralela-plan.md`](prompts/2026-10-16-camilo-sesion-paralela-plan.md).
+- Encargos enviados a otras sesiones: [`prompts/2026-10-16-camilo-encargos-sesiones.md`](prompts/2026-10-16-camilo-encargos-sesiones.md).

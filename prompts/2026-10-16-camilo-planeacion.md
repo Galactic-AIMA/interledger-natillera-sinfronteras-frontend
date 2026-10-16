@@ -93,3 +93,15 @@ Tenemos entonces todo documentado, todo, todo melo. Entonces, déjame eh, el pla
 - ¿Cómo repartimos la construcción de pantallas entre sesiones? → "2 sesiones paralelas (Recomendado)"
 - ¿Qué nivel visual buscamos? → "Pulido en flujo del pitch (Recomendado)"
 - ¿Qué orden de pantallas priorizamos? → "Camino del pitch primero (Recomendado)"
+
+## Prompt 4
+
+Ya confié en el repo frontend. Lanza las sesiones de cuenta-natillera, pagos y la del emulador Android.
+
+## Prompt 5
+
+Las abro yo manualmente en frontend y pego los encargos de la carpeta sesiones.
+
+## Prompt 6
+
+Perfecto guarda todo lo que hemos hecho hasta el momento en nuestras memoria, y todo el uso de IA y actualiza el repo
