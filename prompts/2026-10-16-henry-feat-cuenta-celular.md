@@ -136,3 +136,17 @@ actualiza y mira en que estado estan los repos y haz una auditoria para ver que 
 ## 16:50 · sesión 6902c76c (agregado a mano: el hook no lo guardó)
 
 Haz commit del informe, sube feat/cuenta-celular al repo del equipo y abre el PR a main.
+
+## 16:53 · sesión e6c1aee4
+
+verifica el back y dime en que podemos apoyarlos
+
+## 16:57 · sesión e6c1aee4
+
+no, dejalos trabajar por ahora
+
+## 17:05 · esta sesión (a mano: el hook no la registra)
+Es que nos vamos a quedar con la con la actual. no Vamos a mover más con el front.
+
+## 17:10 · esta sesión (a mano: el hook no la registra)
+mira las actualizaciones y documentacion esten al dia en todo

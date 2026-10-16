@@ -1,5 +1,16 @@
 # Coordinación front ↔ back (2026-10-16 ~16:00)
 
+> **Actualización ~17:15:** el PR del front ya está en `main` y la app tiene modo híbrido: cada función pasa a real cuando su ruta exista (`EXPO_PUBLIC_REAL_METHODS`). Para el pago real hacen falta, con estos nombres exactos, `POST /payments`, `POST /payments/{id}/finish` y `GET /payments/{id}` (hoy solo existe `/start-payment`). Si prefieren otros nombres, avisen: se cambian solo en `src/api/httpApi.ts`.
+>
+> **Actualización ~17:00 (rama `david` `4d38582`, API probada por curl):**
+> - **Código de pagos listo:** `deploy/payments` con `start-payment`, `finish-payment` y `get-payment` cumple la §3 y la §5 (allowlist de `returnUrl`, `?paymentId=` en el `finish.uri`, dueño del pago, hash verificado, `result` ignorado, idempotente). Zips en `deploy/payments/dist`.
+> - **API desplegada:** REST `https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev`, autorizador Cognito, **IdToken** (en el front: `EXPO_PUBLIC_AUTH_TOKEN_TYPE=id`, ya soportado).
+> - **Pero solo existe `/start-payment`.** `/payments`, `/payments/{id}`, `/payments/{id}/finish`, `/me` y `/natilleras/mine` responden `403 Missing Authentication Token` (= la ruta no existe). Faltan las rutas, las tablas (`payments-history` con GSI `author-index`, `natillera-registration`) y el rol IAM.
+> - **Identidad:** el back usa `username` en todo (`author`, `integrants`), pero `GET /me` devuelve `userId = sub`. Propuesta: `userId = username` en `/me` y en `members[].userId`, para que «¿A nombre de quién?» y el chequeo de integrante cuadren.
+> - **`/me` con VTL:** `deploy/me` lee `requestContext.authorizer`; en el API REST debe ir con **integración proxy** (las de pagos pueden seguir en VTL).
+> - **Errores en VTL:** si no se configuran las respuestas de integración por código, un error llega como **200** con `{"errorMessage":"[400] …"}` y la pantalla se cae. Es el paso más fácil de olvidar.
+> - **Front:** en API REST una ruta inexistente responde 403, no 404: `previewQuote` debe tratar ese caso como «sin vista previa» (carril `base`).
+
 > **Actualización ~16:45:**
 > - **Contrato:** ya existe [openapi.yaml](openapi.yaml). El back lo citaba como fuente de verdad, pero no estaba en ninguna rama: tiene las 20 rutas y los esquemas exactos que usa la app; las P0 van marcadas.
 > - **Avance del back:** Duvan subió `start-payment.ts` (`duvdev` `87d69a6`) y David ya le revisó los bloqueantes (`david` `cc46527`). Esa revisión coincide con la §5 de abajo.
