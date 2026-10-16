@@ -29,9 +29,9 @@ export const handler = async (event) => {
     throw new Error('Phone number already registered');
   }
 
+  // Auto-confirma la cuenta (diagrama, flujo 1), pero NO marca email/teléfono como verificados:
+  // nadie comprobó que le pertenezcan, y un atributo verificado habilita recuperar la cuenta por él.
   event.response.autoConfirmUser = true;
-  if (attrs.email) event.response.autoVerifyEmail = true;
-  if (attrs.phone_number) event.response.autoVerifyPhone = true;
   return event;
 };
 
