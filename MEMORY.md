@@ -13,7 +13,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 
 | Carril | Alcance | Persona | Sesión / rama | Estado |
 |---|---|---|---|---|
-| `base` | Scaffold Expo, tema, componentes, `src/api` (+ mocks), auth, navegación | Camilo | main | **lista** (2026-10-16) |
+| `base` | Scaffold Expo, tema, componentes, `src/api` (+ mocks), auth, navegación | Camilo; **Henry a cargo mientras Camilo descansa (desde 2026-10-16 ~12:45)** | `feat/creditos` | lista; arreglos de seguridad aplicados |
 | `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo (sesión A) | `feat/cuenta-natillera` · worktree `frontend-cuenta` | **en `main`** (`ffd9917`, 2026-10-16); falta probar en celular |
 | `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Camilo (sesión B) → Henry (auditoría de seguridad) | integrado en `feat/creditos` (fork de Henry) | **hecha en demo y probada** (2026-10-16 ~13:45); falta Expo Go y Test Wallet. PR: ver [docs/INTEGRACION-EXPO-GO.md](docs/INTEGRACION-EXPO-GO.md) |
 | `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | `feat/creditos` (fork de Henry; contiene `main` `32eb791`) | **hecha en demo y probada** 16→24 (2026-10-16 ~13:45); falta back |
@@ -53,7 +53,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 - 2026-10-16 13:35 · de Henry a base: registro Cognito hecho en `feat/auth-signup` (solo `auth.ts`, `httpApi.ts`, `types.ts`, pantalla 02, `.env.example` y `api-contrato.md`). **Pedido:** `src/api/config.ts` tiene `cognitoRegion` por defecto `us-east-1`; el back está en `us-east-2`. Mientras tanto `.env.example` ya trae `us-east-2` y el `ClientId` público.
 - 2026-10-16 13:50 · de Henry a base: **rama lista para integrar** `feat/creditos` (pagos + seguridad + créditos + Cognito, sobre tu `main`). Guía, cambios en `src/api` y lista de pruebas en Expo Go: [docs/INTEGRACION-EXPO-GO.md](docs/INTEGRACION-EXPO-GO.md). Ojo: `verifyWallet` sin sesión ahora consulta la dirección de pago pública (sin eso la 02 no registra en modo real).
 - Formato: `AAAA-MM-DD HH:MM · de <carril> a <carril>: <qué>`
-- 2026-10-16 12:45 · de pagos a base: 4 arreglos en archivos compartidos (logout con `RevokeToken`, errores no-JSON en `httpApi`, `.gitignore` con `.env*`, patrones del hook). Lista en [docs/auditoria-2026-10-16.md](docs/auditoria-2026-10-16.md).
+- ~~2026-10-16 12:45 · de pagos a base: 4 arreglos en archivos compartidos~~ **Hecho por Henry 13:00 (Camilo descansando)**: (logout con `RevokeToken`, errores no-JSON en `httpApi`, `.gitignore` con `.env*`, patrones del hook). Lista en [docs/auditoria-2026-10-16.md](docs/auditoria-2026-10-16.md).
 - 2026-10-16 12:45 · de pagos a back (Camilo, reenviar a Duvan y David): el back aún no tiene código y sus rutas tentativas no cuadran con el contrato. Prioridad: `GET /payments/{id}` → `returnUrl` (lista blanca) y `debitAmount`/`receiveAmount` al iniciar → `charge-now`. Opción B con hash obligatorio; ignorar `result` del cliente; `natilleraId`. Detalle en el mismo doc.
 
 ## Pendientes para Henry (2026-10-16 ~12:40)
@@ -102,6 +102,11 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 - 2026-10-16 ~13:35 — (Henry + Claude) Registro directo a Cognito según el encargo y el mensaje del back: `signUp` en `src/api/auth.ts` (POST a `cognito-idp.us-east-2`, `X-Amz-Target` SignUp, `email`/`phone_number`/`custom:walletId`), `httpApi.signup` = SignUp + login, errores `UserLambdaValidationException` (motivo del back sin el prefijo técnico), `UsernameExistsException`, `InvalidPasswordException`, `InvalidParameterException` en "usted". Pantalla 02 valida `+57` + 10 dígitos (quita espacios) y la política de contraseña. `tsc` limpio. **Falta probar contra Cognito real en Expo Go** (desde la nube no hay salida a AWS).
 
 - 2026-10-16 ~13:50 — (Henry + Claude) Para modo real: `verifyWallet` sin sesión → dirección de pago pública de Open Payments (GET JSON); `getAuthToken` descarta un token vencido sin refresh. `tsc` limpio. Pendiente tuyo: `config.ts` `us-east-2`.
+- 2026-10-16 ~13:00 (Henry, cubriendo a Camilo) — Arreglos de la auditoría en archivos compartidos: `auth.ts` revoca el refresh token en Cognito al salir (y tolera respuestas no JSON); `httpApi.ts` ya no revienta con HTML/502 y muestra mensajes en «usted» por status en vez del `message` crudo del back; `.gitignore` ignora `.env*` salvo `.env.example`; el hook tapa `clave`/`pwd`/`pass`/`access_token`, secretos AWS sin etiqueta y cadenas largas (probado: no toca URLs ni hashes de commit). `tsc` ok.
+
+- 2026-10-16 ~13:00 (Henry) — Pruebas en `tests/` (8 casos: cuota y p2p ok/rechazo, préstamo completo y rechazo, seguridad de la pasarela). Correr con `npm test` (Node 22+).
+
+- 2026-10-16 ~13:50 (Henry) — Sincronizadas las dos sesiones de Henry: sobre `feat/creditos` del fork (Cognito, pruebas web, docs) entran los arreglos de `base` de la auditoría (`RevokeToken` al salir, errores no JSON con `friendlyError`, `.env*` ignorados, patrones del hook) y `npm test` (8 casos). `tsc` y pruebas ok. Con esto, los pendientes de `base` de INTEGRACION-EXPO-GO.md quedan hechos salvo `config.ts` (región) y `web.output`.
 
 ### cuenta-natillera
 - 2026-10-16 — Sesión A: construidas 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, 15 y 35 (5 ejecutores Sonnet + validador Opus). `tsc` limpio; recorrido completo en web con demo, A+ ×1,4 sin cortes. Cambios en archivos compartidos: `Screen` ahora acepta `headerRight`; `enterDemo` hace `resetQueries`; el código de invitación del mock ya es válido en 07. Pendiente: probar en celular/Expo Go, `expo-clipboard` para copiar el enlace, botón volver en pantallas sueltas, `web.output` "server" → "single" (decide Camilo). 04 se abre desde el icono de persona en 10/05.
@@ -119,3 +124,5 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 
 ### pitch
 - 2026-10-16 ~12:45 — (Henry, otra sesión de Claude) Guion de 5 min y contexto con fuentes en [docs/pitch/](docs/pitch/); lo no respaldado por el repo va marcado [CONFIRMAR]. Faltan las slides en la plantilla oficial.
+- 2026-10-16 ~13:10 (Henry) — Borrador de guion de otra sesión fusionado en [docs/pitch/GUION.md](docs/pitch/GUION.md) (canónico); el duplicado `docs/pitch-guion.md` se quitó.
+- (vacío)

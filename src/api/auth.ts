@@ -107,6 +107,19 @@ export async function signIn(username: string, password: string): Promise<void> 
 }
 
 export async function signOut(): Promise<void> {
+  // Auditoría 2026-10-16: revocar el refresh token en Cognito; borrar solo lo local lo deja vivo.
+  const tokens = await load();
+  if (tokens?.refreshToken && config.cognitoClientId) {
+    try {
+      await fetch(`https://cognito-idp.${config.cognitoRegion}.amazonaws.com/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-amz-json-1.1', 'X-Amz-Target': 'AWSCognitoIdentityProviderService.RevokeToken' },
+        body: JSON.stringify({ Token: tokens.refreshToken, ClientId: config.cognitoClientId }),
+      });
+    } catch {
+      // Sin conexión: igual se cierra la sesión en el teléfono.
+    }
+  }
   await save(null);
 }
 

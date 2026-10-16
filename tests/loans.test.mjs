@@ -1,0 +1,35 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const { mockApi: api } = await import('../src/api/mockApi.ts');
+const { amount } = await import('../src/utils/money.ts');
+test('ciclo del préstamo: pedir → autorizar → tesorera aprueba → desembolso → plan', async () => {
+  await api.login('luz', 'x');
+  const n = await api.getMyNatillera();
+  const req = await api.requestLoan(n.natilleraId, amount('10000000', 'COP', 2), 4);
+  let mine = await api.getMyLoans();
+  assert.equal(mine.request.status, 'pending'); assert.equal(mine.request.repaymentAuthorized, false);
+  const grant = await api.startLoanRepaymentGrant(req.requestId);
+  const fin = await api.finishLoanRepaymentGrant(grant.grantId, { result: 'ok', interactRef: 'demo' });
+  assert.equal(fin.status, 'active'); assert.equal(grant.repetitions, 4);
+  mine = await api.getMyLoans(); assert.equal(mine.request.repaymentAuthorized, true); assert.equal(mine.loan, null);
+  await api.login('rosa.gomez', 'x');
+  const pend = await api.listPendingLoanRequests();
+  assert.ok(pend.some((r) => r.requestId === req.requestId));
+  const d = await api.decideLoan(req.requestId, true);
+  assert.equal(d.status, 'approved');
+  const pay = await api.finishPayment(d.paymentId, { result: 'ok', interactRef: 'demo' });
+  assert.equal(pay.status, 'completed');
+  await api.login('luz', 'x');
+  mine = await api.getMyLoans();
+  assert.ok(mine.loan?.disbursed); assert.equal(mine.loan.schedule.length, 4);
+});
+test('rechazo de la tesorera → 25', async () => {
+  await api.login('andres', 'x');
+  const n = await api.getMyNatillera();
+  const req = await api.requestLoan(n.natilleraId, amount('5000000', 'COP', 2), 2);
+  await api.login('rosa.gomez', 'x');
+  assert.equal((await api.decideLoan(req.requestId, false)).status, 'rejected');
+  await api.login('andres', 'x');
+  const mine = await api.getMyLoans();
+  assert.equal(mine.request.status, 'rejected'); assert.equal(mine.loan, null);
+});

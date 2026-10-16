@@ -15,7 +15,7 @@ Revisión con 4 agentes (verificación y pruebas con Claude Sonnet 5.5, coordina
 
 Regla para préstamos (16–25): **siempre** navegar a la 28 con `antesHref(...)` (es lo que registra el flujo). Para 19 y 23, además de `ResultKind`, agregar los nuevos éxitos al conjunto `SUCCESS` de `src/app/resultado.tsx`.
 
-## Pendiente del front compartido (Camilo, carril `base`)
+## Front compartido (carril `base`) · **hecho por Henry el 2026-10-16 ~13:00**
 
 - `src/api/auth.ts`: el logout es solo local; llamar `RevokeToken` de Cognito antes de borrar tokens.
 - `src/api/httpApi.ts`: si el back devuelve HTML (502), `JSON.parse` revienta; mapear errores por status y no mostrar `message` crudo.
