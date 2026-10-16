@@ -1,5 +1,5 @@
 import type { NatilleraApi } from './client';
-import type { StartPaymentInput } from './types';
+import type { Payment, StartPaymentInput } from './types';
 import { logEvent } from './devLog';
 import { httpApi } from './httpApi';
 import { mockApi } from './mockApi';
@@ -54,6 +54,10 @@ const methods = Object.fromEntries(
 // EXPO_PUBLIC_REAL_METHODS; finish y get van al back solo para los pagos que él creó.
 const realPayments = realMethods.has('startPayment');
 const realPaymentIds = new Set<string>();
+// El back devuelve counterpartName vacío cuando se paga a una billetera directa (`walletAddress`):
+// el nombre que la persona escribió se recuerda aquí para mostrarlo en el resultado y el historial.
+const realNames = new Map<string, string>();
+const withName = (p: Payment): Payment => (p.counterpartName ? p : { ...p, counterpartName: realNames.get(p.paymentId) ?? 'Billetera externa' });
 
 async function startHybridPayment(input: StartPaymentInput) {
   if (!realPayments || input.kind !== 'p2p') return methods.startPayment(input);
@@ -65,19 +69,35 @@ async function startHybridPayment(input: StartPaymentInput) {
   }
   const start = await httpApi.startPayment(body);
   realPaymentIds.add(start.paymentId);
+  if ('counterpartName' in body) realNames.set(start.paymentId, body.counterpartName);
   return start;
 }
 
 const demoFinish = demo('finishPayment');
 const demoGet = demo('getPayment');
+const demoList = demo('listPayments');
+
+// Historial: los pagos reales (GET /payments) encima de los de ejemplo. Si la ruta aún no está
+// desplegada (403) o falla, se muestran solo los de ejemplo; el error queda en el registro técnico.
+async function listHybridPayments() {
+  const sample = await demoList();
+  if (!realPayments) return sample;
+  try {
+    const real = (await httpApi.listPayments()).map(withName);
+    return [...real, ...sample].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
+  } catch {
+    return sample;
+  }
+}
 
 export const hybridApi: NatilleraApi = {
   ...methods,
   // 'demo' porque conviven datos de ejemplo; la billetera real se decide por pago en openWallet.
   mode: 'demo',
   startPayment: startHybridPayment,
-  finishPayment: (paymentId, ret) => (realPaymentIds.has(paymentId) ? httpApi.finishPayment(paymentId, ret) : demoFinish(paymentId, ret)),
-  getPayment: (paymentId) => (realPaymentIds.has(paymentId) ? httpApi.getPayment(paymentId) : demoGet(paymentId)),
+  finishPayment: (paymentId, ret) => (realPaymentIds.has(paymentId) ? httpApi.finishPayment(paymentId, ret).then(withName) : demoFinish(paymentId, ret)),
+  getPayment: (paymentId) => (realPaymentIds.has(paymentId) ? httpApi.getPayment(paymentId).then(withName) : demoGet(paymentId)),
+  listPayments: listHybridPayments,
   async login(username, password) {
     await httpApi.login(username, password);
     mockApi.switchUser(DEMO_DATA_USER);
