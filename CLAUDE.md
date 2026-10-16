@@ -21,6 +21,7 @@ fondo presta a sus integrantes. Los pagos se hacen con **Open Payments** (Interl
 |---|---|
 | [docs/ARQUITECTURA.md](docs/ARQUITECTURA.md) | Los 13 flujos, tablas DynamoDB y reglas. Transcrito de la página 3 del draw.io (versión final). **Fuente de verdad del diseño.** |
 | [docs/USO-IA.md](docs/USO-IA.md) | Bitácora obligatoria del uso de IA (entregable de la hackathon). |
+| [docs/AWS-SETUP.md](docs/AWS-SETUP.md) | Guía de montaje de la infra AWS (manual) y estado de cada recurso. |
 | [MEMORY.md](MEMORY.md) | Estado vivo: carriles, quién hace qué, decisiones, bloqueos. |
 | Open Payments (es) | https://openpayments.dev/es/ — SDK en `/es/sdk/...`, guías en `/es/guides/...` |
 | Repo Open Payments | https://github.com/interledger/open-payments |
@@ -75,8 +76,12 @@ qué produjo la IA, qué se revisó/corrigió a mano. Los commits hechos con IA 
 
 ## Convenciones de código
 
-- Hasta que el equipo decida lo contrario (ver decisiones abiertas en MEMORY.md): Node.js en
-  Lambdas, un handler por endpoint, lógica de Open Payments solo a través de la capa compartida.
+- **TypeScript** en las Lambdas (runtime Node.js 22.x), un handler por endpoint, lógica de Open
+  Payments solo a través de la capa compartida.
+- **Sin IaC.** La infra AWS se crea a mano siguiendo [docs/AWS-SETUP.md](docs/AWS-SETUP.md);
+  después se automatiza con scripts de AWS CLI en `infra/`. Todo recurso nuevo se documenta en
+  esa guía (nombre, región, configuración) para poder recrearlo.
+- Nombres de tablas, pool de Cognito, secretos y variables de entorno: los de docs/AWS-SETUP.md.
 - Validar el body de cada request; responder errores con `{ error, message }` y el status HTTP adecuado.
 - Nada de secretos, wallet addresses privadas de prueba con llaves, ni tokens de grants en commits.
 - Idioma: código e identificadores en inglés (como en el diagrama); docs y comentarios en español.
