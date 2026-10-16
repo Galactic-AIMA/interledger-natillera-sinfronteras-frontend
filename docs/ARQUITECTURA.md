@@ -210,7 +210,7 @@ schedule = [
 
 | Tabla | PK | SK | Notas |
 |---|---|---|---|
-| `Users-info` | `username` | — | Cambio 2026-10-16: se guarda en Pre sign-up, donde aún no existe el `sub`. El access token trae el claim `username`. |
+| `user-info` | `source` (username) | `id` (N, = 1) | Cambio 2026-10-16: tabla creada por el equipo con estas llaves; se llena en Pre sign-up, donde aún no existe el `sub`. El access token trae el claim `username`. |
 | `Saved-accounts` | `author` | `customWalletName` | |
 | `Payments-history` | `paymentId` | — | status: pending \| completed \| rejected \| failed |
 | `natillera-registration` | `natilleraId` | — | |

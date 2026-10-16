@@ -95,7 +95,7 @@ Decisiones técnicas aún sin tomar:
 - 2026-10-16 · Pasos 0, 2 y 3 listos: secreto Open Payments, user pool `us-east-2_2pQzW95IK`,
   app client `20b10a2tnnr69lqlp2sf62orv0`, Lambda `pre-signup` desplegada. Signup + login probados
   de punta a punta (usuario `prueba1`). Requests para el front en `docs/API-AUTH.md`.
-- 2026-10-16 · `pre-signup` ahora también guarda en `Users-info` (PK `username`), basado en el
+- 2026-10-16 · `pre-signup` ahora también guarda en `user-info` (PK `source` + `id`), basado en el
   cambio de Duvan. Falta crear la tabla y desplegar.
 
 ### op-core

@@ -109,8 +109,9 @@ Open Payments no crea billeteras: se crean a mano en la Test Wallet
      permiso de escritura en el app client.
    - Lambda: Node.js 22.x, timeout 5 s (Cognito corta a los 5 s), rol con `cognito-idp:ListUsers`
      sobre el pool y `dynamodb:PutItem` sobre `Users-info`.
-   - También guarda el usuario en `Users-info` (variable de entorno `USER_VIEW_TABLE=Users-info`).
-     La llave es `username` porque en Pre sign-up todavía no existe el `sub`.
+   - También guarda el usuario en la tabla **`user-info`** (variable `USER_VIEW_TABLE=user-info`),
+     llave `source` (username) + `id` (1). En Pre sign-up todavía no existe el `sub`.
+     Verificado 2026-10-16: el registro crea la fila con `assetCode` leído de la wallet.
 
 Anotar **User pool ID** (`us-east-2_xxxx`) y **Client ID** en la tabla.
 
@@ -122,7 +123,7 @@ donde dice Number.
 
 | Tabla | Partition key | Sort key |
 |---|---|---|
-| `Users-info` | `username` (S) | — |
+| `user-info` (creada así) | `source` (S) = username | `id` (N) = 1 |
 | `Saved-accounts` | `author` (S) | `customWalletName` (S) |
 | `Payments-history` | `paymentId` (S) | — |
 | `natillera-registration` | `natilleraId` (S) | — |
@@ -162,7 +163,7 @@ lo confirme, se pueden añadir después sin borrar la tabla):
       "Action": ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem",
                  "dynamodb:DeleteItem", "dynamodb:Query", "dynamodb:BatchGetItem"],
       "Resource": [
-        "arn:aws:dynamodb:us-east-2:349607459198:table/Users-info",
+        "arn:aws:dynamodb:us-east-2:349607459198:table/user-info",
         "arn:aws:dynamodb:us-east-2:349607459198:table/Saved-accounts",
         "arn:aws:dynamodb:us-east-2:349607459198:table/Payments-history",
         "arn:aws:dynamodb:us-east-2:349607459198:table/natillera-registration",
@@ -218,17 +219,18 @@ Nombres de función sugeridos: `natillera-<flujo>`, p. ej. `natillera-signup`,
 Se usa **HTTP API** (más simple y barato, authorizer JWT nativo). Signup y login NO pasan por
 aquí: la app los hace directo contra Cognito ([API-AUTH.md](API-AUTH.md)).
 
-### 7.1 · Lambda de prueba `natillera-me` (GET /me)
+### 7.1 · Lambda de prueba `natillera-me` (GET /me) — opcional
 
-Sirve para probar toda la cadena antes de que existan las Lambdas de pagos.
+Solo verifica la cadena login → token → API → Lambda → DynamoDB. No hace pagos. Se puede
+saltar e ir directo a 7.2 con `start-payment`.
 
 1. **Lambda → Create function** → `natillera-me`, Node.js 22.x, rol nuevo con permisos básicos.
 2. Pegar [deploy/me/index.mjs](../deploy/me/index.mjs) como `index.mjs` → **Deploy**.
-3. Variable de entorno `USER_VIEW_TABLE` = `Users-info`.
+3. Variable de entorno `USER_VIEW_TABLE` = `user-info`.
 4. Rol → política inline `natillera-me-dynamo`:
    ```json
    { "Version": "2012-10-17", "Statement": [{ "Effect": "Allow", "Action": "dynamodb:GetItem",
-     "Resource": "arn:aws:dynamodb:us-east-2:349607459198:table/Users-info" }] }
+     "Resource": "arn:aws:dynamodb:us-east-2:349607459198:table/user-info" }] }
    ```
 
 ### 7.2 · Crear el API

@@ -8,9 +8,10 @@
 //  - usa event.userPoolId en vez de la variable de entorno USER_POOL_ID
 //  - guarda el usuario en DynamoDB (commit fbd01d3 de Duvan): el campo es event.userName (no
 //    event.Username); en Pre sign-up todavía no existe el `sub`, así que la llave es el username
-//    (también viene en el access token, claim `username`). No sobreescribe un registro existente.
+//    en `source` + `id: 1` (llaves de la tabla `user-info` que creó el equipo; el access token trae
+//    el claim `username`). No sobreescribe un registro existente.
 // Runtime: Node.js 22.x · archivo index.mjs · handler index.handler · timeout 5 s.
-// Variable de entorno: USER_VIEW_TABLE (por defecto `Users-info`, PK `username` String).
+// Variable de entorno: USER_VIEW_TABLE (por defecto `user-info`: PK `source` String, SK `id` Number).
 // Permisos extra del rol: cognito-idp:ListUsers sobre el user pool y dynamodb:PutItem sobre la tabla.
 import { CognitoIdentityProviderClient, ListUsersCommand } from '@aws-sdk/client-cognito-identity-provider';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
@@ -18,7 +19,7 @@ import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
 
 const cognito = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION });
 const dynamo = DynamoDBDocumentClient.from(new DynamoDBClient({ region: process.env.AWS_REGION }));
-const USERS_TABLE = process.env.USER_VIEW_TABLE || 'Users-info';
+const USERS_TABLE = process.env.USER_VIEW_TABLE || 'user-info';
 const WALLET_HOST = 'https://ilp.interledger-test.dev';
 
 export const handler = async (event) => {
@@ -51,7 +52,8 @@ const saveUser = async (username, attrs, wallet) => {
     await dynamo.send(new PutCommand({
       TableName: USERS_TABLE,
       Item: {
-        username,
+        source: username,
+        id: 1,
         email: attrs.email,
         phone: attrs.phone_number,
         walletAddress: wallet.id,
@@ -59,7 +61,8 @@ const saveUser = async (username, attrs, wallet) => {
         assetScale: wallet.assetScale,
         createdAt: new Date().toISOString(),
       },
-      ConditionExpression: 'attribute_not_exists(username)',
+      ConditionExpression: 'attribute_not_exists(#source)',
+      ExpressionAttributeNames: { '#source': 'source' },
     }));
   } catch (error) {
     if (error?.name === 'ConditionalCheckFailedException') throw new Error('Username already registered');
