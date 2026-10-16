@@ -150,3 +150,15 @@ Es que nos vamos a quedar con la con la actual. no Vamos a mover más con el fro
 
 ## 17:10 · esta sesión (a mano: el hook no la registra)
 mira las actualizaciones y documentacion esten al dia en todo
+
+## 18:23 · sesión 2594d34c
+
+Revisa el repo del backend ya que tenemos un error y aun no lo solucionamos.   y dame el diagnostico y la solución mas viable por favor
+
+## 18:26 · sesión 2594d34c
+
+¿Viste que el código está demasiado largo? ¿Es normal? y revisa si el código si está coherente con lo que es la función de pagos antes de hacer mi push y avisarles que el error es de API Gateway.
+
+## 18:28 · sesión 2594d34c
+
+El equipo no le parece que el código sea tan largo. Entonces, valida si, si es eso, ¿qué? Y si no, pues hagámosle el, el push, el commit del push.
