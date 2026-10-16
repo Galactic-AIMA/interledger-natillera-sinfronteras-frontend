@@ -1,5 +1,11 @@
 # Coordinación front ↔ back (2026-10-16 ~16:00)
 
+> **Actualización ~16:45:**
+> - **Contrato:** ya existe [openapi.yaml](openapi.yaml). El back lo citaba como fuente de verdad, pero no estaba en ninguna rama: tiene las 20 rutas y los esquemas exactos que usa la app; las P0 van marcadas.
+> - **Avance del back:** Duvan subió `start-payment.ts` (`duvdev` `87d69a6`) y David ya le revisó los bloqueantes (`david` `cc46527`). Esa revisión coincide con la §5 de abajo.
+> - **Tabla de usuarios:** ahora se llama `user-info`, con llave `source` (username) + `id` (1). `GET /me` sigue devolviendo la misma forma.
+> - **Ruta:** el front llama `POST /payments`, no `/payments/start`.
+
 De Henry (front) para Duvan y David, con copia a Camilo. Se revisó el repo del back (ramas `david` `f1fa755`, `duvdev` `fbd01d3`, `master` `63ef6a3`) y se probó Cognito real por terminal. Objetivo: que front y back lleguen juntos al pago real antes de las 11:00 del sábado.
 
 ## 1 · Estado verificado
