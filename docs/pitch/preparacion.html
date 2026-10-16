@@ -78,18 +78,46 @@ details.block>summary .d{font-family:"Martian Mono",monospace;font-size:.85rem;c
 details.block .body{padding:0 16px 16px}
 .slide{font-size:.92rem;color:var(--gris)}
 /* ensayo */
-.rehearse{background:var(--indigo2);color:#fff;border-radius:20px;padding:20px;position:relative}
+.rehearse{background:var(--indigo2);color:#fff;border-radius:20px;padding:20px;position:relative;--rfs:1.3rem}
 :root[data-theme="dark"] .rehearse{background:#262A6E}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .rehearse{background:#262A6E}}
+.rehearse .rtop{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.rehearse .rblock{text-align:right}
 .rehearse .clock{font-family:"Martian Mono",monospace;font-size:clamp(2.6rem,10vw,4.4rem);font-weight:600;line-height:1}
-.rehearse .bar{height:10px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden;margin:14px 0}
-.rehearse .bar i{display:block;height:100%;width:0;background:var(--menta);transition:width .25s linear}
-.rehearse .cur{font-family:Gloock,serif;font-size:1.5rem;margin:6px 0}
-.rehearse .prompt{font-size:clamp(1.05rem,2.6vw,1.35rem);line-height:1.5;background:rgba(0,0,0,.18);border-radius:12px;padding:14px;min-height:150px}
-.rehearse .prompt p{margin:.2em 0}
+.rehearse .clock.over{color:#FFB4A3}
+.rehearse .pill{display:inline-block;margin-top:8px;font-family:"Martian Mono",monospace;font-size:.85rem;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.14)}
+.rehearse .pill.ok{background:#A7C9B9;color:#14352D}
+.rehearse .pill.late{background:#F3C3B6;color:#5A1F12}
+.rehearse .pill.early{background:#D7DCFA;color:#1A1B4B}
+.rehearse .cur{font-family:Gloock,serif;font-size:1.6rem;margin:2px 0}
+.rehearse .delta{font-family:"Martian Mono",monospace;font-size:.85rem;opacity:.85}
+.rehearse .segs{display:flex;gap:4px;margin:16px 0 12px}
+.rehearse .segs button{flex:var(--w);min-height:14px;height:14px;padding:0;border:0;border-radius:99px;background:rgba(255,255,255,.18);position:relative;overflow:hidden;cursor:pointer}
+.rehearse .segs button i{position:absolute;inset:0 auto 0 0;width:0;background:var(--c,#A7C9B9)}
+.rehearse .segs button.on{outline:2px solid #fff;outline-offset:2px}
+.rehearse .prompt{list-style:none;margin:0;padding:16px 18px;font-size:var(--rfs);line-height:1.45;background:rgba(0,0,0,.2);border-radius:14px;max-height:340px;overflow-y:auto;scroll-behavior:smooth;position:relative}
+.rehearse .prompt li{padding:6px 10px;margin:2px 0;border-radius:10px;opacity:.75;transition:opacity .25s,background .25s;cursor:pointer}
+.rehearse .prompt li.done{opacity:.45}
+.rehearse .prompt li.now{opacity:1;background:rgba(255,255,255,.14);box-shadow:inset 4px 0 0 #A7C9B9;font-weight:600}
+.rehearse .prompt li.empty{font-style:italic;opacity:.65}
+.rehearse .rnext{margin-top:10px;font-size:.92rem;opacity:.85}
 .rehearse button{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);color:#fff}
-.rehearse button.go{background:#fff;color:#3F4C9A;border-color:#fff}
-.rehearse .ctr{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.rehearse .delta{font-family:"Martian Mono",monospace;font-size:.9rem;opacity:.9}
+.rehearse button.go{background:#fff;color:#3F4C9A;border-color:#fff;min-width:130px}
+.rehearse button.edit[aria-pressed="true"]{background:#A7C9B9;color:#14352D;border-color:#A7C9B9}
+.rehearse button.danger{border-color:rgba(255,180,163,.6);color:#FFD3C8}
+.rehearse .ctr{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;align-items:center}
+.rehearse .sizes{display:inline-flex;gap:4px;margin-left:auto}
+.rehearse .sizes button{min-width:48px;padding:0 10px}
+.rehearse .keys{font-size:.8rem;opacity:.7;margin:10px 0 0}
+.rehearse .redit{background:rgba(0,0,0,.2);border-radius:14px;padding:14px}
+.rehearse .redit label{display:block;font-size:.85rem;font-weight:600;margin-bottom:10px}
+.rehearse .redit label small{font-weight:400;opacity:.75}
+.rehearse .redit input,.rehearse .redit textarea{display:block;width:100%;margin-top:4px;font:inherit;font-size:1rem;font-weight:400;color:#1A1B4B;background:#fff;border:2px solid transparent;border-radius:10px;padding:10px 12px;min-height:48px;resize:vertical}
+.rehearse .redit textarea#e-say{font-size:1.05rem;line-height:1.5}
+.rehearse .redit input:focus,.rehearse .redit textarea:focus{outline:none;border-color:#A7C9B9}
+.rehearse .erow{display:grid;grid-template-columns:1fr 130px;gap:10px}
+.rehearse .saved{font-family:"Martian Mono",monospace;font-size:.8rem;opacity:.85}
+@media (max-width:560px){.rehearse .erow{grid-template-columns:1fr}.rehearse .sizes{margin-left:0}.rehearse .rblock{text-align:left}}
 .runs{font-family:"Martian Mono",monospace;font-size:.85rem;margin-top:10px;opacity:.9}
 /* flujo de demo */
 .flow{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));counter-reset:paso}
@@ -230,22 +258,52 @@ footer{padding:30px 0 80px;color:var(--gris);font-size:.9rem}
 <section id="ensayo">
   <div class="wrap">
     <h2>Ensayar con cronómetro</h2>
-    <p class="lead">Ensaye en voz alta. El texto avanza solo con el tiempo de cada bloque. Si va adelantado o atrasado, se lo dice. Teclado: <span class="mono">espacio</span> inicia o pausa · <span class="mono">→</span> siguiente bloque · <span class="mono">←</span> anterior.</p>
-    <div class="rehearse">
-      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end">
-        <div><div class="clock" id="rc">0:00</div><div class="delta" id="rdelta">Listo para empezar</div></div>
-        <div style="text-align:right"><div class="delta">Bloque</div><div class="cur" id="rcur">1 · Doña Rosa</div></div>
+    <p class="lead">Ensaye en voz alta. La frase que toca se ilumina sola según el tiempo. Si va adelantado o atrasado, se lo dice. Con <b>✎ Editar</b> cambia frases, tiempos y bloques: se guarda solo en este navegador.</p>
+    <div class="rehearse" id="rh">
+      <div class="rtop">
+        <div><div class="clock" id="rc">0:00</div><div class="pill" id="rdelta">Listo para empezar</div></div>
+        <div class="rblock"><div class="delta" id="rnum">Bloque 1 de 7</div><div class="cur" id="rcur">Doña Rosa</div><div class="delta" id="rleft"></div></div>
       </div>
-      <div class="bar"><i id="rbar"></i></div>
-      <div class="prompt" id="rprompt"></div>
+      <div class="segs" id="rsegs" aria-hidden="true"></div>
+
+      <div id="rview">
+        <ol class="prompt" id="rprompt" aria-live="polite"></ol>
+        <div class="rnext" id="rnextp"></div>
+      </div>
+
+      <div id="redit" class="redit" hidden>
+        <div class="erow">
+          <label>Título del bloque<input id="e-t" maxlength="60"></label>
+          <label>Segundos<input id="e-d" type="number" min="5" max="300" step="5" inputmode="numeric"></label>
+        </div>
+        <label>Lo que se dice <small>una frase por línea · Enter agrega otra</small><textarea id="e-say" rows="7"></textarea></label>
+        <label>Diapositiva<textarea id="e-slide" rows="2"></textarea></label>
+        <label>Consejo<textarea id="e-tip" rows="2"></textarea></label>
+        <div class="ctr">
+          <button id="e-add">＋ Bloque nuevo después</button>
+          <button id="e-up" aria-label="Mover bloque antes">↑ Mover</button>
+          <button id="e-down" aria-label="Mover bloque después">↓ Mover</button>
+          <button id="e-del" class="danger">Eliminar bloque</button>
+        </div>
+        <div class="ctr">
+          <button id="e-dl">⤓ Descargar guion (.md)</button>
+          <button id="e-copy">Copiar guion</button>
+          <button id="e-restore" class="danger">Restaurar el original</button>
+          <span class="saved" id="e-saved"></span>
+        </div>
+      </div>
+
       <div class="ctr">
         <button class="go" id="rgo">▶ Empezar</button>
         <button id="rprev">← Anterior</button>
         <button id="rnext">Siguiente →</button>
         <button id="rreset">Reiniciar</button>
         <button id="rsave">Guardar este ensayo</button>
+        <button id="redbtn" class="edit" aria-pressed="false">✎ Editar</button>
+        <span class="sizes"><button id="rsm" aria-label="Letra más pequeña">A−</button><button id="rbg" aria-label="Letra más grande">A+</button></span>
       </div>
       <div class="runs" id="runs"></div>
+      <p class="keys">Teclado: <span class="mono">espacio</span> inicia o pausa · <span class="mono">→</span> siguiente · <span class="mono">←</span> anterior · <span class="mono">E</span> editar · toque una frase para saltar a ella</p>
     </div>
   </div>
 </section>
@@ -448,7 +506,7 @@ footer{padding:30px 0 80px;color:var(--gris);font-size:.9rem}
 <button class="themebtn" id="theme" aria-label="Cambiar tema claro u oscuro">◐ Tema</button>
 
 <script>
-const BLOCKS=[
+const DEFAULT_BLOCKS=[
  {t:"Doña Rosa",d:30,c:"#3F4C9A",slide:"Título “Doña Rosa” · una natillera, tres países · mapa Colombia – EE. UU. – España con un frasco en el centro.",say:["Ella es Doña Rosa. Vive en Colombia.","Toda la vida ha hecho natillera con la familia.","Pero hoy la familia está regada: Luz vive en Estados Unidos, Andrés en España.","Cada uno gana en otra moneda.","Y la natillera… sigue en un cuaderno."],tip:"Empiece directo, sin saludo largo. Señale cada punto del mapa al nombrarlo."},
  {t:"El problema",d:40,c:"#1A1B4B",slide:"“La plata sí cruza. La natillera no.” · tres cifras grandes.",say:["En 2025 entraron a Colombia más de 13 mil millones de dólares en remesas.","Casi uno de cada cinco hogares recibe plata de afuera.","¿Y saben cuál fue el mes récord? Diciembre.","El mismo mes en que se reparte la natillera.","Pero esa plata llega suelta, mes a mes, con giros, costos y vueltas.","Nadie sabe quién puso, quién debe, cuánto hay."],tip:"Pausa después de “Diciembre”. Es el gancho del pitch."},
  {t:"La solución",d:30,c:"#4F7F6B",slide:"“Natillera sin Fronteras” · captura de la pantalla 10 (frasco + “Entre todos llevan”).",say:["Natillera sin Fronteras es la natillera de toda la vida, pero en el celular.","Cada uno pone su cuota desde su billetera, en su moneda.","Al fondo le llegan pesos.","Y todos ven lo mismo: cuánto hay, quién está al día y quién pidió prestado.","Se lo mostramos."],tip:"“Se lo mostramos” es la señal para que Camilo proyecte el celular."},
@@ -457,60 +515,149 @@ const BLOCKS=[
  {t:"Qué sigue y equipo",d:25,c:"#5F626B",slide:"“Lo que viene” · 3 viñetas + nombres del equipo.",say:["La natillera completa ya funciona con datos de ejemplo:","la cuota que se cobra sola cada mes,","y los préstamos del fondo, que aprueba la tesorera.","Somos cuatro: Duvan y David por detrás, Camilo y Henry en la app."],tip:"Si va tarde, este es el bloque que se recorta."},
  {t:"Cierre",d:25,c:"#B5543F",slide:"Frasco lleno, los tres nombres alrededor, “Diciembre” marcado en el camino del año.",say:["Este diciembre, Doña Rosa no va a sacar el cuaderno.","Va a abrir el celular.","Va a ver que Luz puso. Que Andrés puso.","Y va a repartir la natillera con toda la familia… aunque estén lejos.","Natillera sin Fronteras. Ahorre en familia, aunque vivan en países distintos.","Gracias."],tip:"Más lento que todo lo anterior. Quieto dos segundos después de “Gracias”."}
 ];
-const TOTAL=BLOCKS.reduce((a,b)=>a+b.d,0);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
-const starts=[];BLOCKS.reduce((a,b,i)=>{starts[i]=a;return a+b.d},0);
+const COLORS=["#3F4C9A","#1A1B4B","#4F7F6B","#2F6F63","#4A0E68","#5F626B","#B5543F"];
+const GKEY="nsf-guion-v1";
+const clone=o=>JSON.parse(JSON.stringify(o));
+let BLOCKS=(()=>{const s=store.get(GKEY,null);return Array.isArray(s)&&s.length?s:clone(DEFAULT_BLOCKS)})();
+let TOTAL=0,starts=[];
+function recompute(){starts=[];TOTAL=0;BLOCKS.forEach((b,i)=>{b.c=b.c||COLORS[i%COLORS.length];starts[i]=TOTAL;TOTAL+=b.d})}
+recompute();
+const $=id=>document.getElementById(id);
 
-// barra y bloques
-const tl=document.getElementById("tl"),bl=document.getElementById("blocks");
-BLOCKS.forEach((b,i)=>{
-  const seg=document.createElement("div");seg.style.flex=b.d;seg.style.background=b.c;seg.textContent=b.d>=30?b.t:(i+1);seg.title=b.t+" · "+b.d+" s";seg.setAttribute("role","listitem");
-  seg.onclick=()=>{const d=document.getElementById("b"+i);d.open=true;d.scrollIntoView({behavior:"smooth",block:"center"})};tl.appendChild(seg);
-  const d=document.createElement("details");d.className="block";d.id="b"+i;
-  d.innerHTML=`<summary><span class="n" style="background:${b.c}">${i+1}</span><span class="t"><b>${b.t}</b></span><span class="d">${fmt(starts[i])}–${fmt(starts[i]+b.d)} · ${b.d} s</span></summary>
-  <div class="body"><p class="slide"><b>Diapositiva:</b> ${b.slide}</p><div class="say">${b.say.map(s=>"<p>"+s+"</p>").join("")}</div><p class="muted"><b>Consejo:</b> ${b.tip}</p></div>`;
-  bl.appendChild(d);
-});
-document.getElementById("b0").open=true;
+// barra y bloques del guion
+const tl=$("tl"),bl=$("blocks");
+function renderGuion(){
+  const open=[...bl.querySelectorAll("details[open]")].map(d=>d.id);
+  tl.innerHTML="";bl.innerHTML="";
+  BLOCKS.forEach((b,i)=>{
+    const seg=document.createElement("div");seg.style.flex=b.d;seg.style.background=b.c;seg.textContent=b.d>=30?b.t:(i+1);seg.title=b.t+" · "+b.d+" s";seg.setAttribute("role","listitem");
+    seg.onclick=()=>{const d=$("b"+i);d.open=true;d.scrollIntoView({behavior:"smooth",block:"center"})};tl.appendChild(seg);
+    const d=document.createElement("details");d.className="block";d.id="b"+i;
+    d.innerHTML=`<summary><span class="n" style="background:${b.c}">${i+1}</span><span class="t"><b>${esc(b.t)}</b></span><span class="d">${fmt(starts[i])}–${fmt(starts[i]+b.d)} · ${b.d} s</span></summary>
+    <div class="body">${b.slide?`<p class="slide"><b>Diapositiva:</b> ${esc(b.slide)}</p>`:""}<div class="say">${b.say.map(s=>"<p>"+esc(s)+"</p>").join("")}</div>${b.tip?`<p class="muted"><b>Consejo:</b> ${esc(b.tip)}</p>`:""}</div>`;
+    bl.appendChild(d);
+  });
+  (open.length?open:["b0"]).forEach(id=>{const d=$(id);if(d)d.open=true});
+  const scale=document.querySelector("#guion .scale");
+  if(scale){const n=Math.max(1,Math.floor(TOTAL/60));scale.innerHTML=Array.from({length:n},(_,i)=>`<span>${i}:00</span>`).join("")+`<span>${fmt(TOTAL)}</span>`}
+}
 
 // ensayo
-let running=false,elapsed=0,last=0,raf=0,manual=-1;
-const rc=document.getElementById("rc"),rbar=document.getElementById("rbar"),rcur=document.getElementById("rcur"),rp=document.getElementById("rprompt"),rd=document.getElementById("rdelta"),rgo=document.getElementById("rgo");
+let running=false,elapsed=0,last=0,manual=-1,shown=-1,cur=0,editing=false,lastLine=-2;
+const rc=$("rc"),rcur=$("rcur"),rnum=$("rnum"),rleft=$("rleft"),rp=$("rprompt"),rd=$("rdelta"),rgo=$("rgo"),rsegs=$("rsegs"),rnx=$("rnextp");
 function blockAt(t){for(let i=BLOCKS.length-1;i>=0;i--) if(t>=starts[i]) return i;return 0}
-let shown=-1,cur=0;
-function render(){
-  const auto=blockAt(elapsed);
-  if(manual<auto) manual=-1;
-  cur=manual>=0?manual:auto;
-  rc.textContent=fmt(elapsed);
-  rbar.style.width=Math.min(100,elapsed/TOTAL*100)+"%";
-  rc.style.color=elapsed>TOTAL?"#FFB4A3":"";
-  if(cur!==shown){
-    shown=cur;rcur.textContent=(cur+1)+" · "+BLOCKS[cur].t;
-    rp.innerHTML=BLOCKS[cur].say.map(s=>"<p>"+s+"</p>").join("");
-    [...tl.children].forEach((c,i)=>c.classList.toggle("on",i===cur));
-  }
-  if(!running&&elapsed===0){rd.textContent="Listo para empezar · meta 5:00";return}
-  if(elapsed>TOTAL){rd.textContent="Se pasó "+fmt(elapsed-TOTAL)+" — recorte el bloque 6";return}
-  if(manual>=0){const diff=starts[manual]-elapsed;rd.textContent=diff>0?"Va "+fmt(diff)+" adelantado":"Va "+fmt(-diff)+" atrasado";}
-  else rd.textContent="Quedan "+fmt(starts[cur]+BLOCKS[cur].d-elapsed)+" en este bloque · "+fmt(TOTAL-elapsed)+" en total";
+function buildSegs(){
+  rsegs.innerHTML="";
+  BLOCKS.forEach((b,i)=>{const s=document.createElement("button");s.style.setProperty("--w",b.d);s.title=(i+1)+" · "+b.t;s.tabIndex=-1;s.innerHTML="<i></i>";s.onclick=()=>go(i);rsegs.appendChild(s)});
 }
-function tick(ts){if(!running)return;elapsed+=(ts-last)/1000;last=ts;render();raf=requestAnimationFrame(tick)}
-function toggle(){running=!running;rgo.textContent=running?"❚❚ Pausar":"▶ Seguir";if(running){last=performance.now();raf=requestAnimationFrame(tick)}else render()}
-function go(n){manual=Math.max(0,Math.min(BLOCKS.length-1,n));if(!running&&elapsed===0){}render()}
+// frase que toca según el tiempo, repartiendo el bloque por el largo de cada frase
+function lineAt(i,t){
+  const lines=BLOCKS[i].say;if(!lines.length)return -1;
+  const w=lines.map(l=>Math.max(12,l.length)),tot=w.reduce((a,b)=>a+b,0);
+  let x=(t-starts[i])/BLOCKS[i].d*tot,k=0;
+  for(;k<lines.length-1;k++){if(x<w[k])break;x-=w[k]}
+  return k;
+}
+function lineStart(i,k){
+  const w=BLOCKS[i].say.map(l=>Math.max(12,l.length)),tot=w.reduce((a,b)=>a+b,0);
+  return starts[i]+BLOCKS[i].d*w.slice(0,k).reduce((a,b)=>a+b,0)/tot;
+}
+function paintPrompt(){
+  const b=BLOCKS[cur];
+  rp.innerHTML=b.say.length?b.say.map((s,k)=>`<li data-k="${k}">${esc(s)}</li>`).join(""):`<li class="empty">Este bloque no tiene frases. Toque ✎ Editar para agregarlas.</li>`;
+  rp.querySelectorAll("li[data-k]").forEach(li=>li.onclick=()=>{elapsed=lineStart(cur,+li.dataset.k)+.05;manual=-1;render(true)});
+  const n=BLOCKS[cur+1];
+  rnx.innerHTML=n?`Sigue: <b>${esc(n.t)}</b> — “${esc(n.say[0]||"")}”`:"Es el último bloque: cierre despacio.";
+  rp.scrollTop=0;
+}
+function render(force){
+  const auto=blockAt(elapsed);
+  if(manual>=0&&manual<auto) manual=-1;
+  cur=Math.min(BLOCKS.length-1,manual>=0?manual:auto);
+  rc.textContent=fmt(elapsed);
+  rc.classList.toggle("over",elapsed>TOTAL);
+  [...rsegs.children].forEach((s,i)=>{const p=Math.max(0,Math.min(1,(elapsed-starts[i])/BLOCKS[i].d));s.firstChild.style.width=p*100+"%";s.classList.toggle("on",i===cur)});
+  if(cur!==shown||force){
+    shown=cur;lastLine=-2;
+    rnum.textContent="Bloque "+(cur+1)+" de "+BLOCKS.length+" · "+BLOCKS[cur].d+" s";
+    rcur.textContent=BLOCKS[cur].t;
+    paintPrompt();
+    [...tl.children].forEach((c,i)=>c.classList.toggle("on",i===cur));
+    if(editing) fillEditor();
+  }
+  const end=starts[cur]+BLOCKS[cur].d,inBlock=manual<0&&elapsed>=starts[cur]&&elapsed<end;
+  const started=running||elapsed>0;
+  const line=!started||manual>=0?-1:inBlock?lineAt(cur,elapsed):BLOCKS[cur].say.length;
+  if(line!==lastLine){
+    lastLine=line;
+    rp.querySelectorAll("li[data-k]").forEach(li=>{const k=+li.dataset.k;li.classList.toggle("now",k===line);li.classList.toggle("done",line>=0&&k<line)});
+    const el=rp.querySelector("li.now");if(el) rp.scrollTop=Math.max(0,el.offsetTop-rp.clientHeight/3);
+  }
+  rleft.textContent=started&&inBlock?"quedan "+fmt(end-elapsed)+" en el bloque":"";
+  rd.className="pill";
+  if(!started){rd.textContent="Listo · meta "+fmt(TOTAL);return}
+  if(elapsed>TOTAL){rd.className="pill late";rd.textContent="Se pasó "+fmt(elapsed-TOTAL)+" · recorte un bloque";return}
+  if(manual>=0){const diff=starts[manual]-elapsed;rd.className="pill "+(diff>3?"early":diff<-3?"late":"ok");rd.textContent=diff>3?"Va "+fmt(diff)+" adelantado":diff<-3?"Va "+fmt(-diff)+" atrasado":"Va a tiempo"}
+  else{rd.className="pill ok";rd.textContent="A tiempo · quedan "+fmt(TOTAL-elapsed)}
+}
+function tick(ts){if(!running)return;elapsed+=(ts-last)/1000;last=ts;render();requestAnimationFrame(tick)}
+function toggle(){running=!running;rgo.textContent=running?"❚❚ Pausar":"▶ Seguir";if(running){last=performance.now();requestAnimationFrame(tick)}else render()}
+// en pausa, Anterior/Siguiente mueven el reloj; corriendo, solo adelantan el texto y miden la diferencia
+function go(n){n=Math.max(0,Math.min(BLOCKS.length-1,n));if(!running){elapsed=starts[n];manual=-1;if(elapsed===0)shown=-1}else manual=n;render(true)}
 rgo.onclick=toggle;
-document.getElementById("rnext").onclick=()=>go(cur+1);
-document.getElementById("rprev").onclick=()=>go(cur-1);
-document.getElementById("rreset").onclick=()=>{running=false;elapsed=0;manual=-1;shown=-1;rgo.textContent="▶ Empezar";render()};
+$("rnext").onclick=()=>go(cur+1);
+$("rprev").onclick=()=>go(cur-1);
+$("rreset").onclick=()=>{running=false;elapsed=0;manual=-1;shown=-1;rgo.textContent="▶ Empezar";render(true)};
 document.addEventListener("keydown",e=>{
-  const r=document.getElementById("ensayo").getBoundingClientRect();
-  if(r.bottom<0||r.top>innerHeight||/INPUT|TEXTAREA|BUTTON/.test(e.target.tagName)) return;
-  if(e.code==="Space"){e.preventDefault();toggle()} else if(e.key==="ArrowRight") go(cur+1); else if(e.key==="ArrowLeft") go(cur-1);
+  const r=$("ensayo").getBoundingClientRect();
+  if(r.bottom<0||r.top>innerHeight||/INPUT|TEXTAREA|BUTTON|SELECT/.test(e.target.tagName)) return;
+  if(e.code==="Space"){e.preventDefault();toggle()} else if(e.key==="ArrowRight") go(cur+1); else if(e.key==="ArrowLeft") go(cur-1); else if(e.key==="e"||e.key==="E") setEditing(!editing);
 });
-const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-function showRuns(){const runs=store.get("nsf-ensayos",[]);document.getElementById("runs").textContent=runs.length?"Ensayos: "+runs.map((r,i)=>"#"+(i+1)+" "+fmt(r.s)+(r.s>TOTAL?" ✕":" ✓")).join(" · "):"Aún no hay ensayos guardados."}
-document.getElementById("rsave").onclick=()=>{if(elapsed<5)return;const runs=store.get("nsf-ensayos",[]);runs.push({s:elapsed,at:Date.now()});store.set("nsf-ensayos",runs.slice(-10));showRuns()};
-showRuns();render();
+function showRuns(){const runs=store.get("nsf-ensayos",[]);$("runs").textContent=runs.length?"Ensayos: "+runs.map((r,i)=>"#"+(i+1)+" "+fmt(r.s)+(r.s>(r.meta||300)?" ✕":" ✓")).join(" · "):"Aún no hay ensayos guardados."}
+$("rsave").onclick=()=>{if(elapsed<5)return;const runs=store.get("nsf-ensayos",[]);runs.push({s:elapsed,meta:TOTAL,at:Date.now()});store.set("nsf-ensayos",runs.slice(-10));showRuns()};
+
+// tamaño de letra del texto de ensayo
+let rfs=store.get("nsf-rfs",1.3);
+const applyFs=()=>$("rh").style.setProperty("--rfs",rfs+"rem");
+$("rsm").onclick=()=>{rfs=Math.max(1,+(rfs-.15).toFixed(2));store.set("nsf-rfs",rfs);applyFs()};
+$("rbg").onclick=()=>{rfs=Math.min(2.2,+(rfs+.15).toFixed(2));store.set("nsf-rfs",rfs);applyFs()};
+applyFs();
+
+// editor del guion
+const E={t:$("e-t"),d:$("e-d"),say:$("e-say"),slide:$("e-slide"),tip:$("e-tip")},savedEl=$("e-saved");
+let saveTimer=0;
+function persist(msg){store.set(GKEY,BLOCKS);savedEl.textContent=msg||"Guardado ✓"}
+function later(fn){clearTimeout(saveTimer);savedEl.textContent="Guardando…";saveTimer=setTimeout(()=>{fn();persist()},400)}
+function changed(){recompute();renderGuion();buildSegs();render(true);persist()}
+function fillEditor(){const b=BLOCKS[cur];E.t.value=b.t;E.d.value=b.d;E.say.value=b.say.join("\n");E.slide.value=b.slide||"";E.tip.value=b.tip||""}
+function setEditing(on){
+  editing=on;$("redit").hidden=!on;$("rview").hidden=on;
+  $("redbtn").setAttribute("aria-pressed",String(on));$("redbtn").textContent=on?"✓ Listo":"✎ Editar";
+  if(on){if(running)toggle();fillEditor();E.say.focus()}else{paintPrompt();lastLine=-2;render()}
+}
+$("redbtn").onclick=()=>setEditing(!editing);
+E.t.oninput=()=>{BLOCKS[cur].t=E.t.value.trim()||"Sin título";rcur.textContent=BLOCKS[cur].t;later(renderGuion)};
+E.d.onchange=()=>{BLOCKS[cur].d=Math.max(5,Math.min(300,Math.round(+E.d.value||30)));E.d.value=BLOCKS[cur].d;changed()};
+E.say.oninput=()=>{BLOCKS[cur].say=E.say.value.split("\n").map(s=>s.trim()).filter(Boolean);later(renderGuion)};
+E.slide.oninput=()=>{BLOCKS[cur].slide=E.slide.value.trim();later(renderGuion)};
+E.tip.oninput=()=>{BLOCKS[cur].tip=E.tip.value.trim();later(renderGuion)};
+$("e-add").onclick=()=>{BLOCKS.splice(cur+1,0,{t:"Bloque nuevo",d:20,c:COLORS[(cur+1)%COLORS.length],slide:"",say:["Escriba aquí la primera frase."],tip:""});changed();go(cur+1);E.say.focus();E.say.select()};
+$("e-del").onclick=()=>{if(BLOCKS.length<2)return;if(!confirm("¿Eliminar el bloque “"+BLOCKS[cur].t+"”?"))return;const n=Math.min(cur,BLOCKS.length-2);BLOCKS.splice(cur,1);changed();go(n)};
+function move(dir){const j=cur+dir;if(j<0||j>=BLOCKS.length)return;[BLOCKS[cur],BLOCKS[j]]=[BLOCKS[j],BLOCKS[cur]];changed();go(j)}
+$("e-up").onclick=()=>move(-1);$("e-down").onclick=()=>move(1);
+$("e-restore").onclick=()=>{if(!confirm("¿Volver al guion original? Se pierden sus cambios."))return;BLOCKS=clone(DEFAULT_BLOCKS);recompute();renderGuion();buildSegs();go(0);store.del(GKEY);savedEl.textContent="Original restaurado ✓"};
+function toMd(){
+  let s="# Guion del pitch · Natillera sin Fronteras ("+fmt(TOTAL)+")\n\n";
+  BLOCKS.forEach((b,i)=>{s+=`## ${i+1} · ${b.t} — ${fmt(starts[i])}–${fmt(starts[i]+b.d)}\n\n`;if(b.slide)s+=`**Diapositiva:** ${b.slide}\n\n`;s+=b.say.map(l=>"> "+l).join("\n")+"\n\n";if(b.tip)s+=`*Consejo:* ${b.tip}\n\n`});
+  return s;
+}
+$("e-dl").onclick=()=>{const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([toMd()],{type:"text/markdown"}));a.download="guion-pitch.md";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);savedEl.textContent="Descargado ✓"};
+$("e-copy").onclick=async()=>{try{await navigator.clipboard.writeText(toMd());savedEl.textContent="Copiado ✓"}catch(e){savedEl.textContent="No se pudo copiar"}};
+
+renderGuion();buildSegs();showRuns();render(true);
 
 // preguntas
 const QA=[

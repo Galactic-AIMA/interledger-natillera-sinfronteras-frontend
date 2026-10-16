@@ -100,3 +100,13 @@ Mejor las slides primero (T4). Te paso el link de la plantilla oficial.
 
 ## 15:55 · esta sesión (a mano: el hook no la registra)
 enfócate tu en lo del front, verifica la documentación que este al dia y en que le podemos ayudar a los del back para coordinar y llevarlos a mismo nivel,  además  todo este en orden y que no halla nada suelto o que nos pueda fallar despues.
+
+## 15:47 · sesión 2fa70ba0
+
+mejora esta parte y haz que yo pueda editar los texto o agregarle mas
+
+## 16:05 · esta sesión (a mano: el hook no la registra)
+Sí. Redáctame el mensaje para Duvan y David con el link a docs/COORDINACION-BACK.md, ofreciendo escribir las Lambdas de natillera y GET /payments/{id}.
+
+## 16:30 · esta sesión (a mano: el hook no la registra)
+Ahora deberás poner todos los archivos y carpetas en una sola principal para este  proyecto, fíjate que no quede nada suelto. y dime en que punto estamos
