@@ -1,0 +1,14 @@
+{
+  "name": "interledger-natillera-sin-fronteras",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@interledger/open-payments": "^7.4.0"
+  }
+}
