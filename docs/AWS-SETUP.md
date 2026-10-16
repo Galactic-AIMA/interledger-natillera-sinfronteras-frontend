@@ -264,7 +264,44 @@ curl -i https://<URL>/me -H "Authorization: Bearer <AccessToken>"
 ```
 → **200** con el usuario de `Users-info` (un usuario creado después del cambio de pre-signup).
 
-### 7.5 · Rutas siguientes (P0 y después)
+### 7.5 · `start-payment` (P0) → `POST /payments/start`
+
+**Antes, en AWS:**
+1. Tabla **`payments-history`**: PK `paymentId` (String), on-demand. (Confirmar nombre y llaves con Duvan.)
+2. Lambda **`start-payment`**: Node.js 22.x, timeout **20 s** (API Gateway corta a los 30 s),
+   memoria 512 MB. Variables: `OP_SECRET_ID=natillera/open-payments-client`,
+   `PAYMENTS_TABLE=payments-history`, `USER_VIEW_TABLE=user-info` y la URL de retorno de la
+   billetera (deep link de la app) que Duvan defina.
+3. Rol de la Lambda, política inline:
+   ```json
+   { "Version": "2012-10-17", "Statement": [
+     { "Effect": "Allow", "Action": "secretsmanager:GetSecretValue",
+       "Resource": "arn:aws:secretsmanager:us-east-2:349607459198:secret:natillera/open-payments-client-57Rtn0" },
+     { "Effect": "Allow", "Action": ["dynamodb:PutItem", "dynamodb:GetItem"],
+       "Resource": ["arn:aws:dynamodb:us-east-2:349607459198:table/payments-history",
+                    "arn:aws:dynamodb:us-east-2:349607459198:table/user-info"] } ] }
+   ```
+
+**El código no se puede pegar en el editor de la consola:** usa `@interledger/open-payments`, que
+no viene en el runtime. Duvan (o quien tenga el repo) genera un bundle y se sube como `.zip`:
+
+```bash
+npx esbuild app/src/handlers/start-payment.handler.ts --bundle --platform=node --target=node22 --format=cjs --outfile=dist/start-payment/index.js
+```
+Comprimir **solo** `index.js` (en la raíz del zip) → Lambda → *Code* → *Upload from* → *.zip file*.
+Handler: `index.handler`. (Ajustar la ruta del `.ts` al nombre real del archivo.)
+
+**En el API:** *Rutas → Crear* → `POST /payments/start` → integración Lambda `start-payment`
+(payload 2.0) → adjuntar autorizador `cognito-jwt`.
+
+**Contrato para el código** (HTTP API, payload 2.0):
+- Usuario: `event.requestContext.authorizer.jwt.claims.username` (y `.sub`). Nunca del body.
+- Body: `JSON.parse(event.isBase64Encoded ? Buffer.from(event.body, 'base64').toString() : event.body)`.
+- Respuesta: `{ statusCode: 200, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ paymentId, redirectUrl }) }`.
+- El grant interactivo lleva `interact: { start: ['redirect'], finish: { method: 'redirect', uri: <deep link>, nonce } }`;
+  guardar el `nonce` en `payments-history` para verificar el `hash` al volver (flujo 4).
+
+### 7.6 · Rutas siguientes
 
 Cuando Duvan entregue cada Lambda: **Rutas → Crear** → método + path → integración Lambda →
 adjuntar `cognito-jwt`. Rutas tentativas: `POST /payments/start`, `POST /payments/finish`
