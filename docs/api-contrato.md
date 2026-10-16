@@ -2,6 +2,8 @@
 
 Basado en `docs/ARQUITECTURA.md` (rama `david` del back, transcripción del draw.io página 3). Las rutas son **propuesta del front** hasta que Duvan y David las confirmen; cuando el back publique las suyas, se actualiza este archivo y `src/api/httpApi.ts`, nunca las pantallas.
 
+> **Actualización 2026-10-16 ~16:00 (Henry):** el back todavía no tiene `docs/openapi.yaml` ni la rama `docs/integracion-front`; solo `docs/ARQUITECTURA.md`, `docs/API-AUTH.md` y `docs/AWS-SETUP.md` en la rama `david`. Mientras no exista el OpenAPI, los formatos JSON exactos que espera el front y el camino mínimo para el pago real están en [COORDINACION-BACK.md](COORDINACION-BACK.md).
+>
 > **Fuente de verdad (decisión de Camilo, 2026-10-16):** `docs/openapi.yaml` en el repo back; este archivo es el resumen del front. Si difieren, manda el OpenAPI. El proceso conjunto está en `docs/INTEGRACION.md` del back (rama `docs/integracion-front`, por subir). Hasta que el back apruebe el borrador, nada es definitivo. Mientras tanto el front trabaja solo con mocks hasta la madrugada.
 
 Reglas comunes: `Authorization: Bearer <accessToken de Cognito>` en todo salvo signup y login. `author` / `paymentAuthor` los pone el back desde el `sub`. Montos `{ value: string, assetCode, assetScale }`. Errores `{ error, message }` con su status HTTP.

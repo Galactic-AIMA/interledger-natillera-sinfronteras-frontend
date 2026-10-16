@@ -69,12 +69,35 @@ async function initiateAuth(authFlow: 'USER_PASSWORD_AUTH' | 'REFRESH_TOKEN_AUTH
 
 type CognitoSignUpResult = { UserConfirmed?: boolean; UserSub?: string; __type?: string; message?: string };
 
+const WALLET_HOST = 'https://ilp.interledger-test.dev';
+
+/**
+ * Lleva la billetera a URL https, que es lo único que acepta el pre-signup del back.
+ * Acepta la URL completa, el payment pointer `$ilp.interledger-test.dev/x` o solo el id `x`.
+ */
+export function normalizeWalletAddress(input: string): string {
+  const raw = input.trim();
+  if (raw.startsWith('$')) return `https://${raw.slice(1)}`;
+  if (/^https?:\/\//i.test(raw)) return raw;
+  return `${WALLET_HOST}/${raw.replace(/^\/+/, '')}`;
+}
+
+// Motivos que lanza el pre-signup del back (deploy/pre-signup/index.mjs de la rama `david`), en inglés.
+const PRE_SIGNUP_REASONS: ReadonlyArray<readonly [string, string]> = [
+  ['wallet address is required', 'Escriba la dirección de su billetera.'],
+  ['invalid wallet address', 'No encontramos esa billetera. Revise la dirección.'],
+  ['email already registered', 'Ese correo ya tiene una cuenta.'],
+  ['phone number already registered', 'Ese teléfono ya tiene una cuenta.'],
+  ['username already registered', 'Ese usuario ya existe. Elija otro.'],
+] as const;
+
 // Mensajes en "usted" para los errores de SignUp (llegan con status 400 en __type y message).
 function signUpErrorMessage(type: string, message: string | undefined): string {
   if (type.endsWith('UserLambdaValidationException')) {
-    // Cognito antepone texto técnico ("PreSignUp failed with error …:"); se muestra solo el motivo del back.
-    const reason = (message ?? '').split(':').pop()?.trim();
-    return reason || 'No pudimos validar sus datos. Revise la billetera, el correo y el teléfono.';
+    // Cognito antepone texto técnico ("PreSignUp failed with error …"); se traduce el motivo del back.
+    const text = (message ?? '').toLowerCase();
+    const known = PRE_SIGNUP_REASONS.find(([reason]) => text.includes(reason));
+    return known ? known[1] : 'No pudimos validar sus datos. Revise la billetera, el correo y el teléfono.';
   }
   if (type.endsWith('UsernameExistsException')) return 'Ese usuario ya existe. Elija otro.';
   if (type.endsWith('InvalidPasswordException')) return 'La contraseña es débil. Use mínimo 8 caracteres con mayúscula, minúscula, número y símbolo.';
@@ -92,7 +115,7 @@ export async function signUp(input: SignupInput): Promise<void> {
     UserAttributes: [
       { Name: 'email', Value: input.email.trim() },
       { Name: 'phone_number', Value: input.phone.replace(/\s/g, '') },
-      { Name: 'custom:walletId', Value: input.walletAddress.trim() },
+      { Name: 'custom:walletId', Value: normalizeWalletAddress(input.walletAddress) },
     ],
   });
   if (!response.ok || !data.UserSub) {

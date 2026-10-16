@@ -1,6 +1,6 @@
 import * as Linking from 'expo-linking';
 
-import { getAuthToken, signIn, signOut, signUp } from './auth';
+import { getAuthToken, normalizeWalletAddress, signIn, signOut, signUp } from './auth';
 import { ApiError, type NatilleraApi } from './client';
 import { config } from './config';
 import type {
@@ -29,11 +29,7 @@ type Method = 'GET' | 'POST';
 // Acepta la URL completa, `$ilp.interledger-test.dev/x` o solo el id de la Test Wallet.
 async function lookupPublicWallet(input: string): Promise<WalletInfo> {
   const raw = input.trim();
-  const url = raw.startsWith('$')
-    ? `https://${raw.slice(1)}`
-    : /^https?:\/\//i.test(raw)
-      ? raw
-      : `https://ilp.interledger-test.dev/${raw.replace(/^\/+/, '')}`;
+  const url = normalizeWalletAddress(raw);
   let response: Response;
   try {
     response = await fetch(url, { headers: { Accept: 'application/json' } });
@@ -99,7 +95,11 @@ export const httpApi: NatilleraApi = {
   login: (username, password) => signIn(username, password),
   logout: () => signOut(),
   hasSession: async () => (await getAuthToken()) !== null,
-  getMe: () => request<User>('GET', '/me'),
+  // El GET /me del back (Users-info + userId = sub) no trae displayName: se usa el usuario.
+  getMe: async () => {
+    const me = await request<Omit<User, 'displayName'> & { displayName?: string }>('GET', '/me');
+    return { ...me, displayName: me.displayName ?? me.username };
+  },
   // Con sesión, verifica el back. Sin sesión (pantalla 02, antes del SignUp) se consulta la dirección de
   // pago pública de Open Payments: no firma ni usa llaves. El back vuelve a validar la wallet en el SignUp.
   verifyWallet: async (walletAddress) => {

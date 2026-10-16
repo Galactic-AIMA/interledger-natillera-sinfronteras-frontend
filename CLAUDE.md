@@ -20,6 +20,7 @@ App móvil de **Natillera sin Fronteras** para la Hackatón Open Payments de Int
 | [docs/open-payments.md](docs/open-payments.md) | Resumen técnico de Open Payments y trampas |
 | [docs/api-contrato.md](docs/api-contrato.md) | Contrato con el back (auth con Cognito ya confirmado por el back) |
 | [docs/INTEGRACION-EXPO-GO.md](docs/INTEGRACION-EXPO-GO.md) | Rama de Henry lista para `main`, cambios en `src/api` y pruebas en Expo Go |
+| [docs/COORDINACION-BACK.md](docs/COORDINACION-BACK.md) | Estado del back verificado, camino mínimo para el pago real, formatos JSON exactos y en qué ayuda el front |
 | [docs/ENCARGO-SIGNUP-COGNITO.md](docs/ENCARGO-SIGNUP-COGNITO.md) | Encargo del registro directo a Cognito (hecho) |
 | [docs/SESIONES-HENRY.md](docs/SESIONES-HENRY.md) | Reparto en sesiones paralelas de Henry y su estado |
 | [docs/auditoria-2026-10-16.md](docs/auditoria-2026-10-16.md) · [docs/revision-codigo-2026-10-16.md](docs/revision-codigo-2026-10-16.md) · [docs/pruebas-2026-10-16.md](docs/pruebas-2026-10-16.md) | Auditoría de seguridad, revisión de código y pruebas del 16/10 |

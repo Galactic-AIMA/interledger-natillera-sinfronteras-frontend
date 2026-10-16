@@ -104,12 +104,14 @@ function totalFor(n: NatilleraState, userId?: string): Amount {
 }
 
 function toNatillera(n: NatilleraState, userId: string): Natillera {
-  const periodsSoFar = 3;
+  // Cuotas exigidas a la fecha en el demo: con 1, Luz y Andrés deben una y quedan al día al poner
+  // la cuota (camino del pitch). Antes eran 2 y Andrés seguía «Debe» después de pagar.
+  const periodsDue = 1;
   const members: Member[] = n.memberIds.map((id) => {
     const user = users.find((u) => u.userId === id);
     const total = totalFor(n, id);
     const paid = n.records.filter((r) => r.authorId === id).length;
-    const pending = Math.max(0, Math.min(periodsSoFar, 2) - paid);
+    const pending = Math.max(0, periodsDue - paid);
     return { userId: id, name: user?.displayName ?? id, isAdmin: id === n.adminId, total, status: pending > 0 ? 'debe' : 'al-dia', pendingCount: pending };
   });
   const mine = members.find((m) => m.userId === userId);

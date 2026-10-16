@@ -90,3 +90,13 @@ Sí, arregla en mockApi.ts que Andrés quede Al día después de pagar y que la 
 ## 15:29 · sesión 2fa70ba0
 
 hazlo
+
+## 15:30 · sesión 2fa70ba0
+
+Sí, sube feat/cuenta-celular a origin.
+
+## 15:50 · esta sesión (a mano: el hook no la registra)
+Mejor las slides primero (T4). Te paso el link de la plantilla oficial.
+
+## 15:55 · esta sesión (a mano: el hook no la registra)
+enfócate tu en lo del front, verifica la documentación que este al dia y en que le podemos ayudar a los del back para coordinar y llevarlos a mismo nivel,  además  todo este en orden y que no halla nada suelto o que nos pueda fallar despues.
