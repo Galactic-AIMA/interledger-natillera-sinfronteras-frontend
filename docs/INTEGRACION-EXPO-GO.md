@@ -2,6 +2,7 @@
 
 De Henry a Camilo. Todo lo de Henry está en **una sola rama**, lista para el PR a `main`. Este documento dice qué trae, cómo probarla en Expo Go y qué queda abierto.
 
+> **15:45 (manda sobre lo de abajo):** la rama ya está **en el repo del equipo**: `origin/feat/cuenta-celular` (`b7729fa`, ahora con `feat/creditos` fusionada; 22 commits por delante de `main`, 0 por detrás). PR: https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/compare/main...feat/cuenta-celular · **Las pruebas en Expo Go las hace Camilo en su PC** (Henry no tiene Expo Go): la lista de 8 pruebas de abajo es para él.
 
 > **14:05:** las dos sesiones de Henry quedaron sincronizadas en `feat/creditos` (`093986f`): entraron los arreglos de `base` de la auditoría (`RevokeToken`, `friendlyError`, `.env*`, hook), `npm test` (8/8), región Cognito `us-east-2` por defecto y `web.output` estático. `tsc` limpio.
 
@@ -9,16 +10,16 @@ De Henry a Camilo. Todo lo de Henry está en **una sola rama**, lista para el PR
 
 | Dato | Valor |
 |---|---|
-| Rama | `feat/cuenta-celular` (= `feat/creditos` + pulido en celular) en el fork `HenryStark866/interledger-natillera-sinfronteras-frontend` (Henry no tiene escritura en Galactic-AIMA) |
-| PR a `main` | https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/compare/main...HenryStark866:interledger-natillera-sinfronteras-frontend:feat/cuenta-celular |
+| Rama | `feat/cuenta-celular` (= `feat/creditos` + pulido en celular) en el repo del equipo (copia igual en el fork de Henry) |
+| PR a `main` | https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/compare/main...feat/cuenta-celular |
 | Base | Contiene tu `main` completo hasta `32eb791`: el PR entra sin conflictos |
 | Rama solo-Cognito | `feat/auth-signup` en el mismo fork, por si prefieres el registro en un PR aparte |
 
 Si prefieres traerla por terminal en vez de PR:
 
 ```bash
-git fetch https://github.com/HenryStark866/interledger-natillera-sinfronteras-frontend feat/cuenta-celular:feat/henry
-git switch main && git merge --no-ff feat/henry && git push origin main
+git fetch origin
+git switch main && git merge --no-ff origin/feat/cuenta-celular && git push origin main
 ```
 
 ## Qué trae
