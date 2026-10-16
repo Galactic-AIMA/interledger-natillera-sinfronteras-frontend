@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Preparación del pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Gloock&family=Hanken+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --indigo:#1A1B4B; --indigo2:#3F4C9A; --menta:#A7C9B9; --mentaO:#4F7F6B;
+  --dinero:#2F6F63; --fondo:#F5F6FA; --gris:#5F626B; --alerta:#B5543F; --billetera:#4A0E68;
+  --card:#FFFFFF; --line:#DDE1EA; --texto:#1A1B4B; --suave:#EAF2EE; --aviso:#FBEDE9;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --fondo:#0F1030; --card:#181A45; --line:#2C2F66; --texto:#ECEEF8; --gris:#A9ADC4;
+    --indigo:#ECEEF8; --indigo2:#9AA8F0; --menta:#3C6A58; --suave:#173A33; --aviso:#3E2420; --dinero:#7FC8B4; --alerta:#E9937E;
+  }
+}
+:root[data-theme="dark"]{
+  --fondo:#0F1030; --card:#181A45; --line:#2C2F66; --texto:#ECEEF8; --gris:#A9ADC4;
+  --indigo:#ECEEF8; --indigo2:#9AA8F0; --menta:#3C6A58; --suave:#173A33; --aviso:#3E2420; --dinero:#7FC8B4; --alerta:#E9937E;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--fondo);color:var(--texto);font:16px/1.55 "Hanken Grotesk",system-ui,sans-serif}
+h1,h2,h3{font-family:Gloock,Georgia,serif;font-weight:400;line-height:1.15;margin:0 0 .4em}
+h1{font-size:clamp(2rem,6vw,3.2rem)} h2{font-size:clamp(1.5rem,4vw,2.1rem)} h3{font-size:1.2rem}
+.mono{font-family:"Martian Mono",ui-monospace,monospace}
+a{color:var(--indigo2)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px}
+nav.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--fondo) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+nav.top .wrap{display:flex;gap:6px;overflow-x:auto;padding-top:8px;padding-bottom:8px;scrollbar-width:none}
+nav.top a{white-space:nowrap;text-decoration:none;color:var(--texto);font-weight:600;font-size:.88rem;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--card)}
+nav.top a:hover{border-color:var(--indigo2)}
+section{padding:40px 0;border-bottom:1px solid var(--line)}
+.lead{font-size:1.1rem;color:var(--gris);max-width:62ch}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--suave);color:var(--dinero)}
+.tag.warn{background:var(--aviso);color:var(--alerta)}
+.tag.indigo{background:color-mix(in srgb,var(--indigo2) 16%,transparent);color:var(--indigo2)}
+.big{font-family:"Martian Mono",monospace;font-size:clamp(1.6rem,5vw,2.4rem);font-weight:600;color:var(--dinero);line-height:1.1}
+.muted{color:var(--gris)}
+.say{border-left:4px solid var(--dinero);padding:10px 14px;background:var(--suave);border-radius:0 10px 10px 0;margin:10px 0;font-size:1.05rem}
+.say p{margin:.25em 0}
+.warnbox{border-left:4px solid var(--alerta);padding:10px 14px;background:var(--aviso);border-radius:0 10px 10px 0;margin:10px 0}
+button{font:inherit;cursor:pointer;min-height:48px;padding:0 18px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--texto);font-weight:600}
+button.primary{background:var(--indigo2);border-color:var(--indigo2);color:#fff}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid var(--indigo2);outline-offset:2px}
+.hero{padding:48px 0 36px}
+.countdown{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+.countdown div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 16px;min-width:88px;text-align:center}
+.countdown b{display:block;font-family:"Martian Mono",monospace;font-size:1.8rem;color:var(--indigo2)}
+.countdown span{font-size:.8rem;color:var(--gris)}
+/* línea del día */
+.day{position:relative;margin-top:16px}
+.day ol{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.day li{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.day li.now{border-color:var(--dinero);box-shadow:0 0 0 2px color-mix(in srgb,var(--dinero) 35%,transparent)}
+.day li.past{opacity:.55}
+.day time{font-family:"Martian Mono",monospace;font-weight:600;color:var(--indigo2)}
+/* barra de tiempos */
+.timeline{display:flex;height:46px;border-radius:12px;overflow:hidden;border:1px solid var(--line);margin:16px 0 6px}
+.timeline div{display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:700;color:#fff;cursor:pointer;transition:filter .15s;text-align:center;padding:0 2px;overflow:hidden}
+.timeline div:hover{filter:brightness(1.12)}
+.timeline div.on{outline:3px solid var(--texto);outline-offset:-3px}
+.scale{display:flex;justify-content:space-between;font-family:"Martian Mono",monospace;font-size:.72rem;color:var(--gris)}
+details.block{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:10px 0}
+details.block>summary{list-style:none;cursor:pointer;padding:14px 16px;display:flex;gap:12px;align-items:center}
+details.block>summary::-webkit-details-marker{display:none}
+details.block>summary .n{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700}
+details.block>summary .t{flex:1}
+details.block>summary .d{font-family:"Martian Mono",monospace;font-size:.85rem;color:var(--gris)}
+details.block .body{padding:0 16px 16px}
+.slide{font-size:.92rem;color:var(--gris)}
+/* ensayo */
+.rehearse{background:var(--indigo2);color:#fff;border-radius:20px;padding:20px;position:relative}
+:root[data-theme="dark"] .rehearse{background:#262A6E}
+.rehearse .clock{font-family:"Martian Mono",monospace;font-size:clamp(2.6rem,10vw,4.4rem);font-weight:600;line-height:1}
+.rehearse .bar{height:10px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden;margin:14px 0}
+.rehearse .bar i{display:block;height:100%;width:0;background:var(--menta);transition:width .25s linear}
+.rehearse .cur{font-family:Gloock,serif;font-size:1.5rem;margin:6px 0}
+.rehearse .prompt{font-size:clamp(1.05rem,2.6vw,1.35rem);line-height:1.5;background:rgba(0,0,0,.18);border-radius:12px;padding:14px;min-height:150px}
+.rehearse .prompt p{margin:.2em 0}
+.rehearse button{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.3);color:#fff}
+.rehearse button.go{background:#fff;color:#3F4C9A;border-color:#fff}
+.rehearse .ctr{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.rehearse .delta{font-family:"Martian Mono",monospace;font-size:.9rem;opacity:.9}
+.runs{font-family:"Martian Mono",monospace;font-size:.85rem;margin-top:10px;opacity:.9}
+/* flujo de demo */
+.flow{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));counter-reset:paso}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;position:relative}
+.step .scr{font-family:"Martian Mono",monospace;font-size:.75rem;color:var(--gris)}
+.step h3{margin:.2em 0 .3em;font-size:1.05rem}
+.step .tap{font-weight:700;color:var(--indigo2)}
+.step.wallet{background:var(--billetera);color:#fff;border-color:var(--billetera)}
+.step.wallet .scr,.step.wallet .tap{color:#E6D6F2}
+.step.end{border-color:var(--dinero);background:var(--suave)}
+.step q{display:block;margin-top:8px;font-style:italic;font-size:.93rem}
+/* diagrama */
+svg.diag{width:100%;height:auto;display:block}
+svg.diag text{font-family:"Hanken Grotesk",sans-serif;fill:var(--texto)}
+svg.diag .box{fill:var(--card);stroke:var(--line);stroke-width:1.5}
+svg.diag .wbox{fill:var(--billetera)}
+svg.diag .pipe{stroke:var(--dinero);stroke-width:6;fill:none;stroke-linecap:round;stroke-dasharray:2 12}
+svg.diag .arrow{stroke:var(--indigo2);stroke-width:2;fill:none;marker-end:url(#ah)}
+svg.diag .lbl{font-size:12px;fill:var(--gris)}
+/* palabras */
+.words{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.words div{padding:10px 12px;border-radius:10px;font-weight:600}
+.no{background:var(--aviso);color:var(--alerta);text-decoration:line-through}
+.yes{background:var(--suave);color:var(--dinero)}
+/* tarjetas Q&A */
+.qa{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.flip{perspective:1200px;min-height:230px;cursor:pointer}
+.flip .in{position:relative;width:100%;height:100%;min-height:230px;transition:transform .5s;transform-style:preserve-3d}
+.flip.open .in{transform:rotateY(180deg)}
+.flip .f,.flip .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;padding:18px;border:1px solid var(--line);overflow:auto}
+.flip .f{background:var(--card);display:flex;flex-direction:column;justify-content:space-between}
+.flip .f h3{font-size:1.2rem}
+.flip .b{background:var(--suave);transform:rotateY(180deg);font-size:.95rem}
+.flip .b p{margin:.35em 0}
+@media (prefers-reduced-motion:reduce){.flip .in{transition:none}}
+/* checklist */
+.check{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.check label{display:flex;gap:12px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;cursor:pointer;min-height:48px}
+.check input{width:22px;height:22px;margin-top:2px;flex:0 0 22px;accent-color:var(--dinero)}
+.check input:checked+span{text-decoration:line-through;color:var(--gris)}
+.check small{display:block;color:var(--gris);font-weight:400}
+.progress{font-family:"Martian Mono",monospace;font-size:.9rem;color:var(--dinero);margin:6px 0 12px}
+table{width:100%;border-collapse:collapse;font-size:.95rem}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.8rem;text-transform:uppercase;letter-spacing:.04em;color:var(--gris)}
+.tablewrap{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:14px}
+.themebtn{position:fixed;right:16px;bottom:16px;z-index:20;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.15)}
+footer{padding:30px 0 80px;color:var(--gris);font-size:.9rem}
+@media (max-width:560px){ .words{grid-template-columns:1fr} .day li{grid-template-columns:54px 1fr} }
+@media print{
+  nav.top,.themebtn,.rehearse .ctr,#ensayo{display:none}
+  body{background:#fff;color:#000} section{padding:16px 0;break-inside:avoid}
+  details.block{break-inside:avoid} details.block .body{display:block}
+  .flip .b{position:static;transform:none} .flip .f{position:static} .flip .in{transform:none!important}
+}
+</style>
+</head>
+<body>
+
+<nav class="top" aria-label="Secciones">
+  <div class="wrap">
+    <a href="#hoy">Reloj</a>
+    <a href="#idea">La idea</a>
+    <a href="#guion">Guion</a>
+    <a href="#ensayo">Ensayar</a>
+    <a href="#demo">Demo</a>
+    <a href="#tuberia">Open Payments</a>
+    <a href="#palabras">Palabras</a>
+    <a href="#preguntas">Preguntas</a>
+    <a href="#decidir">Decidir hoy</a>
+    <a href="#planb">Plan B</a>
+    <a href="#checklist">Checklist</a>
+    <a href="#escena">En escena</a>
+  </div>
+</nav>
+
+<header class="hero" id="hoy">
+  <div class="wrap">
+    <span class="tag indigo">Hackatón Open Payments · Ruta N, Medellín</span>
+    <h1>Natillera sin Fronteras<br><span class="muted" style="font-size:.55em">Preparación del pitch · sábado 17 de octubre</span></h1>
+    <p class="lead">Todo lo que necesita para mañana en una sola página: el guion con tiempos, un cronómetro para ensayar, el camino de la demo, cómo explicar Open Payments si preguntan, las preguntas que puede hacer el jurado y la lista de chequeo.</p>
+
+    <div class="countdown" aria-live="polite">
+      <div><b id="cd-h">--</b><span>horas</span></div>
+      <div><b id="cd-m">--</b><span>minutos</span></div>
+      <div><b id="cd-s">--</b><span>segundos</span></div>
+      <div style="text-align:left;min-width:200px"><span>para el pitch</span><b style="font-size:1.1rem" id="cd-lbl">Sáb 17/10 · 12:00</b></div>
+    </div>
+
+    <div class="day">
+      <h3>El sábado, hora por hora</h3>
+      <ol id="dayline">
+        <li data-t="2026-10-17T06:00:00-05:00"><time>06:00</time><div><b>APK a un Android real.</b> Instalar y abrir una vez sin red para confirmar que el modo de ejemplo funciona solo.</div></li>
+        <li data-t="2026-10-17T07:00:00-05:00"><time>07:00</time><div><b>Grabar el video de respaldo</b> con el camino completo (ideal: pago real con la Test Wallet). Cronometrarlo.</div></li>
+        <li data-t="2026-10-17T08:00:00-05:00"><time>08:00</time><div><b>Límite del video.</b> Subirlo al Drive y dejarlo descargado en el portátil. Empiezan los ensayos.</div></li>
+        <li data-t="2026-10-17T08:15:00-05:00"><time>08:15</time><div><b>Ensayo 1, 2 y 3 con cronómetro</b> (abajo, en <a href="#ensayo">Ensayar</a>). Si pasa de 5:00, recortar el bloque 6.</div></li>
+        <li data-t="2026-10-17T10:00:00-05:00"><time>10:00</time><div><b>Cierre de código:</b> todo en <span class="mono">main</span>, <span class="mono">AI_USAGE.md</span> completo, <span class="mono">node scripts/ai-usage-check.mjs</span> limpio.</div></li>
+        <li data-t="2026-10-17T11:00:00-05:00"><time>11:00</time><div><b>Entrega.</b> Formulario enviado, link de demo en el Drive. Después no se toca código.</div></li>
+        <li data-t="2026-10-17T11:30:00-05:00"><time>11:30</time><div><b>Prueba técnica en sala:</b> proyectar el celular, batería al 100 %, modo avión en notificaciones, letra lista.</div></li>
+        <li data-t="2026-10-17T12:00:00-05:00"><time>12:00</time><div><b>Pitch: 5 minutos con demo.</b> Respire. Usted conoce a Doña Rosa mejor que nadie.</div></li>
+      </ol>
+    </div>
+  </div>
+</header>
+
+<section id="idea">
+  <div class="wrap">
+    <h2>La idea en una frase</h2>
+    <div class="say" style="font-size:1.25rem"><p><b>La natillera de toda la vida, pero en el celular:</b> la familia ahorra junta en un mismo fondo, aunque cada uno viva en un país distinto y gane en otra moneda.</p></div>
+    <p class="lead">Si el jurado solo recuerda una cosa, que sea esa. Todo lo demás es prueba de que funciona.</p>
+
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card"><span class="tag">Colombia · pesos</span><h3 style="margin-top:8px">Doña Rosa</h3><p class="muted">Creó la natillera y es la tesorera. Lleva $150.000 en tres aportes.</p></div>
+      <div class="card"><span class="tag">EE. UU. · dólares</span><h3 style="margin-top:8px">Luz</h3><p class="muted">Socia. En el ejemplo, la que pide un préstamo al fondo.</p></div>
+      <div class="card"><span class="tag">España · euros</span><h3 style="margin-top:8px">Andrés</h3><p class="muted">Socio. Va atrasado: <b>él pone la cuota en la demo</b> para que se vea euros → pesos.</p></div>
+    </div>
+
+    <h3 style="margin-top:28px">Las tres cifras del problema</h3>
+    <div class="grid g3">
+      <div class="card"><div class="big">US$13.098 M</div><p>en remesas a Colombia en 2025, +10,6 % frente a 2024.</p><span class="muted" style="font-size:.85rem">Banco de la República</span></div>
+      <div class="card"><div class="big">~18 %</div><p>de los hogares recibe remesas: más de 9 millones de personas.</p></div>
+      <div class="card"><div class="big">Diciembre</div><p>de 2025 fue el mes récord: US$1.173 M. <b>El mismo mes en que se reparte la natillera.</b></p></div>
+    </div>
+    <p class="muted" style="font-size:.9rem;margin-top:10px">Antes de decirlas, verifique la fuente del Banco de la República. Si alguna no cuadra, mejor quitarla que decirla mal.</p>
+  </div>
+</section>
+
+<section id="guion">
+  <div class="wrap">
+    <h2>El guion: 7 bloques, 5 minutos</h2>
+    <p class="lead">Toque un color de la barra o un bloque para ver qué se dice. El bloque más largo es la demo: casi dos minutos.</p>
+    <div class="timeline" id="tl" role="list"></div>
+    <div class="scale"><span>0:00</span><span>1:00</span><span>2:00</span><span>3:00</span><span>4:00</span><span>5:00</span></div>
+    <div id="blocks"></div>
+  </div>
+</section>
+
+<section id="ensayo">
+  <div class="wrap">
+    <h2>Ensayar con cronómetro</h2>
+    <p class="lead">Ensaye en voz alta. El texto avanza solo con el tiempo de cada bloque. Si va adelantado o atrasado, se lo dice. Teclado: <span class="mono">espacio</span> inicia o pausa · <span class="mono">→</span> siguiente bloque · <span class="mono">←</span> anterior.</p>
+    <div class="rehearse">
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end">
+        <div><div class="clock" id="rc">0:00</div><div class="delta" id="rdelta">Listo para empezar</div></div>
+        <div style="text-align:right"><div class="delta">Bloque</div><div class="cur" id="rcur">1 · Doña Rosa</div></div>
+      </div>
+      <div class="bar"><i id="rbar"></i></div>
+      <div class="prompt" id="rprompt"></div>
+      <div class="ctr">
+        <button class="go" id="rgo">▶ Empezar</button>
+        <button id="rprev">← Anterior</button>
+        <button id="rnext">Siguiente →</button>
+        <button id="rreset">Reiniciar</button>
+        <button id="rsave">Guardar este ensayo</button>
+      </div>
+      <div class="runs" id="runs"></div>
+    </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="wrap">
+    <h2>El camino de la demo</h2>
+    <p class="lead">Nueve pasos, de 1:40 a 3:30. Lo que va entre comillas es lo que el jurado lee en la pantalla.</p>
+    <div class="warnbox"><b>Ojo:</b> "Empezar con datos de ejemplo" entra como <b>Doña Rosa</b>, y ella paga en pesos: no se ve el cambio de moneda. Para la demo hay que entrar por <b>Ya tengo cuenta</b> con el usuario <span class="mono">andres</span> (en modo de ejemplo sirve cualquier contraseña).</div>
+    <div class="flow" style="margin-top:14px">
+      <div class="step"><div class="scr">01 · Bienvenida</div><h3>"Ahorre en familia"</h3><div class="tap">Tocar A+ una vez y volver</div><q>Así abre. Una sola idea. Y este botón agranda la letra, para Doña Rosa.</q></div>
+      <div class="step"><div class="scr">03 · Entrar</div><h3>Entra Andrés</h3><div class="tap">Usuario andres · Entrar</div><q>Entra Andrés, desde España.</q></div>
+      <div class="step"><div class="scr">10 · Mi natillera</div><h3>"Entre todos llevan $150.000"</h3><div class="tap">Señalar el fondo y "Falta 1" de Andrés</div><q>Aquí está todo: el fondo, lo que lleva cada uno. Andrés va atrasado.</q></div>
+      <div class="step"><div class="scr">11 · Poner la cuota</div><h3>Llega $50.000 · sale 11,13 €</h3><div class="tap">Poner la cuota</div><q>Andrés pone en euros. A la natillera le llegan pesos. Antes de tocar nada ya sabe cuánto sale, cuánto llega y cuánto cuesta.</q></div>
+      <div class="step"><div class="scr">28 · Va a su billetera</div><h3>Tres pasos</h3><div class="tap">Leer con el dedo · Ir a la billetera</div><q>Le contamos qué va a pasar, en tres pasos. Nadie se pierde.</q></div>
+      <div class="step wallet"><div class="scr">Billetera (otra app)</div><h3>Aprobar / Rechazar</h3><div class="tap">Aprobar</div><q>La app nunca toca la plata. Andrés da el permiso en su propia billetera. Por debajo va Interledger, con Open Payments: la tubería que mueve la plata entre billeteras y entre monedas.</q></div>
+      <div class="step"><div class="scr">30 · Volviendo</div><h3>"Estamos confirmando…"</h3><div class="tap">Esperar en silencio</div><q>(pausa corta: deje que se vea)</q></div>
+      <div class="step end"><div class="scr">34 · Cuota puesta</div><h3>✓ "Cuota puesta"</h3><div class="tap">Listo</div><q>Cuota puesta. Desde España, en menos de un minuto.</q></div>
+      <div class="step end"><div class="scr">10 otra vez</div><h3>El fondo sube a $200.000</h3><div class="tap">Señalar "Andrés +$50.000" y "Al día"</div><q>Y Doña Rosa lo ve de una. Sin cuaderno, sin pantallazos.</q></div>
+    </div>
+    <div class="warnbox" style="margin-top:16px"><b>Regla de oro de la demo:</b> a la primera falla, pase al video sin pelear con la app. Diga: <i>"Les muestro el mismo camino grabado esta mañana."</i> Nadie pierde puntos por un plan B bien hecho. Sí se pierden por dos minutos de silencio.</div>
+  </div>
+</section>
+
+<section id="tuberia">
+  <div class="wrap">
+    <h2>Open Payments, explicado fácil</h2>
+    <p class="lead">En el pitch se nombra <b>una sola vez</b>, como "la tubería". Esta sección es para las preguntas del jurado técnico: entiéndala para responder, pero no la recite en escena.</p>
+    <div class="card" style="margin:14px 0">
+      <svg class="diag" viewBox="0 0 920 300" role="img" aria-label="Flujo de un pago: la app pide a nuestra API, la API arma el pago con Open Payments, Andrés aprueba en su billetera, y la plata viaja de euros a pesos hasta el fondo">
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#3F4C9A"/></marker></defs>
+        <rect class="box" x="10" y="30" width="170" height="90" rx="14"/>
+        <text x="95" y="65" text-anchor="middle" font-weight="700" font-size="16">La app</text>
+        <text x="95" y="88" text-anchor="middle" class="lbl">Sin llaves, sin plata</text>
+        <text x="95" y="104" text-anchor="middle" class="lbl">solo muestra y abre</text>
+
+        <rect class="box" x="290" y="30" width="190" height="90" rx="14"/>
+        <text x="385" y="65" text-anchor="middle" font-weight="700" font-size="16">Nuestra API (AWS)</text>
+        <text x="385" y="88" text-anchor="middle" class="lbl">Firma con Open Payments</text>
+        <text x="385" y="104" text-anchor="middle" class="lbl">llave en Secrets Manager</text>
+
+        <rect class="wbox" x="590" y="30" width="190" height="90" rx="14"/>
+        <text x="685" y="65" text-anchor="middle" font-weight="700" font-size="16" style="fill:#fff">Billetera de Andrés</text>
+        <text x="685" y="88" text-anchor="middle" font-size="12" style="fill:#E6D6F2">Él ve cuánto sale y llega</text>
+        <text x="685" y="104" text-anchor="middle" font-size="12" style="fill:#E6D6F2">y toca Aprobar</text>
+
+        <path class="arrow" d="M182,62 L286,62"/><text x="234" y="52" text-anchor="middle" class="lbl">1. "quiero pagar"</text>
+        <path class="arrow" d="M482,62 L586,62"/><text x="534" y="52" text-anchor="middle" class="lbl">2. pide permiso</text>
+        <path class="arrow" d="M590,104 C520,150 260,150 182,104"/><text x="385" y="160" text-anchor="middle" class="lbl">3. vuelve sola a la app (natillera://retorno)</text>
+
+        <rect class="box" x="10" y="200" width="200" height="80" rx="14"/>
+        <text x="110" y="232" text-anchor="middle" font-weight="700" font-size="15">Sale: euros</text>
+        <text x="110" y="256" text-anchor="middle" class="lbl">de la cuenta de Andrés</text>
+        <path class="pipe" d="M214,240 L706,240"/>
+        <text x="460" y="224" text-anchor="middle" font-weight="700" font-size="14" style="fill:var(--dinero)">Interledger · la tubería entre billeteras y monedas</text>
+        <text x="460" y="268" text-anchor="middle" class="lbl">la cotización trae cuánto sale y cuánto llega; la tasa la pone el proveedor</text>
+        <rect class="box" x="710" y="200" width="200" height="80" rx="14" style="stroke:var(--dinero)"/>
+        <text x="810" y="232" text-anchor="middle" font-weight="700" font-size="15">Llega: pesos</text>
+        <text x="810" y="256" text-anchor="middle" class="lbl">al fondo de la natillera</text>
+      </svg>
+    </div>
+    <div class="grid g2">
+      <div class="card"><h3>Los 4 conceptos que bastan</h3>
+        <p><b>Dirección de pago</b> — una URL pública por cuenta. Dice la moneda.</p>
+        <p><b>Cotización</b> — antes de pagar: cuánto sale de un lado y cuánto llega al otro. Por eso la pantalla 11 muestra el costo antes.</p>
+        <p><b>Permiso (grant)</b> — el usuario lo da en su billetera. Sin permiso no sale nada.</p>
+        <p><b>Pago saliente</b> — la orden de pago, siempre con permiso interactivo.</p>
+      </div>
+      <div class="card"><h3>Lo que nos hace fuertes</h3>
+        <p>✓ La app <b>nunca</b> firma ni guarda llaves: todo pasa por nuestra API.</p>
+        <p>✓ Montos sin decimales sueltos: valor entero + moneda + escala.</p>
+        <p>✓ Cuota automática con <b>tope por mes</b>: se aprueba una vez, se reinicia cada periodo, no acumula.</p>
+        <p>✓ Préstamos: la tesorera aprueba y el plan de pagos se autoriza por adelantado.</p>
+        <p>✓ La app solo acepta billeteras https de <span class="mono">interledger-test.dev</span>, y un pago cuenta solo si lo confirma el servidor.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="palabras">
+  <div class="wrap">
+    <h2>Palabras en escena</h2>
+    <p class="lead">Hable como Doña Rosa. Si el jurado técnico pregunta, ahí sí use las palabras técnicas.</p>
+    <div class="words" style="max-width:640px">
+      <div class="no">grant</div><div class="yes">permiso</div>
+      <div class="no">wallet address</div><div class="yes">billetera</div>
+      <div class="no">quote</div><div class="yes">cuánto sale y cuánto llega</div>
+      <div class="no">API · backend · Lambda</div><div class="yes">"por detrás"</div>
+      <div class="no">token · auth</div><div class="yes">entrar</div>
+      <div class="no">usuario final</div><div class="yes">Doña Rosa, la familia</div>
+      <div class="no">transacción</div><div class="yes">cuota, aporte</div>
+    </div>
+    <p style="margin-top:14px"><b>Tono:</b> "usted", frases cortas, una idea por frase. Pausa después de cada cifra.</p>
+  </div>
+</section>
+
+<section id="preguntas">
+  <div class="wrap">
+    <h2>Preguntas probables del jurado</h2>
+    <p class="lead">Toque cada tarjeta para ver la respuesta. Practíquelas con Camilo: uno pregunta y el otro responde en menos de 30 segundos.</p>
+    <div class="qa" id="qa"></div>
+  </div>
+</section>
+
+<section id="decidir">
+  <div class="wrap">
+    <h2>Decidir hoy, antes de dormir</h2>
+    <p class="lead">Los puntos marcados [CONFIRMAR] en el guion. Cada uno cambia una frase del pitch. Lo que marque aquí se queda guardado en este navegador.</p>
+    <div class="progress" id="p-decidir"></div>
+    <ul class="check" data-key="decidir">
+      <li><label><input type="checkbox" checked><span><b>Andrés queda "Al día" después de pagar.</b><small>Resuelto en <span class="mono">src/api/mockApi.ts</span>: antes de pagar sale "Falta 1"; después, "Al día" y el fondo pasa de $150.000 a $200.000.</small></span></label></li>
+      <li><label><input type="checkbox" checked><span><b>Cifra: 11,13 €.</b><small>Las pantallas 11 y 34 dicen lo mismo: sale 11,13 € (11,00 € de cuota + 0,13 € de costo) y llegan $50.000. Diga "once euros con trece".</small></span></label></li>
+      <li><label><input type="checkbox"><span><b>¿Demo en vivo real, en modo de ejemplo o video?</b><small>Si es modo de ejemplo, dígalo sin pena: "les mostramos la app con datos de ejemplo; el pago real está en el video".</small></span></label></li>
+      <li><label><input type="checkbox"><span><b>Historia de los personajes.</b><small>¿Luz y Andrés son hijos de Doña Rosa? ¿Ciudades (Miami, Madrid)? Si no se confirma, diga "la familia" y "en Estados Unidos / en España".</small></span></label></li>
+      <li><label><input type="checkbox"><span><b>Bloque 6: ¿"ya funciona" o "está diseñada"?</b><small>Los préstamos (16–25) y la cuota automática ya funcionan en modo de ejemplo. Si no se ven contra el back real, diga "ya funcionan con datos de ejemplo".</small></span></label></li>
+      <li><label><input type="checkbox"><span><b>Quién dice cada bloque.</b><small>Propuesta: Henry 1–3 y 5–7; Camilo maneja el celular en la demo (bloque 4) mientras Henry narra.</small></span></label></li>
+      <li><label><input type="checkbox"><span><b>Cómo se proyecta el celular.</b><small>Cable HDMI, scrcpy en el portátil o cámara. Probarlo en sala a las 11:30.</small></span></label></li>
+      <li><label><input type="checkbox"><span><b>Links:</b> plantilla oficial de slides, Drive del equipo y formulario de entrega.</span></label></li>
+      <li><label><input type="checkbox"><span><b>¿Se menciona el premio de inclusión financiera?</b><small>Sugerencia: no nombrarlo; que el bloque 5 lo demuestre solo.</small></span></label></li>
+    </ul>
+  </div>
+</section>
+
+<section id="planb">
+  <div class="wrap">
+    <h2>Plan B</h2>
+    <div class="tablewrap"><table>
+      <thead><tr><th>Si pasa esto</th><th>Hacemos esto</th></tr></thead>
+      <tbody>
+        <tr><td>El back no responde en vivo</td><td>Modo de ejemplo. La billetera es un diálogo Aprobar / Rechazar. Decirlo con honestidad.</td></tr>
+        <tr><td>La Test Wallet falla o no vuelve a la app</td><td>Cortar al <b>video de respaldo</b>, ya abierto en otra pestaña y con el audio probado.</td></tr>
+        <tr><td>Se cae el Wi-Fi</td><td>El APK en modo de ejemplo no necesita red. Datos móviles de respaldo para el portátil.</td></tr>
+        <tr><td>El celular no se proyecta</td><td>Video en el portátil y el celular en la mano, mostrándolo al jurado de cerca.</td></tr>
+        <tr><td>Se acaba el tiempo</td><td>Recortar el bloque 6. <b>Nunca</b> el cierre con Doña Rosa.</td></tr>
+        <tr><td>Se queda en blanco</td><td>Vuelva a Doña Rosa: "¿Qué necesita Doña Rosa?". La historia lo lleva al siguiente bloque.</td></tr>
+        <tr><td>No sabe una respuesta</td><td>"Buena pregunta. Hoy está así: … y lo siguiente es …". Nunca invente una cifra.</td></tr>
+      </tbody>
+    </table></div>
+    <p class="muted" style="margin-top:10px">Demo en navegador: <b>no</b>. En web la billetera de ejemplo sale como un cuadro del navegador. Use el celular.</p>
+  </div>
+</section>
+
+<section id="checklist">
+  <div class="wrap">
+    <h2>Checklist de entrega y de sala</h2>
+    <div class="grid g2">
+      <div>
+        <h3>Entrega (antes de las 11:00)</h3>
+        <div class="progress" id="p-entrega"></div>
+        <ul class="check" data-key="entrega">
+          <li><label><input type="checkbox"><span>Rama <span class="mono">feat/cuenta-celular</span> integrada en <span class="mono">main</span><small>PR en el repo del equipo; pruebas en Expo Go a cargo de Camilo</small></span></label></li>
+          <li><label><input type="checkbox"><span>Pago de punta a punta con la Test Wallet grabado</span></label></li>
+          <li><label><input type="checkbox"><span>APK instalado en un Android real</span></label></li>
+          <li><label><input type="checkbox"><span><span class="mono">AI_USAGE.md</span> con las filas de Henry y "What We Did Ourselves"</span></label></li>
+          <li><label><input type="checkbox"><span><span class="mono">node scripts/ai-usage-check.mjs</span> limpio (front y back)</span></label></li>
+          <li><label><input type="checkbox"><span>Declarar si los bocetos de Figma o el diagrama usaron IA</span></label></li>
+          <li><label><input type="checkbox"><span>Los 4 hicieron el curso de Platzi o la Guide to Open Payments</span></label></li>
+          <li><label><input type="checkbox"><span>Back en <span class="mono">main</span> (hoy usa <span class="mono">master</span>) y repos públicos</span></label></li>
+          <li><label><input type="checkbox"><span>Slides en la plantilla oficial</span></label></li>
+          <li><label><input type="checkbox"><span>Link de demo en el Drive + formulario enviado</span></label></li>
+        </ul>
+      </div>
+      <div>
+        <h3>En la maleta y en sala</h3>
+        <div class="progress" id="p-sala"></div>
+        <ul class="check" data-key="sala">
+          <li><label><input type="checkbox"><span>Celular de la demo al 100 % y cargador</span></label></li>
+          <li><label><input type="checkbox"><span>No molestar activado (sin notificaciones en pantalla)</span></label></li>
+          <li><label><input type="checkbox"><span>Brillo al máximo, rotación bloqueada</span></label></li>
+          <li><label><input type="checkbox"><span>App abierta en la pantalla 01, sesión cerrada</span></label></li>
+          <li><label><input type="checkbox"><span>Video de respaldo descargado en el portátil, no solo en el Drive</span></label></li>
+          <li><label><input type="checkbox"><span>Cable de proyección / scrcpy probado</span></label></li>
+          <li><label><input type="checkbox"><span>Slides abiertas en presentación, sin pestañas con llaves ni contraseñas</span></label></li>
+          <li><label><input type="checkbox"><span>Cronómetro visible (o Camilo marcando 1:00 y 0:30 restantes)</span></label></li>
+          <li><label><input type="checkbox"><span>Agua</span></label></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="escena">
+  <div class="wrap">
+    <h2>En escena</h2>
+    <div class="grid g3">
+      <div class="card"><span class="tag">Los primeros 10 s</span><p>Nada de "hola, somos el equipo…". Empiece directo: <i>"Ella es Doña Rosa."</i> Las presentaciones van en el bloque 6.</p></div>
+      <div class="card"><span class="tag">Las cifras</span><p>Dígalas despacio y calle un segundo después de cada una. La de diciembre es la que conecta con la natillera: dele énfasis.</p></div>
+      <div class="card"><span class="tag">La demo</span><p>Narre lo que <b>Andrés</b> siente, no lo que toca: "ya sabe cuánto le cuesta", "nadie se pierde".</p></div>
+      <div class="card"><span class="tag">La mención técnica</span><p>Una sola vez, mirando al jurado, en el momento de Aprobar. Es la frase que el jurado de Interledger quiere oír.</p></div>
+      <div class="card"><span class="tag">Honestidad</span><p>Si algo es de ejemplo, dígalo antes de que pregunten. Da más confianza que esconderlo.</p></div>
+      <div class="card"><span class="tag">El cierre</span><p>Más lento que el resto. Termine con la frase de la pantalla 01 y diga "Gracias". Quédese quieto dos segundos.</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">Fuentes: <span class="mono">docs/pitch/GUION.md</span>, <span class="mono">docs/pitch/CONTEXTO.md</span>, <span class="mono">docs/open-payments.md</span>, <span class="mono">MEMORY.md</span> y el código de <span class="mono">src/api/mockApi.ts</span> (16/10/2026). Hecho con ayuda de Claude Code (ver <span class="mono">AI_USAGE.md</span>). Para imprimir una copia de bolsillo: Ctrl+P.</div>
+</footer>
+
+<button class="themebtn" id="theme" aria-label="Cambiar tema claro u oscuro">◐ Tema</button>
+
+<script>
+const BLOCKS=[
+ {t:"Doña Rosa",d:30,c:"#3F4C9A",slide:"Título “Doña Rosa” · una natillera, tres países · mapa Colombia – EE. UU. – España con un frasco en el centro.",say:["Ella es Doña Rosa. Vive en Colombia.","Toda la vida ha hecho natillera con la familia.","Pero hoy la familia está regada: Luz vive en Estados Unidos, Andrés en España.","Cada uno gana en otra moneda.","Y la natillera… sigue en un cuaderno."],tip:"Empiece directo, sin saludo largo. Señale cada punto del mapa al nombrarlo."},
+ {t:"El problema",d:40,c:"#1A1B4B",slide:"“La plata sí cruza. La natillera no.” · tres cifras grandes.",say:["En 2025 entraron a Colombia más de 13 mil millones de dólares en remesas.","Casi uno de cada cinco hogares recibe plata de afuera.","¿Y saben cuál fue el mes récord? Diciembre.","El mismo mes en que se reparte la natillera.","Pero esa plata llega suelta, mes a mes, con giros, costos y vueltas.","Nadie sabe quién puso, quién debe, cuánto hay."],tip:"Pausa después de “Diciembre”. Es el gancho del pitch."},
+ {t:"La solución",d:30,c:"#4F7F6B",slide:"“Natillera sin Fronteras” · captura de la pantalla 10 (frasco + “Entre todos llevan”).",say:["Natillera sin Fronteras es la natillera de toda la vida, pero en el celular.","Cada uno pone su cuota desde su billetera, en su moneda.","Al fondo le llegan pesos.","Y todos ven lo mismo: cuánto hay, quién está al día y quién pidió prestado.","Se lo mostramos."],tip:"“Se lo mostramos” es la señal para que Camilo proyecte el celular."},
+ {t:"Demo",d:110,c:"#2F6F63",slide:"Celular proyectado. Video de respaldo listo en otra pestaña.",say:["01 · A+ — “Así abre. Una sola idea. Y este botón agranda la letra, para Doña Rosa.”","03 · “Entra Andrés, desde España.”","10 · “Aquí está todo: el fondo, lo que lleva cada uno. Andrés va atrasado.”","11 · “Andrés pone en euros. A la natillera le llegan pesos. Antes de tocar nada ya sabe cuánto sale, cuánto llega y cuánto cuesta.”","28 · “Le contamos qué va a pasar, en tres pasos. Nadie se pierde.”","Billetera · “La app nunca toca la plata. Andrés da el permiso en su propia billetera. Por debajo va Interledger, con Open Payments: la tubería que mueve la plata entre billeteras y entre monedas.”","30 · (pausa corta)","34 · “Cuota puesta. Desde España, en menos de un minuto.”","10 · “Y Doña Rosa lo ve de una. Sin cuaderno, sin pantallazos.”"],tip:"A la primera falla: “Les muestro el mismo camino grabado esta mañana” y al video."},
+ {t:"Hecha para Doña Rosa",d:40,c:"#4A0E68",slide:"“Hecha para la abuela” · tres íconos: “usted”, A+, “pide permiso antes”.",say:["La hicimos pensando en Doña Rosa, no en un banquero.","Le hablamos de “usted”. Frases cortas. Nada de palabras raras.","Un botón para agrandar la letra en todas las pantallas.","Botones grandes, para el dedo.","Su billetera siempre le pide permiso antes. Si rechaza, no sale ni un peso.","Y le decimos antes cuánto cuesta. Sin letra menuda."],tip:"Este bloque es el que pesa para el premio de inclusión financiera. Despacio."},
+ {t:"Qué sigue y equipo",d:25,c:"#5F626B",slide:"“Lo que viene” · 3 viñetas + nombres del equipo.",say:["La natillera completa ya funciona con datos de ejemplo:","la cuota que se cobra sola cada mes,","y los préstamos del fondo, que aprueba la tesorera.","Somos cuatro: Duvan y David por detrás, Camilo y Henry en la app."],tip:"Si va tarde, este es el bloque que se recorta."},
+ {t:"Cierre",d:25,c:"#B5543F",slide:"Frasco lleno, los tres nombres alrededor, “Diciembre” marcado en el camino del año.",say:["Este diciembre, Doña Rosa no va a sacar el cuaderno.","Va a abrir el celular.","Va a ver que Luz puso. Que Andrés puso.","Y va a repartir la natillera con toda la familia… aunque estén lejos.","Natillera sin Fronteras. Ahorre en familia, aunque vivan en países distintos.","Gracias."],tip:"Más lento que todo lo anterior. Quieto dos segundos después de “Gracias”."}
+];
+const TOTAL=BLOCKS.reduce((a,b)=>a+b.d,0);
+const fmt=s=>{s=Math.max(0,Math.round(s));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
+const starts=[];BLOCKS.reduce((a,b,i)=>{starts[i]=a;return a+b.d},0);
+
+// barra y bloques
+const tl=document.getElementById("tl"),bl=document.getElementById("blocks");
+BLOCKS.forEach((b,i)=>{
+  const seg=document.createElement("div");seg.style.flex=b.d;seg.style.background=b.c;seg.textContent=b.d>=30?b.t:(i+1);seg.title=b.t+" · "+b.d+" s";seg.setAttribute("role","listitem");
+  seg.onclick=()=>{const d=document.getElementById("b"+i);d.open=true;d.scrollIntoView({behavior:"smooth",block:"center"})};tl.appendChild(seg);
+  const d=document.createElement("details");d.className="block";d.id="b"+i;
+  d.innerHTML=`<summary><span class="n" style="background:${b.c}">${i+1}</span><span class="t"><b>${b.t}</b></span><span class="d">${fmt(starts[i])}–${fmt(starts[i]+b.d)} · ${b.d} s</span></summary>
+  <div class="body"><p class="slide"><b>Diapositiva:</b> ${b.slide}</p><div class="say">${b.say.map(s=>"<p>"+s+"</p>").join("")}</div><p class="muted"><b>Consejo:</b> ${b.tip}</p></div>`;
+  bl.appendChild(d);
+});
+document.getElementById("b0").open=true;
+
+// ensayo
+let running=false,elapsed=0,last=0,raf=0,manual=-1;
+const rc=document.getElementById("rc"),rbar=document.getElementById("rbar"),rcur=document.getElementById("rcur"),rp=document.getElementById("rprompt"),rd=document.getElementById("rdelta"),rgo=document.getElementById("rgo");
+function blockAt(t){for(let i=BLOCKS.length-1;i>=0;i--) if(t>=starts[i]) return i;return 0}
+let shown=-1,cur=0;
+function render(){
+  const auto=blockAt(elapsed);
+  if(manual<auto) manual=-1;
+  cur=manual>=0?manual:auto;
+  rc.textContent=fmt(elapsed);
+  rbar.style.width=Math.min(100,elapsed/TOTAL*100)+"%";
+  rc.style.color=elapsed>TOTAL?"#FFB4A3":"";
+  if(cur!==shown){
+    shown=cur;rcur.textContent=(cur+1)+" · "+BLOCKS[cur].t;
+    rp.innerHTML=BLOCKS[cur].say.map(s=>"<p>"+s+"</p>").join("");
+    [...tl.children].forEach((c,i)=>c.classList.toggle("on",i===cur));
+  }
+  if(!running&&elapsed===0){rd.textContent="Listo para empezar · meta 5:00";return}
+  if(elapsed>TOTAL){rd.textContent="Se pasó "+fmt(elapsed-TOTAL)+" — recorte el bloque 6";return}
+  if(manual>=0){const diff=starts[manual]-elapsed;rd.textContent=diff>0?"Va "+fmt(diff)+" adelantado":"Va "+fmt(-diff)+" atrasado";}
+  else rd.textContent="Quedan "+fmt(starts[cur]+BLOCKS[cur].d-elapsed)+" en este bloque · "+fmt(TOTAL-elapsed)+" en total";
+}
+function tick(ts){if(!running)return;elapsed+=(ts-last)/1000;last=ts;render();raf=requestAnimationFrame(tick)}
+function toggle(){running=!running;rgo.textContent=running?"❚❚ Pausar":"▶ Seguir";if(running){last=performance.now();raf=requestAnimationFrame(tick)}else render()}
+function go(n){manual=Math.max(0,Math.min(BLOCKS.length-1,n));if(!running&&elapsed===0){}render()}
+rgo.onclick=toggle;
+document.getElementById("rnext").onclick=()=>go(cur+1);
+document.getElementById("rprev").onclick=()=>go(cur-1);
+document.getElementById("rreset").onclick=()=>{running=false;elapsed=0;manual=-1;shown=-1;rgo.textContent="▶ Empezar";render()};
+document.addEventListener("keydown",e=>{
+  const r=document.getElementById("ensayo").getBoundingClientRect();
+  if(r.bottom<0||r.top>innerHeight||/INPUT|TEXTAREA|BUTTON/.test(e.target.tagName)) return;
+  if(e.code==="Space"){e.preventDefault();toggle()} else if(e.key==="ArrowRight") go(cur+1); else if(e.key==="ArrowLeft") go(cur-1);
+});
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+function showRuns(){const runs=store.get("nsf-ensayos",[]);document.getElementById("runs").textContent=runs.length?"Ensayos: "+runs.map((r,i)=>"#"+(i+1)+" "+fmt(r.s)+(r.s>TOTAL?" ✕":" ✓")).join(" · "):"Aún no hay ensayos guardados."}
+document.getElementById("rsave").onclick=()=>{if(elapsed<5)return;const runs=store.get("nsf-ensayos",[]);runs.push({s:elapsed,at:Date.now()});store.set("nsf-ensayos",runs.slice(-10));showRuns()};
+showRuns();render();
+
+// preguntas
+const QA=[
+ ["¿La app toca la plata o guarda llaves?","<p><b>No.</b> La app nunca firma ni tiene llaves. Todo pago lo arma nuestra API en AWS con el SDK de Open Payments, y la llave vive en Secrets Manager.</p><p>La plata va de billetera a billetera. La app solo muestra y abre la billetera para que la persona dé permiso.</p>"],
+ ["¿Cómo funciona el cambio de moneda?","<p>Antes de pagar pedimos una <b>cotización</b>: trae cuánto sale en la moneda de Andrés (euros) y cuánto llega en la del fondo (pesos). La tasa la pone el proveedor de la billetera.</p><p>Por eso la pantalla 11 muestra el costo <b>antes</b> de tocar nada.</p>"],
+ ["¿Por qué Open Payments y no una remesadora?","<p>Porque cada quien usa <b>su propia billetera</b>, en su moneda, y da permisos precisos: “esta cuota”, o “hasta tanto por mes”.</p><p>No tenemos que custodiar la plata ni hacer convenios con cada banco: la tubería conecta billeteras distintas.</p>"],
+ ["¿Cómo es la cuota que se cobra sola?","<p>La persona aprueba <b>una vez</b> un permiso con tope por periodo (por ejemplo, una cuota al mes). El tope se reinicia cada mes y no se acumula.</p><p>Cada periodo el sistema cobra dentro de ese tope. Para la demo hay un botón “Cobrar ahora”.</p>"],
+ ["¿Cómo funcionan los préstamos?","<p>Un socio pide al fondo, la <b>tesorera</b> (Doña Rosa) aprueba y el fondo desembolsa. El socio autoriza por adelantado el plan de cuotas, así la devolución también es con permiso.</p><p>Hoy funciona con datos de ejemplo, de la pantalla 16 a la 25.</p>"],
+ ["¿Qué es real y qué es de ejemplo?","<p>Responda con lo que haya el sábado. Hoy: la app completa (31 pantallas) funciona en modo de ejemplo. El registro y la entrada ya están conectados a Cognito (falta probarlos en el celular). El pago con la Test Wallet depende del back.</p><p>Frase segura: <i>“La app está completa; el pago real de punta a punta lo grabamos y está en el video.”</i></p>"],
+ ["¿Y la seguridad?","<p>Entrada con Cognito, sesión guardada cifrada en el celular, y la app solo abre billeteras https de la red de prueba de Interledger.</p><p>Un pago se da por hecho <b>solo si lo confirma el servidor</b>, no porque la app lo diga. Hicimos una auditoría el 16/10 y aplicamos los arreglos.</p>"],
+ ["¿Por qué para adultos mayores?","<p>Porque en la familia, la que lleva la natillera suele ser la abuela.</p><p>Le hablamos de “usted”, botón A+ con 3 tamaños de letra, botones de 48 px o más, contraste AA, tres pasos antes de la billetera y el costo siempre antes.</p>"],
+ ["¿Y si alguien no paga?","<p>Todos ven lo mismo: quién está al día y quién debe. La presión es la de siempre, la de la familia, pero sin cuaderno.</p><p>Con la cuota automática, el que quiera se olvida del tema: aprueba una vez y listo.</p>"],
+ ["¿Cuál es el modelo de negocio?","<p class='tag warn'>Decidir con el equipo</p><p>Idea: gratis para la familia. Ingreso posible: una comisión pequeña y visible sobre los préstamos del fondo o un plan para natilleras grandes (empresas, barrios).</p><p>Si no está decidido, diga: <i>“Primero queremos que funcione para la familia; el modelo lo validamos con usuarios.”</i></p>"],
+ ["¿Cómo usaron la IA?","<p>Está todo documentado, como pide la política de la hackatón: <span class='mono'>AI_USAGE.md</span> dice qué herramienta, para qué y en qué archivos, y los prompts literales están en <span class='mono'>/prompts</span>.</p><p>Las decisiones de producto, la historia y las pruebas las hicimos nosotros.</p>"],
+ ["¿Escala? ¿Qué pasa con mil natilleras?","<p>El back es <i>serverless</i> en AWS: Lambda, API Gateway y DynamoDB. Escala solo y cuesta casi nada cuando no se usa.</p><p>El fondo no es una cuenta nuestra: es la suma de aportes menos préstamos, la calcula el back.</p>"]
+];
+const qa=document.getElementById("qa");
+QA.forEach(([q,a])=>{const f=document.createElement("div");f.className="flip";f.tabIndex=0;f.setAttribute("role","button");f.setAttribute("aria-label",q+". Toque para ver la respuesta");
+ f.innerHTML=`<div class="in"><div class="f"><h3>${q}</h3><span class="muted">Toque para ver la respuesta →</span></div><div class="b">${a}</div></div>`;
+ const t=()=>f.classList.toggle("open");f.onclick=t;f.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();t()}};qa.appendChild(f)});
+
+// checklists
+document.querySelectorAll("ul.check").forEach(ul=>{
+  const key="nsf-check-"+ul.dataset.key,boxes=[...ul.querySelectorAll("input")],saved=store.get(key,[]);
+  const prog=document.getElementById("p-"+ul.dataset.key);
+  const upd=()=>{const n=boxes.filter(b=>b.checked).length;prog.textContent=n+" de "+boxes.length+" listos";store.set(key,boxes.map(b=>b.checked))};
+  boxes.forEach((b,i)=>{if(saved.length===boxes.length) b.checked=!!saved[i];b.onchange=upd});upd();
+});
+
+// cuenta regresiva y línea del día
+const PITCH=new Date("2026-10-17T12:00:00-05:00").getTime();
+function clock(){
+  const now=Date.now(),d=PITCH-now;
+  if(d>0){document.getElementById("cd-h").textContent=Math.floor(d/3.6e6);document.getElementById("cd-m").textContent=String(Math.floor(d/6e4)%60).padStart(2,"0");document.getElementById("cd-s").textContent=String(Math.floor(d/1e3)%60).padStart(2,"0")}
+  else{["cd-h","cd-m","cd-s"].forEach(id=>document.getElementById(id).textContent="0");document.getElementById("cd-lbl").textContent="¡Es ahora!"}
+  const items=[...document.querySelectorAll("#dayline li")];let idx=-1;
+  items.forEach((li,i)=>{if(now>=new Date(li.dataset.t).getTime()) idx=i});
+  items.forEach((li,i)=>{li.classList.toggle("past",i<idx);li.classList.toggle("now",i===idx)});
+}
+clock();setInterval(clock,1000);
+
+// tema
+const root=document.documentElement,saved=store.get("nsf-theme",null);if(saved) root.dataset.theme=saved;
+document.getElementById("theme").onclick=()=>{const dark=root.dataset.theme?root.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;root.dataset.theme=dark?"light":"dark";store.set("nsf-theme",root.dataset.theme)};
+</script>
+</body>
+</html>

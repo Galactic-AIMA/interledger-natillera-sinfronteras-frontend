@@ -78,3 +78,15 @@ Ya acepté la invitación. Sube feat/cuenta-celular a origin (y a mi fork) y red
 
 ## 15:45
 actualiza el repo y el expo go no lo hago ni lo tengo yo, ese lo hace camilo en su pc
+
+## 15:21 · sesión 2fa70ba0
+
+Debes dame en html didáctico para el picht y todo lo que me sea de ayuda para prepara la presentacion mañana
+
+## 15:25 · sesión 2fa70ba0
+
+Sí, arregla en mockApi.ts que Andrés quede Al día después de pagar y que la cifra que sale coincida en las pantallas 11 y 34.
+
+## 15:29 · sesión 2fa70ba0
+
+hazlo
