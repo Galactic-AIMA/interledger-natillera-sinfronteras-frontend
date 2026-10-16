@@ -14,8 +14,8 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 | Carril | Alcance | Persona | Sesión / rama | Estado |
 |---|---|---|---|---|
 | `base` | Scaffold Expo, tema, componentes, `src/api` (+ mocks), auth, navegación | Camilo | main | **lista** (2026-10-16) |
-| `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo | — | libre |
-| `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Henry | — | libre |
+| `cuenta-natillera` | Pantallas 01–10, 15, 35 | Camilo (sesión A) | `feat/cuenta-natillera` · worktree `frontend-cuenta` | en curso |
+| `pagos` | Pantallas 11–14, 26–34 (incluye retorno de billetera) | Camilo (sesión B); Henry prueba y revisa | `feat/pagos` · worktree `frontend-pagos` | en curso |
 | `creditos` | Pantallas 16–25 | Henry (+ Camilo en la madrugada) | — | libre |
 | `pitch` | Slides en la plantilla oficial, guion de 5 min, video | Camilo + Henry | — | libre |
 
@@ -39,6 +39,8 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 5. Entrega en `main` (hoy usan `master`) y `AI_USAGE.md` + `/prompts` en la raíz de su repo (hoy tienen `docs/USO-IA.md`, que no cumple la política).
 
 ## Pedidos entre carriles
+
+- 2026-10-16 · de base a todos: **los prompts ahora se guardan en `prompts/AAAA-MM-DD-<persona>-<rama>.md`** (el hook incluye la rama). Al traer `main` a su rama, el hook nuevo queda activo. Si al integrar chocan dos `prompts/2026-10-16-camilo.md` de ramas distintas, se concatenan; nunca se descarta ninguno.
 
 - 2026-10-16 · de base a pagos: Henry, empieza por la Parte A de [docs/HENRY.md](docs/HENRY.md) (wallets de prueba, monedas, `natillera://`, curso, slides). Camilo avisa aquí cuando `base` esté lista para que arranques las pantallas.
 - 2026-10-16 · de base a todos: **`base` lista en `main`.** Ya pueden arrancar pantallas: cada ruta tiene un placeholder con su número; reemplácenlo completo. Guía rápida en "Cómo usar la base" de [docs/HENRY.md](docs/HENRY.md) y en la bitácora `base`.
@@ -66,6 +68,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
   - `src/utils/money.ts`: `formatAmount`, `toMinorUnits`, `currencyName` (12 casos probados).
   - Rutas: `(auth)` 01–03 · `(tabs)/natillera` 05–12, 15–25 · `(tabs)/pagar` 26–27 · `(tabs)/ayuda` 35 · `cuenta` 04 · `billetera/antes` 28 · `billetera/volviendo` 30 · `resultado` 14/19/23/31–34 · `retorno` (deep link).
   - Probar: `npm run web` o `npx expo start` → "Empezar con datos de ejemplo" (Doña Rosa; en demo Luz y Andrés también existen, contraseña cualquiera).
+- 2026-10-16 ~13:15 — Plan de ejecución (`docs/EJECUCION-PANTALLAS.md`), worktrees `frontend-cuenta` y `frontend-pagos` creados, encargos de las sesiones en `prompts/2026-10-16-camilo-encargos-sesiones.md`, prompts de la sesión paralela recuperados de su transcripción, hook con la rama en el nombre. Sesión del emulador Android instalando el SDK.
 
 ### cuenta-natillera
 - (vacío)
