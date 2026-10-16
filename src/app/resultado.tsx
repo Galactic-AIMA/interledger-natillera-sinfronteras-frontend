@@ -4,13 +4,13 @@ import { StyleSheet } from 'react-native';
 
 import type { Amount } from '@/api';
 import { AppText, Button, Card, InfoRow, ResultScreen } from '@/components';
-import { decodeAmount, type ResultKind } from '@/features/pagos/flow';
+import { decodeAmount, safeOrigin, settledOutcome, type ResultKind, type SafeOrigin } from '@/features/pagos/flow';
 import { formatAmount } from '@/utils/money';
 import { param } from '@/features/pagos/flujo/params';
 import { SuccessResult } from '@/features/pagos/flujo/SuccessResult';
 
 type Ctx = {
-  origin: string;
+  origin: SafeOrigin;
   debit?: Amount;
   receive?: Amount;
   counterpart?: string;
@@ -39,7 +39,7 @@ function AmountValue({ amount, tone }: { amount: Amount; tone?: 'money' }) {
 function retryActions(ctx: Ctx) {
   return (
     <>
-      <Button label="Intentar de nuevo" onPress={() => router.replace(ctx.origin as Href)} />
+      <Button label="Intentar de nuevo" onPress={() => router.replace(ctx.origin)} />
       <Button label="Volver" variant="secondary" onPress={() => router.replace(tabRoot(ctx.origin))} />
     </>
   );
@@ -81,6 +81,29 @@ const VARIANTS: Record<ResultKind, (ctx: Ctx) => ReactElement> = {
       actions={done(tabRoot(ctx.origin))}
     />
   ),
+  // 19: permiso de las cuotas del crédito; el tope y las repeticiones los pone la pantalla 30.
+  'credito-autorizado': (ctx) => (
+    <SuccessResult title="Cuotas autorizadas" actions={done('/natillera/prestamos')}>
+      <Card title="Resumen">
+        {ctx.repetitions ? <InfoRow label="Cuotas" value={ctx.repetitions} /> : null}
+        {ctx.limit ? <InfoRow label="Tope por cuota" right={<AmountValue amount={ctx.limit} />} /> : null}
+        <AppText variant="body" tone="muted">
+          Ahora la tesorera decide si aprueba el préstamo.
+        </AppText>
+      </Card>
+    </SuccessResult>
+  ),
+  // 23: la tesorera aprobó y el fondo pagó el préstamo.
+  'prestamo-desembolsado': (ctx) => (
+    <SuccessResult title="Préstamo desembolsado" actions={done('/natillera/prestamos/tesorera')}>
+      <Card title="Resumen">
+        {ctx.debit ? <InfoRow label="Salió del fondo" right={<AmountValue amount={ctx.debit} />} /> : null}
+        {ctx.receive ? (
+          <InfoRow label={`${ctx.counterpart ?? 'La persona'} recibió`} right={<AmountValue amount={ctx.receive} tone="money" />} />
+        ) : null}
+      </Card>
+    </SuccessResult>
+  ),
   // 14: el tope viene en `limit` y las repeticiones en `repetitions`, puestos por la pantalla 30.
   'recurrente-activada': (ctx) => (
     <SuccessResult title="Cuota automática activada" actions={done('/natillera')}>
@@ -95,6 +118,8 @@ const VARIANTS: Record<ResultKind, (ctx: Ctx) => ReactElement> = {
   ),
 };
 
+const SUCCESS: ReadonlySet<ResultKind> = new Set<ResultKind>(['cuota-puesta', 'pago-hecho', 'recurrente-activada', 'credito-autorizado', 'prestamo-desembolsado']);
+
 function isResultKind(value: string | undefined): value is ResultKind {
   return value !== undefined && Object.hasOwn(VARIANTS, value);
 }
@@ -103,15 +128,20 @@ function isResultKind(value: string | undefined): value is ResultKind {
 export default function ScreenResultado() {
   const raw = useLocalSearchParams<Record<string, string | string[]>>();
   const tipo = param(raw.tipo);
+  const asked: ResultKind = isResultKind(tipo) ? tipo : 'fallo';
+  // Seguridad: un éxito (y sus montos) solo se muestra si la pantalla 30 lo confirmó en esta sesión.
+  // Así un enlace natillera://resultado?tipo=pago-hecho no sirve para fingir un pago.
+  const settled = settledOutcome(param(raw.id));
+  const shown = settled ?? (SUCCESS.has(asked) ? { tipo: 'pendiente' as const } : { tipo: asked });
   const ctx: Ctx = {
-    origin: param(raw.origin) ?? '/natillera',
-    debit: decodeAmount(raw.debit),
-    receive: decodeAmount(raw.receive),
-    counterpart: param(raw.counterpart),
-    limit: decodeAmount(raw.limit),
-    repetitions: param(raw.repetitions),
+    origin: safeOrigin(param(raw.origin)),
+    debit: decodeAmount(shown.debit),
+    receive: decodeAmount(shown.receive),
+    counterpart: shown.counterpart,
+    limit: decodeAmount(shown.limit),
+    repetitions: shown.repetitions,
   };
-  return VARIANTS[isResultKind(tipo) ? tipo : 'fallo'](ctx);
+  return VARIANTS[shown.tipo](ctx);
 }
 
 const styles = StyleSheet.create({
