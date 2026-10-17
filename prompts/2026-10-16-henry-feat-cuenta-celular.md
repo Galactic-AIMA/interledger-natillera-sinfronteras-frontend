@@ -200,3 +200,15 @@ Duven se va a encargar directamente de esta start-payment y  ya tenemos acceso a
 <status>completed</status>
 <summary>Background command "gh repo view duvanjaramillomarin/interterledger-natillera-sin-fronteras-backend --json viewerPermission -q .viewerPermission; cd "C:[POSIBLE SECRETO REDACTADO]--Users-tabor-Desktop-Natillera-sin-Fronteras-natillera-front/9ef31aea-3046-446b-a34b-1ab22f76608c/scratchpad/back" &amp;&amp; git fetch -q origin &amp;&amp; git log --oneline -5 origin/david &amp;&amp; git branch -r &amp;&amp; git diff --stat front/natillera-mine origin/david -- deploy/payments | tail -2; gh api repos/duvanjaramillomarin/interterledger-natillera-sin-fronteras-backend/collaborators -q '.[].login' 2&gt;&amp;1; cd "C:/Users/tabor/Desktop/Natillera-sin-Fronteras/natillera-front" &amp;&amp; git fetch -q origin &amp;&amp; git branch -r; git grep -l "natillera-mine\|natilleras-mine" origin/main origin/feat/cuenta-celular" completed (exit code 0)</summary>
 </task-notification>
+
+## 22:18 · sesión 9ef31aea
+
+Sí, borra la rama back/feat-natilleras del repo front y front/natillera-mine del fork; ya están en el back.
+
+## 22:24 · sesión b3a5a546
+
+Ahora queiro que seas el experto en y me crees un logo para la app
+
+## 22:37 · sesión b3a5a546
+
+Sí, conecta el logo como ícono, adaptive icon, favicon y splash en app.json (fondo índigo #1A1B4B) y haz commit.

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024"><rect width="1024" height="1024" rx="0" fill="#1A1B4B"/><g transform="translate(30.720000000000027 30.720000000000027) scale(0.94)">
+  <g transform="translate(0 24)">
+    <defs>
+      <clipPath id="bowl"><path d="M240 480 A272 290 0 0 0 784 480 Z"/></clipPath>
+    </defs>
+    <!-- moneda con brote: el ahorro que crece -->
+    <circle cx="512" cy="318" r="114" fill="#F5F6FA"/>
+    <circle cx="512" cy="318" r="84" fill="none" stroke="#A7C9B9" stroke-width="11"/>
+    <g transform="translate(512 322) scale(1.22) translate(-512 -292)">
+      <path d="M512 336 V292" stroke="#2F6F63" stroke-width="12" stroke-linecap="round"/>
+      <path d="M512 312 C474 310 458 286 462 256 C494 258 512 280 512 312 Z" fill="#2F6F63"/>
+      <path d="M512 296 C540 290 558 270 558 244 C532 244 512 262 512 296 Z" fill="#2F6F63"/>
+    </g>
+    <!-- paila = media esfera del mundo -->
+    <path d="M240 480 A272 290 0 0 0 784 480 Z" fill="#A7C9B9"/>
+    <g clip-path="url(#bowl)" fill="none" stroke="#2F6F63" stroke-width="13" stroke-linecap="round">
+      <ellipse cx="512" cy="480" rx="178" ry="290"/>
+      <ellipse cx="512" cy="480" rx="84" ry="290"/>
+      <path d="M512 480 V780"/>
+      <path d="M200 586 H824"/>
+      <path d="M200 680 H824"/>
+    </g>
+    <!-- borde y asas -->
+    <rect x="148" y="458" width="728" height="30" rx="15" fill="#F5F6FA"/>
+    <rect x="200" y="442" width="624" height="58" rx="29" fill="#F5F6FA"/>
+  </g></g></svg>
