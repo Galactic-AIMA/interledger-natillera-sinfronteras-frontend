@@ -56,15 +56,23 @@ const realPayments = realMethods.has('startPayment');
 const realNatillera = realMethods.has('getMyNatillera');
 // Con las cuentas guardadas en el back, el pago va por `customWalletName` y el back busca la billetera.
 const realAccounts = realMethods.has('listAccounts');
+// Mismo criterio para iniciar el pago y para la vista previa.
+const goesReal = (input: StartPaymentInput) => realPayments && (input.kind === 'p2p' || (input.kind === 'aporte' && realNatillera));
 const realPaymentIds = new Set<string>();
 // El back devuelve counterpartName vacío cuando se paga a una billetera directa (`walletAddress`):
 // el nombre que la persona escribió se recuerda aquí para mostrarlo en el resultado y el historial.
 const realNames = new Map<string, string>();
 const withName = (p: Payment): Payment => (p.counterpartName ? p : { ...p, counterpartName: realNames.get(p.paymentId) ?? 'Billetera externa' });
 
+// Vista previa: con `previewQuote` real va al back (si la ruta aún no existe, httpApi devuelve null).
+// Sin ella, para un pago real la de ejemplo mostraría tasas inventadas: null = «se calcula al confirmar»
+// y la 28 pinta la quote real.
+const demoPreview = demo('previewQuote');
+const previewHybrid = (input: StartPaymentInput) =>
+  realMethods.has('previewQuote') ? httpApi.previewQuote(input) : goesReal(input) ? Promise.resolve(null) : demoPreview(input);
+
 async function startHybridPayment(input: StartPaymentInput) {
-  const goesReal = realPayments && (input.kind === 'p2p' || (input.kind === 'aporte' && realNatillera));
-  if (!goesReal) return methods.startPayment(input);
+  if (!goesReal(input)) return methods.startPayment(input);
   let body: StartPaymentInput = input;
   if (input.kind === 'p2p' && 'customWalletName' in input && !realAccounts) {
     // Las cuentas guardadas siguen de ejemplo: el back recibe la billetera directa (extensión de P0).
@@ -100,6 +108,7 @@ export const hybridApi: NatilleraApi = {
   mode: 'demo',
   // La lista va con la natillera: si la natillera es real, la lista también (aunque no esté en la variable).
   listMyNatilleras: realNatillera ? httpApi.listMyNatilleras : demo('listMyNatilleras'),
+  previewQuote: previewHybrid,
   startPayment: startHybridPayment,
   finishPayment: (paymentId, ret) => (realPaymentIds.has(paymentId) ? httpApi.finishPayment(paymentId, ret).then(withName) : demoFinish(paymentId, ret)),
   getPayment: (paymentId) => (realPaymentIds.has(paymentId) ? httpApi.getPayment(paymentId).then(withName) : demoGet(paymentId)),
