@@ -197,8 +197,14 @@ Decisiones técnicas aún sin tomar:
   (`get-me`, `verify-wallet`, `save-account`, `list-accounts`, `create-natillera`, `get-invitation`,
   `join-natillera`, `get-my-natillera`), despliegue en `infra/deploy-natilleras.sh` y doc en
   [docs/API-NATILLERAS.md](docs/API-NATILLERAS.md). `npm test`: 6/6 con DynamoDB en memoria. Sin desplegar.
+- 2026-10-16 ~22:00 · `feat/natilleras` rebasada sobre `david` (`3f96a3b`) y subida al repo back **para
+  revisión de Duvan**; no se despliega en AWS hasta su visto bueno. Henry sube `feat/prestamos` igual.
 - Contrato con préstamos: el fondo = aportes − `disbursedTotal` (string, unidades menores) de la fila en
   `natillera-registration`; préstamos lo suma al quedar `completed` un desembolso.
+- 2026-10-16 ~23:00 · `feat/natilleras-multi` (sale de `david`): **varias natilleras por persona**. Sin `409
+  AlreadyMember`; Lambda nueva `list-natilleras` (`GET /natilleras`); `GET /natilleras/mine?natilleraId=`
+  (sin id = la más antigua; ajena = 404). `npm test` 7/7. Sin desplegar: revisión de Duvan, luego Ciro
+  corre `infra/deploy-natilleras.sh`. El front necesita su selector (lo hace Camilo).
 
 ### credito
 - (vacío)
