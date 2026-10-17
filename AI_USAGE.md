@@ -15,7 +15,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | Claude (claude.ai con herramientas de código y subagentes) | Claude Opus 5.5 (subagentes: Sonnet 5.5 y Opus 5.5) | Henry | Revisión del repo, auditoría de verificación, pruebas, coordinación y ciberseguridad del carril `pagos`, y sus arreglos |
 | Claude (claude.ai, proyecto del equipo, con acceso al equipo de Henry) | Claude Opus 5.5 | Henry | Revisión de pendientes, integración de ramas, plan de sesiones paralelas, registro Cognito, recorridos automáticos de la app en modo demo (Playwright manejado por la IA), documentación de integración; también ejecutó en el equipo de Henry scripts de git para subir ramas a su fork |
 | Claude Code (app de escritorio) | Claude Opus 5.5 | Henry | Código del front (préstamos, registro, splash), logo y slogan, contrato `openapi.yaml`, documentación y apoyo al back |
-
+| Gemini TTS en Vertex AI (vía Claude Code) | `gemini-2.5-pro-tts` | Camilo | Voz femenina que narra el video demo, a partir de un guion que escribió Claude |
 | IA de diseño para los bocetos de Figma | — | Equipo | Apoyo para generar los bocetos de las 35 pantallas, que luego el equipo ajustó (declarado el 2026-10-17) |
 
 (Agregar aquí cualquier otra herramienta que use el equipo: ChatGPT, Copilot, Gemini, Figma AI…)
@@ -130,6 +130,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-17 | Camilo | Claude Code (Opus 5.5, escritorio) | Revisión de la documentación del repo y de las reglas de la hackatón sobre el idioma; Camilo decidió no traducir (sin cambios en el repo; queda propuesto un README en inglés) | `prompts/2026-10-17-camilo-sesiones-sin-hook.md` |
 | 2026-10-17 | Camilo | Claude Code (Opus 5.5, escritorio) | Diagnóstico de por qué la app real no muestra a Rosa, Luz y Andrés y script (fuera del repo) para crearlos como usuarios reales con el mismo registro de la app; las cuentas las crea Camilo, no la IA | `prompts/2026-10-17-camilo-sesiones-sin-hook.md` |
 | 2026-10-17 | Camilo | Claude Code (Opus 5.5, escritorio) | **Video demo** (3:45, 16:9): la IA manejó el emulador por `adb` con el front final (splash, tablero, letra grande, cuota real con aprobación de Camilo en la Test Wallet, fondo que sube, préstamo, metas, Pagar, Ayuda y registro técnico), escogió los cortes (sin el «Internal Server Error»), y armó el montaje con textos, tarjetas y música generada por código (Python + ffmpeg, sin derechos de terceros) | Video fuera del repo (carpeta de contenido de Camilo); `prompts/2026-10-17-camilo-sesiones-sin-hook.md` |
+| 2026-10-17 | Camilo | Claude Code (Opus 5.5) + Gemini TTS (Vertex AI) | Video demo con narración: Claude escribió el guion por escena y generó la voz femenina con `gemini-2.5-pro-tts`, ajustó los tiempos del video a la voz, sacó una versión solo con música y agregó una escena con el logo de Interledger · Open Payments animado | Video fuera del repo (carpeta de contenido de Camilo); `prompts/2026-10-17-camilo-sesiones-sin-hook.md` |
 
 ## What We Did Ourselves
 
