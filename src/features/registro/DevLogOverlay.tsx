@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { clearLog, formatLog, useDevLog, type LogEntry, type LogKind } from '@/api/devLog';
 import { fonts, palette, radius, space } from '@/theme';
+import { setShowOverlay, useShowOverlay } from './overlayPreference';
 
 // Botón flotante "Logs" encima de todas las pantallas: abre un panel en vivo con el registro técnico
 // para proyectarlo en el pitch mientras se usa la app. Mismos datos que /registro (sin secretos).
@@ -84,6 +85,7 @@ function HeaderButton({ icon, label, onPress }: { icon: keyof typeof Ionicons.gl
 
 export function DevLogOverlay() {
   const entries = useDevLog();
+  const showOverlay = useShowOverlay();
   const insets = useSafeAreaInsets();
   const [open, setOpen] = useState(false);
   const [tall, setTall] = useState(false);
@@ -124,6 +126,9 @@ export function DevLogOverlay() {
     });
   }
 
+  // Apagado por defecto: el registro sigue guardando entradas, solo no se dibuja el botón.
+  if (!showOverlay) return null;
+
   return (
     <View pointerEvents="box-none" style={StyleSheet.absoluteFill}>
       {open ? (
@@ -143,6 +148,7 @@ export function DevLogOverlay() {
                 <Text style={[styles.mono, styles.copyText, copied && { color: OK_COLOR }]}>{copied ? 'Copiado' : 'Copiar todo'}</Text>
               </Pressable>
               <HeaderButton icon={tall ? 'chevron-down' : 'chevron-up'} label={tall ? 'Achicar el panel' : 'Agrandar el panel'} onPress={() => setTall((v) => !v)} />
+              <HeaderButton icon="eye-off-outline" label="Ocultar el botón de registro" onPress={() => { setOpen(false); setShowOverlay(false); }} />
               <HeaderButton icon="trash-outline" label="Limpiar registro" onPress={() => { clearLog(); setExpanded(new Set()); }} />
             </View>
           </View>

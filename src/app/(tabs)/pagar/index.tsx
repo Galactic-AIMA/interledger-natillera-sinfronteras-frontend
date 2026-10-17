@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { ApiError, useAccounts, useApi, useMe, type Amount } from '@/api';
-import { AppText, Button, Card, Choice, InfoRow, Screen, TextField } from '@/components';
+import { AppText, BrandSymbol, Button, Card, Choice, InfoRow, Screen, TextField } from '@/components';
 import { antesHref, encodeAmount } from '@/features/pagos/flow';
 import { PaymentHistory } from '@/features/pagos/pagar/PaymentHistory';
 import { shortAddress } from '@/features/pagos/pagar/shortAddress';
@@ -109,7 +109,7 @@ export default function ScreenPagarIndex() {
   );
 
   return (
-    <Screen title="Pagar" inTabs footer={footer}>
+    <Screen title="Pagar" headerLeft={<BrandSymbol />} inTabs footer={footer}>
       <Card title="Su billetera">
         {me ? (
           <View style={styles.wallet}>
@@ -141,7 +141,7 @@ export default function ScreenPagarIndex() {
           onChangeText={setInput}
           onBlur={() => setTouched(true)}
           keyboardType="numeric"
-          placeholder={asset?.assetCode === 'COP' ? '$ 80.000' : '20,00'}
+          helper={asset?.assetCode === 'COP' ? 'Por ejemplo: 80.000' : 'Por ejemplo: 20,00'}
           mono
           error={amountError}
         />

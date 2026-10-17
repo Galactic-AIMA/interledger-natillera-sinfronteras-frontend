@@ -21,6 +21,9 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
+        // Al salir de una pestaña su pila interna vuelve a la raíz: así, al volver a tocarla,
+        // siempre se llega a su pantalla principal y las personas mayores no se pierden.
+        popToTopOnBlur: true,
         tabBarActiveTintColor: palette.primary,
         tabBarInactiveTintColor: palette.textMuted,
         tabBarStyle: { backgroundColor: palette.surface, borderTopColor: palette.borderSoft, minHeight: 64 },

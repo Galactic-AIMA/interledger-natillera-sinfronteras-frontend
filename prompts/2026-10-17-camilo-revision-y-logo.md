@@ -100,3 +100,30 @@ Las capturas de pantalla se describen entre corchetes.
 > [captura del celular: el splash con los anillos incompletos, cortes corridos] Mira en la pantalla de carga esta fallando el logo para que lo tengas en cuenta
 >
 > tambien quiero que los logs se vean de una manera mas navagable y dejame un botonsito de clipboard en llos para copiarlos todos de  una
+
+## 22
+
+> haz un ultimo barrido a la app visualmente, es detalle de la pantalla de carga esta muy bonito y revisa que otro detalle podriamos mejorar en UX/UI
+>
+> /ui-ux-pro-max
+>
+> Si hay algo mas a refinar y poner mas creativo y bonito me dices antes de hacer algo
+
+## 23
+
+> cuales son la mejoras no me las dijites
+
+## 24
+
+> 1. de acuerdo
+> 2. no esta no
+> 3. de acuerdo, y dale un refinamiento bien elegante a ayuda, que sea su hogar
+> 4. si organiza esto
+> 5. De acuerdo organiza
+> 6. Dale
+> 7. Eso
+> 8. Esta buena la idea
+
+## 25
+
+> Lanza un grupo de sub agentes para adelantar mas agilmente y y al final recopilas todo y ahorremos mas tokens
