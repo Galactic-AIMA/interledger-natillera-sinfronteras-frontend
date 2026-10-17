@@ -13,8 +13,8 @@ Todos van con `Authorization: Bearer <IdToken>`. El usuario sale de `cognito:use
 |---|---|---|---|
 | `GET /loans/simulate` | `simulate-loan` | query `value`, `assetCode`, `assetScale`, `installments` | `LoanSimulation` |
 | `POST /loans/requests` | `request-loan` | `{ natilleraId, value, assetCode, assetScale, installments }` | `LoanRequest` |
-| `GET /loans/requests?status=pending` | `list-loan-requests` | — | `LoanRequest[]` (solo ADMIN; los demás reciben `[]`) |
-| `GET /loans/mine` | `get-my-loans` | — | `{ request, loan }` |
+| `GET /loans/requests?status=pending` | `list-loan-requests` | query `natilleraId` opcional | `LoanRequest[]` de las natilleras donde es ADMIN (o solo de la indicada); los demás reciben `[]` |
+| `GET /loans/mine` | `get-my-loans` | query `natilleraId` opcional | `{ request, loan }`: el más reciente (de esa natillera, si se indica) |
 | `POST /loans/requests/{requestId}/decision` | `decide-loan` | `{ accepted, returnUrl }` | rechazo: `{ status: "rejected" }` |
 
 Las formas son las de `src/api/types.ts` y `docs/openapi.yaml` del front:
@@ -38,7 +38,7 @@ Las formas son las de `src/api/types.ts` y `docs/openapi.yaml` del front:
 | Moneda | El préstamo sale del fondo, así que va en su moneda; si viene otra moneda, responde `400 InvalidAmount` |
 | Quién pide | Solo integrantes de la natillera (`403 Forbidden`) |
 | Monto máximo | Lo disponible en el fondo: aportes de `natillera-records` menos `disbursedTotal` (`409 InsufficientFunds`) |
-| Uno a la vez | Si tiene una solicitud pendiente o un préstamo con cuotas por pagar, responde `409 LoanAlreadyActive` |
+| Uno a la vez | **Por natillera** (una persona puede estar en varias): si tiene en esa natillera una solicitud pendiente o un préstamo con cuotas por pagar, responde `409 LoanAlreadyActive` |
 | Quién decide | La ADMIN (`author` de la natillera). A cualquier otra persona se le responde `404`, para no revelar solicitudes ajenas |
 | Rechazar | Escritura condicional `pending → rejected`. Repetir la decisión da `409 AlreadyDecided` |
 | Aprobar | Exige `repaymentAuthorized` (`409 RepaymentNotAuthorized`). Con las cuotas autorizadas responde **`501 DisbursementNotAvailable`** hasta que exista la fase 2 |
@@ -89,7 +89,7 @@ curl -s -X POST "$API/loans/requests/<requestId>/decision" -H "Authorization: Be
   -H 'Content-Type: application/json' -d '{"accepted":false}'
 ```
 
-Para correr las pruebas en local, sin AWS (DynamoDB en memoria): `npm test` en `deploy/prestamos` (5 casos).
+Para correr las pruebas en local, sin AWS (DynamoDB en memoria): `npm test` en `deploy/prestamos` (6 casos).
 
 ## En el front
 

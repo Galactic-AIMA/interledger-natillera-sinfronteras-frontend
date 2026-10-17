@@ -1,5 +1,5 @@
-// GET /loans/requests?status=pending (flujo 13) → solicitudes pendientes de la natillera (solo ADMIN).
+// GET /loans/requests?status=pending[&natilleraId=] (flujo 13) → pendientes de sus natilleras (solo ADMIN).
 import { listPendingRequests } from './domain';
-import { currentIdentity, withErrors } from './shared';
+import { currentIdentity, param, withErrors } from './shared';
 
-export const handler = withErrors(async (event) => listPendingRequests(currentIdentity(event).username));
+export const handler = withErrors(async (event) => listPendingRequests(currentIdentity(event).username, param(event, 'natilleraId')));

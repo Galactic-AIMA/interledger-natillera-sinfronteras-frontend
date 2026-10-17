@@ -199,11 +199,12 @@ BODY="\"body\": \$input.json('\$')"
 
 P_SIM="\"params\": { \"value\": \"\$util.escapeJavaScript(\$input.params('value'))\", \"assetCode\": \"\$util.escapeJavaScript(\$input.params('assetCode'))\", \"assetScale\": \"\$util.escapeJavaScript(\$input.params('assetScale'))\", \"installments\": \"\$util.escapeJavaScript(\$input.params('installments'))\" }"
 P_REQ="\"params\": { \"requestId\": \"\$util.escapeJavaScript(\$input.params('requestId'))\" }"
+P_NAT="\"params\": { \"natilleraId\": \"\$util.escapeJavaScript(\$input.params('natilleraId'))\" }"
 
 configure_route GET  /loans/simulate                      simulate-loan       "{ $AUTH, $P_SIM }"
 configure_route POST /loans/requests                      request-loan        "{ $AUTH, $BODY }"
-configure_route GET  /loans/requests                      list-loan-requests  "{ $AUTH }"
-configure_route GET  /loans/mine                          get-my-loans        "{ $AUTH }"
+configure_route GET  /loans/requests                      list-loan-requests  "{ $AUTH, $P_NAT }"
+configure_route GET  /loans/mine                          get-my-loans        "{ $AUTH, $P_NAT }"
 configure_route POST /loans/requests/{requestId}/decision decide-loan         "{ $AUTH, $P_REQ, $BODY }"
 
 # ---------------------------------------------------------------- 5. Implementar

@@ -10,6 +10,8 @@ Sesión del repo front (`natillera-front`). Registro completo en el front: `prom
 
 > Sí, arranca back/feat-prestamos con la fase 1 (sin Open Payments) siguiendo el patrón del bloque A, para que Ciro lo despliegue.
 
+> adelante
+
 > ya eso quedo listo
 
 > con que seguimos'
