@@ -17,3 +17,11 @@ Sí, arranca back/feat-prestamos con la fase 1 (sin Open Payments) siguiendo el 
 ## 23:34 · sesión 62c1a6fb
 
 esto me mando camilo hazlo
+
+## 23:35 · sesión 62c1a6fb
+
+Sí, haz push de feat/natillera-real al remoto.
+
+## 23:35 · sesión 62c1a6fb
+
+verifica que la documentación este todo al dia
