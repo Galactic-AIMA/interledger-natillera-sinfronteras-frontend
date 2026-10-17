@@ -480,3 +480,59 @@ lo de la imagen de dice ciro que hace falta'
 ## 04:28 · sesión d72e18f7
 
 Sí, haz push de feat/natillera-real
+
+## 04:30 · sesión e6c1aee4
+
+analizalo bien y dame una respuesta para ciro  ya para trabajar juntos
+
+## 04:42 · sesión e6c1aee4
+
+
+
+<pasted_content id="d5ba">
+Terminé el paso 1 y el back queda congelado. Henry ya puede seguir con los pasos 2 a 4.
+
+PR #12 de Henry fusionado en david. Solo cambia AI_USAGE.md: declara que Duvan usó Gemini de forma puntual y que la base del código es suya. Era lo único que faltaba en la declaración de IA del back.
+Aviso de congelamiento en el repo: lo agregué arriba en docs/COORDINACION.md y en MEMORY.md. Dice que los arreglos nuevos van a backend/ del repo único.
+david → main fusionado (PR #13, e32dcda). Las dos ramas quedaron iguales y main es la versión final.
+Rama por defecto: no pude cambiarla. GitHub me respondió 404, porque hace falta ser admin del repo y solo lo es Duvan. Sigue en master, que está 74 commits atrasada. Si Duvan archiva el repo del back (paso 5), puede cambiarla en ese mismo momento.
+
+El análisis de Henry es correcto: sin el exclude, tsc da 54 errores en backend/; con él, todo pasa y expo export empaqueta bien. Coincide con mi ensayo.
+
+Mensaje para el grupo:
+
+Back congelado. main del back (e32dcda) es la versión final. Desde ahora nadie sube al repo del back: los arreglos van a backend/ del repo único.
+
+Henry, ya puedes hacer el git subtree add --prefix=backend back main (pasos 2–4).
+Camilo, como admin del repo del front, necesito dos cosas: que me des permiso de escritura y, al final, que lo renombres a interledger-natillera-sin-fronteras.
+Duvan, cuando Henry termine, cambia la rama por defecto del back a main y archívalo con un README que apunte al repo nuevo.
+
+Sigue sin hacerse la prueba real de la fase 2 de préstamos. No bloquea la unión de los repos; si sale algún arreglo, lo hago en backend/ cuando Camilo me dé permiso de escritura.
+</pasted_content id="d5ba">
+
+## 04:50 · sesión a9657acf
+
+ya todas las funciones del back están listas para que Camilo las integre al front?
+
+## 04:50 · sesión e6c1aee4
+
+guarda memoria que voy a compactar
+
+## 04:54 · sesión a9657acf
+
+dema las credenciales y el paso a paso para hacer las demas pruebas
+
+## 04:55 · sesión e6c1aee4
+
+atiende esto dos  detalles:
+
+1. Las metas (`listGoals`, `createGoal`…) no tienen back: `/goals` responde 403. Se guardan solo en el teléfono (`goalStore`). Eso ya era así y está bien para la demo, pero es mejor no presentarlas como guardadas en la nube.
+2. Que respondan 401 no prueba que funcionen. Solo dice que la ruta existe. Falta la prueba completa con una sesión iniciada en el APK, sobre todo el pago real con la Test Wallet, el permiso de cobro y la cuota automática, que son lo más nuevo y lo menos probado.
+
+## 05:18 · sesión a9657acf
+
+corrige eso por favor
+
+## 05:19 · sesión a9657acf
+
+Sí, agrega en la pantalla 28 el aviso con la billetera del usuario y en qué cuenta de la Test Wallet entrar.

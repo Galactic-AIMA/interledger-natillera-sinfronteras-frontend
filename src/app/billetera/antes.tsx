@@ -2,7 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { openWallet, useApi, type NatilleraApi } from '@/api';
+import { openWallet, useApi, useMe, type NatilleraApi } from '@/api';
 import { AppText, Button, Card, InfoRow, Screen } from '@/components';
 import { decodeAmount, isFlowKind, isTrustedWalletUrl, resultadoHref, returnToParams, safeOrigin, startedFlow, volviendoHref, type FlowKind } from '@/features/pagos/flow';
 import { PasoAntes } from '@/features/pagos/flujo/PasoAntes';
@@ -34,6 +34,11 @@ async function settledAfterClose(api: NatilleraApi, paymentId: string): Promise<
   return false;
 }
 
+/** "https://ilp.interledger-test.dev/rosa" → "$ilp.interledger-test.dev/rosa", como la muestra la Test Wallet. */
+function walletLabel(address: string): string {
+  return address.trim().replace(/\/+$/, '').replace(/^https:\/\//i, '$');
+}
+
 // 28 · Antes de la billetera
 export default function ScreenBilleteraAntes() {
   const api = useApi();
@@ -48,6 +53,10 @@ export default function ScreenBilleteraAntes() {
   const receive = decodeAmount(raw.receive);
   const counterpart = param(raw.counterpart);
   const [busy, setBusy] = useState(false);
+  // El permiso se pide con la billetera del registro: si la Test Wallet está abierta con otra cuenta,
+  // muestra «Access to the given resource is forbidden» (visto en el celular, 2026-10-17).
+  const me = useMe();
+  const myWallet = api.mode === 'demo' ? '' : (me.data?.walletAddress ?? '');
 
   function close() {
     if (router.canGoBack()) router.back();
@@ -122,6 +131,19 @@ export default function ScreenBilleteraAntes() {
           <Card title="Resumen">
             {debit ? <InfoRow label={kind === 'recurrente' ? 'Tope por cobro' : 'Sale de su billetera'} amount={debit} /> : null}
             {receive ? <InfoRow label={kind === 'p2p' && counterpart ? `${counterpart} recibe` : 'Llega'} amount={receive} tone="money" /> : null}
+          </Card>
+        </Reveal>
+      ) : null}
+
+      {myWallet ? (
+        <Reveal index={5}>
+          <Card title="Entre con la cuenta de esta billetera" tone="soft">
+            <AppText variant="amount" selectable>
+              {walletLabel(myWallet)}
+            </AppText>
+            <AppText variant="body" tone="muted">
+              Si la billetera dice «Access to the given resource is forbidden», está abierta con otra cuenta. Salga de esa cuenta y entre con la dueña de esta billetera.
+            </AppText>
           </Card>
         </Reveal>
       ) : null}
