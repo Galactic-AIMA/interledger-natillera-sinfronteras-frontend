@@ -18,6 +18,8 @@ export default function ScreenAutorizarCuotas() {
   const request = loans.data?.request?.requestId === requestId ? loans.data?.request : null;
   const [starting, setStarting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  // El back de préstamos fase 1 no tiene todavía el permiso de cobro (12B): ruta inexistente (403) o 501.
+  const [unavailable, setUnavailable] = useState(false);
 
   const sim = useQuery({
     queryKey: ['loans', 'simulate', request?.amount.value, request?.installments, api.mode],
@@ -42,6 +44,10 @@ export default function ScreenAutorizarCuotas() {
         }),
       );
     } catch (e) {
+      if (e instanceof ApiError && [403, 404, 405, 501].includes(e.status)) {
+        setUnavailable(true);
+        return;
+      }
       setError(e instanceof ApiError ? e.message : 'No pudimos preparar el permiso. Intente otra vez.');
     } finally {
       setStarting(false);
@@ -53,6 +59,27 @@ export default function ScreenAutorizarCuotas() {
       <Screen headerLeft={<BackButton fallback={'/natillera/prestamos'} />} title="Permiso para cobrar las cuotas" inTabs footer={<Button label="Volver" onPress={() => router.navigate('/natillera/prestamos')} />}>
         <Card tone="danger">
           <AppText>No encontramos esa solicitud de préstamo.</AppText>
+        </Card>
+      </Screen>
+    );
+  }
+
+  if (unavailable) {
+    return (
+      <Screen
+        headerLeft={<BackButton fallback={'/natillera/prestamos'} />}
+        title="Permiso para cobrar las cuotas"
+        inTabs
+        footer={<Button label="Volver a Préstamos" onPress={() => router.navigate('/natillera/prestamos')} />}
+      >
+        <Card title="Su solicitud quedó enviada" tone="soft">
+          <AppText>La tesorera ya puede verla.</AppText>
+        </Card>
+        <Card title="Este paso todavía no está disponible">
+          <AppText>
+            El permiso para que las cuotas se cobren solas desde su billetera llega pronto. Mientras tanto, la tesorera puede ver su
+            solicitud, pero todavía no puede aprobarla ni enviarle la plata.
+          </AppText>
         </Card>
       </Screen>
     );

@@ -91,3 +91,19 @@ cambiaron el front.
 >
 >
 > además valida que tengamos toda las memorias al día y uso de IA actualiza todo hasta ahora revisa en los dos repos que este actualizado
+
+## 20
+
+> Revisa todo los avances la memoria y dime lo mio, y dejame en un mensaje o actualizado para pendientes de cada uno
+
+## 21
+
+> [captura de la tabla de Ciro «Tabla de Camilo: qué podemos avanzar»] Ya Duvan se fue a domir nos queda a nostros terminar
+>
+> Ciro estuvo avanzado las otras funciones y esta organizando start-payment
+>
+> [captura: «Sobre varias natilleras: sí se puede, pero no tocaría el bloque A justo antes del freeze sin probarlo…»]
+
+## 22
+
+> Opción B: conecta préstamos fase 1 real y que la 17 muestre un aviso claro cuando el permiso de cobro no esté disponible.

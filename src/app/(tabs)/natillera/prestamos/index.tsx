@@ -112,6 +112,17 @@ function RequestStatus({ request, adminRow, onAskAgain }: { request: LoanRequest
   );
 }
 
+// Códigos del back de préstamos (docs/API-PRESTAMOS.md del back) en palabras de la persona.
+function loanRequestMessage(e: unknown): string {
+  if (e instanceof ApiError) {
+    if (e.code === 'InsufficientFunds') return 'El fondo todavía no tiene esa plata. Pida un monto menor o espere los próximos aportes.';
+    if (e.code === 'LoanAlreadyActive') return 'Ya tiene una solicitud o un préstamo activo en esta natillera.';
+    if (e.code === 'InvalidInstallments') return 'Elija entre 1 y 12 cuotas.';
+    return e.message;
+  }
+  return 'No pudimos enviar la solicitud. Intente otra vez.';
+}
+
 /** 16 · Pedir un préstamo: monto, cuotas, resumen simulado y solicitud. */
 function AskLoan({
   natilleraId,
@@ -148,7 +159,7 @@ function AskLoan({
       // Paso siguiente: autorizar el cobro de las cuotas (17).
       router.push(autorizarHref(request.requestId));
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'No pudimos enviar la solicitud. Intente otra vez.');
+      setError(loanRequestMessage(e));
     } finally {
       setSending(false);
     }
