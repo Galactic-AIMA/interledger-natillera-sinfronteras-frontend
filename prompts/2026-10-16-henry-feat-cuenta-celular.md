@@ -212,3 +212,11 @@ Ahora queiro que seas el experto en y me crees un logo para la app
 ## 22:37 · sesión b3a5a546
 
 Sí, conecta el logo como ícono, adaptive icon, favicon y splash en app.json (fondo índigo #1A1B4B) y haz commit.
+
+## 22:39 · sesión b3a5a546
+
+verifica y dime cómo se ve, y dame sugerencias que apliquen para mejorar
+
+## 22:41 · sesión b3a5a546
+
+Sí, aplica las mejoras 1 a 5 en scripts/build-logo.py, regenera assets/brand y haz commit.

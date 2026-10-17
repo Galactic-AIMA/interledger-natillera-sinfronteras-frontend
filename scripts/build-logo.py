@@ -24,11 +24,23 @@ INDIGO = "#1A1B4B"
 MENTA = "#A7C9B9"
 VERDE = "#2F6F63"
 FONDO = "#F5F6FA"
+INDIGO2 = "#3F4C9A"
 
 
 def symbol(coin: str = FONDO, rim: str = FONDO, bowl: str = MENTA, lines: str = VERDE,
-           sprout: str = VERDE, ring: str = MENTA) -> str:
-    """Símbolo en una caja de 1024x1024, centrado ópticamente."""
+           sprout: str = VERDE, ring: str = INDIGO2, detail: bool = True) -> str:
+    """Símbolo en una caja de 1024x1024, centrado ópticamente.
+
+    Con `detail=False` la paila va lisa: a 48 px o menos las líneas del mundo
+    se empastan, así que el favicon usa esta versión.
+    """
+    # Pocas líneas y un paralelo curvo: se lee como mundo y no como colador.
+    world = f"""
+    <g clip-path="url(#bowl)" fill="none" stroke="{lines}" stroke-width="16" stroke-linecap="round">
+      <ellipse cx="512" cy="480" rx="128" ry="290"/>
+      <path d="M512 480 V780"/>
+      <path d="M232 600 Q512 668 792 600"/>
+    </g>""" if detail else ""
     return f"""
   <g transform="translate(0 24)">
     <defs>
@@ -44,24 +56,24 @@ def symbol(coin: str = FONDO, rim: str = FONDO, bowl: str = MENTA, lines: str = 
     </g>
     <!-- paila = media esfera del mundo -->
     <path d="M240 480 A272 290 0 0 0 784 480 Z" fill="{bowl}"/>
-    <g clip-path="url(#bowl)" fill="none" stroke="{lines}" stroke-width="13" stroke-linecap="round">
-      <ellipse cx="512" cy="480" rx="178" ry="290"/>
-      <ellipse cx="512" cy="480" rx="84" ry="290"/>
-      <path d="M512 480 V780"/>
-      <path d="M200 586 H824"/>
-      <path d="M200 680 H824"/>
-    </g>
+    {world}
     <!-- borde y asas -->
-    <rect x="148" y="458" width="728" height="30" rx="15" fill="{rim}"/>
-    <rect x="200" y="442" width="624" height="58" rx="29" fill="{rim}"/>
+    <rect x="148" y="456" width="728" height="34" rx="17" fill="{rim}"/>
+    <rect x="200" y="436" width="624" height="70" rx="35" fill="{rim}"/>
   </g>"""
 
 
 def svg(body: str, bg: str | None = None, radius: int = 0, size: int = 1024,
-        scale: float = 1.0) -> str:
+        scale: float = 1.0, glow: bool = False) -> str:
+    """`glow` aclara el centro del fondo índigo para que el ícono no se pierda
+    sobre fondos de pantalla oscuros."""
     back = ""
     if bg:
-        back = f'<rect width="1024" height="1024" rx="{radius}" fill="{bg}"/>'
+        fill = "url(#glow)" if glow else bg
+        back = (f'<defs><radialGradient id="glow" cx="50%" cy="38%" r="70%">'
+                f'<stop offset="0" stop-color="#2A2E6E"/><stop offset="1" stop-color="{bg}"/>'
+                f'</radialGradient></defs>'
+                f'<rect width="1024" height="1024" rx="{radius}" fill="{fill}"/>')
     off = 512 * (1 - scale)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" '
             f'viewBox="0 0 1024 1024">{back}'
@@ -100,19 +112,25 @@ def render_png(svg_path: pathlib.Path, png_name: str, size: int) -> None:
         Image.open(png).resize((size, size), Image.LANCZOS).save(png)
 
 
+# Android adaptive: la zona segura es un círculo de 626 px (66/108); a 0.72 las asas,
+# lo más lejano del centro, quedan adentro con margen.
+ANDROID_SCALE = 0.72
+
 variants = {
     # Logo con fondo redondeado (presentaciones, README, pitch)
-    "logo.svg": (svg(symbol(), INDIGO, radius=232), [("logo.png", 1024)]),
+    "logo.svg": (svg(symbol(), INDIGO, radius=232, glow=True), [("logo.png", 1024)]),
     # Ícono de la app: cuadrado a sangre, iOS y Expo recortan las esquinas
-    "icon.svg": (svg(symbol(), INDIGO, scale=0.94), [("icon.png", 1024), ("favicon.png", 48)]),
-    # Android adaptive: primer plano en la zona segura (66 %) y fondo plano
-    "android-foreground.svg": (svg(symbol(), scale=0.62), [("android-icon-foreground.png", 1024)]),
-    "android-background.svg": (svg("", INDIGO), [("android-icon-background.png", 1024)]),
+    "icon.svg": (svg(symbol(), INDIGO, scale=1.12, glow=True), [("icon.png", 1024)]),
+    # Favicon y tamaños chicos: paila lisa y símbolo más grande
+    "favicon.svg": (svg(symbol(detail=False), INDIGO, scale=1.18, glow=True), [("favicon.png", 48)]),
+    "android-foreground.svg": (svg(symbol(), scale=ANDROID_SCALE),
+                               [("android-icon-foreground.png", 1024)]),
+    "android-background.svg": (svg("", INDIGO, glow=True), [("android-icon-background.png", 1024)]),
     # Splash: símbolo transparente sobre backgroundColor índigo
     "splash.svg": (svg(symbol(), scale=1.0), [("splash-icon.png", 1024)]),
     # Versión clara para fondos blancos (#F5F6FA): moneda índigo, paila verde
     "symbol-light.svg": (
-        svg(symbol(coin=INDIGO, rim=INDIGO, bowl=MENTA, lines=VERDE, sprout=MENTA, ring="#3F4C9A")),
+        svg(symbol(coin=INDIGO, rim=INDIGO, bowl=MENTA, lines=VERDE, sprout=MENTA, ring=MENTA)),
         [("symbol-light.png", 512)],
     ),
 }
@@ -127,7 +145,7 @@ mono_svg = svg(f"""
   <defs><mask id="m" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
     <rect width="1024" height="1024" fill="#000"/>{symbol(coin="#fff", rim="#fff", bowl="#fff",
     lines="#000", sprout="#000", ring="#000")}</mask></defs>
-  <rect width="1024" height="1024" fill="#fff" mask="url(#m)"/>""", scale=0.62)
+  <rect width="1024" height="1024" fill="#fff" mask="url(#m)"/>""", scale=ANDROID_SCALE)
 render_png(write_svg("android-monochrome.svg", mono_svg), "android-icon-monochrome.png", 1024)
 
 # Wordmark horizontal con las tipografías de la app (render con Chrome headless)
@@ -152,8 +170,8 @@ p {{ font: 600 47px/1 Martian, monospace; color: {sub}; margin: 26px 0 0 6px;
 
 
 for name, bg, title, sub, sym in [
-    ("wordmark-dark", INDIGO, FONDO, MENTA, svg(symbol(), INDIGO, radius=232)),
-    ("wordmark-light", FONDO, INDIGO, VERDE, svg(symbol(), INDIGO, radius=232)),
+    ("wordmark-dark", INDIGO, FONDO, MENTA, svg(symbol(), INDIGO, radius=232, glow=True)),
+    ("wordmark-light", FONDO, INDIGO, VERDE, svg(symbol(), INDIGO, radius=232, glow=True)),
 ]:
     html = OUT / f"{name}.html"
     html.write_text(wordmark_html(bg, title, sub, sym), encoding="utf-8")
