@@ -87,12 +87,12 @@ export default function ScreenCuenta() {
         accessibilityRole="switch"
         accessibilityState={{ checked: showOverlay }}
         accessibilityLabel="Mostrar el registro en pantalla"
-        accessibilityHint="Para la presentación: un botón flotante con el registro en vivo"
+        accessibilityHint="Botón flotante con el registro en vivo y copiar al portapapeles"
       >
         <View style={styles.switchText}>
           <AppText>Mostrar el registro en pantalla</AppText>
           <AppText variant="caption" tone="muted">
-            Para la presentación: un botón flotante con el registro en vivo
+            Botón flotante con el registro en vivo y copiar al portapapeles
           </AppText>
         </View>
         <Switch
