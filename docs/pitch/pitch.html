@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Natillera sin Fronteras</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Hanken+Grotesk:wght@400;500;700&family=Martian+Mono:wght@500;700&display=swap">
+<style>
+/* Concepto: escenario 16:9 que escala a la ventana; cada lámina una sola idea, la Paleta G de la app
+   y los tres anillos del logo como hilo visual (un anillo por país, solo se sostienen juntos). */
+:root{
+  --fondo:#F5F6FA; --tinta:#1A1B4B; --indigo2:#3F4C9A; --verde:#2F6F63; --menta:#A7C9B9;
+  --menta-suave:#E6EFEA; --gris:#5F626B; --linea:#DDE1EA; --blanco:#FFFFFF; --billetera:#4A0E68;
+  --noche:#12133A; --lila:#9AA6F0; --sobre-noche:#F5F6FA;
+  --f-titulo:"Gloock",Georgia,"Times New Roman",serif;
+  --f-texto:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-num:"Martian Mono",ui-monospace,Consolas,monospace;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{margin:0;background:var(--noche);color:var(--tinta);font-family:var(--f-texto);overflow:hidden;
+  padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+.viewport{position:fixed;inset:0;overflow:hidden}
+.stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center center;transform:translate(-50%,-50%)}
+.slide{position:absolute;inset:0;background:var(--fondo);overflow:hidden;opacity:0;visibility:hidden;
+  transition:opacity .45s ease,visibility 0s linear .45s}
+.slide.on{opacity:1;visibility:visible;transition:opacity .45s ease,visibility 0s}
+.pad{position:absolute;inset:0;padding:88px 112px;display:flex;flex-direction:column;gap:28px}
+
+/* Tipografía */
+.kicker{font-family:var(--f-num);font-weight:700;font-size:20px;letter-spacing:.18em;text-transform:uppercase;color:var(--verde)}
+h1,h2{font-family:var(--f-titulo);font-weight:400;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:84px;line-height:1.02;max-width:15ch}
+.lead{font-size:34px;line-height:1.35;color:var(--gris);max-width:30ch;margin:0}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+
+/* Anillos */
+.rings .r{stroke-dasharray:1125;stroke-dashoffset:0}
+.draw .rings .r{animation:trazo .8s cubic-bezier(.6,.05,.3,1) both;animation-delay:var(--d)}
+@keyframes trazo{from{stroke-dashoffset:1125}}
+.rise{opacity:1}
+.draw .rise{animation:sube .6s ease both;animation-delay:var(--d,1.4s)}
+@keyframes sube{from{opacity:0;transform:translateY(16px)}}
+
+/* 1 · Portada */
+.portada{display:grid;grid-template-columns:560px 1fr;align-items:center;gap:40px;padding:0 120px 0 90px;height:100%}
+.portada svg{width:560px;height:560px}
+.marca .nombre{font-family:var(--f-titulo);font-size:150px;line-height:.9;color:var(--tinta)}
+.marca .sin{font-family:var(--f-num);font-weight:700;font-size:30px;letter-spacing:.32em;color:var(--verde);margin-top:14px}
+.marca .slogan{font-size:46px;line-height:1.22;color:var(--tinta);margin-top:52px;max-width:17ch;font-weight:500}
+.marca .slogan em{font-style:normal;color:var(--indigo2)}
+.pie{position:absolute;left:112px;right:112px;bottom:56px;display:flex;justify-content:space-between;
+  font-family:var(--f-num);font-size:18px;letter-spacing:.08em;color:var(--gris)}
+
+/* 2 · Doña Rosa */
+.familia{display:grid;grid-template-columns:1fr 1fr 1fr;gap:28px;margin-top:auto}
+.socio{background:var(--blanco);border:2px solid var(--linea);border-radius:28px;padding:30px 32px;display:flex;flex-direction:column;gap:10px}
+.socio .quien{font-family:var(--f-titulo);font-size:48px}
+.socio .donde{font-size:26px;color:var(--gris)}
+.socio .mon{font-family:var(--f-num);font-weight:700;font-size:28px;margin-top:8px}
+.socio .dot{width:26px;height:26px;border-radius:50%;border:7px solid currentColor}
+.cuaderno{position:absolute;right:112px;top:96px;width:330px;transform:rotate(3deg);background:#FFFDF6;border:2px solid var(--linea);
+  border-radius:10px;padding:26px 28px 30px;box-shadow:0 18px 40px -24px rgba(26,27,75,.45);
+  background-image:repeating-linear-gradient(transparent 0 43px,#D9E3F2 43px 45px);font-family:"Segoe Print","Bradley Hand","Comic Sans MS",cursive;font-size:26px;line-height:45px;color:#5A4A3A}
+.cuaderno b{display:block;font-family:var(--f-num);font-size:16px;letter-spacing:.14em;color:var(--alerta,#B5543F);line-height:30px;text-transform:uppercase}
+.cuaderno s{color:#9A8B7B}
+
+/* 3 · Cifras */
+.cifras{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:28px;margin-top:auto}
+.cifra{border-top:4px solid var(--tinta);padding-top:22px;display:flex;flex-direction:column;gap:12px}
+.cifra .grande{font-family:var(--f-num);font-weight:700;font-size:72px;line-height:1;color:var(--tinta);letter-spacing:-.02em}
+.cifra .grande small{font-size:34px;letter-spacing:0}
+.cifra p{margin:0;font-size:27px;line-height:1.35;color:var(--gris)}
+.cifra.hot{border-color:var(--verde)}.cifra.hot .grande{color:var(--verde)}
+.fuente{font-family:var(--f-num);font-size:16px;color:var(--gris);letter-spacing:.04em}
+
+/* Teléfonos */
+.tel{width:300px;aspect-ratio:780/1688;max-width:100%;border-radius:44px;background:var(--tinta);padding:12px;box-shadow:0 30px 60px -30px rgba(26,27,75,.55);flex:none}
+.tel img{display:block;width:100%;height:100%;object-fit:cover;border-radius:34px}
+.tel.sm{width:250px;border-radius:38px;padding:10px}.tel.sm img{border-radius:29px}
+
+/* 4 · Solución */
+.split{display:grid;grid-template-columns:1fr 360px;gap:80px;height:100%;align-items:center}
+.split .txt{display:flex;flex-direction:column;gap:30px}
+.lista{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:22px}
+.lista li{display:grid;grid-template-columns:44px 1fr;gap:18px;align-items:start;font-size:32px;line-height:1.3}
+.lista li svg{width:44px;height:44px;margin-top:2px}
+.frase{font-family:var(--f-titulo);font-size:40px;line-height:1.2;color:var(--indigo2);margin:0;max-width:22ch}
+
+/* 5 · Demo */
+.camino{display:flex;gap:26px;align-items:flex-end;margin-top:auto}
+.paso{display:flex;flex-direction:column;gap:16px;align-items:center;flex:1}
+.paso .cap{font-size:23px;line-height:1.3;text-align:center;max-width:15ch}
+.paso .cap b{display:block;font-family:var(--f-num);font-size:15px;letter-spacing:.14em;color:var(--verde);margin-bottom:6px}
+.flecha{align-self:center;margin-bottom:120px;color:var(--menta);font-size:44px;font-family:var(--f-num)}
+.billetera{width:250px;aspect-ratio:780/1688;border-radius:38px;background:var(--billetera);padding:28px 22px;color:#fff;display:flex;flex-direction:column;justify-content:center;gap:16px;box-shadow:0 30px 60px -30px rgba(74,14,104,.6)}
+.billetera .t{font-family:var(--f-num);font-size:13px;letter-spacing:.16em;opacity:.7}
+.billetera .q{font-size:22px;line-height:1.3;font-weight:700}
+.billetera .ok{background:#fff;color:var(--billetera);border-radius:14px;text-align:center;padding:14px;font-weight:700;font-size:20px}
+.billetera .no{border:2px solid rgba(255,255,255,.5);border-radius:14px;text-align:center;padding:12px;font-size:18px}
+.envivo{display:inline-flex;align-items:center;gap:12px;font-family:var(--f-num);font-weight:700;font-size:18px;letter-spacing:.16em;color:var(--blanco);background:var(--verde);padding:10px 18px;border-radius:99px;width:max-content}
+.envivo i{width:12px;height:12px;border-radius:50%;background:#fff;animation:late 1.4s ease-in-out infinite}
+@keyframes late{50%{opacity:.25}}
+
+/* 6 · Lo real */
+.tubo{display:grid;grid-template-columns:1fr 70px 1fr 70px 1fr 70px 1fr;align-items:stretch;margin-top:auto}
+.nodo{background:var(--blanco);border:2px solid var(--linea);border-radius:26px;padding:28px 26px;display:flex;flex-direction:column;gap:10px}
+.nodo .n{font-family:var(--f-num);font-size:15px;letter-spacing:.14em;color:var(--gris)}
+.nodo .h{font-family:var(--f-titulo);font-size:36px;line-height:1.08}
+.nodo p{margin:0;font-size:22px;line-height:1.35;color:var(--gris)}
+.nodo .m{font-family:var(--f-num);font-weight:700;font-size:26px}
+.nodo.eur .m{color:var(--indigo2)}.nodo.cop .m{color:var(--verde)}
+.nodo.ilp{background:var(--tinta);border-color:var(--tinta);color:var(--sobre-noche)}.nodo.ilp p,.nodo.ilp .n{color:#C5C9E8}
+.conector{align-self:center;height:4px;background:repeating-linear-gradient(90deg,var(--indigo2) 0 12px,transparent 12px 20px);position:relative}
+.conector::after{content:"";position:absolute;right:-2px;top:-8px;border:10px solid transparent;border-left:14px solid var(--indigo2)}
+.sellos{display:flex;gap:16px;flex-wrap:wrap}
+.sello{display:inline-flex;align-items:center;gap:10px;font-size:22px;font-weight:700;padding:10px 18px;border-radius:99px;background:var(--menta-suave);color:var(--verde)}
+.sello::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--verde)}
+
+/* 7 · Antes y después */
+.duo{display:flex;gap:70px;align-items:center;justify-content:center;margin-top:auto}
+.duo figure{margin:0;display:flex;flex-direction:column;gap:18px;align-items:center}
+.duo figcaption{font-size:24px;text-align:center;line-height:1.3}
+.duo figcaption .num{display:block;font-size:40px;font-weight:700}
+.duo .despues .num{color:var(--verde)}
+.mas{font-family:var(--f-num);font-weight:700;font-size:44px;color:var(--verde);background:var(--menta-suave);border-radius:24px;padding:22px 28px;text-align:center}
+.mas small{display:block;font-size:18px;font-weight:500;color:var(--gris);font-family:var(--f-texto);margin-top:6px}
+
+/* 8 · Inclusión */
+.incl{display:grid;grid-template-columns:1fr 560px;gap:70px;height:100%;align-items:center}
+.incl .tels{display:flex;gap:30px;justify-content:center}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.chip{background:var(--blanco);border:2px solid var(--linea);border-radius:22px;padding:22px 24px;font-size:25px;line-height:1.3}
+.chip b{display:block;font-family:var(--f-titulo);font-weight:400;font-size:34px;margin-bottom:4px;color:var(--tinta)}
+.chip.ancho{grid-column:1/-1}
+.aa{font-family:var(--f-num);font-weight:700;color:var(--indigo2)}
+
+/* 9 · Lo que viene + equipo */
+.viene{display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px}
+.viene .card{background:var(--blanco);border:2px solid var(--linea);border-radius:26px;padding:28px;display:flex;flex-direction:column;gap:10px}
+.viene .card .h{font-family:var(--f-titulo);font-size:36px;line-height:1.1}
+.viene .card p{margin:0;font-size:23px;line-height:1.35;color:var(--gris)}
+.estado{font-family:var(--f-num);font-size:14px;letter-spacing:.12em;font-weight:700;padding:6px 12px;border-radius:99px;width:max-content}
+.estado.ya{background:var(--menta-suave);color:var(--verde)}
+.estado.luego{background:#ECEEF8;color:var(--indigo2)}
+.equipo{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:auto;border-top:2px solid var(--linea);padding-top:28px}
+.persona{display:flex;gap:16px;align-items:center}
+.ini{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-titulo);font-size:28px;color:#fff;flex:none}
+.persona .q{font-size:26px;font-weight:700}.persona .r{font-size:20px;color:var(--gris)}
+
+/* 10 · Cierre */
+.slide.dark{background:var(--noche);color:var(--sobre-noche)}
+.cierre{height:100%;display:grid;grid-template-columns:1fr 470px;align-items:center;gap:60px;padding:0 120px}
+.cierre h2{font-size:76px;max-width:16ch;color:var(--sobre-noche)}
+.cierre .lead{color:#C5C9E8;font-size:32px;max-width:28ch;margin-top:26px}
+.cierre .firma{margin-top:54px;display:flex;flex-direction:column;gap:10px}
+.cierre .firma .a{font-size:26px;color:var(--menta)}
+.cierre .firma .b{font-family:var(--f-titulo);font-size:52px;line-height:1.1;color:var(--sobre-noche)}
+.cierre svg{width:470px;height:470px}
+.gracias{font-family:var(--f-num);font-weight:700;letter-spacing:.3em;font-size:20px;color:var(--menta);text-align:center;margin-top:-30px}
+
+/* Controles del presentador (fuera del escenario) */
+.barra{position:fixed;left:0;right:0;bottom:0;height:4px;background:rgba(255,255,255,.08);z-index:5}
+.barra i{display:block;height:100%;background:var(--menta);transition:width .35s ease}
+.hud{position:fixed;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:6;display:flex;gap:8px;align-items:center;
+  font-family:var(--f-num);font-size:13px;color:#C5C9E8;opacity:.0;transition:opacity .3s}
+body:hover .hud,.hud:focus-within{opacity:1}
+.hud button{font:inherit;color:#F5F6FA;background:rgba(26,27,75,.85);border:1px solid #33367A;border-radius:10px;padding:8px 12px;cursor:pointer;min-height:36px}
+.hud button:focus-visible{outline:3px solid var(--menta);outline-offset:2px}
+.notas{position:fixed;left:max(14px,env(safe-area-inset-left,0px));right:max(14px,env(safe-area-inset-right,0px));bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:6;
+  background:rgba(18,19,58,.96);color:#F5F6FA;border:1px solid #33367A;border-radius:16px;padding:18px 22px;max-height:42vh;overflow:auto;
+  font-size:17px;line-height:1.5;box-shadow:0 20px 50px rgba(0,0,0,.4)}
+.notas .cab{display:flex;justify-content:space-between;gap:12px;font-family:var(--f-num);font-size:12px;letter-spacing:.12em;color:var(--menta);margin-bottom:8px;flex-wrap:wrap}
+.notas p{margin:0 0 6px;max-width:80ch}
+.notas .tarde{color:#F2A28E}
+/* Ajustes de alto: que todo quepa en 900 px */
+.camino .tel.sm,.camino .billetera{width:200px}
+.duo .tel.sm{width:210px}
+.incl h2{font-size:70px}
+@media (prefers-reduced-motion:reduce){
+  .draw .rings .r,.draw .rise{animation:none}.slide{transition:none}.envivo i{animation:none}
+}
+</style>
+
+<div class="viewport" id="vp">
+  <main class="stage" id="stage" aria-live="polite">
+
+    <!-- 1 · Portada -->
+    <section class="slide" aria-label="Portada">
+      <div class="portada">
+        <div class="logo" data-rings="claro" role="img" aria-label="Logo: tres anillos entrelazados"></div>
+        <div class="marca">
+          <div class="nombre rise" style="--d:1.5s">Natillera</div>
+          <div class="sin rise" style="--d:1.7s">SIN FRONTERAS</div>
+          <div class="slogan rise" style="--d:2.1s">Lejos en distancia, <em>juntos en el ahorro.</em></div>
+        </div>
+      </div>
+      <div class="pie"><span>Hackatón Open Payments · Interledger</span><span>Medellín · 17 oct 2026</span></div>
+    </section>
+
+    <!-- 2 · Doña Rosa -->
+    <section class="slide" aria-label="Doña Rosa">
+      <div class="pad">
+        <div class="kicker">Una familia, tres países</div>
+        <h2>Ella es Doña Rosa. Su natillera vive en un cuaderno.</h2>
+        <div class="cuaderno" aria-hidden="true"><b>Natillera · octubre</b>Rosa ✓ $50.000<br>Luz ¿giro? <s>$50.000</s><br>Andrés … debe<br>Total: ¿?</div>
+        <div class="familia">
+          <div class="socio" style="color:var(--tinta)"><span class="dot"></span><span class="quien">Doña Rosa</span><span class="donde">Medellín, Colombia · la tesorera</span><span class="mon">Pesos · COP</span></div>
+          <div class="socio" style="color:var(--verde)"><span class="dot"></span><span class="quien" style="color:var(--tinta)">Luz</span><span class="donde">Estados Unidos</span><span class="mon">Dólares · USD</span></div>
+          <div class="socio" style="color:var(--indigo2)"><span class="dot"></span><span class="quien" style="color:var(--tinta)">Andrés</span><span class="donde">España</span><span class="mon">Euros · EUR</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 · El problema -->
+    <section class="slide" aria-label="El problema">
+      <div class="pad">
+        <div class="kicker">El problema</div>
+        <h2>La plata sí cruza fronteras. La natillera, no.</h2>
+        <div class="cifras">
+          <div class="cifra"><div class="grande num">US$13.098<small> M</small></div><p>llegaron a Colombia en remesas en 2025, un 10,6 % más que en 2024.</p></div>
+          <div class="cifra"><div class="grande num">~18 %</div><p>de los hogares recibe plata de un familiar en el exterior.</p></div>
+          <div class="cifra hot"><div class="grande">Diciembre</div><p>fue el mes récord. Es el mismo mes en que se reparte la natillera.</p></div>
+        </div>
+        <div class="fuente">Fuente: Banco de la República</div>
+      </div>
+    </section>
+
+    <!-- 4 · La solución -->
+    <section class="slide" aria-label="La solución">
+      <div class="pad">
+        <div class="split">
+          <div class="txt">
+            <div class="kicker">La solución</div>
+            <h2>La natillera de siempre, ahora en el celular.</h2>
+            <ul class="lista">
+              <li><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="15" fill="none" stroke="#3F4C9A" stroke-width="5"/></svg>Cada quien pone su cuota desde su billetera, en su moneda.</li>
+              <li><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="15" fill="none" stroke="#2F6F63" stroke-width="5"/></svg>Al fondo de la natillera le llegan pesos.</li>
+              <li><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="15" fill="none" stroke="#1A1B4B" stroke-width="5"/></svg>Todos ven lo mismo: cuánto hay, quién está al día y quién pidió prestado.</li>
+            </ul>
+            <p class="frase">«Ahorre en familia, aunque vivan en países distintos.»</p>
+          </div>
+          <div class="tel"><img src="pantallas/10-mi-natillera.png" alt="Pantalla Mi natillera: entre todos llevan, fondo y lo último que pasó"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5 · Demo -->
+    <section class="slide" aria-label="Demo en vivo">
+      <div class="pad">
+        <span class="envivo"><i></i>EN VIVO</span>
+        <h2 style="max-width:none">Andrés pone su cuota desde España.</h2>
+        <div class="camino">
+          <div class="paso"><div class="tel sm"><img src="pantallas/11-poner-cuota.png" alt="Poner la cuota"></div><div class="cap"><b>1 · LA CUOTA</b>Ve antes cuánto sale en euros y cuánto llega en pesos</div></div>
+          <div class="flecha" aria-hidden="true">→</div>
+          <div class="paso"><div class="tel sm"><img src="pantallas/28-va-a-su-billetera.png" alt="Va a su billetera, en tres pasos"></div><div class="cap"><b>2 · SIN SUSTOS</b>Le contamos en tres pasos qué va a pasar</div></div>
+          <div class="flecha" aria-hidden="true">→</div>
+          <div class="paso"><div class="billetera" aria-label="Billetera de Andrés pidiendo permiso"><span class="t">SU BILLETERA</span><span class="q">La natillera quiere hacer un pago</span><span class="ok">Aprobar</span><span class="no">Rechazar</span></div><div class="cap"><b>3 · SU PERMISO</b>Él aprueba en su propia billetera</div></div>
+          <div class="flecha" aria-hidden="true">→</div>
+          <div class="paso"><div class="tel sm"><img src="pantallas/34-cuota-puesta.png" alt="Cuota puesta"></div><div class="cap"><b>4 · LISTO</b>Cuota puesta, en menos de un minuto</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6 · Lo real -->
+    <section class="slide" aria-label="Así se mueve la plata">
+      <div class="pad">
+        <div class="kicker">Por debajo, y de verdad</div>
+        <h2 style="max-width:18ch">La app nunca toca la plata. Solo pide permiso.</h2>
+        <div class="sellos"><span class="sello">Pago real EUR → COP con Open Payments</span><span class="sello">Cuentas reales</span><span class="sello">Natilleras y socios en el servidor</span></div>
+        <div class="tubo">
+          <div class="nodo"><span class="n">LA APP</span><span class="h">Natillera</span><p>Muestra cuánto sale y cuánto llega, y pide el permiso.</p></div>
+          <div class="conector" aria-hidden="true"></div>
+          <div class="nodo eur"><span class="n">BILLETERA DE ANDRÉS</span><span class="h">Él aprueba</span><span class="m">sale en €</span></div>
+          <div class="conector" aria-hidden="true"></div>
+          <div class="nodo ilp"><span class="n">LA TUBERÍA</span><span class="h">Interledger · Open Payments</span><p>Mueve la plata entre billeteras y monedas.</p></div>
+          <div class="conector" aria-hidden="true"></div>
+          <div class="nodo cop"><span class="n">FONDO DE LA NATILLERA</span><span class="h">Llega a casa</span><span class="m">llega en $</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 · Antes y después -->
+    <section class="slide" aria-label="Doña Rosa lo ve de una">
+      <div class="pad">
+        <div class="kicker">Y en Medellín…</div>
+        <h2 style="max-width:none">Doña Rosa lo ve de una.</h2>
+        <div class="duo">
+          <figure><div class="tel sm"><img src="pantallas/10-mi-natillera.png" alt="Antes: el fondo en 150.000 pesos"></div><figcaption>Antes<span class="num">$150.000</span>Andrés debía la cuota</figcaption></figure>
+          <div class="mas num">+$50.000<small>desde España, en euros</small></div>
+          <figure class="despues"><div class="tel sm"><img src="pantallas/10-despues.png" alt="Después: el fondo en 200.000 pesos"></div><figcaption>Después<span class="num">$200.000</span>Andrés quedó al día</figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8 · Inclusión -->
+    <section class="slide" aria-label="Hecha para Doña Rosa">
+      <div class="pad">
+        <div class="incl">
+          <div style="display:flex;flex-direction:column;gap:28px">
+            <div class="kicker">Inclusión financiera</div>
+            <h2>Hecha para Doña Rosa, no para un banquero.</h2>
+            <div class="chips">
+              <div class="chip"><b>De «usted»</b>Frases cortas, cero palabras raras.</div>
+              <div class="chip"><b><span class="aa">A+</span> en todo</b>La letra crece en todas las pantallas.</div>
+              <div class="chip"><b>Botones grandes</b>Para el dedo, con buen contraste.</div>
+              <div class="chip"><b>Sin letra menuda</b>El costo se ve antes de pagar.</div>
+              <div class="chip ancho"><b>Siempre pide permiso</b>Si dice que no, no sale ni un peso.</div>
+            </div>
+          </div>
+          <div class="tels">
+            <div class="tel sm"><img src="pantallas/01-letra-grande.png" alt="Bienvenida con la letra grande"></div>
+            <div class="tel sm" style="margin-top:80px"><img src="pantallas/32-permiso-rechazado.png" alt="Permiso rechazado: no salió plata"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 · Lo que viene y el equipo -->
+    <section class="slide" aria-label="Lo que viene y el equipo">
+      <div class="pad">
+        <div class="kicker">Lo que viene</div>
+        <h2 style="max-width:none">La natillera completa.</h2>
+        <div class="viene">
+          <div class="card"><span class="estado ya">YA EN LA APP</span><span class="h">Préstamos del fondo</span><p>Simular, pedir y que la tesorera decida.</p></div>
+          <div class="card"><span class="estado ya">YA EN LA APP</span><span class="h">Metas en familia</span><p>Ahorrar para algo o hacer una colecta.</p></div>
+          <div class="card"><span class="estado luego">SIGUE</span><span class="h">La cuota que se pone sola</span><p>Un permiso, y cada mes llega sin acordarse.</p></div>
+        </div>
+        <div class="equipo">
+          <div class="persona"><span class="ini" style="background:var(--tinta)">H</span><div><div class="q">Henry</div><div class="r">App, marca y pitch</div></div></div>
+          <div class="persona"><span class="ini" style="background:var(--indigo2)">C</span><div><div class="q">Camilo</div><div class="r">App y servidor</div></div></div>
+          <div class="persona"><span class="ini" style="background:var(--verde)">D</span><div><div class="q">Duvan</div><div class="r">Servidor y pagos</div></div></div>
+          <div class="persona"><span class="ini" style="background:var(--billetera)">DC</span><div><div class="q">David Ciro</div><div class="r">Servidor y nube</div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 · Cierre -->
+    <section class="slide dark" aria-label="Cierre">
+      <div class="cierre">
+        <div>
+          <h2 class="rise" style="--d:.1s">Este diciembre, Doña Rosa no va a sacar el cuaderno.</h2>
+          <p class="lead rise" style="--d:.5s">Va a abrir el celular, ver que Luz puso, que Andrés puso, y repartir la natillera con toda la familia.</p>
+          <div class="firma rise" style="--d:2.2s">
+            <span class="a">Ahorre en familia, aunque vivan en países distintos.</span>
+            <span class="b">Lejos en distancia, juntos en el ahorro.</span>
+          </div>
+        </div>
+        <div>
+          <div class="logo" data-rings="oscuro" role="img" aria-label="Logo: tres anillos entrelazados"></div>
+          <div class="gracias rise" style="--d:2.6s">GRACIAS</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="barra" aria-hidden="true"><i id="prog"></i></div>
+<div class="notas" id="notas" hidden></div>
+<div class="hud" id="hud">
+  <span id="cuenta" class="num">1 / 10</span>
+  <button id="b-prev" type="button" aria-label="Lámina anterior">←</button>
+  <button id="b-next" type="button" aria-label="Lámina siguiente">→</button>
+  <button id="b-notas" type="button">Notas (N)</button>
+  <button id="b-full" type="button">Pantalla completa (F)</button>
+</div>
+
+<script>
+(function(){
+  // Geometría exacta del logo (src/components/BrandSymbol.tsx).
+  var RINGS=[
+    {cx:512,cy:429,start:-90,cuts:['M580.5 525.2 A179 179 0 0 1 586.0 651.2','M629.6 417.8 A179 179 0 0 1 741.5 476.1']},
+    {cx:415.9,cy:595.5,start:150,cuts:['M347.4 499.3 A179 179 0 0 1 341.9 373.3','M465.0 488.0 A179 179 0 0 1 571.4 420.3']},
+    {cx:608.1,cy:595.5,start:30,cuts:['M559.0 703.0 A179 179 0 0 1 452.6 770.7','M490.5 606.7 A179 179 0 0 1 378.7 548.4']}
+  ];
+  var COLORES={claro:['#1A1B4B','#2F6F63','#3F4C9A'],oscuro:['#F5F6FA','#A7C9B9','#9AA6F0']};
+  document.querySelectorAll('[data-rings]').forEach(function(el,k){
+    var c=COLORES[el.getAttribute('data-rings')], id='m'+k, s='<svg class="rings" viewBox="0 0 1024 1024" aria-hidden="true"><defs>';
+    RINGS.forEach(function(r,i){
+      s+='<mask id="'+id+i+'" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024"><rect width="1024" height="1024" fill="#fff"/>';
+      r.cuts.forEach(function(d){s+='<path d="'+d+'" fill="none" stroke="#000" stroke-width="94"/>'});
+      s+='</mask>';
+    });
+    s+='</defs>';
+    RINGS.forEach(function(r,i){
+      s+='<g mask="url(#'+id+i+')"><circle class="r" style="--d:'+(0.15+i*0.2)+'s" cx="'+r.cx+'" cy="'+r.cy+'" r="179" fill="none" stroke="'+c[i]+'" stroke-width="58" transform="rotate('+r.start+' '+r.cx+' '+r.cy+')"/></g>';
+    });
+    el.innerHTML=s+'</svg>';
+  });
+
+  // Guion: lo que se dice en cada lámina (basado en docs/pitch/GUION.md de Henry) y segundos objetivo.
+  var NOTAS=[
+    {t:15,q:'Camilo',p:['(Esperar a que se dibujen los anillos.)','Somos Natillera sin Fronteras.','Tres anillos: una familia que vive en tres países y que solo se sostiene junta.','Lejos en distancia, juntos en el ahorro.']},
+    {t:30,q:'Henry',p:['Ella es Doña Rosa. Vive en Medellín.','Toda la vida ha hecho natillera con la familia.','Pero hoy la familia está regada: Luz vive en Estados Unidos, Andrés en España.','Cada uno gana en otra moneda. Y la natillera… sigue en un cuaderno.']},
+    {t:35,q:'Henry',p:['En 2025 entraron a Colombia más de 13 mil millones de dólares en remesas.','Casi uno de cada cinco hogares recibe plata de afuera.','¿Y saben cuál fue el mes récord? Diciembre. (pausa) El mismo mes en que se reparte la natillera.','Pero esa plata llega suelta: nadie sabe quién puso, quién debe ni cuánto hay.']},
+    {t:25,q:'Camilo',p:['Natillera sin Fronteras es la natillera de toda la vida, pero en el celular.','Cada uno pone su cuota desde su billetera, en su moneda. Al fondo le llegan pesos.','Y todos ven lo mismo. Ahorre en familia, aunque vivan en países distintos.','Se lo mostramos. (Pasar al celular proyectado.)']},
+    {t:80,q:'Camilo',p:['DEMO EN VIVO en el celular. Si algo falla: «les muestro el mismo camino grabado esta mañana» y al video.','1. Andrés pone en euros; a la natillera le llegan pesos. Antes de tocar nada sabe cuánto sale, cuánto llega y cuánto cuesta. (Leer en voz alta los números que salgan.)','2. Le contamos en tres pasos qué va a pasar. Nadie se pierde.','3. Andrés da el permiso en su propia billetera.','4. Cuota puesta. Desde España, en menos de un minuto.']},
+    {t:25,q:'Camilo',p:['Esto no es una maqueta: el pago de euros a pesos ya corrió de verdad con Open Payments, en la billetera de prueba de Interledger.','La app nunca guarda llaves ni toca la plata. Arma el pago y la persona da el permiso en su billetera.','Por debajo va Interledger con Open Payments: la tubería que mueve la plata entre billeteras y entre monedas.']},
+    {t:15,q:'Henry',p:['Y Doña Rosa lo ve de una. El fondo pasó de 150 a 200 mil.','Andrés quedó al día. Sin cuaderno y sin pantallazos.']},
+    {t:35,q:'Henry',p:['La hicimos pensando en Doña Rosa, no en un banquero.','Le hablamos de «usted», con frases cortas.','Un botón para agrandar la letra en todas las pantallas. Botones grandes, para el dedo.','Su billetera siempre le pide permiso. Si dice que no, no sale ni un peso. Y el costo se ve antes de pagar.']},
+    {t:25,q:'Henry',p:['La natillera completa ya se está armando: los préstamos del fondo, que decide la tesorera, y las metas en familia.','Lo que sigue: la cuota que se pone sola cada mes, con un solo permiso.','Somos cuatro: Henry y Camilo en la app; Duvan y David Ciro en el servidor.','(Si vamos tarde, esta lámina es la que se recorta.)']},
+    {t:25,q:'Camilo',p:['Este diciembre, Doña Rosa no va a sacar el cuaderno.','Va a abrir el celular. Va a ver que Luz puso. Que Andrés puso.','Y va a repartir la natillera con toda la familia… aunque estén lejos.','Natillera sin Fronteras. Lejos en distancia, juntos en el ahorro. Gracias. (Quietos dos segundos.)']}
+  ];
+
+  var slides=[].slice.call(document.querySelectorAll('.slide')), cur=0, t0=null, tick=null;
+  var stage=document.getElementById('stage'), notas=document.getElementById('notas');
+  function fit(){
+    var w=window.innerWidth, h=window.innerHeight, k=Math.min(w/1600,h/900);
+    stage.style.transform="translate(-50%,-50%) scale("+k+")";
+  }
+  function fmt(s){s=Math.max(0,Math.round(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')}
+  function acumulado(i){var a=0;for(var j=0;j<=i;j++)a+=NOTAS[j].t;return a}
+  function pintarNotas(){
+    if(notas.hidden)return;
+    var n=NOTAS[cur], usado=t0?(Date.now()-t0)/1000:0, meta=acumulado(cur), tarde=t0&&usado>meta;
+    notas.innerHTML='<div class="cab"><span>LÁMINA '+(cur+1)+' · HABLA '+n.q.toUpperCase()+' · '+n.t+' s</span><span class="'+(tarde?'tarde':'')+'">'+(t0?'RELOJ '+fmt(usado)+' · META '+fmt(meta)+' / 5:00':'EL RELOJ ARRANCA AL PASAR DE LA PORTADA')+'</span></div>'+
+      n.p.map(function(x){return '<p>'+x.replace(/</g,'&lt;')+'</p>'}).join('');
+  }
+  function ir(i){
+    i=Math.max(0,Math.min(slides.length-1,i));
+    if(i>0&&!t0){t0=Date.now();tick=setInterval(pintarNotas,1000)}
+    slides[cur].classList.remove('on','draw');
+    cur=i;
+    var s=slides[cur]; s.classList.add('on'); void s.offsetWidth; s.classList.add('draw');
+    document.getElementById('prog').style.width=((cur+1)/slides.length*100)+'%';
+    document.getElementById('cuenta').textContent=(cur+1)+' / '+slides.length;
+    try{history.replaceState(null,'','#l'+(cur+1))}catch(e){}
+    pintarNotas();
+  }
+  function full(){
+    try{ if(document.fullscreenElement)document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(function(){}); }catch(e){}
+  }
+  function toggleNotas(){notas.hidden=!notas.hidden;pintarNotas()}
+  document.addEventListener('keydown',function(e){
+    if(e.target.closest&&e.target.closest('button')&&(e.key===' '||e.key==='Enter'))return;
+    var k=e.key;
+    if(k==='ArrowRight'||k===' '||k==='PageDown'||k==='Enter'){e.preventDefault();ir(cur+1)}
+    else if(k==='ArrowLeft'||k==='PageUp'||k==='Backspace'){e.preventDefault();ir(cur-1)}
+    else if(k==='Home')ir(0); else if(k==='End')ir(slides.length-1);
+    else if(k==='n'||k==='N')toggleNotas();
+    else if(k==='f'||k==='F')full();
+    else if(k==='r'||k==='R'){t0=null;clearInterval(tick);pintarNotas()}
+  });
+  document.getElementById('vp').addEventListener('click',function(e){ir(e.clientX<window.innerWidth*0.3?cur-1:cur+1)});
+  var x0=null;
+  document.addEventListener('touchstart',function(e){x0=e.touches[0].clientX},{passive:true});
+  document.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40)ir(dx<0?cur+1:cur-1);x0=null});
+  document.getElementById('b-prev').onclick=function(){ir(cur-1)};
+  document.getElementById('b-next').onclick=function(){ir(cur+1)};
+  document.getElementById('b-notas').onclick=toggleNotas;
+  document.getElementById('b-full').onclick=full;
+  window.addEventListener('resize',fit); fit();
+  var m=/^#l(\d+)$/.exec(location.hash||''); ir(m?parseInt(m[1],10)-1:0);
+})();
+</script>
