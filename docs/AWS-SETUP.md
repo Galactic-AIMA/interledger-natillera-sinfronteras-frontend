@@ -10,6 +10,15 @@ antes de crear cada recurso; un recurso en otra región "no existe" para los dem
 **Nunca** pegar en este archivo, en el repo ni en el chat: llaves privadas, contraseñas, access
 keys de IAM ni tokens. Los IDs y ARNs sí se pueden anotar (no son secretos).
 
+## Despliegue por AWS CLI
+
+Desde el 2026-10-16 los pagos se despliegan con `infra/deploy-payments.sh` (idempotente; publica
+una versión de respaldo de cada Lambda antes de reemplazarla). Sesión: `aws login --profile natillera --region us-east-2`.
+
+```bash
+AWS_PROFILE=natillera bash infra/deploy-payments.sh
+```
+
 ## Prioridad: P0 (pago 1 a 1 EUR→COP) antes de las 14:00 del 2026-10-16
 
 Solo lo mínimo para P0, en este orden: **1 → 2 → 3 → 4 (solo `Users-info` y `Payments-history`)

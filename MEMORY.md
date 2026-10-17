@@ -127,6 +127,17 @@ Decisiones técnicas aún sin tomar:
   (Duvan). Lambdas de pagos en modo `INTEGRATION_MODE=vtl`: identidad solo en `auth.username`,
   body en `body`, transferencia del cuerpo = Nunca. Errores `[status] {json}` mapeados en la
   respuesta de integración. Token: IdToken.
+- 2026-10-16 (~19:50 COL) · Despliegue por AWS CLI con `infra/deploy-payments.sh` (perfil
+  `natillera`, `aws login`): tabla `payments-history` (+ GSI `author-index`); Lambdas
+  `finish-payment` y `get-payment` con el código del repo, `INTEGRATION_MODE=vtl`, timeouts 25/10 s;
+  rutas `/payments` (POST, GET), `/payments/{id}` (GET), `/payments/{id}/finish` (POST) con
+  `cognito_authorizer`, VTL con username escapado, transferencia del cuerpo NEVER y respuestas de
+  error; rutas viejas endurecidas igual; deployment en `dev`. Verificado: todas las rutas 401 sin
+  token; `get-payment`/`finish-payment` responden 404 bien formado (DynamoDB OK).
+  **`start-payment`: Duvan lo está desplegando en paralelo desde la consola** (subió su código a las
+  00:42 y 00:52 UTC). Su versión lee `USERS_VIEW_TABLE`, que no está en la Lambda → falla con
+  `tableName null`. Respaldos: v1 (edición en consola), v2 (repo), v3 (código de Duvan de 00:42).
+  Acordar cuál `start-payment` queda antes de volver a correr el script.
 - 2026-10-16 · `pre-signup` ahora también guarda en `user-info` (PK `source` + `id`), basado en el
   cambio de Duvan. Falta crear la tabla y desplegar.
 

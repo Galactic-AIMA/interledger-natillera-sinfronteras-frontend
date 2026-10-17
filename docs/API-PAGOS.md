@@ -35,7 +35,7 @@ del front (`docs/api-contrato.md` del repo del front). **Pendiente de revisión 
 `POST /payments` → `start-payment`
 ```velocity
 {
-  "auth": { "username": "$context.authorizer.claims['cognito:username']" },
+  "auth": { "username": "$util.escapeJavaScript($context.authorizer.claims['cognito:username'])" },
   "body": $input.json('$')
 }
 ```
@@ -43,7 +43,7 @@ del front (`docs/api-contrato.md` del repo del front). **Pendiente de revisión 
 `POST /payments/{id}/finish` → `finish-payment`
 ```velocity
 {
-  "auth": { "username": "$context.authorizer.claims['cognito:username']" },
+  "auth": { "username": "$util.escapeJavaScript($context.authorizer.claims['cognito:username'])" },
   "paymentId": "$util.escapeJavaScript($input.params('id'))",
   "body": $input.json('$')
 }
@@ -52,7 +52,7 @@ del front (`docs/api-contrato.md` del repo del front). **Pendiente de revisión 
 `GET /payments/{id}` → `get-payment`
 ```velocity
 {
-  "auth": { "username": "$context.authorizer.claims['cognito:username']" },
+  "auth": { "username": "$util.escapeJavaScript($context.authorizer.claims['cognito:username'])" },
   "paymentId": "$util.escapeJavaScript($input.params('id'))"
 }
 ```
@@ -60,7 +60,7 @@ del front (`docs/api-contrato.md` del repo del front). **Pendiente de revisión 
 `GET /payments` → `get-payment`
 ```velocity
 {
-  "auth": { "username": "$context.authorizer.claims['cognito:username']" }
+  "auth": { "username": "$util.escapeJavaScript($context.authorizer.claims['cognito:username'])" }
 }
 ```
 

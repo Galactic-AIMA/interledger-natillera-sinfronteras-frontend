@@ -179,3 +179,18 @@ Prompts **literales**, en orden. Las capturas de pantalla adjuntas se marcan com
 
 ### 37
 > Falto que subieras los curls actualizados al repo, subelos al repo y pasamelos por chat tambien
+
+### 38
+> Ve gestionando para conectarte por AWS CLI
+
+### 39
+> Sí, aplica todos los arreglos con AWS CLI, guarda el script en infra/ y despliega a dev. Luego prueba que respondan 401 sin token.
+
+### 40
+> Puede que Duvan tambien esté modificando el codigo para que lo revises
+
+### 41
+> Como vas?
+
+### 42
+> Como vas?
