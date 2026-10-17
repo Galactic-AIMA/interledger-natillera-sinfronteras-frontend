@@ -100,13 +100,13 @@ aws logs tail /aws/lambda/<nombre> --since 10m
    con la llave del cliente, sin guardar nada → `{ debitAmount, receiveAmount }`.
 4. Revisar y desplegar lo que entregue Henry (préstamos) y el PR de multi-natillera de Camilo.
 
-### Camilo (CLI + app)
+### Camilo (app; **sin acceso a la CLI de AWS** por ahora — solo David despliega)
 1. **Varias natilleras (bloque A):**
    - Trae `david` a `feat/natilleras-multi`: `git merge origin/david`. Hay conflicto en
      `infra/deploy-natilleras.sh`: **conserva los bloques `Logs` y `Secrets`** de la política.
    - Corre `npm test`, recompila y abre el PR a `david`. David lo revisa.
-   - Despliégalo **tú** con `infra/deploy-natilleras.sh`, avisando antes: tarda ~30–40 min.
-     No toca pagos ni préstamos.
+   - ✅ PR #8 fusionado en `david`. **Lo despliega David** con `infra/deploy-natilleras.sh` (~30–40 min);
+     Camilo prueba `GET /natilleras` y el cambio de natillera desde la app cuando David avise.
 2. **Prueba real de aporte** desde la app (o `CURLS.md` §3):
    - `prueba3` se une a "Familia Ciro" (`FAMILIA-Z9BR-J4TX`).
    - Hace un aporte en **COP** (moneda del fondo) y aprueba con la cuenta dueña de la wallet de `prueba3`.
