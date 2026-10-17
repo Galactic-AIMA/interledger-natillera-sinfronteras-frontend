@@ -1,5 +1,11 @@
 # Coordinación del equipo — cómo trabajar en paralelo sin pisarnos
 
+> **🧊 Back congelado (2026-10-17).** Este repo ya no recibe cambios: el código pasa a `backend/` del repo único
+> (el del front, que se renombra a `interledger-natillera-sin-fronteras`, con `git subtree` y la historia completa).
+> Cualquier arreglo, por ejemplo de la prueba de préstamos fase 2, se hace en `backend/` del repo único.
+> Lo ya desplegado en AWS no cambia: los scripts de `infra/` corren igual desde `backend/`.
+
+
 Vigente desde 2026-10-17 (madrugada). Estado detallado: [MEMORY.md](../MEMORY.md) → "Foto al 2026-10-17".
 Requests de prueba: [CURLS.md](CURLS.md). Qué pasó esta noche: [REPORTE-DUVAN.md](REPORTE-DUVAN.md).
 

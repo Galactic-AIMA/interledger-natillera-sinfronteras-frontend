@@ -10,7 +10,7 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
 |---|---|---|---|
 | Claude Code (app de escritorio) | Claude Opus 5.5 | David Ciro | Plan de pago de Claude (suscripción); consumo de créditos: _por completar_ |
 | Claude Code (app de escritorio) | Claude Opus 5.5 | Camilo | Plan de pago de Claude (suscripción) |
-| _(Duvan: agregar si usó alguna herramienta de IA)_ | | Duvan Jaramillo | |
+| Gemini | — | Duvan Jaramillo | Consultas puntuales mientras escribía la base de los handlers (poco uso); esa base luego se mejoró con Claude Code |
 | Claude Code (app de escritorio) | Claude Opus 5.5 | Henry Taborda (front, apoyo al back) | Plan de pago de Claude (suscripción) |
 
 ## Where and How We Used AI
@@ -114,7 +114,8 @@ Los commits hechos con IA llevan `Co-Authored-By: Claude` en el historial de git
 
 - **Arquitectura y diseño de flujos** (draw.io, 13 flujos y tablas): el equipo, sin IA.
 - **Handlers de las Lambdas en TypeScript** (`app/src/handlers/*`, rama `duvdev`): Duvan Jaramillo.
-  _(Duvan: confirmar si usó IA en algún archivo.)_
+  La base es de Duvan; consultó a Gemini en pocos puntos. Después el equipo la mejoró con Claude Code
+  (por ejemplo `deploy/payments/src/start-payment-duvan.ts`, con sus `[fix]` marcados).
 - **Montaje real en AWS:** David creó a mano en la consola los siguientes recursos y probó el registro y
   el login de punta a punta:
   - cuenta, MFA y budget;
