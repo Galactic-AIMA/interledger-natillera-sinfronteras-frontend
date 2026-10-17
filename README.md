@@ -40,17 +40,15 @@ App ──GET /payments/{id}──▶ estado final (pantalla 30 → resultado)
 
 ## Qué funciona contra el backend real
 
-Con sesión iniciada, **todas las funciones llaman al backend real** (`EXPO_PUBLIC_REAL_METHODS` en `eas.json`); ya no se
-mezclan datos de ejemplo con la plata de verdad.
+Con sesión iniciada, la app llama al backend real en todo menos en **Metas** (`EXPO_PUBLIC_REAL_METHODS` en `eas.json`);
+no se mezclan datos de ejemplo con la plata de verdad. Que una ruta responda 401 sin sesión solo dice que existe: lo
+que cuenta es la prueba con sesión iniciada en el APK y la Test Wallet.
 
-| Funciona de punta a punta (Cognito + API Gateway + Lambda + Test Wallet) | Llama al back, que aún no tiene la ruta |
+| Estado (17/10) | Qué |
 |---|---|
-| Registro y entrada (Cognito), perfil | Préstamos fase 2: permiso de cobro de las cuotas y desembolso |
-| Crear natillera, invitar con código y unirse | Aporte mensual automático (grant recurrente) |
-| Cuentas guardadas | |
-| Pagar a una persona y poner la cuota, con aprobación en la Test Wallet y vista previa de la quote | |
-| Préstamos fase 1: simular, pedir, ver mi préstamo, solicitudes de la tesorera y rechazar | |
-| Metas: los aportes a una colecta son pagos reales; la meta se guarda en el celular | |
+| Probado de punta a punta (Cognito + API Gateway + Lambda + Test Wallet) | Registro y entrada, perfil, crear natillera y poner la cuota aprobando en la Test Wallet (aporte de 50.000 COP, 17/10 04:03) |
+| Desplegado; falta la prueba completa con sesión en el APK | Unirse con código, cuentas guardadas, pagar a una persona con vista previa de la quote, préstamos fase 1 (simular, pedir, mi préstamo, solicitudes, rechazar), préstamos fase 2 (permiso de cobro de las cuotas y desembolso) y cuota automática (permiso recurrente y «Cobrar ahora») |
+| Solo en el celular, sin backend | Metas: la meta y su avance viven en la memoria del teléfono y se pierden al cerrar la app (`src/api/goalStore.ts`). Los aportes a una colecta sí son pagos reales con Open Payments |
 
 Cuando una ruta todavía no existe, la app lo dice («todavía no está lista en el servidor, no salió plata») en vez de
 mostrar un resultado inventado. Si la persona está en varias natilleras, los préstamos y las solicitudes son siempre
