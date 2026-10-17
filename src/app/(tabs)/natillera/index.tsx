@@ -1,7 +1,7 @@
 import { useLocalSearchParams } from 'expo-router';
 
 import { useMyNatillera } from '@/api';
-import { Screen } from '@/components';
+import { BrandSymbol, Screen } from '@/components';
 import { HomeNatillera } from '@/features/natillera/HomeNatillera';
 import { InvitedToNatillera } from '@/features/natillera/InvitedToNatillera';
 import { NoNatillera } from '@/features/natillera/NoNatillera';
@@ -11,7 +11,7 @@ export default function ScreenNatilleraIndex() {
   const { code } = useLocalSearchParams<{ code?: string }>();
   const { data: natillera, isLoading, isError } = useMyNatillera();
 
-  if (isLoading) return <Screen title="Mi natillera" inTabs>{null}</Screen>;
+  if (isLoading) return <Screen title="Mi natillera" headerLeft={<BrandSymbol />} inTabs>{null}</Screen>;
   // Con un código, la invitación va primero aunque ya tenga natillera: puede unirse a varias.
   if (code) return <InvitedToNatillera code={code} />;
   // Si falló la carga, HomeNatillera pinta el error con reintento (no confundir con «sin natillera»).
