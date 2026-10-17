@@ -1,3 +1,4 @@
+export { AnimatedSplash, SLOGAN } from './AnimatedSplash';
 export { AppText, type AppTextProps } from './AppText';
 export { Button } from './Button';
 export { Card } from './Card';

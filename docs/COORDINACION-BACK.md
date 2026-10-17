@@ -1,5 +1,11 @@
 # Coordinación front ↔ back (2026-10-16 ~16:00)
 
+> **Actualización ~22:00 (rama `david` `dc3a428`, API probada por curl):**
+> - **Pagos listos en AWS:** `POST /payments`, `GET /payments`, `GET /payments/{id}`, `POST /payments/{id}/finish` responden 401 sin token (existen y tienen autorizador) y `GET /payments/{id}/return` (opción B, pública) responde. Primer inicio de pago real verificado por David (`melos` COP → `f9a1abde` EUR).
+> - **El front ya es compatible con la opción B:** la billetera vuelve a `return-payment`, que finaliza y redirige a `natillera://retorno?paymentId=…&result=ok|rejected|failed|pending`. La 30 llama `finish` sin `interact_ref`; como el pago ya no está `pending`, el back devuelve el estado (idempotente) y la 30 consulta hasta el final. `rejected` ya está en `WALLET_REJECTIONS`.
+> - **`GET /me` y `GET /natilleras/mine`:** las cubre el **bloque A de Camilo** (`feat/natilleras`, ya fusionado en `david`: perfil, verificar billetera, cuentas guardadas, crear/unirse/ver natillera, invitación; `infra/deploy-natilleras.sh`). La versión que había escrito Henry se descartó por duplicada (PR #1 cerrado). Único ajuste que faltaba: `GET /me` devolvía `userId = sub` y la app lo compara con `members[].userId` (username) → PR https://github.com/duvanjaramillomarin/interterledger-natillera-sin-fronteras-backend/pull/2 (rama `feat/me-userid-username`, revisor Ciro, quien despliega con AWS CLI). `start-payment` lo lleva Duvan.
+> - **Luego, en el front (Camilo):** `EXPO_PUBLIC_REAL_METHODS` con `getMe,getMyNatillera` y las demás rutas del bloque A ya desplegadas, más `startPayment,finishPayment,getPayment`; `EXPO_PUBLIC_AUTH_TOKEN_TYPE=id`.
+
 > **Actualización ~17:15:** el PR del front ya está en `main` y la app tiene modo híbrido: cada función pasa a real cuando su ruta exista (`EXPO_PUBLIC_REAL_METHODS`). Para el pago real hacen falta, con estos nombres exactos, `POST /payments`, `POST /payments/{id}/finish` y `GET /payments/{id}` (hoy solo existe `/start-payment`). Si prefieren otros nombres, avisen: se cambian solo en `src/api/httpApi.ts`.
 >
 > **Actualización ~17:00 (rama `david` `4d38582`, API probada por curl):**
