@@ -14,7 +14,7 @@
    y los tres anillos del logo como hilo visual (un anillo por país, solo se sostienen juntos). */
 :root{
   --fondo:#F5F6FA; --tinta:#1A1B4B; --indigo2:#3F4C9A; --verde:#2F6F63; --menta:#A7C9B9;
-  --menta-suave:#E6EFEA; --gris:#5F626B; --linea:#DDE1EA; --blanco:#FFFFFF; --billetera:#4A0E68;
+  --menta-suave:#E6EFEA; --alerta:#B5543F; --gris:#5F626B; --linea:#DDE1EA; --blanco:#FFFFFF; --billetera:#4A0E68;
   --noche:#12133A; --lila:#9AA6F0; --sobre-noche:#F5F6FA;
   --f-titulo:"Gloock",Georgia,"Times New Roman",serif;
   --f-texto:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
@@ -25,7 +25,7 @@
 /* Modo oscuro: mismas tintas, noche profunda con lila y menta; las pantallas de la app quedan claras y resaltan. */
 html[data-theme="dark"]{
   --fondo:#0E1030; --tinta:#F5F6FA; --indigo2:#9AA6F0; --verde:#7FC3AE; --menta:#A7C9B9;
-  --menta-suave:#16304A; --gris:#AEB2D0; --linea:#2B2E66; --blanco:#181A4A; --noche:#080920;
+  --menta-suave:#16304A; --alerta:#F2A28E; --gris:#AEB2D0; --linea:#2B2E66; --blanco:#181A4A; --noche:#080920;
   --bisel:#34377F; --ilp-bg:#262A75; --luego-bg:#23266B; --anillo1:#F5F6FA; --anillo2:#A7C9B9; --anillo3:#9AA6F0;
   color-scheme:dark;
 }
@@ -199,9 +199,37 @@ body:hover .hud,.hud:focus-within{opacity:1}
 .incl .chip{padding:16px 20px;font-size:21px}.incl .chip b{font-size:29px}
 .incl .kicker{margin-bottom:-8px}
 
+
+/* 2 · Lo que se está perdiendo */
+.h-prob{max-width:18ch;font-size:76px}
+.prob{display:grid;grid-template-columns:1fr 600px;gap:40px;align-items:center;margin-top:auto}
+.males{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:22px}
+.males li{display:grid;grid-template-columns:56px 1fr;gap:20px;align-items:start}
+.males .ico{width:56px;height:56px;padding:8px;border-radius:16px;background:var(--menta-suave);box-sizing:border-box}
+.males b{display:block;font-family:var(--f-titulo);font-weight:400;font-size:36px;line-height:1.1;color:var(--tinta)}
+.males p{margin:6px 0 0;font-size:22px;line-height:1.38;color:var(--gris);max-width:40ch}
+.giro{width:600px;height:496px;overflow:visible;margin-top:-40px}
+.giro .t1{font-family:var(--f-titulo);font-size:28px;fill:var(--tinta)}
+.giro .t2{font-family:var(--f-num);font-size:14px;letter-spacing:.06em;fill:var(--gris)}
+.giro .t3{font-family:var(--f-texto);font-weight:700;font-size:20px;fill:var(--alerta)}
+.draw .giro{animation:aparece .7s cubic-bezier(.2,.8,.2,1) both;animation-delay:.35s}
+
+/* 3 · Figuras de la familia */
+.socio{display:flex;flex-direction:column;align-items:flex-start;gap:18px;padding-top:26px}
+.socio .datos{display:flex;flex-direction:column;gap:8px;min-width:0}
+.socio .quien{color:var(--tinta)}
+.avatar{width:150px;height:150px;border-radius:50%;border:5px solid currentColor;overflow:hidden;box-sizing:border-box;
+  background:color-mix(in srgb,currentColor 16%,var(--blanco))}
+.avatar-svg{display:block;width:100%;height:100%}
+.ojos{transform-box:fill-box;transform-origin:center;animation:parpadeo 5s infinite}
+.socio:nth-child(2) .ojos{animation-delay:1.7s}.socio:nth-child(3) .ojos{animation-delay:3.1s}
+@keyframes parpadeo{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+.draw .avatar{animation:saluda .7s cubic-bezier(.2,1.5,.4,1) both;animation-delay:calc(.35s + var(--i,0)*.15s)}
+@keyframes saluda{from{opacity:0;transform:scale(.55) rotate(-12deg)}}
+
 /* Animaciones breves de entrada (≤ .7 s por elemento, escalonadas con --i) */
 .draw .tel,.draw .billetera{animation:telSube .65s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.12s + var(--i,0)*.12s)}
-.draw .socio,.draw .cifra,.draw .nodo,.draw .chip,.draw .viene .card,.draw .persona,.draw .paso .cap,.draw .lista li,.draw .sello,.draw .mas,.draw .duo figcaption,.draw .frase,.draw .kicker,.draw h2,.draw .lead{
+.draw .socio,.draw .cifra,.draw .nodo,.draw .chip,.draw .viene .card,.draw .persona,.draw .paso .cap,.draw .lista li,.draw .males li,.draw .sello,.draw .mas,.draw .duo figcaption,.draw .frase,.draw .kicker,.draw h2,.draw .lead{
   animation:aparece .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.05s + var(--i,0)*.09s)}
 .draw .cuaderno{animation:cae .7s cubic-bezier(.2,.9,.3,1.2) both;animation-delay:.35s}
 .draw .conector,.draw .flecha{animation:aparece .4s ease both;animation-delay:calc(.25s + var(--i,0)*.09s)}
@@ -211,7 +239,7 @@ body:hover .hud,.hud:focus-within{opacity:1}
 @keyframes cae{from{opacity:0;transform:translateY(-30px) rotate(-4deg)}}
 @keyframes enfoca{from{opacity:0;filter:blur(6px)}}
 @media (prefers-reduced-motion:reduce){
-  .draw *{animation:none!important}
+  .draw *{animation:none!important}.ojos{animation:none}
   .draw .rings .r,.draw .rise{animation:none}.slide{transition:none}.envivo i{animation:none}
 }
 </style>
@@ -232,6 +260,44 @@ body:hover .hud,.hud:focus-within{opacity:1}
       <div class="pie"><span>Hackatón Open Payments · Interledger</span><span>Medellín · 17 oct 2026</span></div>
     </section>
 
+    <!-- 2 · Lo que se está perdiendo -->
+    <section class="slide" aria-label="Lo que se está perdiendo">
+      <div class="pad">
+        <div class="kicker">Lo que se está perdiendo</div>
+        <h2 class="h-prob">La natillera se está quedando sin familia.</h2>
+        <div class="prob">
+          <ul class="males">
+            <li style="color:var(--indigo2)"><svg viewBox="0 0 48 48" aria-hidden="true" class="ico"><path d="M24 6 v6 M14 14 C14 24 34 24 34 14 M10 42 c0-10 6-16 14-16 s14 6 14 16 M17 34 h14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Se apaga una tradición</b><p>La familia se regó por el mundo y la natillera de diciembre ya casi no se arma.</p></div></li>
+            <li style="color:var(--verde)"><svg viewBox="0 0 48 48" aria-hidden="true" class="ico"><path d="M24 40 C10 31 6 24 6 17 a9 9 0 0 1 18-3 a9 9 0 0 1 18 3 c0 7-4 14-18 23 Z" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Reunir plata se volvió difícil</b><p>Ayudar a un familiar enfermo o celebrarle el cumpleaños a la abuela termina en mil mensajes, giros sueltos y nadie sabe cuánto hay.</p></div></li>
+            <li style="color:var(--alerta)"><svg viewBox="0 0 48 48" aria-hidden="true" class="ico"><path d="M8 16 h32 v22 H8 Z M8 22 h32 M30 30 h4 M20 6 l-6 10 M28 6 l6 10" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>Cada envío se come una tajada</b><p>Comisiones y cambio de moneda cuando nos mandan plata, o cuando les mandamos a los hijos que estudian afuera. La familia termina con menos.</p></div></li>
+          </ul>
+          <svg class="giro" viewBox="0 0 520 430" role="img" aria-label="La plata viaja de allá para acá y en el camino se le caen monedas por comisiones y cambio de moneda">
+  <path id="arco" d="M92 250 C 180 50, 340 50, 428 250" fill="none" style="stroke:var(--linea)" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 14"/>
+  <g>
+    <g><circle r="15" style="fill:var(--verde)"/><circle r="9" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      <animateMotion dur="3.2s" repeatCount="indefinite" begin="0s"><mpath href="#arco"/></animateMotion>
+      <animateTransform attributeName="transform" type="scale" values="1;1;.62;.62" keyTimes="0;.42;.58;1" dur="3.2s" repeatCount="indefinite" additive="sum" begin="0s"/></g>
+    <g><circle r="15" style="fill:var(--verde)"/><circle r="9" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      <animateMotion dur="3.2s" repeatCount="indefinite" begin="1.07s"><mpath href="#arco"/></animateMotion>
+      <animateTransform attributeName="transform" type="scale" values="1;1;.62;.62" keyTimes="0;.42;.58;1" dur="3.2s" repeatCount="indefinite" additive="sum" begin="1.07s"/></g>
+    <g><circle r="15" style="fill:var(--verde)"/><circle r="9" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="2"/>
+      <animateMotion dur="3.2s" repeatCount="indefinite" begin="2.13s"><mpath href="#arco"/></animateMotion>
+      <animateTransform attributeName="transform" type="scale" values="1;1;.62;.62" keyTimes="0;.42;.58;1" dur="3.2s" repeatCount="indefinite" additive="sum" begin="2.13s"/></g>
+    <circle cx="260" cy="104" r="8" style="fill:var(--alerta)"><animate attributeName="cy" values="104;330" dur="1.6s" repeatCount="indefinite" begin=".4s"/><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite" begin=".4s"/></circle>
+    <circle cx="250" cy="104" r="6" style="fill:var(--alerta)"><animate attributeName="cy" values="104;330" dur="1.6s" repeatCount="indefinite" begin="1.2s"/><animate attributeName="opacity" values="1;0" dur="1.6s" repeatCount="indefinite" begin="1.2s"/></circle>
+  </g>
+  <g><circle cx="92" cy="250" r="62" style="fill:var(--blanco);stroke:var(--indigo2)" stroke-width="5"/>
+    <text x="92" y="248" text-anchor="middle" class="t1">Allá</text><text x="92" y="272" text-anchor="middle" class="t2">USD · EUR</text></g>
+  <g><circle cx="428" cy="250" r="62" style="fill:var(--blanco);stroke:var(--verde)" stroke-width="5"/>
+    <text x="428" y="248" text-anchor="middle" class="t1">Aquí</text><text x="428" y="272" text-anchor="middle" class="t2">COP</text></g>
+  <path d="M196 352 h128" style="stroke:var(--alerta)" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 8"/>
+  <text x="260" y="390" text-anchor="middle" class="t3">Se queda en el camino:</text>
+  <text x="260" y="416" text-anchor="middle" class="t2">comisiones y cambio de moneda</text>
+</svg>
+        </div>
+      </div>
+    </section>
+
     <!-- 2 · Doña Rosa -->
     <section class="slide" aria-label="Doña Rosa">
       <div class="pad">
@@ -239,9 +305,9 @@ body:hover .hud,.hud:focus-within{opacity:1}
         <h2>Ella es Doña Rosa. Su natillera vive en un cuaderno.</h2>
         <div class="cuaderno" aria-hidden="true"><b>Natillera · octubre</b>Rosa ✓ $50.000<br>Luz ¿giro? <s>$50.000</s><br>Andrés … debe<br>Total: ¿?</div>
         <div class="familia">
-          <div class="socio" style="color:var(--tinta)"><span class="dot"></span><span class="quien">Doña Rosa</span><span class="donde">Medellín, Colombia · la tesorera</span><span class="mon">Pesos · COP</span></div>
-          <div class="socio" style="color:var(--verde)"><span class="dot"></span><span class="quien" style="color:var(--tinta)">Luz</span><span class="donde">Estados Unidos</span><span class="mon">Dólares · USD</span></div>
-          <div class="socio" style="color:var(--indigo2)"><span class="dot"></span><span class="quien" style="color:var(--tinta)">Andrés</span><span class="donde">España</span><span class="mon">Euros · EUR</span></div>
+          <div class="socio" style="color:var(--tinta)"><div class="avatar"><svg class="avatar-svg" viewBox="0 0 120 120" aria-hidden="true"><defs><clipPath id="av-rosa"><circle cx="60" cy="60" r="60"/></clipPath></defs><g clip-path="url(#av-rosa)"><path d="M16 124 C20 94 40 84 60 84 C80 84 100 94 104 124 Z" fill="currentColor"/><path d="M50 84 Q60 94 70 84" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><rect x="52" y="64" width="16" height="22" rx="7" fill="#C98E6B"/><ellipse cx="60" cy="50" rx="20" ry="23" fill="#C98E6B"/><circle cx="46.5" cy="58" r="3.4" fill="#E36F5C" opacity=".28"/><circle cx="73.5" cy="58" r="3.4" fill="#E36F5C" opacity=".28"/><g class="ojos"><ellipse cx="52.5" cy="50" rx="2.3" ry="2.7" fill="#1A1B4B"/><ellipse cx="67.5" cy="50" rx="2.3" ry="2.7" fill="#1A1B4B"/></g><path d="M53.5 60.5 Q60 66 66.5 60.5" fill="none" stroke="#1A1B4B" stroke-width="2.3" stroke-linecap="round"/><circle cx="60" cy="23" r="10" fill="#D3D6DF"/><path d="M39 49 C37 30 48 25 60 25 C72 25 83 30 81 49 C78 38 70 33 60 33 C50 33 42 38 39 49 Z" fill="#D3D6DF"/><g fill="none" stroke="#1A1B4B" stroke-width="1.8"><circle cx="52.5" cy="50" r="6.6"/><circle cx="67.5" cy="50" r="6.6"/><path d="M59 49.5 h2"/></g><circle cx="39.5" cy="58" r="2.4" fill="#A7C9B9"/><circle cx="80.5" cy="58" r="2.4" fill="#A7C9B9"/></g></svg></div><div class="datos"><span class="quien">Doña Rosa</span><span class="donde">Medellín, Colombia · la tesorera</span><span class="mon">Pesos · COP</span></div></div>
+          <div class="socio" style="color:var(--verde)"><div class="avatar"><svg class="avatar-svg" viewBox="0 0 120 120" aria-hidden="true"><defs><clipPath id="av-luz"><circle cx="60" cy="60" r="60"/></clipPath></defs><g clip-path="url(#av-luz)"><path d="M35 52 C33 27 49 21 60 21 C73 21 88 28 85 52 L87 90 C78 95 42 95 33 90 Z" fill="#2B1B17"/><path d="M16 124 C20 94 40 84 60 84 C80 84 100 94 104 124 Z" fill="currentColor"/><path d="M50 84 Q60 94 70 84" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><rect x="52" y="64" width="16" height="22" rx="7" fill="#A86B4C"/><ellipse cx="60" cy="50" rx="20" ry="23" fill="#A86B4C"/><circle cx="46.5" cy="58" r="3.4" fill="#E36F5C" opacity=".28"/><circle cx="73.5" cy="58" r="3.4" fill="#E36F5C" opacity=".28"/><g class="ojos"><ellipse cx="52.5" cy="50" rx="2.3" ry="2.7" fill="#1A1B4B"/><ellipse cx="67.5" cy="50" rx="2.3" ry="2.7" fill="#1A1B4B"/></g><path d="M53.5 60.5 Q60 66 66.5 60.5" fill="none" stroke="#1A1B4B" stroke-width="2.3" stroke-linecap="round"/><path d="M39 47 C41 31 51 27 62 28 C72 29 80 36 81 47 C72 40 61 36 52 40 C46 42 42 44 39 47 Z" fill="#2B1B17"/><circle cx="39.5" cy="59" r="2.4" fill="#F2C14E"/><circle cx="80.5" cy="59" r="2.4" fill="#F2C14E"/></g></svg></div><div class="datos"><span class="quien">Luz</span><span class="donde">Estados Unidos</span><span class="mon">Dólares · USD</span></div></div>
+          <div class="socio" style="color:var(--indigo2)"><div class="avatar"><svg class="avatar-svg" viewBox="0 0 120 120" aria-hidden="true"><defs><clipPath id="av-andres"><circle cx="60" cy="60" r="60"/></clipPath></defs><g clip-path="url(#av-andres)"><path d="M16 124 C20 94 40 84 60 84 C80 84 100 94 104 124 Z" fill="currentColor"/><path d="M50 84 Q60 94 70 84" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3"/><rect x="52" y="64" width="16" height="22" rx="7" fill="#E0AC85"/><ellipse cx="60" cy="50" rx="20" ry="23" fill="#E0AC85"/><circle cx="46.5" cy="58" r="3.4" fill="#E36F5C" opacity=".28"/><circle cx="73.5" cy="58" r="3.4" fill="#E36F5C" opacity=".28"/><g class="ojos"><ellipse cx="52.5" cy="50" rx="2.3" ry="2.7" fill="#1A1B4B"/><ellipse cx="67.5" cy="50" rx="2.3" ry="2.7" fill="#1A1B4B"/></g><path d="M53.5 60.5 Q60 66 66.5 60.5" fill="none" stroke="#1A1B4B" stroke-width="2.3" stroke-linecap="round"/><path d="M40 46 C39 29 50 24 61 24 C73 24 82 31 80 46 C77 38 70 34 60 35 C51 35 44 39 40 46 Z" fill="#3A2A20"/><path d="M41 54 C42 71 50 77 60 77 C70 77 78 71 79 54 C76 63 70 67 60 67 C50 67 44 63 41 54 Z" fill="#3A2A20"/><path d="M54 61.5 Q60 65.5 66 61.5" fill="none" stroke="#F3E6DC" stroke-width="2.2" stroke-linecap="round"/></g></svg></div><div class="datos"><span class="quien">Andrés</span><span class="donde">España</span><span class="mon">Euros · EUR</span></div></div>
         </div>
       </div>
     </section>
@@ -428,19 +494,20 @@ body:hover .hud,.hud:focus-within{opacity:1}
   // Guion: lo que se dice en cada lámina (basado en docs/pitch/GUION.md de Henry) y segundos objetivo.
   var NOTAS=[
     {t:15,q:'Camilo',p:['(Esperar a que se dibujen los anillos.)','Somos Natillera sin Fronteras.','Tres anillos: una familia que vive en tres países y que solo se sostiene junta.','Lejos en distancia, juntos en el ahorro.']},
-    {t:30,q:'Henry',p:['Ella es Doña Rosa. Vive en Medellín.','Toda la vida ha hecho natillera con la familia.','Pero hoy la familia está regada: Luz vive en Estados Unidos, Andrés en España.','Cada uno gana en otra moneda. Y la natillera… sigue en un cuaderno.']},
-    {t:35,q:'Henry',p:['En 2025 entraron a Colombia más de 13 mil millones de dólares en remesas.','Casi uno de cada cinco hogares recibe plata de afuera.','¿Y saben cuál fue el mes récord? Diciembre. (pausa) El mismo mes en que se reparte la natillera.','Pero esa plata llega suelta: nadie sabe quién puso, quién debe ni cuánto hay.']},
+    {t:25,q:'Camilo',p:['La natillera es de las tradiciones más nuestras. Y se está perdiendo.','La familia se regó por el mundo. Cuando hay que reunir plata, para un familiar enfermo o para el cumpleaños de la abuela, es un enredo de mensajes y giros sueltos.','Y cada vez que nos mandan plata, o que les mandamos a los hijos que estudian afuera, las comisiones y el cambio se comen una tajada.','Esa plata que se queda en el camino es la economía de la familia.']},
+    {t:20,q:'Henry',p:['Ella es Doña Rosa. Vive en Medellín.','Toda la vida ha hecho natillera con la familia.','Pero hoy la familia está regada: Luz vive en Estados Unidos, Andrés en España.','Cada uno gana en otra moneda. Y la natillera… sigue en un cuaderno.']},
+    {t:25,q:'Henry',p:['En 2025 entraron a Colombia más de 13 mil millones de dólares en remesas.','Casi uno de cada cinco hogares recibe plata de afuera.','¿Y saben cuál fue el mes récord? Diciembre. (pausa) El mismo mes en que se reparte la natillera.','Pero esa plata llega suelta: nadie sabe quién puso, quién debe ni cuánto hay.']},
     {t:25,q:'Camilo',p:['Natillera sin Fronteras es la natillera de toda la vida, pero en el celular.','Cada uno pone su cuota desde su billetera, en su moneda. Al fondo le llegan pesos.','Y todos ven lo mismo. Ahorre en familia, aunque vivan en países distintos.','Se lo mostramos. (Pasar al celular proyectado.)']},
     {t:80,q:'Camilo',p:['DEMO EN VIVO en el celular. Si algo falla: «les muestro el mismo camino grabado esta mañana» y al video.','1. Andrés pone en euros; a la natillera le llegan pesos. Antes de tocar nada sabe cuánto sale, cuánto llega y cuánto cuesta. (Leer en voz alta los números que salgan.)','2. Le contamos en tres pasos qué va a pasar. Nadie se pierde.','3. Andrés da el permiso en su propia billetera.','4. Cuota puesta. Desde España, en menos de un minuto.']},
     {t:25,q:'Camilo',p:['Esto no es una maqueta: el pago de euros a pesos ya corrió de verdad con Open Payments, en la billetera de prueba de Interledger.','La app nunca guarda llaves ni toca la plata. Arma el pago y la persona da el permiso en su billetera.','Por debajo va Interledger con Open Payments: la tubería que mueve la plata entre billeteras y entre monedas.']},
     {t:15,q:'Henry',p:['Y Doña Rosa lo ve de una: el fondo sube en ese momento y Andrés queda al día.','En «¿Quién ya puso?» cada socio es un anillo: con color, al día; en gris, le falta la cuota.','Sin cuaderno y sin pantallazos.']},
-    {t:35,q:'Henry',p:['La hicimos pensando en Doña Rosa, no en un banquero.','Le hablamos de «usted», con frases cortas.','Un botón para agrandar la letra en todas las pantallas. Botones grandes, para el dedo.','Su billetera siempre le pide permiso. Si dice que no, no sale ni un peso. Y el costo se ve antes de pagar.','Y si tiene dudas, la Ayuda le contesta en sus palabras: ¿cuánto llevo?, ¿qué es el permiso?']},
-    {t:25,q:'Henry',p:['La natillera completa ya se está armando: los préstamos del fondo, que decide la tesorera, y las metas en familia.','Lo que sigue: la cuota que se pone sola cada mes, con un solo permiso.','Somos cuatro: Henry, marca y frontend; Camilo, integración y frontend; Duvan, arquitectura y pagos; Ciro, servidor y nube.','(Si vamos tarde, esta lámina es la que se recorta.)']},
+    {t:30,q:'Henry',p:['La hicimos pensando en Doña Rosa, no en un banquero.','Le hablamos de «usted», con frases cortas.','Un botón para agrandar la letra en todas las pantallas. Botones grandes, para el dedo.','Su billetera siempre le pide permiso. Si dice que no, no sale ni un peso. Y el costo se ve antes de pagar.','Y si tiene dudas, la Ayuda le contesta en sus palabras: ¿cuánto llevo?, ¿qué es el permiso?']},
+    {t:20,q:'Henry',p:['La natillera completa ya se está armando: los préstamos del fondo, que decide la tesorera, y las metas en familia.','Lo que sigue: la cuota que se pone sola cada mes, con un solo permiso.','Somos cuatro: Henry, marca y frontend; Camilo, integración y frontend; Duvan, arquitectura y pagos; Ciro, servidor y nube.','(Si vamos tarde, esta lámina es la que se recorta.)']},
     {t:25,q:'Camilo',p:['Este diciembre, Doña Rosa no va a sacar el cuaderno.','Va a abrir el celular. Va a ver que Luz puso. Que Andrés puso.','Y va a repartir la natillera con toda la familia… aunque estén lejos.','Natillera sin Fronteras. Lejos en distancia, juntos en el ahorro. Gracias. (Quietos dos segundos.)']}
   ];
 
   // Índice de escalonado para las animaciones de entrada.
-  ['.familia','.cifras','.tubo','.chips','.viene','.equipo','.lista','.camino','.sellos','.duo','.tels'].forEach(function(sel){
+  ['.familia','.males','.cifras','.tubo','.chips','.viene','.equipo','.lista','.camino','.sellos','.duo','.tels'].forEach(function(sel){
     document.querySelectorAll(sel).forEach(function(g){[].slice.call(g.children).forEach(function(el,i){el.style.setProperty('--i',i);
       [].forEach.call(el.querySelectorAll('.tel,.billetera,.cap,.grande,.num'),function(n){n.style.setProperty('--i',i)})})});
   });
