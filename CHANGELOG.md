@@ -7,11 +7,19 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - Cada versión nombra su commit; con `git show <tag>` se ve el estado exacto.
 
 ## [Sin publicar]
+
+## App (front)
+
+## [1.0.0] · 2026-10-17 09:10 · `4373242` · 🏁 entrega
+Versión de entrega de la hackatón; la APK de Android va adjunta a la Release `v1.0.0`. Interfaz igual a la `v0.11.0` más los sonidos de la `v0.12.0`.
+### Arreglado
+- Backend: `return-payment` vuelve a la app con una página en vez de un 302 (PR #16).
 ### Documentación
+- Pitch corto para presentar con el video y versión con el orden de la plantilla oficial (`4373242`).
+- Repo renombrado a `interledger-natillera-sin-fronteras` (`55fdf74`); prompts del video demo y de la entrega en `prompts/`.
 - Pitch en HTML con 13 láminas (5:15): «Lo que se está perdiendo», figuras de Doña Rosa, Luz y Andrés, «Una colecta con nombre propio» y «El impacto»; modo claro y oscuro y capturas incrustadas (`208e34d`, `d9fbab6`, `5f1f4c1`). Sin cambios en la app.
 - Tablero, `CLAUDE.md`, memoria del back y `AI_USAGE.md` al día (06:55).
 
-## App (front)
 
 ## [0.12.0] · 2026-10-17 06:50 · `4f6b68c` · 🔊 sonidos
 Única excepción a la interfaz congelada, por pedido de Camilo: solo sonido, sin cambio visual.
@@ -142,7 +150,8 @@ Versión final de la interfaz: desde aquí la interfaz queda **congelada** (ver 
 ### Agregado
 - Cognito y Lambda pre-signup probados de punta a punta (solo consulta el host de la Test Wallet).
 
-[Sin publicar]: https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/compare/v0.10.2...HEAD
+[Sin publicar]: https://github.com/Galactic-AIMA/interledger-natillera-sin-fronteras/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/Galactic-AIMA/interledger-natillera-sin-fronteras/compare/v0.12.0...v1.0.0
 [0.10.2]: https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/compare/v0.10.1...v0.10.2
 [0.10.1]: https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/compare/v0.10.0...v0.10.1
 [0.10.0]: https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/compare/v0.9.0...v0.10.0
