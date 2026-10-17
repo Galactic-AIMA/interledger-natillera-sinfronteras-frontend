@@ -366,3 +366,9 @@ contacto y un token de sesión de Cognito.
 
 ### 89
 > Sí: abre el PR david → main con el resumen de cambios y fusiónalo.
+
+### 90
+> [captura del mensaje de Henry sobre ramas y PRs] Bueno, te comento, debido a las normas de la hackathon hay que entregar un solo repo, entonces hay que fusionar los 2 repos de back y front. Este es el mensaje que le sale a Henry, creo que está desactualizado pero verifica
+
+### 91
+> Reporte de estado de Henry: [reporte: PR #12 del back con la declaración de IA de Duvan, ensayo del repo único con tsconfig exclude, reparto de pasos 1–5]
