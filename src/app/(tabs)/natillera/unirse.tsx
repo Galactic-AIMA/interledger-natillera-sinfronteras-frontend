@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button, Screen, TextField } from '@/components';
 import { BackButton } from '@/features/navegacion/BackButton';
 
-// Formato esperado: letras, guion y números (ej. ROSA-4821).
+// Formato esperado: letras, números y guiones (ej. FAMILIA-Z9BR-J4TX; los viejos, ROSA-4821).
 const CODE_PATTERN = /^[A-Z0-9]+(-[A-Z0-9]+)*$/;
 
 // 07 · Tengo una invitación — pide el código y lo manda a la pantalla 06.
@@ -19,7 +19,7 @@ export default function ScreenNatilleraUnirse() {
       return;
     }
     if (!CODE_PATTERN.test(normalized)) {
-      setError('El código solo lleva letras, números y un guion. Revíselo.');
+      setError('El código solo lleva letras, números y guiones. Revíselo.');
       return;
     }
     setError(null);
@@ -27,11 +27,11 @@ export default function ScreenNatilleraUnirse() {
   }
 
   return (
-    <Screen headerLeft={<BackButton />} title="Invitación" inTabs footer={<Button label="Unirme" onPress={submit} />}>
+    <Screen headerLeft={<BackButton />} title="Invitación" inTabs footer={<Button label="Buscar invitación" onPress={submit} />}>
       <TextField
         label="Código de la invitación"
-        placeholder="ROSA-4821"
-        helper="Se lo dio quien creó la natillera."
+        placeholder="Escriba el código"
+        helper="Se lo dio quien creó la natillera. Ej.: FAMILIA-Z9BR-J4TX"
         error={error}
         value={code}
         onChangeText={(text) => {

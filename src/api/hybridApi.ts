@@ -49,16 +49,14 @@ const methods = Object.fromEntries(
   (Object.keys(httpApi) as (keyof NatilleraApi)[]).filter((name): name is Method => name !== 'mode').map((name) => [name, pick(name)]),
 ) as Omit<NatilleraApi, 'mode'>;
 
-// Pagos reales: se activan con `startPayment` en EXPO_PUBLIC_REAL_METHODS; finish y get van al back
-// solo para los pagos que él creó.
-//  - P2P (pagar a una persona y colectas de Metas): siempre reales.
-//  - Cuota (`aporte`): real solo si la natillera también lo es (`getMyNatillera`), porque el back
-//    valida el `natilleraId` contra su tabla; con la natillera de ejemplo sigue de ejemplo.
-//  - Cuenta guardada: si `listAccounts` es real, el back la resuelve por `customWalletName`; si no,
-//    se manda la billetera de la cuenta de ejemplo (extensión de P0).
+// Pagos reales: P2P (pagar a una persona y colectas de Metas) con `startPayment` en EXPO_PUBLIC_REAL_METHODS.
+// La cuota (`aporte`) va real solo si la natillera también lo es (`getMyNatillera`): el back exige que la
+// natillera exista y que quien paga sea integrante. finish y get van al back solo para los pagos que él creó.
 const realPayments = realMethods.has('startPayment');
 const realNatillera = realMethods.has('getMyNatillera');
+// Con las cuentas guardadas en el back, el pago va por `customWalletName` y el back busca la billetera.
 const realAccounts = realMethods.has('listAccounts');
+// Mismo criterio para iniciar el pago y para la vista previa.
 const goesReal = (input: StartPaymentInput) => realPayments && (input.kind === 'p2p' || (input.kind === 'aporte' && realNatillera));
 const realPaymentIds = new Set<string>();
 // El back devuelve counterpartName vacío cuando se paga a una billetera directa (`walletAddress`):
@@ -66,8 +64,9 @@ const realPaymentIds = new Set<string>();
 const realNames = new Map<string, string>();
 const withName = (p: Payment): Payment => (p.counterpartName ? p : { ...p, counterpartName: realNames.get(p.paymentId) ?? 'Billetera externa' });
 
-// El back no tiene vista previa (`/payments/preview`): para un pago real, la de ejemplo mostraría tasas
-// inventadas, así que la pantalla dice «se calcula al confirmar» y la 28 pinta la quote real.
+// Vista previa: con `previewQuote` real va al back (si la ruta aún no existe, httpApi devuelve null).
+// Sin ella, para un pago real la de ejemplo mostraría tasas inventadas: null = «se calcula al confirmar»
+// y la 28 pinta la quote real.
 const demoPreview = demo('previewQuote');
 const previewHybrid = (input: StartPaymentInput) =>
   realMethods.has('previewQuote') ? httpApi.previewQuote(input) : goesReal(input) ? Promise.resolve(null) : demoPreview(input);
@@ -76,6 +75,7 @@ async function startHybridPayment(input: StartPaymentInput) {
   if (!goesReal(input)) return methods.startPayment(input);
   let body: StartPaymentInput = input;
   if (input.kind === 'p2p' && 'customWalletName' in input && !realAccounts) {
+    // Las cuentas guardadas siguen de ejemplo: el back recibe la billetera directa (extensión de P0).
     const account = (await mockApi.listAccounts()).find((a) => a.customWalletName === input.customWalletName);
     if (account) body = { kind: 'p2p', walletAddress: account.walletAddress, counterpartName: account.customWalletName, amount: input.amount };
   }
