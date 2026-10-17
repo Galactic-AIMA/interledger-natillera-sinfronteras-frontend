@@ -217,7 +217,7 @@ schedule = [
 | `natillera-records` | `natilleraID` | `id` | |
 | `natillera-loan-request` | `requestId` | — | status: pending \| approved \| rejected |
 | `Natillera-Loans-Records` | `loanId` | — | |
-| `Recurring-grants` | `grantId` | — | |
+| `Recurring-grants` | `grantId` | — | Implementada como `natillera-grants` (2026-10-17): sin tokens; el access token y la URL de manejo van en Secrets Manager (`natillera/grants/<grantId>`). Ver docs/API-PRESTAMOS.md |
 | `Loan-payments` | `loanId` | `n` | capital, interest, total, balanceAfter |
 
 Nota: en el diagrama conviven `natilleraId` y `natilleraID`; conviene unificar el nombre

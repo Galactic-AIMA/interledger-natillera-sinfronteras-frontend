@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Despliega préstamos, fase 1 (flujos 10, 11 y 13 sin Open Payments) con AWS CLI: tabla
-# natillera-loan-request con sus índices, permiso del rol, 5 Lambdas, rutas del API REST (VTL, mismo
-# patrón que infra/deploy-natilleras.sh) y stage. Idempotente. No toca las Lambdas de pagos ni del
-# bloque A: solo agrega una política inline al rol que ya usan.
+# Despliega préstamos (flujos 10, 11, 12B y 13) y la cuota automática (flujo 12) con AWS CLI: tablas
+# natillera-loan-request (con sus índices) y natillera-grants, permisos del rol, 10 Lambdas, rutas del API
+# REST (VTL, mismo patrón que infra/deploy-natilleras.sh) y stage. Idempotente. No toca las Lambdas de
+# pagos ni del bloque A: solo agrega dos políticas inline (prestamos-dynamo y cobros-op) al rol que ya usan.
+# El desembolso se completa con return-payment / finish-payment de pagos, sin cambios en ellas.
 #
 # Uso:  cd deploy/prestamos && npm install && npm test && npm run build && cd ../..
 #       AWS_PROFILE=natillera bash infra/deploy-prestamos.sh
@@ -18,6 +19,10 @@ AUTHORIZER_NAME="cognito_authorizer"
 NATILLERAS_TABLE="natillera-registration"
 RECORDS_TABLE="natillera-records"
 LOANS_TABLE="natillera-loan-request"
+GRANTS_TABLE="natillera-grants"        # fase 2 y cuota automática: grants recurrentes (sin tokens)
+PAYMENTS_TABLE="natillera-payments"    # la de pagos (David): el desembolso y los cobros se guardan ahí
+USERS_TABLE="user-info"
+SECRET_ID="natillera/open-payments-client"
 AUTHOR_INDEX="author-index"
 NATILLERA_INDEX="natillera-index"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -74,6 +79,19 @@ ensure_index() {
 ensure_index "$AUTHOR_INDEX" author
 ensure_index "$NATILLERA_INDEX" natilleraId
 
+log "Tabla $GRANTS_TABLE"
+if aws dynamodb describe-table --table-name "$GRANTS_TABLE" >/dev/null 2>&1; then
+  have="$(aws dynamodb describe-table --table-name "$GRANTS_TABLE" --query 'Table.KeySchema[].AttributeName' --output text | tr '\t' ' ')"
+  [ "$have" = "grantId" ] || { echo "La tabla $GRANTS_TABLE existe con llaves '$have' y se esperaba 'grantId'. Revisar antes de seguir."; exit 1; }
+  echo "ya existe ($have)"
+else
+  aws dynamodb create-table --table-name "$GRANTS_TABLE" --billing-mode PAY_PER_REQUEST \
+    --attribute-definitions AttributeName=grantId,AttributeType=S --key-schema AttributeName=grantId,KeyType=HASH \
+    --query 'TableDescription.TableStatus' --output text
+  aws dynamodb wait table-exists --table-name "$GRANTS_TABLE"
+  echo "creada"
+fi
+
 # ---------------------------------------------------------------- 2. Permisos del rol
 ROLE_ARN="$(aws lambda get-function-configuration --function-name start-payment --query Role --output text)"
 ROLE_NAME="${ROLE_ARN##*/}"
@@ -91,21 +109,48 @@ PYEOF
 aws iam put-role-policy --role-name "$ROLE_NAME" --policy-name prestamos-dynamo --policy-document "$(fpath "$TMP/policy.json")"
 echo "ok"
 
-# ---------------------------------------------------------------- 3. Lambdas
-"$PY" - "$TMP/env.json" "$NATILLERAS_TABLE" "$RECORDS_TABLE" "$LOANS_TABLE" "$AUTHOR_INDEX" "$NATILLERA_INDEX" <<'PYEOF'
+# Política propia de la fase 2 (regla 9 de docs/COORDINACION.md: otra inline con su nombre, no se tocan las demás).
+# Secretos: leer la llave del cliente y manejar solo los de cada grant (natillera/grants/*).
+log "Política inline cobros-op en el rol $ROLE_NAME"
+SM="arn:aws:secretsmanager:$AWS_REGION:$ACCOUNT:secret:natillera"
+"$PY" - "$TMP/cobros.json" "$T" "$SM" "$NATILLERAS_TABLE" "$RECORDS_TABLE" "$PAYMENTS_TABLE" "$GRANTS_TABLE" "$USERS_TABLE" <<'PYEOF'
 import json, sys
-out, nat, rec, loans, aidx, nidx = sys.argv[1:]
+out, t, sm, nat, rec, pay, grants, users = sys.argv[1:]
+json.dump({"Version": "2012-10-17", "Statement": [
+  {"Sid": "Grants", "Effect": "Allow", "Action": ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem"],
+   "Resource": [f"{t}/{grants}"]},
+  {"Sid": "Payments", "Effect": "Allow", "Action": ["dynamodb:GetItem", "dynamodb:PutItem"], "Resource": [f"{t}/{pay}"]},
+  {"Sid": "Users", "Effect": "Allow", "Action": ["dynamodb:Query", "dynamodb:GetItem"], "Resource": [f"{t}/{users}"]},
+  {"Sid": "Savings", "Effect": "Allow", "Action": ["dynamodb:PutItem"], "Resource": [f"{t}/{rec}"]},
+  {"Sid": "DisbursedTotal", "Effect": "Allow", "Action": ["dynamodb:UpdateItem"], "Resource": [f"{t}/{nat}"]},
+  {"Sid": "ClientKey", "Effect": "Allow", "Action": ["secretsmanager:GetSecretValue"], "Resource": [f"{sm}/open-payments-client*"]},
+  {"Sid": "GrantSecrets", "Effect": "Allow",
+   "Action": ["secretsmanager:CreateSecret", "secretsmanager:PutSecretValue", "secretsmanager:GetSecretValue"],
+   "Resource": [f"{sm}/grants/*"]}]}, open(out, "w"))
+PYEOF
+aws iam put-role-policy --role-name "$ROLE_NAME" --policy-name cobros-op --policy-document "$(fpath "$TMP/cobros.json")"
+echo "ok"
+
+# ---------------------------------------------------------------- 3. Lambdas
+BASE_URL="https://$API_ID.execute-api.$AWS_REGION.amazonaws.com/$STAGE"
+"$PY" - "$TMP/env.json" "$NATILLERAS_TABLE" "$RECORDS_TABLE" "$LOANS_TABLE" "$AUTHOR_INDEX" "$NATILLERA_INDEX" \
+  "$GRANTS_TABLE" "$PAYMENTS_TABLE" "$USERS_TABLE" "$SECRET_ID" "$BASE_URL" <<'PYEOF'
+import json, sys
+out, nat, rec, loans, aidx, nidx, grants, pay, users, secret, base = sys.argv[1:]
 json.dump({"Variables": {"INTEGRATION_MODE": "vtl", "NATILLERAS_TABLE": nat, "NATILLERA_RECORDS_TABLE": rec,
-  "LOAN_REQUESTS_TABLE": loans, "LOAN_AUTHOR_INDEX": aidx, "LOAN_NATILLERA_INDEX": nidx}}, open(out, "w"))
+  "LOAN_REQUESTS_TABLE": loans, "LOAN_AUTHOR_INDEX": aidx, "LOAN_NATILLERA_INDEX": nidx,
+  # Fase 2: la billetera del fondo vuelve a return-payment ($BASE_URL/payments/{id}/return), como en start-payment.
+  "GRANTS_TABLE": grants, "PAYMENTS_TABLE": pay, "USER_VIEW_TABLE": users, "OP_SECRET_ID": secret,
+  "RETURN_BASE_URL": base}}, open(out, "w"))
 PYEOF
 
-deploy_lambda() { # deploy_lambda nombre timeout
-  local name="$1" timeout="$2"
+deploy_lambda() { # deploy_lambda nombre timeout [memoria]
+  local name="$1" timeout="$2" memory="${3:-256}"
   log "Lambda $name"
   [ -f "$DIST/$name.zip" ] || { echo "Falta $DIST/$name.zip (npm run build en deploy/prestamos)"; exit 1; }
   if ! aws lambda get-function-configuration --function-name "$name" >/dev/null 2>&1; then
     aws lambda create-function --function-name "$name" --runtime nodejs22.x --handler index.handler \
-      --role "$ROLE_ARN" --zip-file "$(bpath "$DIST/$name.zip")" --timeout "$timeout" --memory-size 256 \
+      --role "$ROLE_ARN" --zip-file "$(bpath "$DIST/$name.zip")" --timeout "$timeout" --memory-size "$memory" \
       --environment "$(fpath "$TMP/env.json")" --query 'FunctionArn' --output text
     aws lambda wait function-active-v2 --function-name "$name"
     echo "creada"
@@ -117,11 +162,15 @@ deploy_lambda() { # deploy_lambda nombre timeout
   aws lambda update-function-code --function-name "$name" --zip-file "$(bpath "$DIST/$name.zip")" --query 'CodeSize' --output text
   aws lambda wait function-updated-v2 --function-name "$name"
   aws lambda update-function-configuration --function-name "$name" --handler index.handler --runtime nodejs22.x \
-    --timeout "$timeout" --memory-size 256 --environment "$(fpath "$TMP/env.json")" --query 'LastUpdateStatus' --output text
+    --timeout "$timeout" --memory-size "$memory" --environment "$(fpath "$TMP/env.json")" --query 'LastUpdateStatus' --output text
   aws lambda wait function-updated-v2 --function-name "$name"
 }
 for fn in simulate-loan list-loan-requests get-my-loans; do deploy_lambda "$fn" 10; done
-for fn in request-loan decide-loan; do deploy_lambda "$fn" 15; done
+deploy_lambda request-loan 15
+# Con Open Payments (fase 2 y cuota automática): más tiempo y memoria, como las de pagos.
+for fn in decide-loan start-repayment-grant finish-repayment-grant start-recurring finish-recurring charge-recurring-now; do
+  deploy_lambda "$fn" 25 512
+done
 
 # ---------------------------------------------------------------- 4. API Gateway (REST + VTL)
 AUTHORIZER_ID="$(aws apigateway get-authorizers --rest-api-id "$API_ID" --query "items[?name=='$AUTHORIZER_NAME'].id" --output text)"
@@ -200,12 +249,18 @@ BODY="\"body\": \$input.json('\$')"
 P_SIM="\"params\": { \"value\": \"\$util.escapeJavaScript(\$input.params('value'))\", \"assetCode\": \"\$util.escapeJavaScript(\$input.params('assetCode'))\", \"assetScale\": \"\$util.escapeJavaScript(\$input.params('assetScale'))\", \"installments\": \"\$util.escapeJavaScript(\$input.params('installments'))\" }"
 P_REQ="\"params\": { \"requestId\": \"\$util.escapeJavaScript(\$input.params('requestId'))\" }"
 P_NAT="\"params\": { \"natilleraId\": \"\$util.escapeJavaScript(\$input.params('natilleraId'))\" }"
+P_GRANT="\"params\": { \"grantId\": \"\$util.escapeJavaScript(\$input.params('grantId'))\" }"
 
 configure_route GET  /loans/simulate                      simulate-loan       "{ $AUTH, $P_SIM }"
 configure_route POST /loans/requests                      request-loan        "{ $AUTH, $BODY }"
 configure_route GET  /loans/requests                      list-loan-requests  "{ $AUTH, $P_NAT }"
 configure_route GET  /loans/mine                          get-my-loans        "{ $AUTH, $P_NAT }"
 configure_route POST /loans/requests/{requestId}/decision decide-loan         "{ $AUTH, $P_REQ, $BODY }"
+configure_route POST /loans/requests/{requestId}/repayment-grant start-repayment-grant  "{ $AUTH, $P_REQ, $BODY }"
+configure_route POST /loans/repayment/{grantId}/finish    finish-repayment-grant "{ $AUTH, $P_GRANT, $BODY }"
+configure_route POST /recurring                           start-recurring        "{ $AUTH, $BODY }"
+configure_route POST /recurring/{grantId}/finish          finish-recurring       "{ $AUTH, $P_GRANT, $BODY }"
+configure_route POST /recurring/{grantId}/charge-now      charge-recurring-now   "{ $AUTH, $P_GRANT }"
 
 # ---------------------------------------------------------------- 5. Implementar
 log "Implementar en el stage $STAGE"
@@ -213,4 +268,4 @@ aws apigateway create-deployment --rest-api-id "$API_ID" --stage-name "$STAGE" \
   --description "deploy-prestamos $(date -u +%FT%TZ)" --query id --output text
 echo
 echo "Listo: https://$API_ID.execute-api.$AWS_REGION.amazonaws.com/$STAGE"
-echo "Fase 2 pendiente: repayment-grant y el desembolso al aprobar (Open Payments)."
+echo "Sin token, las 10 rutas deben responder 401 (incluidas /recurring y /loans/repayment/{grantId}/finish)."

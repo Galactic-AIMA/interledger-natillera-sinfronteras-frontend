@@ -135,9 +135,9 @@ test('mi préstamo desembolsado (campos que escribe la fase 2): plan con pagadas
   await fails(requestLoan(ev('andres', { body: { natilleraId: 'n1', value: '100', assetCode: 'EUR', assetScale: 2, installments: 1 } })), 409, 'LoanAlreadyActive');
 });
 
-test('aprobar con cuotas autorizadas: 501 hasta que exista el desembolso (fase 2)', async () => {
+test('aprobar con cuotas autorizadas: el desembolso pide returnUrl (el resto, en fase2.test.ts)', async () => {
   rows(env.loansTable).push({ requestId: 'r2', natilleraId: 'n1', author: 'luz', amount: eur('1000'), installments: 2, status: 'pending', repaymentAuthorized: true, createdAt: '2026-10-17T10:00:00Z' });
-  await fails(decideLoan(ev('rosa', { params: { requestId: 'r2' }, body: { accepted: true } })), 501, 'DisbursementNotAvailable');
+  await fails(decideLoan(ev('rosa', { params: { requestId: 'r2' }, body: { accepted: true } })), 400, 'InvalidReturnUrl');
   await fails(decideLoan(ev('rosa', { params: { requestId: 'r2' }, body: {} })), 400, 'BadRequest');
 });
 

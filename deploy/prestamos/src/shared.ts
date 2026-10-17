@@ -50,6 +50,11 @@ export const withErrors =
       if (error instanceof HttpError) {
         status = error.statusCode;
         body = { error: error.error, message: error.message };
+      } else if (error?.name === 'OpenPaymentsClientError') {
+        // Fase 2: la billetera rechazó una llamada (por nombre, para no meter el SDK en las Lambdas de la fase 1).
+        console.log('Open Payments error', error.status, error.code, error.description);
+        status = 502;
+        body = { error: 'OpenPaymentsError', message: error.description || error.message };
       } else {
         console.log('Unhandled error', error);
         status = 500;
