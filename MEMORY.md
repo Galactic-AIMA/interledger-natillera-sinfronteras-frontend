@@ -170,6 +170,18 @@ Decisiones técnicas aún sin tomar:
   `'Bad Request'` (p. ej. un segundo PATCH sobre una interacción ya aceptada). **El 500 no significa
   que el pago falló: revisar `GET /payments/{id}`.** Monto fijo de débito en EUR hacia COP falló en
   la cotización (`non-positive receive amount`); monto fijo de recepción en COP sí funciona.
+- 2026-10-16 (~23:30 COL) · **Bloque A desplegado en `dev`** (código del front, rama
+  `back/feat-natilleras`, integrado en `david`): 3 tablas (`saved-accounts`, `natillera-registration`
+  + `invitation-index`, `natillera-records`), 8 Lambdas y 8 rutas VTL con Cognito (deployment `kzds5w`).
+  Corrección propia: código de invitación `PALABRA-XXXX-XXXX` (Crockford base32, ~2^40) en vez de
+  `PALABRA-1234` (adivinable). Probado: 401 sin token en las 8 rutas; con `ciro-demo-euro` funcionan
+  perfil, verificar wallet (y rechazo de host ajeno), cuentas guardadas, crear natillera (`Familia Ciro`,
+  wallet `cirocol`), invitación, unirse idempotente y 409 al crear otra.
+  `finish-payment` (v5 respaldo) y `return-payment` (v2) ahora tienen
+  `NATILLERA_RECORDS_TABLE=natillera-records`, solo por configuración.
+  **Duvan maneja `start-payment` por ahora: no correr `infra/deploy-payments.sh`** (la redespliega).
+  Su `start-payment` falla con `AccessDenied` al leer el secreto `prueba1`: lo bloquea una **SCP de la
+  organización** (no se arregla con IAM). Solución: un solo secreto (`OP_SECRET_ID`), región us-east-2.
 
 ### op-core
 - (vacío)

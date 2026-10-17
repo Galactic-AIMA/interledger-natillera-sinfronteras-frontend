@@ -89,8 +89,17 @@ Tablas nuevas: `saved-accounts` (`author` + `customWalletName`), `natillera-regi
 Revisión hasta ahora: el código está bien (identidad solo del token, allowlist de hosts, escrituras
 condicionales, no toca las Lambdas de pagos). Verificado en AWS: no existe ninguna de esas tablas,
 Lambdas ni rutas, así que no hay choques. `start-payment` ya lee `natillera-registration` con las
-mismas llaves (`natilleraId`, `walletAddress`, `integrants`), así que los aportes encajan. Falta:
-correr sus tests y desplegar. Además piden agregar `NATILLERA_RECORDS_TABLE` a
+mismas llaves (`natilleraId`, `walletAddress`, `integrants`), así que los aportes encajan.
+
+**Actualización (~23:30):** desplegado y probado en `dev`. Cambié el código de invitación a
+`PALABRA-XXXX-XXXX` (antes `PALABRA-1234` se podía adivinar). `finish-payment` y `return-payment`
+ya tienen `NATILLERA_RECORDS_TABLE` (solo configuración, con versión de respaldo).
+
+**Sobre tu `start-payment` y el secreto `prueba1`:** el `AccessDenied` viene de una **SCP de la
+organización AWS de la hackatón** (deny explícito), no de IAM: ningún permiso del rol lo puede saltar.
+`natillera/open-payments-client` sí se puede leer. Open Payments solo necesita **una** llave, la del
+cliente (la app); cada persona aprueba en su billetera. Usa `process.env.OP_SECRET_ID` y región
+`us-east-2`. Mientras tú manejes `start-payment`, nosotros no corremos `infra/deploy-payments.sh`. Además piden agregar `NATILLERA_RECORDS_TABLE` a
 `finish-payment` y `return-payment` para que los aportes (`kind:'aporte'`) sumen al fondo.
 
 Henry subirá préstamos igual, en `back/feat-prestamos`.
