@@ -454,3 +454,29 @@ Sí, fusiona el PR #9 en main y borra el worktree wt-fix-preview.
 ## 04:12 · sesión d72e18f7
 
 Sí, pon el guion de pitch-y-video.html igual a las notas de pitch.html de Camilo y vuelve a publicar el artefacto
+
+## 04:19 · sesión e6c1aee4
+
+<pasted_content id="d5ba">
+Henry, tu aporte de 50.000 de las 4:03 salió perfecto con el arreglo: la billetera ahora devuelve a la app en menos de 1 s. ¿Te salió el «Internal Server Error» esta vez?
+
+Lo de «Cirugía de la abuela Carmen» no es del back: la meta le paga a ilp.interledger-test.dev/carmen, y esa billetera no existe en la Test Wallet. Cámbiala por una billetera real (por ejemplo cirocol) o crea una cuenta carmen en COP.
+
+Y dos detalles de la app: la vista previa se llama en cada tecla (pon un debounce de unos 600 ms), y cuando el error diga “Could not get wallet address” muestra «La billetera de quien recibe no existe».
+</pasted_content id="d5ba">
+
+## 04:19 · sesión e6c1aee4
+
+que nos falta?
+
+## 04:25 · sesión e6c1aee4
+
+el 1 y 2 lo hace camilo pero despues de el 3 y 4 que lo hara ciro y haz tu el 6 que del 7 ya tenemos el curso y falta lo demas
+
+## 04:27 · sesión e6c1aee4
+
+lo de la imagen de dice ciro que hace falta'
+
+## 04:28 · sesión d72e18f7
+
+Sí, haz push de feat/natillera-real

@@ -13,6 +13,8 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | Claude (claude.ai con herramientas de código y subagentes) | Claude Opus 5.5 (subagentes: Sonnet 5.5 y Opus 5.5) | Henry | Revisión del repo, auditoría de verificación, pruebas, coordinación y ciberseguridad del carril `pagos`, y sus arreglos |
 | Claude (claude.ai, proyecto del equipo, con acceso al equipo de Henry) | Claude Opus 5.5 | Henry | Revisión de pendientes, integración de ramas, plan de sesiones paralelas, registro Cognito, recorridos automáticos de la app en modo demo (Playwright manejado por la IA), documentación de integración; también ejecutó en el equipo de Henry scripts de git para subir ramas a su fork |
 
+| IA de diseño para los bocetos de Figma | — | Equipo | Apoyo para generar los bocetos de las 35 pantallas, que luego el equipo ajustó (declarado el 2026-10-17) |
+
 (Agregar aquí cualquier otra herramienta que use el equipo: ChatGPT, Copilot, Gemini, Figma AI…)
 
 ## Where and How We Used AI
@@ -101,10 +103,11 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-17 | Camilo | Claude Code (Opus 5.5, escritorio) | Botón «Logs» visible por defecto (el barrido lo había dejado apagado): píldora con estado (punto verde o rojo), un segmento que abre el panel y otro que copia todo el registro al portapapeles sin abrirlo; si se oculta, se recuerda (también en web) y se vuelve a encender en Su cuenta; prueba en web | `src/features/registro/DevLogOverlay.tsx`, `src/features/registro/overlayPreference.ts`, `src/app/cuenta.tsx`, `prompts/2026-10-17-camilo-logs-visibles.md` |
 | 2026-10-17 | Camilo | Claude Code (Opus 5.5, escritorio) | Pitch al día con la app actual: capturas nuevas tomadas del emulador por adb (Mi natillera, ¿Quién ya puso?, Poner la cuota, letra grande, Ayuda), láminas 4, 5, 7, 8 y 9 actualizadas y roles del equipo | `docs/pitch/pitch.html`, `docs/pitch/pantallas/v2-*.png`, `prompts/2026-10-17-camilo-pitch-html.md` |
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Merge del pitch final de Camilo en `feat/natillera-real` y guion de `pitch-y-video.html` igualado a las notas de `pitch.html` (10 láminas, reparto y roles nuevos, cronómetro y horario ajustados); artefacto republicado | `docs/pitch/pitch-y-video.html`, `AI_USAGE.md` |
+| 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Cierre de la declaración de IA: bocetos de Figma con IA, Gemini de Duvan en el back, chequeo `ai-usage-check` en verde y curso marcado en el checklist | `AI_USAGE.md`, `MEMORY.md` |
 
 ## What We Did Ourselves
 
-- Idea del producto, reglas de la natillera y bocetos de las 35 pantallas en Figma (equipo). *Por confirmar: si los bocetos usaron IA.*
+- Idea del producto y reglas de la natillera (equipo). Los bocetos de las 35 pantallas en Figma se hicieron **con ayuda de IA** (ver «Tools Used»); el flujo, el contenido de cada pantalla y la revisión fueron del equipo.
 - Arquitectura del backend en draw.io (equipo back).
 - Idea de «Metas» (sugerencia recibida en la hackatón) y sus decisiones: dos modos, solo en el front, colecta con pago real y alcance (Camilo, respondiendo preguntas de la IA).
 - Decisiones de alcance, stack, autenticación y reparto del trabajo (Camilo y equipo, respondiendo preguntas de la IA).

@@ -99,8 +99,8 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 
 ## Checklist de entrega
 
-- [ ] Los 4 hicieron el curso de Platzi o la Guide to Open Payments
-- [ ] Declarar si los bocetos de Figma o el diagrama usaron IA
+- [x] Los 4 hicieron el curso de Platzi o la Guide to Open Payments
+- [x] Declarar si los bocetos de Figma o el diagrama usaron IA (Figma: con IA; diagrama draw.io: sin IA; 2026-10-17)
 - [ ] Pago de punta a punta con la Test Wallet grabado (el aporte real ya funciona en el emulador, 2026-10-17 ~02:51; falta grabarlo)
 - [ ] APK instalado en un Android real
 - [ ] `AI_USAGE.md` completo y `node scripts/ai-usage-check.mjs` limpio (front y back)
