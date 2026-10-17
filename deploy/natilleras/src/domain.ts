@@ -56,7 +56,10 @@ export const getMe = async (username: string, sub?: string) => {
   const { Item } = await dynamo.send(new GetCommand({ TableName: env.usersTable, Key: { source: username, id: 1 } }));
   if (!Item) throw new HttpError(404, 'UserNotFound', 'User not found');
   return {
-    userId: sub ?? username,
+    // userId = username, igual que members[].userId e integrants: la app los compara para armar
+    // «¿A nombre de quién?» (cuota y recurrente). El sub va aparte.
+    userId: username,
+    sub,
     username,
     displayName: (Item.displayName as string) || username,
     email: Item.email,

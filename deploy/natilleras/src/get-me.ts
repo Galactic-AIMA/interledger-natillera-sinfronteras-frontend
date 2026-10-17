@@ -1,4 +1,4 @@
-// GET /me → perfil de quien llama (fila de user-info + userId = sub).
+// GET /me → perfil de quien llama (fila de user-info + userId = username).
 import { getMe } from './domain';
 import { currentIdentity, withErrors } from './shared';
 

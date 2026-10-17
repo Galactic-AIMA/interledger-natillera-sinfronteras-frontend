@@ -95,7 +95,8 @@ test('sin usuario en el token → 401', async () => {
 
 test('GET /me devuelve el perfil normalizado', async () => {
   const me: any = await getMe(ev('rosa'));
-  assert.equal(me.userId, 'sub-rosa');
+  assert.equal(me.userId, 'rosa');
+  assert.equal(me.sub, 'sub-rosa');
   assert.equal(me.username, 'rosa');
   assert.equal(me.displayName, 'rosa');
   assert.equal(me.assetCode, 'COP');
