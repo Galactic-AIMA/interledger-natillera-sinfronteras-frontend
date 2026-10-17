@@ -7,6 +7,7 @@ import { AppText, Button, Card, Screen, TextField } from '@/components';
 import { WalletVerifier } from '@/features/natillera/WalletVerifier';
 import { currencyName } from '@/utils/money';
 import { BackButton } from '@/features/navegacion/BackButton';
+import { FirstTimeGuide } from '@/features/guia/FirstTimeGuide';
 
 // El back viejo solo deja una natillera por persona (409 AlreadyMember).
 const ONE_ONLY = 'Por ahora cada persona puede estar en una sola natillera. Pronto podrá tener varias.';
@@ -68,6 +69,7 @@ export default function ScreenNatilleraCrear() {
           {failure}
         </AppText>
       ) : null}
+      <FirstTimeGuide id="crear" />
     </Screen>
   );
 }

@@ -22,6 +22,11 @@ después del tamaño más grande vuelve al normal.
 
 ![Letra grande](pitch/pantallas/v3-letra-grande.png)
 
+**La app también le enseña.** La primera vez que entra a cada cosa (poner la cuota, pagar, pedir un préstamo…),
+la app le pregunta **«¿Le mostramos cómo se hace?»**. Toque **Sí, muéstreme** y verá los pasos uno por uno, con
+dibujos que se mueven. Toque **Ahora no** si ya sabe: no se lo vuelve a preguntar. Para verla otra vez, vaya a
+**Ayuda → Guías paso a paso**.
+
 ---
 
 ## 1. Crear su cuenta
@@ -148,7 +153,7 @@ Para ahorrar juntos para algo puntual.
 ## 11. Ayuda y su cuenta
 
 - **Ayuda** (pestaña de abajo): cuánto lleva ahorrado, qué es el costo del envío, qué es el permiso de la billetera,
-  cómo funciona el préstamo y el código de su natillera para compartirlo.
+  cómo funciona el préstamo, las **guías paso a paso** de cada proceso y el código de su natillera para compartirlo.
 - **Su cuenta** (botón arriba en Mi natillera): sus datos, su billetera y **Cerrar sesión**.
 
 ![Ayuda](pitch/pantallas/v3-ayuda.png)

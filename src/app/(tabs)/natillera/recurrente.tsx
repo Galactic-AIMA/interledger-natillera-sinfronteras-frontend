@@ -12,6 +12,7 @@ import { PasosRecurrente } from '@/features/pagos/recurrente/PasosRecurrente';
 import { palette, space } from '@/theme';
 import { formatAmount } from '@/utils/money';
 import { BackButton } from '@/features/navegacion/BackButton';
+import { FirstTimeGuide } from '@/features/guia/FirstTimeGuide';
 
 // 12 · Cuota automática (pagos recurrentes)
 export default function ScreenNatilleraRecurrente() {
@@ -165,6 +166,7 @@ export default function ScreenNatilleraRecurrente() {
           </Reveal>
         </>
       )}
+      <FirstTimeGuide id="recurrente" />
     </Screen>
   );
 }

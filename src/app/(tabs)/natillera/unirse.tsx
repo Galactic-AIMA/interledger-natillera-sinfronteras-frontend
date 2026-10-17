@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { Button, Screen, TextField } from '@/components';
 import { BackButton } from '@/features/navegacion/BackButton';
+import { FirstTimeGuide } from '@/features/guia/FirstTimeGuide';
 
 // Formato esperado: letras, números y guiones (ej. FAMILIA-Z9BR-J4TX; los viejos, ROSA-4821).
 const CODE_PATTERN = /^[A-Z0-9]+(-[A-Z0-9]+)*$/;
@@ -44,6 +45,7 @@ export default function ScreenNatilleraUnirse() {
         onSubmitEditing={submit}
         mono
       />
+      <FirstTimeGuide id="unirse" />
     </Screen>
   );
 }

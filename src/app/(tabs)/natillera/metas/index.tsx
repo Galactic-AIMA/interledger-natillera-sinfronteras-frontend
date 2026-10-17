@@ -6,6 +6,7 @@ import { isHybrid } from '@/api/hybridApi';
 import { AppText, Button, Card, Screen } from '@/components';
 import { GoalCard } from '@/features/metas/GoalCard';
 import { BackButton } from '@/features/navegacion/BackButton';
+import { FirstTimeGuide } from '@/features/guia/FirstTimeGuide';
 import { palette, space } from '@/theme';
 
 // 36 · Metas de la familia: ahorros con fecha y colectas (un viaje, un regalo, la cirugía de alguien).
@@ -46,6 +47,7 @@ export default function ScreenMetas() {
           ))}
         </View>
       )}
+      <FirstTimeGuide id="metas" />
     </Screen>
   );
 }
