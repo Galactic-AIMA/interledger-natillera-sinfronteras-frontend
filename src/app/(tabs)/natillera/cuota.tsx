@@ -5,7 +5,7 @@ import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Animated, { FadeIn, ReduceMotion } from 'react-native-reanimated';
 
 import { ApiError, useApi, useMe, useMyNatillera } from '@/api';
-import { AppText, Button, Card, Choice, InfoRow, LinkRow, Screen } from '@/components';
+import { AppText, BrandLoader, Button, Card, Choice, InfoRow, LinkRow, Screen } from '@/components';
 import { antesHref, encodeAmount } from '@/features/pagos/flow';
 import { Reveal } from '@/features/pagos/flujo/Reveal';
 import { palette, space } from '@/theme';
@@ -99,7 +99,7 @@ export default function ScreenNatilleraCuota() {
     >
       {loadingData ? (
         <View style={styles.center}>
-          <ActivityIndicator size="large" color={palette.primary} accessibilityLabel="Cargando" />
+          <BrandLoader size={72} />
         </View>
       ) : !natillera ? (
         <Card tone="soft">

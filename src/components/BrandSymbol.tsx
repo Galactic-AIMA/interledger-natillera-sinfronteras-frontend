@@ -32,12 +32,16 @@ export function RingMasks({ prefix }: { prefix: string }) {
   );
 }
 
+// El viewBox recorta el aire alrededor de los anillos para que se vea grande a tamaño de ícono.
+const TIGHT_VIEWBOX = '200 214 624 624';
+// Mismo recorte, centrado en el centroide de los tres anillos (512, 540): así gira sin cabecear.
+export const CENTERED_VIEWBOX = '200 228 624 624';
+
 /** Símbolo fijo de la marca (encabezados). Decorativo: el título de la pantalla ya dice dónde está. */
-export function BrandSymbol({ size = 36 }: { size?: number }) {
+export function BrandSymbol({ size = 36, viewBox = TIGHT_VIEWBOX }: { size?: number; viewBox?: string }) {
   const prefix = `brand-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
   return (
-    // El viewBox recorta el aire alrededor de los anillos para que se vea grande a tamaño de ícono.
-    <Svg width={size} height={size} viewBox="200 214 624 624" accessible={false} importantForAccessibility="no-hide-descendants">
+    <Svg width={size} height={size} viewBox={viewBox} accessible={false} importantForAccessibility="no-hide-descendants">
       <RingMasks prefix={prefix} />
       {BRAND_RINGS.map((ring, i) => (
         <Circle key={i} cx={ring.cx} cy={ring.cy} r={RING_RADIUS} fill="none" stroke={ring.color} strokeWidth={RING_STROKE} mask={`url(#${prefix}-${i})`} />
