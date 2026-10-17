@@ -20,7 +20,7 @@ Solo el dueño despliega lo suyo. Si necesitas cambiar algo de otra persona, pí
 | `pre-signup`, Cognito | **David** | consola (`deploy/pre-signup/index.mjs`) |
 | Bloque A: `get-me`, `verify-wallet`, `save-account`, `list-accounts`, `create-natillera`, `get-my-natillera`, `join-natillera`, `get-invitation` (+ multi) | **Camilo** | `infra/deploy-natilleras.sh` |
 | Préstamos: `simulate-loan`, `request-loan`, `list-loan-requests`, `get-my-loans`, `decide-loan` | **Henry** escribe, **David** despliega | `infra/deploy-prestamos.sh` |
-| Nueva `payments-quote` (`POST /payments/quote`) | **David** (Duvan no está) | `infra/deploy-payments.sh` |
+| Nueva `preview-payment` (`POST /payments/preview`) | **David** (Duvan no está) | `infra/deploy-payments.sh` |
 | Tabla `payments-history` (`source` + `id`) | **Duvan** (sus eventos) | — |
 | Tablas `natillera-payments`, `user-info` | David | — |
 | `natillera-registration`, `saved-accounts`, `natillera-records` | Camilo (`natillera-records` la escribe pagos) | — |
@@ -96,8 +96,8 @@ aws logs tail /aws/lambda/<nombre> --since 10m
 ### David (CLI)
 1. ✅ `infra/deploy-natilleras.sh` ya incluye logs y secrets en `natilleras-dynamo` (antes los borraba).
 2. PR `david → main` con lo último (arreglo de `start-payment`, tabla nueva y esta guía).
-3. **`POST /payments/quote`** (`previewQuote` del front), basado en la fase 1 de Duvan: incoming payment + quote
-   con la llave del cliente, sin guardar nada → `{ debitAmount, receiveAmount, expiresAt }`.
+3. **`POST /payments/preview`** (`previewQuote` del front), basado en la fase 1 de Duvan: incoming payment + quote
+   con la llave del cliente, sin guardar nada → `{ debitAmount, receiveAmount }`.
 4. Revisar y desplegar lo que entregue Henry (préstamos) y el PR de multi-natillera de Camilo.
 
 ### Camilo (CLI + app)
@@ -120,7 +120,7 @@ aws logs tail /aws/lambda/<nombre> --since 10m
    - Si lo cambias, hazlo en ese archivo y por PR.
    - **No** vuelvas a leer llaves de `user-info` ni a escribir en `payments-history` desde el flujo de pagos:
      eso rompe `return-payment`, que completa el pago.
-2. `POST /payments/quote` lo hizo David a partir de tu fase 1. Revísalo.
+2. `POST /payments/preview` lo hizo David a partir de tu fase 1. Revísalo.
 3. Préstamos fase 2 (diseño), si queda tiempo:
    - desembolso = pago del fondo al socio, que aprueba la ADMIN dueña de la wallet del fondo;
    - cuotas = grant con `interval`.

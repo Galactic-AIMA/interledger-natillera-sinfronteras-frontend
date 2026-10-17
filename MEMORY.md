@@ -233,6 +233,10 @@ Decisiones técnicas aún sin tomar:
   (`infra/policy-presignup.sh`). Por revisión de seguridad, `natilleras-dynamo` quedó con Secrets solo en
   `natillera/*` y `user-info` de solo lectura (respaldo de la anterior en el scratch de la sesión).
   Verificado: pre-signup → "Email already registered", get-me y start-payment OK. PR #7 `david → main`.
+- 2026-10-17 (~02:30 COL) · **`POST /payments/preview`** (`previewQuote` del front) desplegado: Lambda
+  `preview-payment` = fase 1 de Duvan (incoming + quote) con la llave del cliente, sin guardar nada. Mismo
+  body que `POST /payments` sin `returnUrl` → `{ debitAmount, receiveAmount }`. Deployment `n7s92a`.
+  Probado: 4.000 COP ← 2,13 EUR; cuota 50.000 COP ← 15,09 EUR; 401 sin token.
 
 ### op-core
 - (vacío)

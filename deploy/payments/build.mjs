@@ -4,7 +4,7 @@ import { build } from 'esbuild';
 import { execFileSync } from 'node:child_process';
 import { rmSync } from 'node:fs';
 
-const lambdas = ['start-payment', 'start-payment-duvan', 'finish-payment', 'get-payment', 'return-payment'];
+const lambdas = ['start-payment', 'start-payment-duvan', 'preview-payment', 'finish-payment', 'get-payment', 'return-payment'];
 rmSync('dist', { recursive: true, force: true });
 
 for (const name of lambdas) {

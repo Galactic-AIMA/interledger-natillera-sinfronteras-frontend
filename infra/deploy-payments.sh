@@ -100,6 +100,7 @@ deploy_lambda() { # deploy_lambda nombre timeout memoria archivo-env [zip]
 deploy_lambda start-payment 25 512 "$TMP/env-start.json" start-payment-duvan
 deploy_lambda finish-payment 25 512 "$TMP/env-vtl.json"
 deploy_lambda get-payment 10 256 "$TMP/env-vtl.json"
+deploy_lambda preview-payment 25 512 "$TMP/env-vtl.json"   # POST /payments/preview (previewQuote)
 deploy_lambda return-payment 25 512 "$TMP/env-proxy.json"
 
 # ---------------------------------------------------------------- 3. API Gateway (REST + VTL)
@@ -179,6 +180,7 @@ PID="\"paymentId\": \"\$util.escapeJavaScript(\$input.params('id'))\""
 BODY="\"body\": \$input.json('\$')"
 
 configure_route POST /payments              start-payment  "{ $AUTH, $BODY }"
+configure_route POST /payments/preview      preview-payment "{ $AUTH, $BODY }"
 configure_route GET  /payments              get-payment    "{ $AUTH }"
 configure_route GET  /payments/{id}         get-payment    "{ $AUTH, $PID }"
 configure_route POST /payments/{id}/finish  finish-payment "{ $AUTH, $PID, $BODY }"

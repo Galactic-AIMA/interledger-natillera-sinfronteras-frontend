@@ -25,7 +25,7 @@ const RETURN_BASE_URL = (process.env.RETURN_BASE_URL || '').replace(/\/$/, '');
 const WALLET_HOSTS = (process.env.WALLET_HOSTS || 'ilp.interledger-test.dev').split(',').map((h) => h.trim());
 
 // [fix] Solo wallets del Test Wallet (el backend no debe consultar URLs arbitrarias).
-const checkWalletUrl = (value: unknown): string => {
+export const checkWalletUrl = (value: unknown): string => {
   let url: URL;
   try {
     url = new URL(String(value));
@@ -39,7 +39,7 @@ const checkWalletUrl = (value: unknown): string => {
 };
 
 // [fix] A quién se le paga: wallet directa, cuenta guardada (flujo 6) o natillera (aporte, flujo 9).
-const resolveReceiver = async (username: string, body: Record<string, any>) => {
+export const resolveReceiver = async (username: string, body: Record<string, any>) => {
   if (body.kind === 'aporte') {
     if (!body.natilleraId) throw new HttpError(400, 'BadRequest', 'natilleraId is required for aporte');
     const { Item } = await dynamo.send(

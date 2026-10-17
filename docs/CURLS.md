@@ -69,6 +69,15 @@ curl -s -X POST "$API/payments" -H "Authorization: Bearer $TOKEN" -H 'Content-Ty
 
 Respuesta: `{ "paymentId", "redirectUrl", "debitAmount", "receiveAmount" }`.
 
+**Vista previa sin pagar** (`previewQuote`): mismo body sin `returnUrl`, en `POST /payments/preview`.
+No pide aprobación ni guarda nada.
+
+```bash
+curl -s -X POST "$API/payments/preview" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"kind":"p2p","walletAddress":"https://ilp.interledger-test.dev/<wallet-que-recibe>","value":"400000","assetCode":"COP","assetScale":2}'
+```
+
+Respuesta: `{ "debitAmount", "receiveAmount" }`.
+
 ```bash
 PAYMENT_ID=<paymentId>
 ```
