@@ -11,3 +11,30 @@ Respuestas a las preguntas de Claude: base = «Nueva sobre su guion»; demo = «
 ## 2
 
 > Sí, haz commit de docs/pitch/pitch.html y push a main.
+
+## 3
+
+> en que ruta en local quedo el html, dejamela en la carpeta para estudiarla  tenerla detectada?
+>
+> tambien vi que que la interfaz esta desactualizada, hice varios cambios, actualizate
+>
+> y el slide 8 no pongas que datos de ejemplo pon como si todo estuviera en prod,
+>
+> Para el slide 9
+> Henry
+> Marca, Frontend, Pitch, QA
+>
+> Camilo
+> Integración y simulacion de APP, Frontend, QA, pItch
+>
+> Duvan
+> Arquitectura, Backend, Servidor y pagos
+>
+> Ciro
+> Servidor, Backend y nube
+
+(Adjuntó dos capturas de las láminas 4 y 8.)
+
+## 4
+
+> Sí, haz commit de docs/pitch/pitch.html y pantallas/v2-*.png y push a main.

@@ -11,7 +11,8 @@ import { setShowOverlay, useShowOverlay } from './overlayPreference';
 // Botón flotante "Logs" encima de todas las pantallas: abre un panel en vivo con el registro técnico
 // para proyectarlo en el pitch mientras se usa la app. Mismos datos que /registro (sin secretos).
 // Navegable: filtros por tipo y por fallas, filas compactas que se abren con un toque, panel que se
-// agranda y un botón para copiar todo el registro de una vez.
+// agranda y un botón para copiar todo el registro de una vez. La píldora también copia de un toque
+// (el portapapeles), sin abrir el panel. Se ve por defecto; se apaga con el ojo o en Su cuenta.
 const KIND_LABEL: Record<LogKind, string> = { cognito: 'Cognito', api: 'Back', billetera: 'Billetera', demo: 'Ejemplo' };
 const KINDS = ['api', 'cognito', 'billetera', 'demo'] as const satisfies readonly LogKind[];
 type Filter = 'todos' | 'fallas' | LogKind;
@@ -23,6 +24,7 @@ const CHIP_BG = 'rgba(255, 255, 255, 0.08)';
 const CHIP_ON_BG = '#E6E9F2';
 const OK_COLOR = '#5FD3A0';
 const FAIL_COLOR = '#FF7A66';
+const ACCENT = '#00D1FF';
 const COPIED_MS = 1800;
 
 function matches(entry: LogEntry, filter: Filter): boolean {
@@ -126,7 +128,7 @@ export function DevLogOverlay() {
     });
   }
 
-  // Apagado por defecto: el registro sigue guardando entradas, solo no se dibuja el botón.
+  // Si se apagó, el registro sigue guardando entradas: solo no se dibuja el botón.
   if (!showOverlay) return null;
 
   return (
@@ -168,15 +170,31 @@ export function DevLogOverlay() {
           />
         </View>
       ) : null}
-      <Pressable
-        onPress={() => setOpen((v) => !v)}
-        style={[styles.fab, { top: insets.top + 64 }]}
-        accessibilityRole="button"
-        accessibilityLabel={open ? 'Cerrar registro técnico' : 'Abrir registro técnico'}
-      >
-        <Text style={[styles.mono, styles.fabText]}>{open ? '✕ Logs' : `Logs ${entries.length}`}</Text>
-        {!open && failures > 0 ? <View style={styles.dot} /> : null}
-      </Pressable>
+      <View style={[styles.fab, { top: insets.top + 64 }]}>
+        <Pressable
+          onPress={() => setOpen((v) => !v)}
+          style={styles.fabMain}
+          hitSlop={6}
+          accessibilityRole="button"
+          accessibilityLabel={open ? 'Cerrar registro técnico' : 'Abrir registro técnico'}
+        >
+          {!open ? <View style={[styles.dot, { backgroundColor: failures > 0 ? FAIL_COLOR : OK_COLOR }]} /> : null}
+          <Text style={[styles.mono, styles.fabText]}>{open ? '✕ Logs' : `Logs ${entries.length}`}</Text>
+        </Pressable>
+        {!open ? (
+          <Pressable
+            onPress={() => void copyAll()}
+            disabled={entries.length === 0}
+            style={[styles.fabCopy, entries.length === 0 && styles.disabled]}
+            hitSlop={6}
+            accessibilityRole="button"
+            accessibilityLabel={copied ? 'Registro copiado' : 'Copiar todo el registro'}
+          >
+            <Ionicons name={copied ? 'checkmark' : 'clipboard-outline'} size={16} color={copied ? OK_COLOR : CONSOLE_TEXT} />
+            {copied ? <Text style={[styles.mono, styles.fabText, { color: OK_COLOR }]}>Copiado</Text> : null}
+          </Pressable>
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -189,15 +207,24 @@ const styles = StyleSheet.create({
     right: space.sm,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: space.xs,
-    paddingHorizontal: space.md,
-    paddingVertical: space.xs,
     borderRadius: radius.pill,
     backgroundColor: CONSOLE_BG,
-    opacity: 0.85,
+    borderWidth: 1,
+    borderColor: ACCENT,
+    overflow: 'hidden',
+  },
+  fabMain: { flexDirection: 'row', alignItems: 'center', gap: space.xs, paddingHorizontal: space.md, minHeight: 36 },
+  fabCopy: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.xs,
+    paddingHorizontal: space.sm,
+    minHeight: 36,
+    borderLeftWidth: 1,
+    borderLeftColor: 'rgba(255, 255, 255, 0.16)',
   },
   fabText: { fontFamily: fonts.monoBold },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: FAIL_COLOR },
+  dot: { width: 8, height: 8, borderRadius: 4 },
   panel: {
     position: 'absolute',
     left: 0,
