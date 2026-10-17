@@ -143,6 +143,14 @@ Decisiones técnicas aún sin tomar:
   Verificado invocando la Lambda: validaciones 400/401/404 OK y **un inicio de pago real contra
   Open Payments** (prueba1, wallet `melos` COP → `f9a1abde` EUR: 1,00 EUR llega, 3.552,19 COP sale;
   pago `d010eca7…` en `pending`). Usuarios de prueba prueba1/2/3 tienen la wallet `melos` (COP).
+- 2026-10-16 (~20:50 COL) · Aprobar en la Test Wallet con `finish.uri = exp://…` da *Internal
+  Server Error* al aceptar (probado: el front lo abrió en 1 min, no era vencimiento). Se implementó la
+  **opción B**: `start-payment` usa `finish.uri = <API>/payments/{id}/return` (env `RETURN_BASE_URL`);
+  nueva Lambda `return-payment` (ruta pública `GET /payments/{id}/return`, proxy) verifica el hash,
+  finaliza y responde 302 a `<returnUrl>?paymentId=…&result=ok|rejected|failed|pending`. Sin hash no
+  cambia nada. `POST /payments/{id}/finish` queda como respaldo (idempotente). Desplegado (`c9epko`).
+  Ojo: si alguien abre el enlace de aprobación con una cuenta que no es dueña de la wallet que paga,
+  la Test Wallet **rechaza el grant** automáticamente (enlace inservible).
 - 2026-10-16 · `pre-signup` ahora también guarda en `user-info` (PK `source` + `id`), basado en el
   cambio de Duvan. Falta crear la tabla y desplegar.
 

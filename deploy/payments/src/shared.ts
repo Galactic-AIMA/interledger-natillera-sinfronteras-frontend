@@ -46,6 +46,7 @@ export type PaymentRecord = {
   continueUri: string;
   continueToken: string;
   outgoingPaymentId?: string;
+  appReturnUrl?: string;
   createdAt: string;
   updatedAt: string;
 };

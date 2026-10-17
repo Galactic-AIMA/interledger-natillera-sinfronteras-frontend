@@ -197,3 +197,27 @@ Prompts **literales**, en orden. Las capturas de pantalla adjuntas se marcan com
 
 ### 43
 > Dejamos el start-payment del repo (ya revisado). Coordino con Duvan para que no lo vuelva a subir y vuelve a desplegarlo.
+
+### 44
+> Ya lo aprobé en la Test Wallet, te pego la URL de retorno para que lo finalices.
+> [captura: respuesta del Claude del front sobre aprobar el pago y estado de las rutas]
+> Esto es lo que me dice el claude de los de Frontend
+
+### 45
+> [captura: Test Wallet "Access to the given resource is forbidden"]
+> La cuenta de melos la tienen en la test wallet de los de front, les pasé el link y no  les abrió, yo lo abrí y me salió resource is forbidden
+
+### 46
+> Vamos con la B, me lo pasas y yo se los paso
+
+### 47
+> [captura: Test Wallet "Internal Server Error" al aceptar]
+> https://wallet.interledger-test.dev/grant-interactions?interactId=1fd1e0e1-269f-450e-82a0-d0b16b3bb726&nonce=385FF9419003EC0D&clientName=d8f12cf9&clientUri=https%3A%2F%2Filp.interledger-test.dev%2Ff9a1abde
+>
+> Al aceptar desde la wallet de melos sale asi, y este es el link que queda, no aparece el exp://localhost
+
+### 48
+> [captura: chat del equipo, el front abrió el enlace en 1 minuto y salió el error]
+> Ya estan listos, ahora no demoraron nada en abrir el enlace
+>
+> Por cierto no podemos hacerlo con mi test wallet, o abrir la test wallet en mi navegador y abrirlo yo ?

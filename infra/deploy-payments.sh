@@ -52,29 +52,47 @@ else
 fi
 
 # ---------------------------------------------------------------- 2. Lambdas
-"$PY" - "$TMP/env.json" "$SECRET_ID" "$USERS_TABLE" "$PAYMENTS_TABLE" <<'EOF'
+BASE_URL="https://$API_ID.execute-api.$AWS_REGION.amazonaws.com/$STAGE"
+# env_file <archivo> <modo> [RETURN_BASE_URL]
+env_file() {
+  "$PY" - "$1" "$2" "${3:-}" "$SECRET_ID" "$USERS_TABLE" "$PAYMENTS_TABLE" <<'PYEOF'
 import json, sys
-out, secret, users, payments = sys.argv[1:]
-json.dump({"Variables": {"INTEGRATION_MODE": "vtl", "OP_SECRET_ID": secret,
-                         "USER_VIEW_TABLE": users, "PAYMENTS_TABLE": payments}}, open(out, "w"))
-EOF
+out, mode, base, secret, users, payments = sys.argv[1:]
+v = {"INTEGRATION_MODE": mode, "OP_SECRET_ID": secret, "USER_VIEW_TABLE": users, "PAYMENTS_TABLE": payments}
+if base: v["RETURN_BASE_URL"] = base
+json.dump({"Variables": v}, open(out, "w"))
+PYEOF
+}
+env_file "$TMP/env-start.json" vtl "$BASE_URL"   # opción B: la billetera vuelve a $BASE_URL/payments/{id}/return
+env_file "$TMP/env-vtl.json" vtl
+env_file "$TMP/env-proxy.json" proxy
+ROLE_ARN="$(aws lambda get-function-configuration --function-name start-payment --query Role --output text)"
 
-deploy_lambda() {
-  local name="$1" timeout="$2" memory="$3"
+deploy_lambda() { # deploy_lambda nombre timeout memoria archivo-env
+  local name="$1" timeout="$2" memory="$3" envf="$4"
   log "Lambda $name"
   [ -f "$DIST/$name.zip" ] || { echo "Falta $DIST/$name.zip (npm run build)"; exit 1; }
+  if ! aws lambda get-function-configuration --function-name "$name" >/dev/null 2>&1; then
+    aws lambda create-function --function-name "$name" --runtime nodejs22.x --handler index.handler \
+      --role "$ROLE_ARN" --zip-file "$(bpath "$DIST/$name.zip")" --timeout "$timeout" --memory-size "$memory" \
+      --environment "$(fpath "$envf")" --query 'FunctionArn' --output text
+    aws lambda wait function-active-v2 --function-name "$name"
+    echo "creada"
+    return
+  fi
   local backup
   backup="$(aws lambda publish-version --function-name "$name" --description "respaldo antes de deploy-payments $(date -u +%FT%TZ)" --query Version --output text)"
   echo "respaldo publicado: versión $backup"
   aws lambda update-function-code --function-name "$name" --zip-file "$(bpath "$DIST/$name.zip")" --query 'CodeSize' --output text
   aws lambda wait function-updated-v2 --function-name "$name"
   aws lambda update-function-configuration --function-name "$name" --handler index.handler --runtime nodejs22.x \
-    --timeout "$timeout" --memory-size "$memory" --environment "$(fpath "$TMP/env.json")" --query 'LastUpdateStatus' --output text
+    --timeout "$timeout" --memory-size "$memory" --environment "$(fpath "$envf")" --query 'LastUpdateStatus' --output text
   aws lambda wait function-updated-v2 --function-name "$name"
 }
-deploy_lambda start-payment 25 512
-deploy_lambda finish-payment 25 512
-deploy_lambda get-payment 10 256
+deploy_lambda start-payment 25 512 "$TMP/env-start.json"
+deploy_lambda finish-payment 25 512 "$TMP/env-vtl.json"
+deploy_lambda get-payment 10 256 "$TMP/env-vtl.json"
+deploy_lambda return-payment 25 512 "$TMP/env-proxy.json"
 
 # ---------------------------------------------------------------- 3. API Gateway (REST + VTL)
 AUTHORIZER_ID="$(aws apigateway get-authorizers --rest-api-id "$API_ID" --query "items[?name=='$AUTHORIZER_NAME'].id" --output text)"
@@ -157,6 +175,25 @@ configure_route GET  /payments              get-payment    "{ $AUTH }"
 configure_route GET  /payments/{id}         get-payment    "{ $AUTH, $PID }"
 configure_route POST /payments/{id}/finish  finish-payment "{ $AUTH, $PID, $BODY }"
 
+# Opción B: ruta PÚBLICA a la que vuelve la billetera (sin token; el hash protege). Proxy: responde 302.
+log "Ruta GET /payments/{id}/return → return-payment (pública, proxy)"
+RET_RID="$(ensure_resource "/payments/{id}/return")"
+if aws apigateway get-method --rest-api-id "$API_ID" --resource-id "$RET_RID" --http-method GET >/dev/null 2>&1; then
+  aws apigateway update-method --rest-api-id "$API_ID" --resource-id "$RET_RID" --http-method GET \
+    --patch-operations op=replace,path=/authorizationType,value=NONE --query authorizationType --output text
+else
+  aws apigateway put-method --rest-api-id "$API_ID" --resource-id "$RET_RID" --http-method GET \
+    --authorization-type NONE --query authorizationType --output text
+fi
+aws apigateway put-integration --rest-api-id "$API_ID" --resource-id "$RET_RID" --http-method GET \
+  --type AWS_PROXY --integration-http-method POST \
+  --uri "arn:aws:apigateway:$AWS_REGION:lambda:path/2015-03-31/functions/arn:aws:lambda:$AWS_REGION:$ACCOUNT:function:return-payment/invocations" \
+  --query type --output text
+aws lambda add-permission --function-name return-payment --statement-id apigw-GET-payments-return \
+  --action lambda:InvokeFunction --principal apigateway.amazonaws.com \
+  --source-arn "arn:aws:execute-api:$AWS_REGION:$ACCOUNT:$API_ID/*/GET/payments/*/return" \
+  >/dev/null 2>&1 && echo "permiso de invocación agregado" || echo "permiso de invocación ya existía"
+
 # Rutas viejas (antes del contrato): quedan con autorizador y sin passthrough mientras existan.
 harden_legacy() {
   local path="$1" rid method
@@ -202,4 +239,4 @@ log "Implementar en el stage $STAGE"
 aws apigateway create-deployment --rest-api-id "$API_ID" --stage-name "$STAGE" \
   --description "deploy-payments $(date -u +%FT%TZ)" --query id --output text
 echo
-echo "Listo: https://$API_ID.execute-api.$AWS_REGION.amazonaws.com/$STAGE"
+echo "Listo: $BASE_URL"

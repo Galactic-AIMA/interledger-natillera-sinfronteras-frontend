@@ -22,6 +22,10 @@ import {
   type PaymentRecord,
 } from './shared';
 
+// Opción B del contrato: si está configurada, la billetera vuelve por https al backend
+// (GET /payments/{id}/return), que finaliza y redirige a la app. Si no, opción A: vuelve a la app.
+const RETURN_BASE_URL = (process.env.RETURN_BASE_URL || '').replace(/\/$/, '');
+
 const WALLET_HOSTS = (process.env.WALLET_HOSTS || 'ilp.interledger-test.dev').split(',').map((h) => h.trim());
 
 // Solo se consultan wallets de los hosts permitidos (evita que el backend llame URLs arbitrarias).
@@ -148,7 +152,13 @@ export const handler = withErrors(async (event) => {
       },
       interact: {
         start: ['redirect'],
-        finish: { method: 'redirect', uri: `${returnUrl}?paymentId=${paymentId}`, nonce: clientNonce },
+        finish: {
+          method: 'redirect',
+          uri: RETURN_BASE_URL
+            ? `${RETURN_BASE_URL}/payments/${paymentId}/return`
+            : `${returnUrl}?paymentId=${paymentId}`,
+          nonce: clientNonce,
+        },
       },
     },
   );
@@ -176,6 +186,7 @@ export const handler = withErrors(async (event) => {
     interactFinishNonce: outgoingGrant.interact.finish,
     continueUri: outgoingGrant.continue.uri,
     continueToken: outgoingGrant.continue.access_token.value,
+    appReturnUrl: returnUrl,
     createdAt: now,
     updatedAt: now,
   };
