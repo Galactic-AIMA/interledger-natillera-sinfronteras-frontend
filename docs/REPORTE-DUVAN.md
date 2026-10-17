@@ -87,8 +87,10 @@ Tablas nuevas: `saved-accounts` (`author` + `customWalletName`), `natillera-regi
 (`natilleraId`, índice `invitation-index`), `natillera-records` (`natilleraId` + `id`).
 
 Revisión hasta ahora: el código está bien (identidad solo del token, allowlist de hosts, escrituras
-condicionales, no toca las Lambdas de pagos). Falta: correr sus tests, confirmar que no choca con
-recursos que ya existan en AWS y desplegar. Además piden agregar `NATILLERA_RECORDS_TABLE` a
+condicionales, no toca las Lambdas de pagos). Verificado en AWS: no existe ninguna de esas tablas,
+Lambdas ni rutas, así que no hay choques. `start-payment` ya lee `natillera-registration` con las
+mismas llaves (`natilleraId`, `walletAddress`, `integrants`), así que los aportes encajan. Falta:
+correr sus tests y desplegar. Además piden agregar `NATILLERA_RECORDS_TABLE` a
 `finish-payment` y `return-payment` para que los aportes (`kind:'aporte'`) sumen al fondo.
 
 Henry subirá préstamos igual, en `back/feat-prestamos`.
