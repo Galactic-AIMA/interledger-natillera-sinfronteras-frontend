@@ -14,6 +14,8 @@ App móvil de **Natillera sin Fronteras** para la Hackatón Open Payments de Int
 
 | Documento | Para qué |
 |---|---|
+| [docs/COMO-TRABAJAMOS.md](docs/COMO-TRABAJAMOS.md) | **Cómo trabaja el equipo**: arquitectura, contrato, carriles y worktrees, despliegues, calidad, versiones, IA y lecciones |
+| [docs/ANDROID.md](docs/ANDROID.md) | Emulador de Android Studio, celular por cable, APK con EAS y sus trampas |
 | [docs/PLAN.md](docs/PLAN.md) | Plan completo: reglas, arquitectura, carriles, cronograma, riesgos |
 | [docs/HENRY.md](docs/HENRY.md) | Guía de Henry: tareas sin dependencia, orden de pantallas, reglas, cómo pedir cosas |
 | [docs/figma-pantallas.md](docs/figma-pantallas.md) | Las 35 pantallas, endpoint de cada una, dueño y Paleta G |
