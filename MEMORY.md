@@ -22,11 +22,13 @@ terminar. Fechas absolutas (YYYY-MM-DD). Reglas de uso en [CLAUDE.md](CLAUDE.md)
 | Tabla de pagos | **`natillera-payments`** (PK `paymentId`, GSI `author-index`). `payments-history` = tabla de eventos de Duvan (`source`+`id`), vacía |
 | Permisos del rol `PowerUserRole` | **Sin `PowerUserAccess`** (lo quitó otra sesión a las 22:27). Inline: `natilleras-dynamo` (logs, secrets `natillera/*`, user-info solo lectura), `prestamos-dynamo`, `pagos-dynamo`, `presignup-cognito` (ListUsers + PutItem user-info) |
 | Bloque A (perfil, wallets, cuentas, natilleras) | ✅ desplegado y probado |
-| Multi-natilleras (PR #8 de Camilo, `GET /natilleras`) | Fusionado en `david` 2026-10-17 (`b2b8628`, tests 7/7); **falta desplegar** con `infra/deploy-natilleras.sh` (Camilo) |
+| Multi-natilleras (PR #8 de Camilo, `GET /natilleras`) | ✅ desplegado 2026-10-17 (deployment `xk83n3`); respaldos: get-me v2, resto del bloque A v1 |
 | Préstamos fase 1 (+ multi-natillera) | ✅ desplegado y probado; aprobar/desembolsar = fase 2 (501) |
 | Préstamos fase 2 + cuota automática (Henry, 2026-10-17 madrugada) | 🟡 código y 11 pruebas locales en `feat/credito-fase2-recurrente` (PR a `david`); **sin desplegar**: lo despliega Ciro con `infra/deploy-prestamos.sh` |
-| Aportes (`kind:'aporte'`) | Soportado en el `start-payment` actual; falta probar uno real |
-| Recurrente, desembolso, cobro de cuotas | ❌ sin código (modo demo en el front) |
+| Aportes (`kind:'aporte'`) | ✅ **probado real** 2026-10-17 07:45Z: prueba3 → Familia Ciro 50.000 COP, `fundTotal` subió |
+| Préstamos fase 2 + cuota automática (PR #9 de Henry) | Desplegado 2026-10-17 (deployment `1x7kck`; tabla `natillera-grants`, política `cobros-op`, secreto por grant `natillera/grants/<id>`). Respaldos: simulate-loan v1, list-loan-requests v2, get-my-loans v2, request-loan v2, decide-loan v1. **Falta prueba real** (riesgos: desembolso con debit fijo COP→EUR, CreateSecret vs SCP) |
+| Llaves | Una sola: `natillera/open-payments-client`. Restos a borrar post-hackatón: secretos `prueba1`, `ciro` y `privateKey` de prueba1 en user-info |
+| CLI de AWS | **Solo David** despliega (Camilo sin acceso) |
 | Rama `main` | Existe; `david` tiene lo último. PR #6 de Henry **no se debe correr** (vuelve a `payments-history`) |
 
 ## Metas acordadas con todo el equipo (2026-10-16)
