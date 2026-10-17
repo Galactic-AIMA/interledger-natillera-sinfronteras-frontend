@@ -114,6 +114,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-17 | Camilo | Claude Code (Opus 5.5, escritorio) | Validación de las memorias del equipo contra git y GitHub (05:07): el tablero quedó con el estado vigente (repo único, PR #3, #8, #9 y #10 en `main`, PR #11 abierto, fase 2 desplegada sin prueba real) y `backend/MEMORY.md` sin la fila contradictoria de la fase 2 | `MEMORY.md`, `backend/MEMORY.md`, `AI_USAGE.md`, `prompts/2026-10-17-camilo-memorias-al-dia.md` |
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Diagnóstico del «Access to the given resource is forbidden» de la Test Wallet en el celular (la sesión abierta era de otra cuenta, no la dueña de la billetera que paga) y aviso en la pantalla 28 con la billetera del usuario en modo real | `src/app/billetera/antes.tsx`, `AI_USAGE.md` |
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Metas sin backend dichas tal cual: aviso «Por ahora, solo en este celular» en la 36 con sesión real y README con tres estados (probado, desplegado sin prueba completa, solo en el celular); lista de prueba con sesión en el APK para el pago real, la cuota automática y el préstamo fase 2 | `src/app/(tabs)/natillera/metas/index.tsx`, `README.md`, `docs/prueba-apk-2026-10-17.md`, `CLAUDE.md`, `AI_USAGE.md` |
+| 2026-10-17 | Camilo | Claude Code (Opus 5.5, escritorio) | Historial de versiones: línea de tiempo de front y back armada desde git y GitHub (commits de `main`, PR de los dos repos y memorias), `CHANGELOG.md` en formato Keep a Changelog con SemVer y tags anotados `v0.1.0`–`v0.10.2` y `backend-v0.1.0`–`backend-v0.7.1` sobre los commits de cada hito; Camilo eligió el esquema y el alcance | `CHANGELOG.md`, `AI_USAGE.md`, `prompts/2026-10-17-camilo-versionamiento.md` |
 
 ## What We Did Ourselves
 
@@ -138,6 +139,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 - Sesión de revisión e integración de Henry (raíz, sin hook): [`prompts/2026-10-16-camilo-integracion-henry.md`](prompts/2026-10-16-camilo-integracion-henry.md).
 - Sesión del bloque A del back (raíz, sin hook): [`prompts/2026-10-16-camilo-back-natilleras.md`](prompts/2026-10-16-camilo-back-natilleras.md).
 - Sesión del botón de logs, el PR #8 del back y el aporte real (raíz, sin hook): [`prompts/2026-10-17-camilo-logs-y-aporte-real.md`](prompts/2026-10-17-camilo-logs-y-aporte-real.md).
+- Sesión del historial de versiones (raíz, sin hook): [`prompts/2026-10-17-camilo-versionamiento.md`](prompts/2026-10-17-camilo-versionamiento.md).
 - Sesión del botón de logs visible con portapapeles (raíz, sin hook): [`prompts/2026-10-17-camilo-logs-visibles.md`](prompts/2026-10-17-camilo-logs-visibles.md).
 - Sesión de validación de las memorias del equipo (raíz, sin hook): [`prompts/2026-10-17-camilo-memorias-al-dia.md`](prompts/2026-10-17-camilo-memorias-al-dia.md).
 - Encargos enviados a otras sesiones: [`prompts/2026-10-16-camilo-encargos-sesiones.md`](prompts/2026-10-16-camilo-encargos-sesiones.md).
