@@ -20,6 +20,7 @@ App móvil de **Natillera sin Fronteras** para la Hackatón Open Payments de Int
 | [docs/open-payments.md](docs/open-payments.md) | Resumen técnico de Open Payments y trampas |
 | [docs/api-contrato.md](docs/api-contrato.md) | Contrato con el back (auth con Cognito ya confirmado por el back) |
 | [docs/INTEGRACION-EXPO-GO.md](docs/INTEGRACION-EXPO-GO.md) | Rama de Henry lista para `main`, cambios en `src/api` y pruebas en Expo Go |
+| [docs/prueba-apk-2026-10-17.md](docs/prueba-apk-2026-10-17.md) | **Prueba con sesión en el APK** antes de las 11:00: pago real, cuota automática, préstamo fase 2 y metas (solo en el celular) |
 | [docs/estado-2026-10-17-madrugada.md](docs/estado-2026-10-17-madrugada.md) | **Estado más reciente** (17/10 03:25) de front y back: qué está desplegado en `dev`, la fase 2 sin desplegar y lo que falta para la entrega, por prioridad (incluye unir los dos repos). Los de la noche y la tarde quedan como histórico |
 | [docs/logs-back-2026-10-16.md](docs/logs-back-2026-10-16.md) | Informe de logs del back (errores vistos desde el front) |
 | [docs/openapi.yaml](docs/openapi.yaml) | Contrato exacto de la API que llama la app (20 rutas, P0 marcadas) |
