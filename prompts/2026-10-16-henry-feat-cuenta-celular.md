@@ -182,3 +182,7 @@ explícame todo el flujo y las historias de usuario por favor
 ## 21:36 · sesión 9ef31aea
 
 revisa el repo y comencemos a trabajar en apoyo al back
+
+## 21:45 · sesión 9ef31aea
+
+Sí, abre el PR de front/natillera-mine contra la rama david del repo back.
