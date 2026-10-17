@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Natillera sin Fronteras — API que consume la app
-  version: 2026-10-16
+  version: 2026-10-17
   description: |
     Contrato que implementa el front en src/api/httpApi.ts (tipos en src/api/types.ts).
     Escrito por el front el 2026-10-16 ~16:30 a partir de docs/api-contrato.md y de los tipos reales;
@@ -15,10 +15,14 @@ info:
     - Montos: `Amount` en unidades menores, `value` siempre string.
     - Errores: `{ error, message }` con su status. La app muestra su propio texto según el status.
     - P0 (pago real del video): /me, /natilleras/mine, POST /payments, /payments/{id}/finish, GET /payments/{id}.
+    - Estado en `dev` (2026-10-17): todo desplegado salvo GET /natilleras (varias natilleras, PR de Camilo),
+      /recurring/* y préstamos fase 2 (permiso de cobro y desembolso), que en la app siguen en modo demo.
+      Fuente de verdad del back: `docs/API-*.md` de la rama `david`.
 servers:
-  - url: https://{apiId}.execute-api.us-east-2.amazonaws.com
+  - url: https://{apiId}.execute-api.us-east-2.amazonaws.com/{stage}
     variables:
-      apiId: { default: pendiente }
+      apiId: { default: lofoyfhz52 }
+      stage: { default: dev }
 security:
   - cognitoJwt: []
 
@@ -41,6 +45,9 @@ paths:
   /natilleras/mine:
     get:
       summary: "[P0] Mi natillera (flujo 13). null si no está en ninguna"
+      description: Sin `natilleraId`, la más antigua. Con `natilleraId`, esa (404 si la persona no es integrante).
+      parameters:
+        - { name: natilleraId, in: query, required: false, schema: { type: string } }
       responses:
         "200":
           description: OK
@@ -49,6 +56,13 @@ paths:
               schema: { oneOf: [ { $ref: "#/components/schemas/Natillera" }, { type: "null" } ] }
 
   /natilleras:
+    get:
+      summary: Mis natilleras, la más antigua primero (selector de Mi natillera)
+      description: |
+        Del back de varias natilleras (rama `feat/natilleras-multi`, en despliegue). Mientras no exista,
+        el API REST responde 403 y la app arma la lista con la única de /natilleras/mine.
+      responses:
+        "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/NatilleraSummary" } } } } }
     post:
       summary: Crear natillera (flujo 7)
       requestBody:
@@ -78,17 +92,25 @@ paths:
 
   /payments/preview:
     post:
-      summary: (Opcional) Cotizar sin crear grant. Si responde 404, la app dice «se calcula al confirmar»
+      summary: Cotizar sin crear grant ni guardar nada (preview-payment)
+      description: |
+        Mismo cuerpo que POST /payments, sin `returnUrl`. Hace el incoming payment y la quote con la llave
+        del cliente y responde lo que sale y lo que llega. Si la ruta no existe (403/404/405), la app dice
+        «se calcula al confirmar».
       requestBody:
         required: true
         content: { application/json: { schema: { $ref: "#/components/schemas/PaymentBody" } } }
       responses:
         "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/QuotePreview" } } } }
+        "400": { $ref: "#/components/responses/Error" }
 
   /payments:
     post:
       summary: "[P0] Iniciar pago (flujo 3): incoming + quote + grant interactivo"
       description: |
+        **Monto:** la app lo manda en la moneda de **quien recibe** (la de la natillera o la de la cuenta),
+        así el back fija lo que llega y la quote calcula lo que sale de la billetera de quien paga. El back
+        también acepta la moneda de quien paga (fija lo que sale); cualquier otra moneda → 400.
         `returnUrl` va como `interact.finish.uri` agregándole `?paymentId=<id>`. Aceptar solo
         `natillera://retorno` y `exp://<host>:<puerto>/--/retorno`; cualquier otra → 400.
         Guardar en payments-history: paymentId, sub, quoteId, incomingPaymentId, continueUri,
@@ -191,6 +213,10 @@ paths:
   /loans/simulate:
     get:
       summary: Simular préstamo (flujo 10)
+      description: |
+        De 1 a 12 cuotas; capital igual en cada una (la última absorbe el residuo) e interés del 1 % del
+        saldo. `receiveAmount` es el mismo monto: la conversión sale del desembolso (fase 2).
+        Errores 400: BadRequest, InvalidAmount, InvalidInstallments.
       parameters:
         - { name: value, in: query, required: true, schema: { type: string } }
         - { name: assetCode, in: query, required: true, schema: { type: string } }
@@ -198,10 +224,15 @@ paths:
         - { name: installments, in: query, required: true, schema: { type: integer } }
       responses:
         "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/LoanSimulation" } } } }
+        "400": { $ref: "#/components/responses/Error" }
 
   /loans/requests:
     post:
       summary: Pedir préstamo (flujo 10)
+      description: |
+        El préstamo sale del fondo, así que va en la moneda de la natillera (otra → 400 InvalidAmount).
+        Solo integrantes (403 Forbidden). Máximo: lo disponible en el fondo (409 InsufficientFunds). Una
+        solicitud o préstamo activo a la vez por natillera (409 LoanAlreadyActive).
       requestBody:
         required: true
         content:
@@ -214,15 +245,23 @@ paths:
                   properties: { natilleraId: { type: string }, installments: { type: integer } }
       responses:
         "201": { description: Creada, content: { application/json: { schema: { $ref: "#/components/schemas/LoanRequest" } } } }
+        "400": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
     get:
       summary: Solicitudes pendientes (tesorera, flujo 13)
-      parameters: [ { name: status, in: query, schema: { type: string, enum: [pending] } } ]
+      description: |
+        Solo de las natilleras donde quien pregunta es ADMIN; a los demás, `[]`. La app manda el
+        `natilleraId` de la natillera que está mostrando, para no mezclar las de otra.
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [pending] } }
+        - { name: natilleraId, in: query, required: false, schema: { type: string } }
       responses:
         "200": { description: OK, content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/LoanRequest" } } } } }
 
   /loans/requests/{requestId}/repayment-grant:
     post:
-      summary: Autorizar el cobro de las cuotas antes del desembolso (flujo 12B)
+      summary: "(Fase 2, aún no está en el back) Autorizar el cobro de las cuotas antes del desembolso (flujo 12B)"
       parameters: [ { $ref: "#/components/parameters/RequestId" } ]
       requestBody:
         required: true
@@ -232,7 +271,7 @@ paths:
 
   /loans/repayment/{grantId}/finish:
     post:
-      summary: Activar el cobro de cuotas (flujo 12B)
+      summary: "(Fase 2, aún no está en el back) Activar el cobro de cuotas (flujo 12B)"
       parameters: [ { $ref: "#/components/parameters/GrantId" } ]
       requestBody: { content: { application/json: { schema: { $ref: "#/components/schemas/WalletReturnBody" } } } }
       responses:
@@ -241,6 +280,10 @@ paths:
   /loans/requests/{requestId}/decision:
     post:
       summary: La tesorera aprueba (y desembolsa) o rechaza (flujo 11)
+      description: |
+        Solo la ADMIN; a cualquier otra persona, 404 (no revela solicitudes ajenas). Rechazar funciona hoy.
+        Aprobar exige las cuotas autorizadas (409 RepaymentNotAuthorized) y, con ellas, responde
+        501 DisbursementNotAvailable hasta la fase 2. Repetir la decisión → 409 AlreadyDecided.
       parameters: [ { $ref: "#/components/parameters/RequestId" } ]
       requestBody:
         required: true
@@ -258,10 +301,16 @@ paths:
                   - allOf:
                       - { type: object, required: [status], properties: { status: { const: approved } } }
                       - $ref: "#/components/schemas/WalletRedirect"
+        "404": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "501": { $ref: "#/components/responses/Error" }
 
   /loans/mine:
     get:
       summary: Mi solicitud y mi préstamo (flujo 13)
+      description: El más reciente; con `natilleraId`, el de esa natillera (la app manda la que está mostrando).
+      parameters:
+        - { name: natilleraId, in: query, required: false, schema: { type: string } }
       responses:
         "200": { description: OK, content: { application/json: { schema: { $ref: "#/components/schemas/MyLoans" } } } }
 
@@ -292,7 +341,7 @@ components:
       properties:
         userId: { type: string, description: sub de Cognito }
         username: { type: string }
-        displayName: { type: string, description: Opcional; si falta, la app usa username }
+        displayName: { type: string, description: "Opcional; si falta, la app usa username" }
         email: { type: string }
         phone: { type: string }
         walletAddress: { type: string }
@@ -354,8 +403,20 @@ components:
         natilleraName: { type: string }
         adminName: { type: string }
         quota: { $ref: "#/components/schemas/Amount" }
+    NatilleraSummary:
+      type: object
+      required: [natilleraId, natilleraName, isAdmin, membersCount, asset, quota]
+      properties:
+        natilleraId: { type: string }
+        natilleraName: { type: string }
+        isAdmin: { type: boolean }
+        membersCount: { type: integer }
+        asset: { type: object, properties: { assetCode: { type: string }, assetScale: { type: integer } } }
+        quota: { $ref: "#/components/schemas/Amount" }
     PaymentBody:
-      description: El monto va aplanado (value, assetCode, assetScale) junto a los demás campos
+      description: |
+        El monto va aplanado (value, assetCode, assetScale) junto a los demás campos, en la moneda de quien
+        recibe (ver POST /payments).
       oneOf:
         - allOf:
             - $ref: "#/components/schemas/Amount"
@@ -372,6 +433,14 @@ components:
               properties:
                 kind: { const: p2p }
                 customWalletName: { type: string }
+        - allOf:
+            - $ref: "#/components/schemas/Amount"
+            - type: object
+              required: [kind, walletAddress]
+              description: Colectas de Metas, a una billetera sin cuenta guardada
+              properties:
+                kind: { const: p2p }
+                walletAddress: { type: string }
     QuotePreview:
       type: object
       required: [debitAmount, receiveAmount]

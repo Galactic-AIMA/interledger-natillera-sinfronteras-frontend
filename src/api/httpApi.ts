@@ -250,8 +250,10 @@ export const httpApi: NatilleraApi = {
   requestLoan: (natilleraId, value, installments) => request<LoanRequest>('POST', '/loans/requests', { natilleraId, ...value, installments }),
   startLoanRepaymentGrant: (requestId) => request<RecurringGrant>('POST', `/loans/requests/${requestId}/repayment-grant`, { returnUrl: returnUrl() }),
   finishLoanRepaymentGrant: (grantId, ret) => request<RecurringGrant>('POST', `/loans/repayment/${grantId}/finish`, walletReturnBody(ret)),
-  getMyLoans: () => request<MyLoans>('GET', '/loans/mine'),
-  listPendingLoanRequests: () => request<LoanRequest[]>('GET', '/loans/requests?status=pending'),
+  getMyLoans: (natilleraId) =>
+    request<MyLoans>('GET', `/loans/mine${natilleraId ? `?natilleraId=${encodeURIComponent(natilleraId)}` : ''}`),
+  listPendingLoanRequests: (natilleraId) =>
+    request<LoanRequest[]>('GET', `/loans/requests?status=pending${natilleraId ? `&natilleraId=${encodeURIComponent(natilleraId)}` : ''}`),
   decideLoan: (requestId, accepted) => request<LoanDecisionResult>('POST', `/loans/requests/${requestId}/decision`, { accepted, returnUrl: returnUrl() }),
 
   // Metas: el back aún no las guarda; viven en este celular mientras la app esté abierta.

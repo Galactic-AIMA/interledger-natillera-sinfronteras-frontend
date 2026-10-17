@@ -57,14 +57,31 @@ export function useAccounts() {
   return useQuery({ queryKey: [...keys.accounts, api.mode], queryFn: () => api.listAccounts() });
 }
 
+// Préstamos de la natillera que se está mostrando. Sin `natilleraId` el back devuelve los de la más
+// reciente, y Mi natillera muestra por defecto la más antigua: así las dos pantallas siempre coinciden.
+function useShownNatilleraId() {
+  const natillera = useMyNatillera();
+  return { natilleraId: natillera.data?.natilleraId, ready: !natillera.isPending };
+}
+
 export function useMyLoans() {
   const api = useApi();
-  return useQuery({ queryKey: [...keys.myLoans, api.mode], queryFn: () => api.getMyLoans() });
+  const { natilleraId, ready } = useShownNatilleraId();
+  return useQuery({
+    queryKey: [...keys.myLoans, api.mode, natilleraId ?? 'default'],
+    queryFn: () => api.getMyLoans(natilleraId),
+    enabled: ready,
+  });
 }
 
 export function usePendingLoanRequests() {
   const api = useApi();
-  return useQuery({ queryKey: [...keys.pendingLoans, api.mode], queryFn: () => api.listPendingLoanRequests() });
+  const { natilleraId, ready } = useShownNatilleraId();
+  return useQuery({
+    queryKey: [...keys.pendingLoans, api.mode, natilleraId ?? 'default'],
+    queryFn: () => api.listPendingLoanRequests(natilleraId),
+    enabled: ready,
+  });
 }
 
 export function useGoals() {

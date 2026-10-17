@@ -73,9 +73,9 @@ export default function ScreenTesorera() {
   const back = <Button label="Volver a Préstamos" variant="ghost" onPress={() => router.navigate('/natillera/prestamos')} />;
   return (
     <Screen headerLeft={<BackButton fallback={'/natillera/prestamos'} />} title="Préstamos" inTabs footer={back}>
-      {pending.isLoading ? <AppText tone="muted">Cargando…</AppText> : null}
+      {pending.isPending ? <AppText tone="muted">Cargando…</AppText> : null}
       {pending.isError ? <AppText tone="danger">No pudimos cargar las solicitudes.</AppText> : null}
-      {!pending.isLoading && list.length === 0 ? (
+      {!pending.isPending && list.length === 0 ? (
         <Card tone="soft">
           <AppText>No hay solicitudes de préstamo por aprobar.</AppText>
         </Card>

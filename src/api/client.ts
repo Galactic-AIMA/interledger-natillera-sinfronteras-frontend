@@ -67,8 +67,9 @@ export interface NatilleraApi {
   requestLoan(natilleraId: string, amount: Amount, installments: number): Promise<LoanRequest>;
   startLoanRepaymentGrant(requestId: string): Promise<RecurringGrant>;
   finishLoanRepaymentGrant(grantId: string, ret: WalletReturn): Promise<RecurringGrant>;
-  getMyLoans(): Promise<MyLoans>;
-  listPendingLoanRequests(): Promise<LoanRequest[]>;
+  // Con `natilleraId`, solo los de esa natillera (una persona puede estar en varias).
+  getMyLoans(natilleraId?: string): Promise<MyLoans>;
+  listPendingLoanRequests(natilleraId?: string): Promise<LoanRequest[]>;
   decideLoan(requestId: string, accepted: boolean): Promise<LoanDecisionResult>;
 
   // Metas (36–38): solo en el front por ahora; ver goalStore.ts.

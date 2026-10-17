@@ -42,7 +42,7 @@ export default function ScreenPlanDePagos() {
   const schedule = loan?.schedule ?? sim.data?.schedule ?? [];
   const requested = loan?.request.amount ?? simParams?.amount;
   const count = loan?.request.installments ?? simParams?.installments;
-  const loading = simParams ? sim.isLoading : loans.isLoading;
+  const loading = simParams ? sim.isLoading : loans.isPending;
 
   return (
     <Screen headerLeft={<BackButton fallback={'/natillera/prestamos'} />} title={loan ? 'Su préstamo' : 'Plan de pagos'} inTabs>

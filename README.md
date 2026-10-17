@@ -32,17 +32,25 @@ App ──GET /payments/{id}──▶ estado final (pantalla 30 → resultado)
 ```
 
 - Los montos viajan como `{ value: string, assetCode, assetScale }` en unidades menores. La app nunca usa floats para dinero.
-- La quote muestra lo que sale de la billetera de quien paga y lo que llega al fondo, cada uno en su moneda (pantalla 28).
+- El monto de `POST /payments` va en la moneda de **quien recibe** (la del fondo o la de la cuenta): así queda fijo lo que
+  llega, y la quote calcula cuánto sale de la billetera de quien paga, en su moneda.
+- Antes de ir a la billetera, `POST /payments/preview` cotiza sin crear nada, y la pantalla 28 muestra lo que sale y lo
+  que llega, cada uno en su moneda.
 - Un pago solo se da por hecho cuando el backend lo confirma: la app consulta el estado real en vez de fiarse de la URL de vuelta.
 
 ## Qué funciona contra el backend real y qué es demo
 
 | Real (Cognito + API Gateway + Lambda + Test Wallet) | Demo (datos de ejemplo) |
 |---|---|
-| Registro y entrada (Cognito), perfil | Préstamos 16–25 (el backend tiene la fase 1, sin desembolso) |
+| Registro y entrada (Cognito), perfil | Préstamos fase 2: permiso de cobro de las cuotas y desembolso |
 | Crear natillera, invitar con código y unirse | Aporte mensual automático (grant recurrente) |
 | Cuentas guardadas | Metas de la familia (solo en la app) |
-| Pagar a una persona y poner la cuota, con aprobación en la Test Wallet | |
+| Pagar a una persona y poner la cuota, con aprobación en la Test Wallet y vista previa de la quote | |
+| Préstamos fase 1: simular, pedir, ver mi préstamo, solicitudes de la tesorera y rechazar | |
+
+En préstamos, aprobar todavía no desembolsa: el backend pide primero el permiso de cobro de las cuotas (fase 2) y la
+app explica en la 17 y la 21 por qué la solicitud queda en espera. Si la persona está en varias natilleras, los
+préstamos y las solicitudes son siempre los de la natillera que está viendo.
 
 La app funciona en **modo híbrido**: cada función pasa a real cuando su ruta existe en el backend
 (`EXPO_PUBLIC_REAL_METHODS`), y el resto sigue con los datos de ejemplo. El botón «Empezar con datos de ejemplo»
