@@ -10,6 +10,7 @@ Lo único que ya se probó así: registro, entrada, crear natillera y poner la c
 
 - Dos cuentas con billetera de la Test Wallet con saldo: **A = tesorera** (creó la natillera) y **B = socia** (se unió
   con el código). La billetera del fondo es la de A.
+- En el navegador del celular, la sesión de la Test Wallet debe ser **de la cuenta dueña de la billetera que paga** (B para sus pagos, A para el desembolso). Con otra cuenta abierta la Test Wallet responde «Access to the given resource is forbidden»: cerrar sesión y entrar con la correcta. La pantalla 28 ya muestra con qué billetera entrar.
 - APK instalado desde la build `preview` (no Expo Go: el retorno `natillera://retorno` es el del APK).
 - En cada paso anotar: ✅ / ❌, la hora y, si falla, el texto exacto que mostró la app. El registro técnico del perfil
   dice qué ruta respondió qué.
