@@ -386,3 +386,71 @@ actualízate y la memoria también y la documentación
 ## 03:27 · sesión c68d8f3c
 
 Sí, sube feat/natillera-real y abre el PR a main.
+
+## 03:31 · sesión e6c1aee4
+
+yo voy a crear una cuenta con mi villetera real de test  y hare las prubas dame los paso y dime si lo hago en expo go o si descargo el apk mejor de una vez?
+
+## 03:48 · sesión d72e18f7
+
+camilo nos actualizo el pitch final actualizate
+
+## 03:58 · sesión e6c1aee4
+
+
+
+<pasted_content id="d5ba">
+Henry, desplegamos un arreglo para el «Internal Server Error» de la Test Wallet. Necesito que hagas un aporte pequeño ahora para confirmarlo:
+
+Dónde: en la app (el mismo APK con el que hiciste los aportes de antes), con tu usuario henry, en la natillera Familia Ciro.
+
+Pasos:
+
+Abre Natillera → Familia Ciro → Poner mi cuota / Aportar.
+Monto: $5.000 COP. Revisa la vista previa de lo que sale y lo que llega.
+Confirma. Se abre la Test Wallet: inicia sesión con la cuenta dueña de tu billetera (la misma de antes).
+Toca Accept una sola vez y no vuelvas a tocar nada. En 1–2 s la app debería volver sola.
+La app muestra «Procesando» unos segundos y luego el recibo como completado.
+
+Qué revisar:
+
+Si salió o no el «Internal Server Error». Lo esperado es que no salga.
+Cuánto tardó en volver a la app después de tocar Accept.
+Que el total del fondo de Familia Ciro suba $5.000 y que el pago aparezca en tu historial.
+
+Avísame con la hora exacta en que tocaste Accept y una captura del recibo. Si algo falla, mándame también captura de la pantalla donde se quedó. Yo reviso los logs del back.
+
+Importante: hazlo dentro de los 10 minutos desde que confirmas en la app. El enlace de aprobación vence.
+
+Para tus instrucciones de prueba, cambia el paso 6 así:
+
+6 · Aprobar en la Test Wallet: inicie sesión con la cuenta dueña de su billetera y toque Aceptar una sola vez. La app vuelve sola en uno o dos segundos.
+</pasted_content id="d5ba">
+
+## 04:00 · sesión e6c1aee4
+
+aun no hemos creado el apk
+
+## 04:08 · sesión e6c1aee4
+
+
+
+<pasted_content id="d5ba">
+Henry, tu aporte de 50.000 de las 4:03 salió perfecto con el arreglo: la billetera ahora devuelve a la app en menos de 1 s. ¿Te salió el «Internal Server Error» esta vez?
+
+Lo de «Cirugía de la abuela Carmen» no es del back: la meta le paga a ilp.interledger-test.dev/carmen, y esa billetera no existe en la Test Wallet. Cámbiala por una billetera real (por ejemplo cirocol) o crea una cuenta carmen en COP.
+
+Y dos detalles de la app: la vista previa se llama en cada tecla (pon un debounce de unos 600 ms), y cuando el error diga “Could not get wallet address” muestra «La billetera de quien recibe no existe».
+</pasted_content id="d5ba">
+
+## 04:08 · sesión e6c1aee4
+
+Sí: haz los tres arreglos (meta de Carmen con cirocol, debounce de 600 ms en la vista previa y el mensaje de billetera inexistente) en una rama desde main, con tsc y tests, y abre el PR.
+
+## 04:12 · sesión e6c1aee4
+
+Sí, fusiona el PR #9 en main y borra el worktree wt-fix-preview.
+
+## 04:12 · sesión d72e18f7
+
+Sí, pon el guion de pitch-y-video.html igual a las notas de pitch.html de Camilo y vuelve a publicar el artefacto
