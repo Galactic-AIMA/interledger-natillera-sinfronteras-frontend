@@ -44,7 +44,14 @@ Solo el dueño despliega lo suyo. Si necesitas cambiar algo de otra persona, pí
    repo o el chat. La única llave del backend vive en Secrets Manager: `natillera/open-payments-client`.
 8. **Un despliegue a la vez en el stage `dev`.** Después de `create-deployment`, el stage tarda ~1 min:
    mientras tanto las rutas nuevas responden 403.
-9. Para leer un secreto: solo nombres bajo `natillera/…`. La SCP de la organización bloquea otros
+9. **Políticas del rol `PowerUserRole`** (todas inline, cada script reescribe solo la suya):
+   - `natilleras-dynamo` (`deploy-natilleras.sh`): también da logs y Secrets a todas las Lambdas;
+   - `prestamos-dynamo` (`deploy-prestamos.sh`);
+   - `pagos-dynamo` (`deploy-payments.sh`);
+   - `presignup-cognito` (`policy-presignup.sh`).
+
+   Si una Lambda nueva necesita otro permiso, se crea **otra** inline con su nombre.
+10. Para leer un secreto: solo nombres bajo `natillera/…`. La SCP de la organización bloquea otros
    (p. ej. `prueba1`) y **eso no se arregla con IAM**.
 
 ## 3. Git

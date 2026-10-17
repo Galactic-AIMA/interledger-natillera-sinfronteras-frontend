@@ -20,7 +20,7 @@ terminar. Fechas absolutas (YYYY-MM-DD). Reglas de uso en [CLAUDE.md](CLAUDE.md)
 | Pago 1 a 1 (`POST /payments` → aprobar → `return-payment` → `GET /payments/{id}`) | ✅ **probado de punta a punta 2 veces** (21:32 y 01:23): EUR→COP |
 | `start-payment` desplegado | Código de **Duvan con `[fix]`** (`deploy/payments/src/start-payment-duvan.ts`); su versión sin fix = **v6** |
 | Tabla de pagos | **`natillera-payments`** (PK `paymentId`, GSI `author-index`). `payments-history` = tabla de eventos de Duvan (`source`+`id`), vacía |
-| Permisos del rol `PowerUserRole` | **Sin `PowerUserAccess`** (lo quitó otra sesión a las 22:27). Inline: `natilleras-dynamo` (incluye logs y secrets), `prestamos-dynamo`, `pagos-dynamo` |
+| Permisos del rol `PowerUserRole` | **Sin `PowerUserAccess`** (lo quitó otra sesión a las 22:27). Inline: `natilleras-dynamo` (logs, secrets `natillera/*`, user-info solo lectura), `prestamos-dynamo`, `pagos-dynamo`, `presignup-cognito` (ListUsers + PutItem user-info) |
 | Bloque A (perfil, wallets, cuentas, natilleras) | ✅ desplegado y probado |
 | Préstamos fase 1 (+ multi-natillera) | ✅ desplegado y probado; aprobar/desembolsar = fase 2 (501) |
 | Aportes (`kind:'aporte'`) | Soportado en el `start-payment` actual; falta probar uno real |
@@ -228,6 +228,11 @@ Decisiones técnicas aún sin tomar:
   mostró otra vez "Internal Server Error". `infra/deploy-payments.sh` quedó alineado (tabla, política y
   zip `start-payment-duvan`). Lo que Duvan pegó (grant.continue + outgoing con `process.exit`) es la
   fase 3 y ya existe en `complete.ts`.
+- 2026-10-17 (~02:00 COL) · **El registro estaba roto desde las 22:27**: `pre-signup` (mismo rol) perdió
+  `cognito-idp:ListUsers` al quitarse `PowerUserAccess`. Nueva inline `presignup-cognito`
+  (`infra/policy-presignup.sh`). Por revisión de seguridad, `natilleras-dynamo` quedó con Secrets solo en
+  `natillera/*` y `user-info` de solo lectura (respaldo de la anterior en el scratch de la sesión).
+  Verificado: pre-signup → "Email already registered", get-me y start-payment OK. PR #7 `david → main`.
 
 ### op-core
 - (vacío)

@@ -87,14 +87,16 @@ T="arn:aws:dynamodb:$AWS_REGION:$ACCOUNT:table"
 import json, sys
 out, t, users, saved, nat, rec = sys.argv[1:]
 json.dump({"Version": "2012-10-17", "Statement": [
-  {"Sid": "ReadUsers", "Effect": "Allow", "Action": ["dynamodb:GetItem"], "Resource": f"{t}/{users}"},
+  {"Sid": "ReadUsers", "Effect": "Allow", "Action": ["dynamodb:GetItem", "dynamodb:Query"], "Resource": f"{t}/{users}"},
   # El rol ya no tiene PowerUserAccess (2026-10-17): esta política también da logs y Secrets Manager a
-  # TODAS las Lambdas del rol (pagos incluidos). No quitar estos dos bloques.
+  # TODAS las Lambdas del rol (pagos incluidos). No quitar estos dos bloques. La escritura en user-info
+  # (pre-signup) y ListUsers de Cognito están en la inline presignup-cognito (infra/policy-presignup.sh).
   {"Sid": "Logs", "Effect": "Allow", "Action": ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"], "Resource": "*"},
-  {"Sid": "Secrets", "Effect": "Allow", "Action": ["secretsmanager:GetSecretValue"], "Resource": "*"},
+  {"Sid": "Secrets", "Effect": "Allow", "Action": ["secretsmanager:GetSecretValue"],
+   "Resource": t.replace(":dynamodb:", ":secretsmanager:").replace(":table", ":secret:natillera/*")},
   {"Sid": "Natilleras", "Effect": "Allow",
    "Action": ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem", "dynamodb:Query", "dynamodb:Scan"],
-   "Resource": [f"{t}/{saved}", f"{t}/{nat}", f"{t}/{nat}/index/*", f"{t}/{rec}", f"{t}/{users}"]}]}, open(out, "w"))
+   "Resource": [f"{t}/{saved}", f"{t}/{nat}", f"{t}/{nat}/index/*", f"{t}/{rec}"]}]}, open(out, "w"))
 PYEOF
 aws iam put-role-policy --role-name "$ROLE_NAME" --policy-name natilleras-dynamo --policy-document "$(fpath "$TMP/policy.json")"
 echo "ok"
