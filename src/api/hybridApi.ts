@@ -56,6 +56,9 @@ const realPayments = realMethods.has('startPayment');
 const realNatillera = realMethods.has('getMyNatillera');
 // Con las cuentas guardadas en el back, el pago va por `customWalletName` y el back busca la billetera.
 const realAccounts = realMethods.has('listAccounts');
+// Préstamos fase 1 reales (pedir, listar, mi préstamo, rechazar): el permiso de cobro (12B) también va al
+// back, para que una solicitud real no termine en el modo de ejemplo. Si su ruta no existe, la 17 lo explica.
+const realLoans = realMethods.has('requestLoan');
 // Mismo criterio para iniciar el pago y para la vista previa.
 const goesReal = (input: StartPaymentInput) => realPayments && (input.kind === 'p2p' || (input.kind === 'aporte' && realNatillera));
 const realPaymentIds = new Set<string>();
@@ -108,6 +111,8 @@ export const hybridApi: NatilleraApi = {
   mode: 'demo',
   // La lista va con la natillera: si la natillera es real, la lista también (aunque no esté en la variable).
   listMyNatilleras: realNatillera ? httpApi.listMyNatilleras : demo('listMyNatilleras'),
+  startLoanRepaymentGrant: realLoans ? httpApi.startLoanRepaymentGrant : demo('startLoanRepaymentGrant'),
+  finishLoanRepaymentGrant: realLoans ? httpApi.finishLoanRepaymentGrant : demo('finishLoanRepaymentGrant'),
   previewQuote: previewHybrid,
   startPayment: startHybridPayment,
   finishPayment: (paymentId, ret) => (realPaymentIds.has(paymentId) ? httpApi.finishPayment(paymentId, ret).then(withName) : demoFinish(paymentId, ret)),

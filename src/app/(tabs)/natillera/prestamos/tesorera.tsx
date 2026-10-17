@@ -44,7 +44,15 @@ export default function ScreenTesorera() {
         );
       }
     } catch (e) {
-      setError(e instanceof ApiError ? e.message : 'No pudimos registrar la decisión. Intente otra vez.');
+      if (e instanceof ApiError && e.code === 'RepaymentNotAuthorized') {
+        setError('Para aprobar, quien pidió debe autorizar primero el cobro de las cuotas. Por ahora puede rechazarla o dejarla pendiente.');
+      } else if (e instanceof ApiError && (e.code === 'DisbursementNotAvailable' || e.status === 501)) {
+        setError('Enviar la plata del préstamo llega pronto. Por ahora puede rechazarla o dejarla pendiente.');
+      } else if (e instanceof ApiError && e.code === 'AlreadyDecided') {
+        setError('Esa solicitud ya tenía una decisión.');
+      } else {
+        setError(e instanceof ApiError ? e.message : 'No pudimos registrar la decisión. Intente otra vez.');
+      }
     } finally {
       setBusy(null);
     }
