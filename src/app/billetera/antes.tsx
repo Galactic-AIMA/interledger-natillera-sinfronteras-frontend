@@ -2,7 +2,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-import { openWallet, useApi } from '@/api';
+import { openWallet, useApi, type NatilleraApi } from '@/api';
 import { AppText, Button, Card, InfoRow, Screen } from '@/components';
 import { decodeAmount, isFlowKind, isTrustedWalletUrl, resultadoHref, returnToParams, safeOrigin, startedFlow, volviendoHref, type FlowKind } from '@/features/pagos/flow';
 import { PasoAntes } from '@/features/pagos/flujo/PasoAntes';
@@ -12,6 +12,26 @@ import { space } from '@/theme';
 
 function asFlowKind(value: string | undefined): FlowKind | undefined {
   return isFlowKind(value) ? value : undefined;
+}
+
+// Flujos que mueven plata con un solo pago (los permisos recurrentes no: si se cierran, no hay cobro).
+const PAYMENT_KINDS: readonly FlowKind[] = ['cuota', 'p2p', 'desembolso'];
+
+/**
+ * La persona cerró la billetera sin volver a la app. Puede haber aprobado igual: la Test Wallet muestra
+ * «Internal Server Error» aunque el back ya haya finalizado el pago (aviso de Ciro, 2026-10-16).
+ * Se consulta el estado unos segundos; `true` si el pago ya no está pendiente.
+ */
+async function settledAfterClose(api: NatilleraApi, paymentId: string): Promise<boolean> {
+  for (let attempt = 0; attempt < 4; attempt++) {
+    try {
+      if ((await api.getPayment(paymentId)).status !== 'pending') return true;
+    } catch {
+      // Sin respuesta del back no se sabe nada: se reintenta y, si sigue así, se cierra como antes.
+    }
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+  }
+  return false;
 }
 
 // 28 · Antes de la billetera
@@ -44,6 +64,12 @@ export default function ScreenBilleteraAntes() {
         demoDetail: param(raw.demoDetail) ?? '',
       });
       if (outcome.kind === 'cancelled') {
+        const realWallet = /^https:\/\//i.test(redirectUrl);
+        if (realWallet && PAYMENT_KINDS.includes(kind) && (await settledAfterClose(api, id))) {
+          // La 30 consulta el pago y muestra el resultado real (hecho, rechazado o fallido).
+          router.replace(volviendoHref({ kind, id, origin, debit: param(raw.debit), receive: param(raw.receive), counterpart }));
+          return;
+        }
         close();
         return;
       }

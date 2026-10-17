@@ -33,9 +33,12 @@ export default function ScreenPagarIndex() {
   }, [saved, accounts]);
 
   const selected = accounts?.find((a) => a.customWalletName === accountName) ?? null;
-  const minor = me ? toMinorUnits(input, me.assetScale, me.assetCode) : null;
-  const amount: Amount | null = me && minor ? { value: minor, assetCode: me.assetCode, assetScale: me.assetScale } : null;
-  const amountError = touched && !amount ? 'Escriba cuánto quiere enviar, un monto mayor a cero.' : null;
+  // El monto va en la moneda de quien RECIBE: el back fija lo que llega y cotiza lo que sale.
+  // Con monto fijo en la moneda de quien paga, EUR→COP falla en la cotización (aviso de Ciro, 2026-10-16).
+  const asset = selected ?? me;
+  const minor = asset ? toMinorUnits(input, asset.assetScale, asset.assetCode) : null;
+  const amount: Amount | null = asset && minor ? { value: minor, assetCode: asset.assetCode, assetScale: asset.assetScale } : null;
+  const amountError = touched && !amount ? 'Escriba cuánto le debe llegar, un monto mayor a cero.' : null;
 
   const quote = useQuery({
     queryKey: ['quote', api.mode, 'p2p', selected?.customWalletName, amount?.value],
@@ -48,6 +51,9 @@ export default function ScreenPagarIndex() {
       router.push('/pagar/guardar-cuenta');
       return;
     }
+    // Si la cuenta nueva es de otra moneda, el número escrito ya no significa lo mismo.
+    const next = accounts?.find((a) => a.customWalletName === value);
+    if (next && selected && next.assetCode !== selected.assetCode) setInput('');
     setAccountName(value);
   }
 
@@ -66,7 +72,7 @@ export default function ScreenPagarIndex() {
           id: start.paymentId,
           redirectUrl: start.redirectUrl,
           demoTitle: 'Enviar un pago',
-          demoDetail: `Va a enviar ${formatAmount(amount)} a ${selected.customWalletName}.`,
+          demoDetail: `${selected.customWalletName} va a recibir ${formatAmount(amount)}.`,
           origin: '/pagar',
           debit: encodeAmount(debit),
           receive: encodeAmount(receive),
@@ -128,14 +134,14 @@ export default function ScreenPagarIndex() {
         )}
       </Card>
 
-      <Card title="2. ¿Cuánto envía?">
+      <Card title="2. ¿Cuánto le llega?">
         <TextField
-          label={me ? `Monto en ${currencyName(me.assetCode)}` : 'Monto'}
+          label={asset ? `Monto que recibe, en ${currencyName(asset.assetCode)}` : 'Monto'}
           value={input}
           onChangeText={setInput}
           onBlur={() => setTouched(true)}
           keyboardType="numeric"
-          placeholder="$ 80.000"
+          placeholder={asset?.assetCode === 'COP' ? '$ 80.000' : '20,00'}
           mono
           error={amountError}
         />
