@@ -115,8 +115,10 @@ const getNatillera = async (natilleraId: string) => {
   return (Item as NatilleraItem | undefined) ?? null;
 };
 
-// Mismo criterio que el bloque A: una persona = una natillera; Scan con filtro (pocas filas en la demo).
-const findNatilleraOf = async (username: string) => {
+// Una persona puede estar en varias natilleras (mismo criterio que el bloque A con varias natilleras).
+// Scan con filtro: pocas filas en la demo.
+const findNatillerasOf = async (username: string) => {
+  const items: NatilleraItem[] = [];
   let ExclusiveStartKey: Record<string, any> | undefined;
   do {
     const page = await dynamo.send(
@@ -127,10 +129,10 @@ const findNatilleraOf = async (username: string) => {
         ExclusiveStartKey,
       }),
     );
-    if (page.Items?.[0]) return page.Items[0] as NatilleraItem;
+    items.push(...((page.Items ?? []) as NatilleraItem[]));
     ExclusiveStartKey = page.LastEvaluatedKey;
   } while (ExclusiveStartKey);
-  return null;
+  return items;
 };
 
 // Plata disponible en el fondo = aportes (natillera-records, moneda del fondo) − desembolsado.
@@ -186,7 +188,7 @@ const queryLoans = async (indexName: string, field: string, value: string) => {
   return items.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 };
 
-// Un préstamo a la vez: pendiente, o aprobado con cuotas por pagar.
+// Un préstamo a la vez por natillera: pendiente, o aprobado con cuotas por pagar.
 const isActive = (i: LoanItem) => i.status === 'pending' || (i.status === 'approved' && (i.paidCount ?? 0) < i.installments);
 
 // POST /loans/requests (flujo 10) { natilleraId, value, assetCode, assetScale, installments } → LoanRequest.
@@ -203,8 +205,9 @@ export const requestLoan = async (username: string, body: Record<string, any>) =
   if (asset.assetCode !== natillera.assetCode || asset.assetScale !== natillera.assetScale) {
     throw new HttpError(400, 'InvalidAmount', `Loans are in the fund currency (${natillera.assetCode}, scale ${natillera.assetScale})`);
   }
-  if ((await queryLoans(env.authorIndex, 'author', username)).some(isActive)) {
-    throw new HttpError(409, 'LoanAlreadyActive', 'You already have a loan request or an active loan');
+  const mine = await queryLoans(env.authorIndex, 'author', username);
+  if (mine.some((i) => i.natilleraId === natillera.natilleraId && isActive(i))) {
+    throw new HttpError(409, 'LoanAlreadyActive', 'You already have a loan request or an active loan in this natillera');
   }
   if (value > (await availableFund(natillera))) throw new HttpError(409, 'InsufficientFunds', 'The fund does not have that much money');
 
@@ -222,16 +225,22 @@ export const requestLoan = async (username: string, body: Record<string, any>) =
   return toRequest(item);
 };
 
-// GET /loans/requests?status=pending (flujo 13, tesorera). Quien no es ADMIN recibe [].
-export const listPendingRequests = async (username: string) => {
-  const natillera = await findNatilleraOf(username);
-  if (!natillera || natillera.author !== username) return [];
-  return (await queryLoans(env.natilleraIndex, 'natilleraId', natillera.natilleraId)).filter((i) => i.status === 'pending').map(toRequest);
+// GET /loans/requests?status=pending[&natilleraId=] (flujo 13, tesorera): pendientes de las natilleras
+// donde quien llama es ADMIN (o solo de la indicada). Quien no es ADMIN recibe [].
+export const listPendingRequests = async (username: string, natilleraId?: string) => {
+  const admined = (await findNatillerasOf(username)).filter((n) => n.author === username && (!natilleraId || n.natilleraId === natilleraId));
+  const lists = await Promise.all(admined.map((n) => queryLoans(env.natilleraIndex, 'natilleraId', n.natilleraId)));
+  return lists
+    .flat()
+    .filter((i) => i.status === 'pending')
+    .sort((a, b) => a.createdAt.localeCompare(b.createdAt))
+    .map(toRequest);
 };
 
-// GET /loans/mine (flujo 13) → { request, loan }: la solicitud más reciente y, si ya se desembolsó, el préstamo.
-export const getMyLoans = async (username: string) => {
-  const mine = await queryLoans(env.authorIndex, 'author', username);
+// GET /loans/mine[?natilleraId=] (flujo 13) → { request, loan }: la solicitud más reciente (de esa natillera,
+// si se indica) y, si ya se desembolsó, el préstamo.
+export const getMyLoans = async (username: string, natilleraId?: string) => {
+  const mine = (await queryLoans(env.authorIndex, 'author', username)).filter((i) => !natilleraId || i.natilleraId === natilleraId);
   const latest = mine[mine.length - 1];
   if (!latest) return { request: null, loan: null };
   const request = toRequest(latest);

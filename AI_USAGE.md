@@ -100,6 +100,7 @@ Los commits hechos con IA llevan `Co-Authored-By: Claude` en el historial de git
 - **`GET /me` con `userId = username`:** Claude cambió `getMe` en [`deploy/natilleras/src/domain.ts`](deploy/natilleras/src/domain.ts) (el `sub` va en `sub`), ajustó la prueba y regeneró `dist/get-me.zip`. Motivo: la app compara `me.userId` con `members[].userId` (username) en cuota y recurrente.
 - **Revisión humana:** Henry pidió el cambio; Ciro lo revisó y Claude lo desplegó (solo la Lambda `get-me`).
 - **Préstamos, fase 1 (sin Open Payments):** Claude escribió [`deploy/prestamos`](deploy/prestamos) (simular, pedir, listar pendientes, mi préstamo, rechazar; 5 Lambdas con el patrón del bloque A y 5 pruebas locales), [`infra/deploy-prestamos.sh`](infra/deploy-prestamos.sh) y [`docs/API-PRESTAMOS.md`](docs/API-PRESTAMOS.md). Henry decidió el alcance; Ciro revisa y despliega.
+- **README del repo:** Claude escribió [`README.md`](README.md) (arquitectura, pago con Open Payments, rutas, despliegue, seguridad) y el pedido de la rama `main` en `MEMORY.md`; Henry lo revisó.
 
 ## Prompt Log
 

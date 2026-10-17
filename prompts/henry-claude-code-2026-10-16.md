@@ -9,3 +9,11 @@ Sesión del repo front (`natillera-front`). Registro completo en el front: `prom
 > listo, que mas podemos apoyarles en le back, ?
 
 > Sí, arranca back/feat-prestamos con la fase 1 (sin Open Payments) siguiendo el patrón del bloque A, para que Ciro lo despliegue.
+
+> adelante
+
+> ya eso quedo listo
+
+> con que seguimos'
+
+> Sí, escribe los README del front y del back (PR a main y a david) y deja el pedido de la rama main del back para Duvan.
