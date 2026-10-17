@@ -10,8 +10,10 @@ import { PaymentHistory } from '@/features/pagos/pagar/PaymentHistory';
 import { shortAddress } from '@/features/pagos/pagar/shortAddress';
 import { space } from '@/theme';
 import { currencyName, formatAmount, toMinorUnits } from '@/utils/money';
+import { useDebouncedValue } from '@/utils/useDebouncedValue';
 
 const NEW_ACCOUNT = '__new__';
+const PREVIEW_DEBOUNCE_MS = 600;
 
 // 26 · Pagar: enviar plata a una cuenta guardada con Open Payments (la firma la hace el back).
 export default function ScreenPagarIndex() {
@@ -40,10 +42,13 @@ export default function ScreenPagarIndex() {
   const amount: Amount | null = asset && minor ? { value: minor, assetCode: asset.assetCode, assetScale: asset.assetScale } : null;
   const amountError = touched && !amount ? 'Escriba cuánto le debe llegar, un monto mayor a cero.' : null;
 
+  // La vista previa se pide cuando el monto lleva 600 ms quieto, no en cada tecla (aviso del back, 2026-10-17).
+  const previewValue = useDebouncedValue(amount?.value ?? null, PREVIEW_DEBOUNCE_MS);
+  const previewAmount = amount && previewValue === amount.value ? amount : null;
   const quote = useQuery({
-    queryKey: ['quote', api.mode, 'p2p', selected?.customWalletName, amount?.value],
-    queryFn: () => (selected && amount ? api.previewQuote({ kind: 'p2p', customWalletName: selected.customWalletName, amount }) : null),
-    enabled: Boolean(selected && amount),
+    queryKey: ['quote', api.mode, 'p2p', selected?.customWalletName, previewAmount?.value],
+    queryFn: () => (selected && previewAmount ? api.previewQuote({ kind: 'p2p', customWalletName: selected.customWalletName, amount: previewAmount }) : null),
+    enabled: Boolean(selected && previewAmount),
   });
 
   function chooseAccount(value: string) {

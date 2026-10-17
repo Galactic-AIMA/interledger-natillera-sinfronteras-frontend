@@ -104,6 +104,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-17 | Camilo | Claude Code (Opus 5.5, escritorio) | Pitch al día con la app actual: capturas nuevas tomadas del emulador por adb (Mi natillera, ¿Quién ya puso?, Poner la cuota, letra grande, Ayuda), láminas 4, 5, 7, 8 y 9 actualizadas y roles del equipo | `docs/pitch/pitch.html`, `docs/pitch/pantallas/v2-*.png`, `prompts/2026-10-17-camilo-pitch-html.md` |
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Merge del pitch final de Camilo en `feat/natillera-real` y guion de `pitch-y-video.html` igualado a las notas de `pitch.html` (10 láminas, reparto y roles nuevos, cronómetro y horario ajustados); artefacto republicado | `docs/pitch/pitch-y-video.html`, `AI_USAGE.md` |
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Cierre de la declaración de IA: bocetos de Figma con IA, Gemini de Duvan en el back, chequeo `ai-usage-check` en verde y curso marcado en el checklist | `AI_USAGE.md`, `MEMORY.md` |
+| 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Arreglos pedidos por el back tras la prueba real: billetera de la meta de ejemplo a `cirocol` (la de `carmen` no existe), vista previa con espera de 600 ms en vez de una consulta por tecla y mensaje «La billetera de quien recibe no existe» | `src/api/mockApi.ts`, `src/api/httpApi.ts`, `src/utils/useDebouncedValue.ts`, `src/app/(tabs)/pagar/index.tsx`, `src/app/(tabs)/natillera/metas/[goalId].tsx`, `AI_USAGE.md` |
 
 ## What We Did Ourselves
 
