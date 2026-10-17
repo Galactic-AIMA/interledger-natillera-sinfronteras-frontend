@@ -8,3 +8,10 @@ Sesión abierta en la raíz del workspace (sin hook); prompts copiados literal.
 4. > Te cuento, te cuento que el QR funcionó perfecto en mi equipo. En mi Android. Sí, a mí.
 
 Resultado: tag `v1.0.0` + Release con la APK (build local con Gradle), versión web en GitHub Pages (rama `gh-pages`) y QR de ambas en la portada de los pitch.
+
+## Continuación (~10:15–10:30)
+
+5. > Sí, sube el commit bd60f43 del pitch con los QR a main.
+6. > Documenta la memoria  y deja todo al día y el uso de ia y documenta la ultima version yy el tema de qrs en el repo
+
+Resultado: README con sección «Descargarla y probarla» y QR en `docs/qr/`, build local de la APK en `docs/ANDROID.md`, CHANGELOG (distribución de la `v1.0.0`) y tablero al día. Nota: el push del paso 5 subió también `b2a683a`, un commit local de otra sesión (presentación de 4 láminas).

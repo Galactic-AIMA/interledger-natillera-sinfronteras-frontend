@@ -7,11 +7,16 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - Cada versión nombra su commit; con `git show <tag>` se ve el estado exacto.
 
 ## [Sin publicar]
+### Documentación
+- QR de descarga (APK y versión web) en la portada de los pitch (`bd60f43`) y en el README; build local de la APK en `docs/ANDROID.md`.
 
 ## App (front)
 
 ## [1.0.0] · 2026-10-17 09:10 · `4373242` · 🏁 entrega
 Versión de entrega de la hackatón; la APK de Android va adjunta a la Release `v1.0.0`. Interfaz igual a la `v0.11.0` más los sonidos de la `v0.12.0`.
+### Distribución
+- **APK de Android** adjunta a la [Release `v1.0.0`](https://github.com/Galactic-AIMA/interledger-natillera-sin-fronteras/releases/tag/v1.0.0) (09:50; build local con Gradle, 86 MB, firma de depuración). Probada en el emulador y en un Android real.
+- **Versión web para iPhone** en GitHub Pages: https://galactic-aima.github.io/interledger-natillera-sin-fronteras/ (rama `gh-pages`, export de este mismo tag).
 ### Arreglado
 - Backend: `return-payment` vuelve a la app con una página en vez de un 302 (PR #16).
 ### Documentación
