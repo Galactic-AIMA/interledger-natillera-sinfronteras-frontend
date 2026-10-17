@@ -27,7 +27,7 @@ App ──POST /payments──▶ Backend: incoming payment (fondo) + quote + gr
 App ◀── redirectUrl ───┘
 App ──abre la billetera (Test Wallet)──▶ la persona aprueba
 Billetera ──▶ Backend GET /payments/{id}/return: verifica el hash, continúa el grant y crea el outgoing payment
-Backend ──302──▶ natillera://retorno?paymentId=…&result=…
+Backend ──página «Volver a la app»──▶ natillera://retorno?paymentId=…&result=…
 App ──GET /payments/{id}──▶ estado final (pantalla 30 → resultado)
 ```
 

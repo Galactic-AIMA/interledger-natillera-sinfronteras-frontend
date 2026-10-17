@@ -87,6 +87,10 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
 
 **Camilo · Claude Code (bloque A: natilleras, cuentas guardadas y perfil)**
 
+- **«Internal Server Error» de la Test Wallet (2026-10-17):** Claude encontró en el código de la Test Wallet que el
+  error sale de un segundo toque a «Accept» mientras la redirección espera, y cambió `return-payment` para responder
+  de una y completar el pago en segundo plano. Henry (con Claude) lo llevó a una página «Volver a la app» (PR #16);
+  Claude la compiló desde el código, la desplegó con respaldo y la verificó con un pago real (14:05Z).
 - **Lambdas de natilleras** ([`deploy/natilleras/src`](deploy/natilleras/src)): crear natillera,
   invitación, unirse, "mi natillera" con totales y estado de cada socio, cuentas guardadas, `GET /me` y
   verificación de billetera. Claude las escribió desde `docs/ARQUITECTURA.md` y el contrato del front,

@@ -44,7 +44,7 @@ Cognito (us-east-2) ── pre-signup: verifica la billetera y guarda el perfil
    - **verifica el hash** de la interacción;
    - pasa el pago a `processing` de forma atómica, para no pagar dos veces;
    - hace `grant.continue` y crea el **outgoing payment** con la quote;
-   - responde 302 a la app (`natillera://retorno?paymentId=…&result=…`), siempre que el `returnUrl` esté en una lista cerrada.
+   - responde **de una** con una página «Su pago va en camino» que abre la app (`natillera://retorno?paymentId=…&result=…`) y tiene el botón «Volver a la app», siempre que el `returnUrl` esté en una lista cerrada. El pago se completa en segundo plano (auto-invocación asíncrona) y la app consulta `GET /payments/{id}`. Con un 302, Chrome en Android a veces no abría la app y un segundo toque a «Accept» daba «Internal Server Error» en la Test Wallet.
 4. `GET /payments/{id}` da el estado final. `POST /payments/{id}/finish` queda como respaldo idempotente.
 
 Si es un **aporte** a la natillera, al quedar `completed` se registra en `natillera-records` y suma al fondo.
