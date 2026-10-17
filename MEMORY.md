@@ -197,6 +197,10 @@ Decisiones técnicas aún sin tomar:
   simular OK (BigInt), pedir → 409 `InsufficientFunds` (fondo en 0, falta un aporte), otra moneda → 400,
   mis préstamos → vacío, pendientes → `[]`, decidir por no-ADMIN → 404. Aprobar/desembolsar = fase 2.
   Ojo: tras un deployment, el stage tarda ~1 min; antes responde 403 "Missing Authentication Token".
+- 2026-10-17 (~01:20 COL) · **PR #4 (préstamos con varias natilleras) desplegado** sin correr el script
+  completo: `request-loan`, `get-my-loans`, `list-loan-requests` (respaldo v1 de cada una) y plantillas de
+  `GET /loans/requests` y `GET /loans/mine` con `natilleraId` opcional (escapado). Deployment `pxnk9k`.
+  Probado: listas vacías, 409 `InsufficientFunds`, 401 sin token.
 
 ### op-core
 - (vacío)

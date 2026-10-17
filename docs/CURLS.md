@@ -270,6 +270,8 @@ REQUEST_ID=<requestId>
 
 ## 17 · Mis préstamos — `GET /loans/mine`
 
+Con varias natilleras se puede filtrar con `?natilleraId=$NATILLERA_ID` (también en la sección 18).
+
 ```bash
 curl -s "$API/loans/mine" -H "Authorization: Bearer $TOKEN"
 ```
