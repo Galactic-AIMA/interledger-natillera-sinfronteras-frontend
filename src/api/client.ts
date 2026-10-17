@@ -10,6 +10,7 @@ import type {
   LoanSimulation,
   MyLoans,
   Natillera,
+  NatilleraSummary,
   Payment,
   QuotePreview,
   RecurringGrant,
@@ -39,7 +40,9 @@ export interface NatilleraApi {
   verifyWallet(walletAddress: string): Promise<WalletInfo>;
 
   // Natillera (flujos 7, 8, 13)
-  getMyNatillera(): Promise<Natillera | null>;
+  // Sin id: la natillera por defecto (la más antigua). Con id: esa, si la persona es integrante.
+  getMyNatillera(natilleraId?: string): Promise<Natillera | null>;
+  listMyNatilleras(): Promise<NatilleraSummary[]>;
   createNatillera(input: CreateNatilleraInput): Promise<Natillera>;
   getInvitation(code: string): Promise<InvitationPreview>;
   joinNatillera(code: string): Promise<Natillera>;

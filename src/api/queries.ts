@@ -1,6 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 
 import { useApi } from './ApiProvider';
+import { ApiError } from './client';
+import { setActiveNatillera, useActiveNatilleraId } from './activeNatillera';
 
 // Claves compartidas: tras un pago, invalidar con queryClient.invalidateQueries({ queryKey: keys.x }).
 export const keys = {
@@ -20,7 +22,29 @@ export function useMe() {
 
 export function useMyNatillera() {
   const api = useApi();
-  return useQuery({ queryKey: [...keys.natillera, api.mode], queryFn: () => api.getMyNatillera() });
+  const activeId = useActiveNatilleraId();
+  return useQuery({
+    queryKey: [...keys.natillera, api.mode, activeId ?? 'default'],
+    queryFn: async () => {
+      if (!activeId) return api.getMyNatillera();
+      try {
+        return await api.getMyNatillera(activeId);
+      } catch (error) {
+        // La activa ya no es de esta persona (otra sesión, o la sacaron): se vuelve a la por defecto.
+        if (error instanceof ApiError && error.status === 404) {
+          setActiveNatillera(null);
+          return api.getMyNatillera();
+        }
+        throw error;
+      }
+    },
+  });
+}
+
+/** Todas las natilleras de la persona, para el selector de Mi natillera. */
+export function useMyNatilleras() {
+  const api = useApi();
+  return useQuery({ queryKey: [...keys.natillera, 'list', api.mode], queryFn: () => api.listMyNatilleras() });
 }
 
 export function usePayments() {

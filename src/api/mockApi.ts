@@ -232,11 +232,23 @@ export const mockApi: NatilleraApi & { switchUser(username: string): void } = {
     return { exists: ok, walletAddress, assetCode: ok ? (known?.assetCode ?? (walletAddress.includes('luz') ? 'USD' : 'COP')) : undefined, assetScale: ok ? 2 : undefined };
   },
 
-  async getMyNatillera() {
+  async getMyNatillera(natilleraId) {
     await wait(200);
     const user = me();
+    if (natilleraId) {
+      const chosen = natilleras.find((x) => x.natilleraId === natilleraId && x.memberIds.includes(user.userId));
+      if (!chosen) throw new ApiError('No encontramos esa natillera.', 404, 'NatilleraNotFound');
+      return toNatillera(chosen, user.userId);
+    }
     const n = myNatilleraState(user.userId);
     return n ? toNatillera(n, user.userId) : null;
+  },
+  async listMyNatilleras() {
+    await wait(150);
+    const user = me();
+    return natilleras
+      .filter((n) => n.memberIds.includes(user.userId))
+      .map((n) => ({ natilleraId: n.natilleraId, natilleraName: n.natilleraName, isAdmin: n.adminId === user.userId, membersCount: n.memberIds.length, asset: { assetCode: 'COP', assetScale: 2 }, quota: n.quota }));
   },
   async createNatillera(input) {
     await wait();

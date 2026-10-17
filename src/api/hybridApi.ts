@@ -98,6 +98,8 @@ export const hybridApi: NatilleraApi = {
   ...methods,
   // 'demo' porque conviven datos de ejemplo; la billetera real se decide por pago en openWallet.
   mode: 'demo',
+  // La lista va con la natillera: si la natillera es real, la lista también (aunque no esté en la variable).
+  listMyNatilleras: realNatillera ? httpApi.listMyNatilleras : demo('listMyNatilleras'),
   startPayment: startHybridPayment,
   finishPayment: (paymentId, ret) => (realPaymentIds.has(paymentId) ? httpApi.finishPayment(paymentId, ret).then(withName) : demoFinish(paymentId, ret)),
   getPayment: (paymentId) => (realPaymentIds.has(paymentId) ? httpApi.getPayment(paymentId).then(withName) : demoGet(paymentId)),
