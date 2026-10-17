@@ -158,6 +158,14 @@ Decisiones técnicas aún sin tomar:
   start-payment compilado a CommonJS dentro de `index.mjs`. Se respaldó como **versión 1** y se
   restauró `deploy/pre-signup/index.mjs` del repo; timeout 3 s → 10 s. Verificado: rechaza wallet
   inválida. **Antes de subir desde la consola, revisar el nombre de la Lambda.**
+- 2026-10-16 (~21:32 COL) · **P0 logrado: primer pago real EUR→COP completo.** Usuario
+  `ciro-demo-euro` (wallet `ciroeur`, EUR) → `cirocol` (COP): 2,13 EUR → 4.000 COP, pago
+  `a03971c1…`, outgoing payment `d1a0f088…`. Flujo opción B: aprobar en la Test Wallet →
+  `return-payment` verificó el hash y finalizó → `completed`. La Test Wallet **igual mostró
+  "Internal Server Error"**: su backend convierte en 500 cualquier error de Rafiki que no sea el texto
+  `'Bad Request'` (p. ej. un segundo PATCH sobre una interacción ya aceptada). **El 500 no significa
+  que el pago falló: revisar `GET /payments/{id}`.** Monto fijo de débito en EUR hacia COP falló en
+  la cotización (`non-positive receive amount`); monto fijo de recepción en COP sí funciona.
 
 ### op-core
 - (vacío)
