@@ -1,5 +1,7 @@
 # Estado de los repos y qué falta · 2026-10-16 ~23:40
 
+> **Histórico.** El estado vigente está en [estado-2026-10-17-madrugada.md](estado-2026-10-17-madrugada.md).
+
 Revisión de Henry con Claude Code. Reemplaza a [estado-2026-10-16-tarde.md](estado-2026-10-16-tarde.md), que queda como histórico.
 
 ## Front (`Galactic-AIMA/...-frontend`, rama por defecto `main`)

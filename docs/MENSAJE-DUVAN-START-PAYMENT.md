@@ -1,5 +1,7 @@
 # Mensaje para Duvan — `start-payment` (17/10, madrugada)
 
+> **Histórico (03:25):** resuelto. `start-payment` ya funciona en el `main` del back (PR #7, 02:03). Estado vigente en [estado-2026-10-17-madrugada.md](estado-2026-10-17-madrugada.md).
+
 Duvan, revisamos el error de la librería en `start-payment`. Te dejo el diagnóstico y una propuesta para llegar a la demo con el pago funcionando.
 
 ## 1. El error de la librería (`ENOENT … specs/wallet-address-server.yaml`)

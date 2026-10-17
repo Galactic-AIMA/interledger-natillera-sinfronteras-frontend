@@ -5,7 +5,8 @@ Estado vivo. Cada sesión lo lee al empezar y actualiza **solo su sección** al 
 ## Estado general
 
 - 2026-10-16 — Repo vacío creado. Setup inicial: CLAUDE.md, MEMORY.md, AI_USAGE.md, hook de prompts, docs (Camilo + Claude Code).
-- 2026-10-16 23:40 — **Estado vigente:** [docs/estado-2026-10-16-noche.md](docs/estado-2026-10-16-noche.md). Bloque A del back desplegado; `main` del front trae cuota real, pagos reales y varias natilleras. `tsc` limpio, `npm test` 15/15.
+- 2026-10-17 03:25 — **Estado vigente:** [docs/estado-2026-10-17-madrugada.md](docs/estado-2026-10-17-madrugada.md). `start-payment` funciona en el `main` del back (PR #7). Préstamos fase 2 y cuota automática están en `david` (PR #9) pero **sin desplegar** (403). `POST /payments/preview` sí está desplegado. `main` del front trae logo Anillos, panel de logs y el barrido UX. `tsc` limpio, `npm test` 15/15. **Falta unir los dos repos en uno** (ver checklist).
+- 2026-10-16 23:40 — Estado anterior (histórico): [docs/estado-2026-10-16-noche.md](docs/estado-2026-10-16-noche.md). Bloque A del back desplegado; `main` del front trae cuota real, pagos reales y varias natilleras. `tsc` limpio, `npm test` 15/15.
 - Entrega: **2026-10-17 11:00**. Grabar video de respaldo antes de las 08:00.
 
 Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](docs/HENRY.md)
