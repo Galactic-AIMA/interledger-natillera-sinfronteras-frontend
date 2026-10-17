@@ -8,6 +8,7 @@ import { planSimHref } from '@/features/creditos/links';
 import { antesHref } from '@/features/pagos/flow';
 import { formatAmount } from '@/utils/money';
 import { BackButton } from '@/features/navegacion/BackButton';
+import { FirstTimeGuide } from '@/features/guia/FirstTimeGuide';
 
 // 21 · Préstamos (tesorera): aprueba o rechaza. Aprobar abre la billetera del fondo para el desembolso (22 → 30 → 23).
 export default function ScreenTesorera() {
@@ -102,6 +103,7 @@ export default function ScreenTesorera() {
           </AppText>
         </Card>
       ))}
+      <FirstTimeGuide id="tesorera" />
     </Screen>
   );
 }

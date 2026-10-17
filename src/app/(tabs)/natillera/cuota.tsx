@@ -11,6 +11,7 @@ import { Reveal } from '@/features/pagos/flujo/Reveal';
 import { palette, space } from '@/theme';
 import { formatAmount } from '@/utils/money';
 import { BackButton } from '@/features/navegacion/BackButton';
+import { FirstTimeGuide } from '@/features/guia/FirstTimeGuide';
 
 // 11 · Poner la cuota
 export default function ScreenNatilleraCuota() {
@@ -152,6 +153,7 @@ export default function ScreenNatilleraCuota() {
           </Reveal>
         </>
       )}
+      <FirstTimeGuide id="cuota" />
     </Screen>
   );
 }

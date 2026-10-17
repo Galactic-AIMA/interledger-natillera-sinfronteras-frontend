@@ -5,6 +5,8 @@ import { Share, StyleSheet, View } from 'react-native';
 import { useMe, useMyNatillera } from '@/api';
 import { AppText, BrandSymbol, Button, Card, Screen, SLOGAN } from '@/components';
 import { FaqItem } from '@/features/ayuda/FaqItem';
+import { GuideSheet } from '@/features/guia/GuideSheet';
+import { GUIDE_IDS, GUIDES, type GuideId } from '@/features/guia/guides';
 import { fonts, space } from '@/theme';
 import { formatAmount } from '@/utils/money';
 import { firstName } from '@/utils/names';
@@ -18,6 +20,7 @@ export default function ScreenAyuda() {
   const { data: natillera, isLoading } = useMyNatillera();
   const { data: me } = useMe();
   const [openId, setOpenId] = useState<string | null>(null);
+  const [guideId, setGuideId] = useState<GuideId | null>(null);
 
   const howMuch = isLoading
     ? 'Estamos buscando su cifra…'
@@ -81,6 +84,13 @@ export default function ScreenAyuda() {
           />
         ))}
       </View>
+      <Card title="Guías paso a paso">
+        <AppText tone="muted">Vuelva a ver cómo se hace cada cosa, con calma.</AppText>
+        {GUIDE_IDS.map((id) => (
+          <Button key={id} label={GUIDES[id].title} variant="secondary" onPress={() => setGuideId(id)} />
+        ))}
+      </Card>
+      <GuideSheet id={guideId} start="steps" onClose={() => setGuideId(null)} />
       {natillera ? (
         <Card title="Su natillera" tone="soft">
           <View style={styles.codeBlock}>

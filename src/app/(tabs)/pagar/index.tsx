@@ -8,6 +8,7 @@ import { AppText, BrandSymbol, Button, Card, Choice, InfoRow, Screen, TextField 
 import { antesHref, encodeAmount } from '@/features/pagos/flow';
 import { PaymentHistory } from '@/features/pagos/pagar/PaymentHistory';
 import { shortAddress } from '@/features/pagos/pagar/shortAddress';
+import { FirstTimeGuide } from '@/features/guia/FirstTimeGuide';
 import { space } from '@/theme';
 import { currencyName, formatAmount, toMinorUnits } from '@/utils/money';
 import { useDebouncedValue } from '@/utils/useDebouncedValue';
@@ -170,6 +171,7 @@ export default function ScreenPagarIndex() {
       </Card>
 
       <PaymentHistory />
+      <FirstTimeGuide id="pagar" />
     </Screen>
   );
 }

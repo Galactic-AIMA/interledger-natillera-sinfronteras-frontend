@@ -8,6 +8,7 @@ import { AppText, Button, Card, Choice, InfoRow, LinkRow, Screen, StatusPill, Te
 import { autorizarHref, INSTALLMENT_OPTIONS, planSimHref } from '@/features/creditos/links';
 import { toMinorUnits } from '@/utils/money';
 import { BackButton } from '@/features/navegacion/BackButton';
+import { FirstTimeGuide } from '@/features/guia/FirstTimeGuide';
 
 // 16 Pedir · 20 Esperando a la tesorera · 25 Rechazado (y acceso a 17, 21 y 24).
 export default function ScreenPrestamos() {
@@ -181,6 +182,7 @@ function AskLoan({
         )}
       </Card>
       {amount ? <LinkRow label="Ver el plan de pagos" onPress={() => router.push(planSimHref(amount, installments))} /> : null}
+      <FirstTimeGuide id="prestamo" />
     </Screen>
   );
 }
