@@ -9,6 +9,7 @@ import { GoalCard } from '@/features/metas/GoalCard';
 import { palette, radius, space } from '@/theme';
 import { formatMovementDate } from '@/utils/dates';
 import { formatAmount } from '@/utils/money';
+import { useFundSound } from '@/utils/useFundSound';
 
 import { JarIllustration } from './JarIllustration';
 import { MemberRings } from './MemberRings';
@@ -102,6 +103,7 @@ function LoadingSkeleton() {
 export function HomeNatillera() {
   const reduceMotion = useReducedMotion();
   const { data: natillera, isPending, isError, refetch } = useMyNatillera();
+  useFundSound(natillera);
 
   if (isPending) {
     return (

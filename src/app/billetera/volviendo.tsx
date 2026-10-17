@@ -8,6 +8,7 @@ import { ResultScreen } from '@/components';
 import { decodeAmount, encodeAmount, isFlowKind, resultadoHref, safeOrigin, settleFlow, startedFlow, type FlowKind, type ResultadoParams } from '@/features/pagos/flow';
 import { param } from '@/features/pagos/flujo/params';
 import { takeGoalPayment } from '@/features/metas/goalPayments';
+import { playSound } from '@/utils/sounds';
 
 type Outcome = Omit<ResultadoParams, 'origin'>;
 
@@ -112,6 +113,9 @@ export default function ScreenBilleteraVolviendo() {
         }
       }
       if (own) settleFlow(id, outcome);
+      // Aviso sonoro: la cuota suena a monedas en el bote; los demás pagos hechos, a «ding-ding».
+      if (outcome.tipo === 'cuota-puesta') playSound('monedas');
+      else if (outcome.tipo === 'pago-hecho' || outcome.tipo === 'meta-aporte' || outcome.tipo === 'prestamo-desembolsado') playSound('pago');
       // Sin await: el refetch de lo que queda debajo no debe demorar el resultado.
       void Promise.all([
         queryClient.invalidateQueries({ queryKey: keys.natillera }),
