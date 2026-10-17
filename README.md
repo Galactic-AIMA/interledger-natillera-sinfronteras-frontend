@@ -17,6 +17,18 @@ con adultos mayores: textos cortos en «usted», botones grandes y un botón **A
 |---|---|---|---|---|
 | ![](docs/pitch/pantallas/01-bienvenida.png) | ![](docs/pitch/pantallas/10-mi-natillera.png) | ![](docs/pitch/pantallas/11-poner-cuota.png) | ![](docs/pitch/pantallas/28-va-a-su-billetera.png) | ![](docs/pitch/pantallas/34-cuota-puesta.png) |
 
+## Descargarla y probarla
+
+| Android (APK v1.0.0) | iPhone y computador (versión web) |
+|---|---|
+| <img src="docs/qr/qr-apk.png" width="180" alt="QR de la APK"> | <img src="docs/qr/qr-web.png" width="180" alt="QR de la versión web"> |
+| [Descargar la APK](https://github.com/Galactic-AIMA/interledger-natillera-sin-fronteras/releases/download/v1.0.0/natillera-sin-fronteras-v1.0.0.apk) · [Release v1.0.0](https://github.com/Galactic-AIMA/interledger-natillera-sin-fronteras/releases/tag/v1.0.0) | [Abrir la app web](https://galactic-aima.github.io/interledger-natillera-sin-fronteras/) |
+| Permitir «instalar apps de origen desconocido». Firmada con la llave de depuración (no es de Play Store). Probada en un Android real | Funciona completa con «Empezar con datos de ejemplo». Con una cuenta real, el login pasa pero el API del back aún no tiene CORS para el navegador |
+
+> **EN:** Scan the QR codes to install the Android APK or open the web version (iPhone users). The web version is fully usable in sample-data mode.
+
+Los mismos QR están en la portada de los pitch de [`docs/pitch/`](docs/pitch/).
+
 ## Cómo usa Open Payments
 
 **La app nunca firma ni guarda llaves.** El SDK de Open Payments corre solo en el backend (AWS Lambda), y la
@@ -67,7 +79,8 @@ npx expo start            # escanear el QR con Expo Go; "w" para abrirla en el n
 ```
 
 - **Solo demo:** `EXPO_PUBLIC_USE_MOCKS=1` en `.env`, o el botón «Empezar con datos de ejemplo».
-- **APK (Android):** `npx eas-cli build -p android --profile preview`. `eas.json` ya trae las variables del API.
+- **APK (Android):** con EAS (`npx eas-cli build -p android --profile preview`) o en local con Gradle; ver [docs/ANDROID.md](docs/ANDROID.md#4-apk-para-instalar). `eas.json` trae las variables del API.
+- **Web:** `npx expo export -p web` (la publicada en GitHub Pages lleva `experiments.baseUrl` solo en el build).
 - **Pruebas:** `npm test` (15 casos: cuota, pagos, préstamos, modo híbrido, seguridad de la vuelta de la billetera, teléfono) y `npm run typecheck`.
 
 ## Stack

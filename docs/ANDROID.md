@@ -96,7 +96,22 @@ Al terminar, EAS da un enlace y un QR para bajar el APK. Para instalarlo por cab
 
 - **Paquete Android:** `com.galacticaima.natillera` (en `app.json`); el esquema `natillera://` es el que usa la vuelta de la billetera.
 - **Variables:** las de `EXPO_PUBLIC_*` se hornean en el APK al compilar. Solo valores públicos: nunca llaves.
-- **Build local** (`npx expo run:android`): crea la carpeta `android/` dentro del repo (prebuild). No lo usamos para no cambiar el repo en plena hackatón; decídelo con el equipo antes.
+- **Build local:** así salió la APK `v1.0.0` (2026-10-17), porque EAS no tenía sesión en el equipo. Se hace en un worktree aparte para no meter `android/` al repo:
+
+```bash
+git worktree add D:/na v1.0.0 && cd D:/na && npm ci
+# exportar las EXPO_PUBLIC_* del perfil preview de eas.json
+npx expo prebuild -p android --no-install --clean
+# en android/app/build.gradle, dentro de android { }:
+#   externalNativeBuild { cmake { buildStagingDirectory = file("D:/c") } }
+cd android && ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,armeabi-v7a,x86_64
+# sale en android/app/build/outputs/apk/release/app-release.apk
+```
+
+- **Trampa de Windows:** el `ninja` de CMake 3.22.1 falla con rutas de más de 260 caracteres (`mkdir(...): No such file or directory`). Por eso el worktree va en una ruta corta (`D:
+a`) y la carpeta de CMake en `D:\c`. `subst` no sirve: el autolinking de Expo no encuentra `package.json` en la raíz de una unidad.
+- **Arquitecturas:** sin `x86_64` la APK no abre en el emulador (`couldn't find DSO libreactnative.so`); con las tres pesa 86 MB.
+- **Distribución:** la APK va adjunta a la Release `v1.0.0`; el QR de [`docs/qr/qr-apk.png`](qr/qr-apk.png) apunta a su descarga directa.
 
 ## 5. Trampas que nos costaron tiempo
 
