@@ -382,3 +382,7 @@ es obligatorio para el funcionamiento crear una secret manager por cuenta para c
 ## 03:23 · sesión c68d8f3c
 
 actualízate y la memoria también y la documentación
+
+## 03:27 · sesión c68d8f3c
+
+Sí, sube feat/natillera-real y abre el PR a main.
