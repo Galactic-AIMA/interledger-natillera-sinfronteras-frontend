@@ -181,7 +181,7 @@ Curl paso a paso: [CURLS.md](CURLS.md).
 
 ## 7 · Pendiente
 
-- Prueba real de préstamos fase 2 (autorizar cuotas → desembolso) y de la cuota automática con `charge-now`.
+- ✅ Préstamos fase 2 probados con la Test Wallet (2026-10-17). Falta probar la cuota automática con `charge-now` y crear el cobro de cada cuota del préstamo.
 - Cobro programado mensual (EventBridge Scheduler) de cuotas y préstamos: después de la hackatón.
 - Después de la hackatón: borrar los secretos y llaves de usuario que quedaron de pruebas (`prueba1`, `ciro`)
   y rotar esas llaves en la Test Wallet. El diseño correcto es una sola llave, la del cliente.

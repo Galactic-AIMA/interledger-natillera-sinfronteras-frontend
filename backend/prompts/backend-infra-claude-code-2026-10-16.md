@@ -402,3 +402,15 @@ contacto y un token de sesión de Cognito.
 
 ### 101
 > [captura: pantalla «Permiso para cobrar las cuotas»] 9:41 Al darle al boton autorizar cuotas, lleva a henry a la pantalla con el boton verde, pero no se aplican los cambios, en mi apartado de prestamos no se actualizan las cuotas autorizadas, habia que aprobar primero el pr antes de la prueba? Debo reiniciar la app yo tambien?
+
+### 102
+> REvisa los logs, como que falló cuando acepté el prestamos [...] Y el boton de volver a la app, no devuelve a la app
+
+### 103
+> [captura "Eso ya se hizo antes"] Esta vez no entró a la test wallet para darle el botón aprobar. Aparece el mensaje de que esta solicitud ya se aprobó, pero no parece que fuera así.
+
+### 104
+> Revisa otra vez, esta vez sí abrió la test wallet, le di aceptar y me dejó en el botón [...] si sigue apareciendo el préstamo de Henry, eso no debería de quitarse. [...] Los 3 pagos nuevos fue Duvan haciendo pruebas
+
+### 105
+> Sí, ya aparece en el de Henry, aparece préstamo activo. En la natillera, el monto de la natillera aparece 415.000. [...] Creo que falta el botón de pagar la cuota de los préstamos. [...] Recuerda que nos quedan menos de 45 minutos.
