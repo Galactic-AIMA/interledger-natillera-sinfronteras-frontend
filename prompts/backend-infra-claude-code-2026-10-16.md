@@ -306,3 +306,12 @@ contacto y un token de sesión de Cognito.
 
 ### 69
 > [captura: Test Wallet "Internal Server Error" al aceptar €1.85]
+
+### 70
+> Fusiona el PR #7. Lo de Camilo cuales son las instrucciones de la multi-natilleras
+
+### 71
+> Listo, que mas nos falta?
+
+### 72
+> Fusiona el PR #8

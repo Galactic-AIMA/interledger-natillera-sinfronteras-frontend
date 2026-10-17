@@ -22,6 +22,7 @@ terminar. Fechas absolutas (YYYY-MM-DD). Reglas de uso en [CLAUDE.md](CLAUDE.md)
 | Tabla de pagos | **`natillera-payments`** (PK `paymentId`, GSI `author-index`). `payments-history` = tabla de eventos de Duvan (`source`+`id`), vacía |
 | Permisos del rol `PowerUserRole` | **Sin `PowerUserAccess`** (lo quitó otra sesión a las 22:27). Inline: `natilleras-dynamo` (logs, secrets `natillera/*`, user-info solo lectura), `prestamos-dynamo`, `pagos-dynamo`, `presignup-cognito` (ListUsers + PutItem user-info) |
 | Bloque A (perfil, wallets, cuentas, natilleras) | ✅ desplegado y probado |
+| Multi-natilleras (PR #8 de Camilo, `GET /natilleras`) | Fusionado en `david` 2026-10-17 (`b2b8628`, tests 7/7); **falta desplegar** con `infra/deploy-natilleras.sh` (Camilo) |
 | Préstamos fase 1 (+ multi-natillera) | ✅ desplegado y probado; aprobar/desembolsar = fase 2 (501) |
 | Aportes (`kind:'aporte'`) | Soportado en el `start-payment` actual; falta probar uno real |
 | Recurrente, desembolso, cobro de cuotas | ❌ sin código (modo demo en el front) |
