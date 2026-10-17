@@ -117,6 +117,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Metas sin backend dichas tal cual: aviso «Por ahora, solo en este celular» en la 36 con sesión real y README con tres estados (probado, desplegado sin prueba completa, solo en el celular); lista de prueba con sesión en el APK para el pago real, la cuota automática y el préstamo fase 2 | `src/app/(tabs)/natillera/metas/index.tsx`, `README.md`, `docs/prueba-apk-2026-10-17.md`, `CLAUDE.md`, `AI_USAGE.md` |
 | 2026-10-17 | Camilo | Claude Code (Opus 5.5, escritorio) | Historial de versiones: línea de tiempo de front y back armada desde git y GitHub (commits de `main`, PR de los dos repos y memorias), `CHANGELOG.md` en formato Keep a Changelog con SemVer y tags anotados `v0.1.0`–`v0.10.2` y `backend-v0.1.0`–`backend-v0.7.1` sobre los commits de cada hito; Camilo eligió el esquema y el alcance | `CHANGELOG.md`, `AI_USAGE.md`, `prompts/2026-10-17-camilo-versionamiento.md` |
 | 2026-10-17 | Camilo | Claude Code (Opus 5.5, escritorio) | «¿Olvidó su contraseña?» en Entrar y pantalla de recuperar contraseña en tres pasos (usuario, código y clave nueva, listo), **solo demostración**: no llama a Cognito porque el pre-signup no verifica el correo | `src/app/(auth)/recuperar-clave.tsx`, `src/app/(auth)/entrar.tsx`, `AI_USAGE.md` |
+| 2026-10-17 | Camilo | Claude Code (Opus 5.5, escritorio) | Revisión de la documentación del repo y guías para reutilizar: Android (emulador, celular por cable, APK y trampas) y forma de trabajo del equipo, a partir de las memorias y documentos de la hackatón | `docs/ANDROID.md`, `docs/COMO-TRABAJAMOS.md`, `README.md`, `CLAUDE.md`, `prompts/2026-10-17-camilo-guias-equipo.md` |
 
 ## What We Did Ourselves
 
@@ -143,6 +144,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 - Sesión del botón de logs, el PR #8 del back y el aporte real (raíz, sin hook): [`prompts/2026-10-17-camilo-logs-y-aporte-real.md`](prompts/2026-10-17-camilo-logs-y-aporte-real.md).
 - Sesión del historial de versiones (raíz, sin hook): [`prompts/2026-10-17-camilo-versionamiento.md`](prompts/2026-10-17-camilo-versionamiento.md).
 - Sesión del botón de logs visible con portapapeles (raíz, sin hook): [`prompts/2026-10-17-camilo-logs-visibles.md`](prompts/2026-10-17-camilo-logs-visibles.md).
+- Sesión de las guías de Android y de cómo trabajamos (raíz, sin hook): [`prompts/2026-10-17-camilo-guias-equipo.md`](prompts/2026-10-17-camilo-guias-equipo.md).
 - Sesión de validación de las memorias del equipo (raíz, sin hook): [`prompts/2026-10-17-camilo-memorias-al-dia.md`](prompts/2026-10-17-camilo-memorias-al-dia.md).
 - Encargos enviados a otras sesiones: [`prompts/2026-10-16-camilo-encargos-sesiones.md`](prompts/2026-10-16-camilo-encargos-sesiones.md).
 - Sesión de Henry del logo, el slogan y los préstamos reales (el hook la guardó en el archivo de otra rama; aquí va separada): [`prompts/2026-10-17-henry-logo-y-prestamos.md`](prompts/2026-10-17-henry-logo-y-prestamos.md).
