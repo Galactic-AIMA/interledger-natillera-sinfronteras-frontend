@@ -7,10 +7,21 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - Cada versión nombra su commit; con `git show <tag>` se ve el estado exacto.
 
 ## [Sin publicar]
-### Documentación
-- QR de descarga (APK y versión web) en la portada de los pitch (`bd60f43`) y en el README; build local de la APK en `docs/ANDROID.md`.
 
 ## App (front)
+
+## [1.0.1] · 2026-10-17 10:45 · `0220506` · 📦 cierre de la entrega
+La app es la misma de la `v1.0.0`: no cambió nada en `src/`, `app.json`, `package.json` ni `eas.json`, así que sirve la APK de la [Release `v1.0.0`](https://github.com/Galactic-AIMA/interledger-natillera-sin-fronteras/releases/tag/v1.0.0). Esta versión suma los arreglos del back y la documentación que entraron por PR hasta las 10:45. El PR #20 (guía animada en la app) queda fuera: cambia la interfaz congelada y espera el OK de Camilo.
+### Arreglado (backend)
+- Los permisos de cuotas de préstamo y de cuota automática vuelven a la app por la página «Volver a la app» (PR #21, `1c5147d`).
+- El back termina el permiso de cuotas cuando vuelve la billetera (PR #22, `f3f56ae`).
+- `return-payment` vuelve a la app con una página en vez de un 302, lo que quita el «Internal Server Error» de la Test Wallet. Ciro lo desplegó y lo probó con un aporte real a las 09:05 (PR #17, `d62067f`).
+### Documentación
+- Cierre del back: repo único, IdToken en `openapi.yaml` y `return-payment` probado (PR #17, Ciro). Préstamos fase 2 probados con dinero real (PR #23, `af8ffcc`).
+- Manual de usuario y manual técnico en `docs/` (PR #18).
+- Pitch: intro de 1 minuto y roles del equipo, versión en el orden de la plantilla oficial, sección técnica de Open Payments e Interledger, presentación de 4 láminas para proyectar con el video y QR de descarga (APK y web para iPhone) en la portada (`5454851`, `24218b1`, `908a6f8`, `ff13059`, `bd60f43`, `b2a683a`).
+- Descarga de la APK y versión web con QR en el README; build local de la APK en `docs/ANDROID.md` (PR #24, `44e46a4`).
+- Tablero y checklist de entrega al día, más los prompts de las sesiones de la raíz (PR #19).
 
 ## [1.0.0] · 2026-10-17 09:10 · `4373242` · 🏁 entrega
 Versión de entrega de la hackatón; la APK de Android va adjunta a la Release `v1.0.0`. Interfaz igual a la `v0.11.0` más los sonidos de la `v0.12.0`.
