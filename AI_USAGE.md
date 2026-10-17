@@ -66,6 +66,13 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
   script, corrió las pruebas, desplegó en `dev` y probó las 8 rutas. Una revisión automática marcó que
   el código de invitación (`PALABRA-1234`) se podía adivinar; se cambió a `PALABRA-XXXX-XXXX`
   (Crockford base32, ~2^40). Requests: [`docs/CURLS.md`](docs/CURLS.md) secciones 9–14.
+- **Préstamos (código de Henry):** Claude revisó, fusionó y desplegó la fase 1 y la versión con varias
+  natilleras, y probó las 5 rutas.
+- **`start-payment` de Duvan:** Claude corrigió su código con cambios mínimos marcados `// [fix]`
+  ([`deploy/payments/src/start-payment-duvan.ts`](deploy/payments/src/start-payment-duvan.ts)). Con
+  CloudTrail encontró que al rol le habían quitado permisos y que `payments-history` se había recreado con
+  otro esquema; agregó una política mínima y una tabla nueva. Resultado: un segundo pago real EUR→COP
+  completado.
 
 **Camilo · Claude Code (bloque A: natilleras, cuentas guardadas y perfil)**
 
@@ -106,6 +113,8 @@ Los commits hechos con IA llevan `Co-Authored-By: Claude` en el historial de git
 
 - **`GET /me` con `userId = username`:** Claude cambió `getMe` en [`deploy/natilleras/src/domain.ts`](deploy/natilleras/src/domain.ts) (el `sub` va en `sub`), ajustó la prueba y regeneró `dist/get-me.zip`. Motivo: la app compara `me.userId` con `members[].userId` (username) en cuota y recurrente.
 - **Revisión humana:** Henry pidió el cambio; Ciro lo revisó y Claude lo desplegó (solo la Lambda `get-me`).
+- **Préstamos, fase 1 (sin Open Payments):** Claude escribió [`deploy/prestamos`](deploy/prestamos) (simular, pedir, listar pendientes, mi préstamo, rechazar; 5 Lambdas con el patrón del bloque A y 5 pruebas locales), [`infra/deploy-prestamos.sh`](infra/deploy-prestamos.sh) y [`docs/API-PRESTAMOS.md`](docs/API-PRESTAMOS.md). Henry decidió el alcance; Ciro revisa y despliega.
+- **README del repo:** Claude escribió [`README.md`](README.md) (arquitectura, pago con Open Payments, rutas, despliegue, seguridad) y el pedido de la rama `main` en `MEMORY.md`; Henry lo revisó.
 
 ## Prompt Log
 
@@ -114,5 +123,5 @@ Prompts literales en [`/prompts`](prompts/):
 | Archivo | Persona | Herramienta | Tema |
 |---|---|---|---|
 | [`prompts/backend-infra-claude-code-2026-10-16.md`](prompts/backend-infra-claude-code-2026-10-16.md) | David | Claude Code | Setup del repo, infra AWS, Cognito, pre-signup, API Gateway, pagos, bloque A |
-| [`prompts/henry-claude-code-2026-10-16.md`](prompts/henry-claude-code-2026-10-16.md) | Henry | Claude Code | `GET /me` con `userId = username` |
+| [`prompts/henry-claude-code-2026-10-16.md`](prompts/henry-claude-code-2026-10-16.md) | Henry | Claude Code | `GET /me` con `userId = username`; préstamos fase 1 |
 | [`prompts/backend-natilleras-claude-code-2026-10-16.md`](prompts/backend-natilleras-claude-code-2026-10-16.md) | Camilo | Claude Code | Bloque A: natilleras, cuentas guardadas, perfil |

@@ -12,6 +12,21 @@ terminar. Fechas absolutas (YYYY-MM-DD). Reglas de uso en [CLAUDE.md](CLAUDE.md)
   conexión con el frontend), `david` (David + sus
   sesiones de Claude; las sesiones salen de `david` con `feat/<carril>-...` y vuelven a `david`).
 
+### Foto al 2026-10-17 ~01:30 COL (stage `dev`, API `lofoyfhz52`, us-east-2)
+
+| Parte | Estado |
+|---|---|
+| Registro / login (Cognito + `pre-signup`) | ✅ funciona |
+| Pago 1 a 1 (`POST /payments` → aprobar → `return-payment` → `GET /payments/{id}`) | ✅ **probado de punta a punta 2 veces** (21:32 y 01:23): EUR→COP |
+| `start-payment` desplegado | Código de **Duvan con `[fix]`** (`deploy/payments/src/start-payment-duvan.ts`); su versión sin fix = **v6** |
+| Tabla de pagos | **`natillera-payments`** (PK `paymentId`, GSI `author-index`). `payments-history` = tabla de eventos de Duvan (`source`+`id`), vacía |
+| Permisos del rol `PowerUserRole` | **Sin `PowerUserAccess`** (lo quitó otra sesión a las 22:27). Inline: `natilleras-dynamo` (logs, secrets `natillera/*`, user-info solo lectura), `prestamos-dynamo`, `pagos-dynamo`, `presignup-cognito` (ListUsers + PutItem user-info) |
+| Bloque A (perfil, wallets, cuentas, natilleras) | ✅ desplegado y probado |
+| Préstamos fase 1 (+ multi-natillera) | ✅ desplegado y probado; aprobar/desembolsar = fase 2 (501) |
+| Aportes (`kind:'aporte'`) | Soportado en el `start-payment` actual; falta probar uno real |
+| Recurrente, desembolso, cobro de cuotas | ❌ sin código (modo demo en el front) |
+| Rama `main` | Existe; `david` tiene lo último. PR #6 de Henry **no se debe correr** (vuelve a `payments-history`) |
+
 ## Metas acordadas con todo el equipo (2026-10-16)
 
 Enfoque actual: **pagos 1 a 1**. Lo demás espera a que P0 funcione.
@@ -113,6 +128,7 @@ Decisiones técnicas aún sin tomar:
   en el entorno de `finish-payment` y `return-payment` (en `env_file` de `deploy-payments.sh`); sin eso
   `complete.ts` no registra aportes y el total del fondo queda en 0. (2) Desplegar el bloque A con
   `infra/deploy-natilleras.sh` (ver docs/API-NATILLERAS.md).
+- 2026-10-17 · de front (Henry) a Duvan (dueño del repo): **crear la rama `main` y ponerla por defecto antes de las 11:00** (regla de la hackatón: todo en `main` del repo público). Hoy la rama por defecto es `master` y solo tiene el commit inicial; todo el trabajo está en `david`. Pasos: (1) fusionar los PR abiertos en `david`; (2) `git push origin origin/david:refs/heads/main` (o en GitHub: Branches → New branch `main` desde `david`); (3) Settings → General → Default branch → `main` (solo el dueño puede); (4) desde ahí, todo PR va a `main`. No borrar `master` ni `david` hasta después de la entrega.
 - formato: `YYYY-MM-DD · de <carril> a <carril>: <qué se necesita>`
 
 ## Bitácora por carril
@@ -182,6 +198,45 @@ Decisiones técnicas aún sin tomar:
   **Duvan maneja `start-payment` por ahora: no correr `infra/deploy-payments.sh`** (la redespliega).
   Su `start-payment` falla con `AccessDenied` al leer el secreto `prueba1`: lo bloquea una **SCP de la
   organización** (no se arregla con IAM). Solución: un solo secreto (`OP_SECRET_ID`), región us-east-2.
+- 2026-10-17 (~01:00 COL) · **Decisión del equipo: priorizar funcionalidad para la hackatón.** El
+  `start-payment` desplegado es el de Duvan (3 fases: start → continue → complete; hoy devuelve la quote)
+  y usa la llave privada de cada usuario guardada en `user-info` (`walletInfo.walletKeys`; `prueba1` ya la
+  tiene). Queda como **deuda técnica de seguridad** para después de la hackatón: llaves en texto plano en
+  DynamoDB y `console.log` de la llave (se pidió quitar esa línea). Versión segura de referencia:
+  `deploy/payments/src/start-payment.ts` (una sola llave del cliente en Secrets Manager). Rotar las llaves
+  de la Test Wallet después de la demo. Equivalencia: start+continue de Duvan = nuestro `start-payment`;
+  complete = `return-payment` / `finish-payment`.
+- 2026-10-17 (~01:05 COL) · **Préstamos fase 1 desplegado** (PR #3 de Henry, fusionado en `david`):
+  tabla `natillera-loan-request` (+ `author-index`, `natillera-index`), 5 Lambdas y 5 rutas VTL
+  (deployment `g1qlqr`). 401 sin token en las 5. Probado con `ciro-demo-euro` (ADMIN de "Familia Ciro"):
+  simular OK (BigInt), pedir → 409 `InsufficientFunds` (fondo en 0, falta un aporte), otra moneda → 400,
+  mis préstamos → vacío, pendientes → `[]`, decidir por no-ADMIN → 404. Aprobar/desembolsar = fase 2.
+  Ojo: tras un deployment, el stage tarda ~1 min; antes responde 403 "Missing Authentication Token".
+- 2026-10-17 (~01:20 COL) · **PR #4 (préstamos con varias natilleras) desplegado** sin correr el script
+  completo: `request-loan`, `get-my-loans`, `list-loan-requests` (respaldo v1 de cada una) y plantillas de
+  `GET /loans/requests` y `GET /loans/mine` con `natilleraId` opcional (escapado). Deployment `pxnk9k`.
+  Probado: listas vacías, 409 `InsufficientFunds`, 401 sin token.
+- 2026-10-17 (~01:25 COL) · **`start-payment` arreglado sobre el código de Duvan y pago real completo.**
+  Tres causas: (1) su código devolvía la quote (`return quote`) sin grant ni registro; se corrigió con
+  6 `[fix]` (enlace con `interact.finish` → `return-payment`, guardar, respuesta del contrato, `value`,
+  aporte/cuenta guardada, **llave única del cliente**: `return-payment` continúa el grant con ese mismo
+  cliente). (2) CloudTrail: a las 22:27 la sesión `AccountFullAccessRole/64086418…` quitó
+  `PowerUserAccess` y `SecretsManagerReadWrite` del rol → se agregó inline `pagos-dynamo`. (3) A las 00:47
+  `payments-history` fue borrada y recreada con `source`+`id` (se perdieron los pagos viejos) → tabla nueva
+  `natillera-payments` y `PAYMENTS_TABLE` en las 4 Lambdas de pagos. Prueba: `ciro-demo-euro` →
+  `cirocol`, 1,85 EUR → 3.000 COP, pago `b3b045cc…` **completed** (outgoing `7bc3a425…`); la Test Wallet
+  mostró otra vez "Internal Server Error". `infra/deploy-payments.sh` quedó alineado (tabla, política y
+  zip `start-payment-duvan`). Lo que Duvan pegó (grant.continue + outgoing con `process.exit`) es la
+  fase 3 y ya existe en `complete.ts`.
+- 2026-10-17 (~02:00 COL) · **El registro estaba roto desde las 22:27**: `pre-signup` (mismo rol) perdió
+  `cognito-idp:ListUsers` al quitarse `PowerUserAccess`. Nueva inline `presignup-cognito`
+  (`infra/policy-presignup.sh`). Por revisión de seguridad, `natilleras-dynamo` quedó con Secrets solo en
+  `natillera/*` y `user-info` de solo lectura (respaldo de la anterior en el scratch de la sesión).
+  Verificado: pre-signup → "Email already registered", get-me y start-payment OK. PR #7 `david → main`.
+- 2026-10-17 (~02:30 COL) · **`POST /payments/preview`** (`previewQuote` del front) desplegado: Lambda
+  `preview-payment` = fase 1 de Duvan (incoming + quote) con la llave del cliente, sin guardar nada. Mismo
+  body que `POST /payments` sin `returnUrl` → `{ debitAmount, receiveAmount }`. Deployment `n7s92a`.
+  Probado: 4.000 COP ← 2,13 EUR; cuota 50.000 COP ← 15,09 EUR; 401 sin token.
 
 ### op-core
 - (vacío)
