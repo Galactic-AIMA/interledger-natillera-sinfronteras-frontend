@@ -113,6 +113,7 @@ Decisiones técnicas aún sin tomar:
   en el entorno de `finish-payment` y `return-payment` (en `env_file` de `deploy-payments.sh`); sin eso
   `complete.ts` no registra aportes y el total del fondo queda en 0. (2) Desplegar el bloque A con
   `infra/deploy-natilleras.sh` (ver docs/API-NATILLERAS.md).
+- 2026-10-17 · de front (Henry) a Duvan (dueño del repo): **crear la rama `main` y ponerla por defecto antes de las 11:00** (regla de la hackatón: todo en `main` del repo público). Hoy la rama por defecto es `master` y solo tiene el commit inicial; todo el trabajo está en `david`. Pasos: (1) fusionar los PR abiertos en `david`; (2) `git push origin origin/david:refs/heads/main` (o en GitHub: Branches → New branch `main` desde `david`); (3) Settings → General → Default branch → `main` (solo el dueño puede); (4) desde ahí, todo PR va a `main`. No borrar `master` ni `david` hasta después de la entrega.
 - formato: `YYYY-MM-DD · de <carril> a <carril>: <qué se necesita>`
 
 ## Bitácora por carril
