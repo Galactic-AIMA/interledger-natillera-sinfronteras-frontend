@@ -106,7 +106,7 @@ historia y los commits de cada persona. El repo original queda archivado.
 
 ## Documentos
 
-[Plan](docs/PLAN.md) · [Contrato del API (OpenAPI)](docs/openapi.yaml) · [Las 35 pantallas](docs/figma-pantallas.md) ·
+**[Manual de usuario](docs/MANUAL-USUARIO.md)** · **[Manual técnico](docs/MANUAL-TECNICO.md)** · [Plan](docs/PLAN.md) · [Contrato del API (OpenAPI)](docs/openapi.yaml) · [Las 35 pantallas](docs/figma-pantallas.md) ·
 [Resumen de Open Payments](docs/open-payments.md) · [Coordinación con el backend](docs/COORDINACION-BACK.md) ·
 [Android: emulador, celular y APK](docs/ANDROID.md) · [Cómo trabajamos](docs/COMO-TRABAJAMOS.md) ·
 [Guion del pitch](docs/pitch/GUION.md) · [Figma](https://www.figma.com/design/hK29vkj23AZZXEN7W2hjmA)
