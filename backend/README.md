@@ -72,7 +72,8 @@ app está en [`docs/openapi.yaml`](../docs/openapi.yaml) de la app (raíz del re
 | Natilleras: crear, invitar, unirse, varias por persona | ✅ desplegado y probado |
 | Aporte al fondo | ✅ probado: 50.000 COP de un integrante, el fondo subió |
 | Préstamos: simular, pedir, listar, rechazar | ✅ desplegado y probado |
-| Préstamos: autorizar cuotas y desembolso al aprobar · cuota automática y «cobrar ahora» | 🔄 desplegado; en prueba con la Test Wallet |
+| Préstamos: autorizar cuotas y desembolso al aprobar | ✅ **probado real** 2026-10-17: henry autorizó 2 cuotas, la tesorera aprobó y el fondo desembolsó $35.000 (cirocol → henry1); el fondo bajó a $415.000 |
+| Cuota automática y «cobrar ahora» · cobro de cada cuota del préstamo | Desplegado sin probar · el cobro de las cuotas del préstamo (`paidCount`) no tiene ruta todavía: el permiso queda aprobado y se cobraría con un Scheduler |
 | Cobro programado mensual (EventBridge Scheduler) | ❌ fuera del alcance de la hackatón: se cobra con `charge-now` |
 
 ## Desplegar
