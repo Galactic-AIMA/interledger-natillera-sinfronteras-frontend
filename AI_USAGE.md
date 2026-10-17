@@ -99,6 +99,7 @@ Los commits hechos con IA llevan `Co-Authored-By: Claude` en el historial de git
 
 - **`GET /me` con `userId = username`:** Claude cambió `getMe` en [`deploy/natilleras/src/domain.ts`](deploy/natilleras/src/domain.ts) (el `sub` va en `sub`), ajustó la prueba y regeneró `dist/get-me.zip`. Motivo: la app compara `me.userId` con `members[].userId` (username) en cuota y recurrente.
 - **Revisión humana:** Henry pidió el cambio; Ciro lo revisó y Claude lo desplegó (solo la Lambda `get-me`).
+- **Préstamos, fase 1 (sin Open Payments):** Claude escribió [`deploy/prestamos`](deploy/prestamos) (simular, pedir, listar pendientes, mi préstamo, rechazar; 5 Lambdas con el patrón del bloque A y 5 pruebas locales), [`infra/deploy-prestamos.sh`](infra/deploy-prestamos.sh) y [`docs/API-PRESTAMOS.md`](docs/API-PRESTAMOS.md). Henry decidió el alcance; Ciro revisa y despliega.
 
 ## Prompt Log
 
@@ -107,5 +108,5 @@ Prompts literales en [`/prompts`](prompts/):
 | Archivo | Persona | Herramienta | Tema |
 |---|---|---|---|
 | [`prompts/backend-infra-claude-code-2026-10-16.md`](prompts/backend-infra-claude-code-2026-10-16.md) | David | Claude Code | Setup del repo, infra AWS, Cognito, pre-signup, API Gateway, pagos, bloque A |
-| [`prompts/henry-claude-code-2026-10-16.md`](prompts/henry-claude-code-2026-10-16.md) | Henry | Claude Code | `GET /me` con `userId = username` |
+| [`prompts/henry-claude-code-2026-10-16.md`](prompts/henry-claude-code-2026-10-16.md) | Henry | Claude Code | `GET /me` con `userId = username`; préstamos fase 1 |
 | [`prompts/backend-natilleras-claude-code-2026-10-16.md`](prompts/backend-natilleras-claude-code-2026-10-16.md) | Camilo | Claude Code | Bloque A: natilleras, cuentas guardadas, perfil |
