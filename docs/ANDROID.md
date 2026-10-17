@@ -107,7 +107,7 @@ Al terminar, EAS da un enlace y un QR para bajar el APK. Para instalarlo por cab
 | `exp://localhost:8083` no abre | Se perdió el `adb reverse` al reiniciar el emulador o desconectar el cable: repetirlo |
 | `tsc` falla con rutas «no asignables» | Otro Metro reescribió `.expo/types/router.d.ts` con rutas viejas: borrarlo y arrancar el Metro de nuevo |
 | `npx expo lint` cambia `package.json` | Sin ESLint instalado lo instala solo: revertir si no era la intención |
-| La Test Wallet dice «Internal Server Error» al aceptar | El pago igual entra: cerrar la pestaña, volver a la app y mirar el resultado. No aceptar dos veces |
+| La Test Wallet dice «Internal Server Error» al aceptar | Era un segundo toque en Accept: Chrome bloqueaba la vuelta automática a la app y la pestaña seguía mostrando Accept. Con `return-payment` nuevo (página «Volver a la app» en vez del 302) ya no pasa. Si sale, el pago igual entró: cerrar la pestaña y la app muestra el resultado. Tocar Accept **una sola vez** |
 | `adb shell input keyevent 4` cierra la pantalla | En el emulador «atrás» cierra la vista en vez del teclado |
 | El texto escrito con `adb shell input text` sale distinto | El teclado de Android pega sugerencias: revisar el campo antes de enviar |
 | El emulador no arranca o va muy lento | `emulator -accel-check`; activar la virtualización y WHPX |

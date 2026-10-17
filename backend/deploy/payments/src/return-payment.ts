@@ -8,11 +8,15 @@
 // y el nonce del servidor de autorización, así que no se puede fabricar. Un "rechazo" sin hash no
 // modifica el pago (queda pending y vence solo): nadie puede anular el pago de otra persona.
 //
-// Rapidez: con el hash verificado responde el 302 de una (result=pending) y completa el pago en segundo
-// plano, invocándose a sí misma de forma asíncrona. Mientras la Test Wallet espera la redirección sigue
-// mostrando "Accept"; si la persona lo toca otra vez, la billetera muestra "Internal Server Error"
-// (aunque el pago sale bien). La app consulta GET /payments/{id} hasta el estado final.
+// Rapidez: con el hash verificado responde de una (result=pending) y completa el pago en segundo plano,
+// invocándose a sí misma de forma asíncrona. La app consulta GET /payments/{id} hasta el estado final.
 // Si la invocación asíncrona falla, se completa aquí mismo como antes.
+//
+// Vuelta a la app con una página, no con un 302 (2026-10-17): Chrome en Android solo abre un esquema
+// propio (natillera://, exp://) si hubo un toque reciente. Si la Test Wallet tarda en aceptar, el 302
+// queda bloqueado sin aviso, la pestaña sigue mostrando "Accept" y el segundo toque da "Internal Server
+// Error" (con el pago ya hecho). La página reemplaza la de la billetera (ya no hay Accept que tocar dos
+// veces), intenta abrir la app sola y deja el botón "Volver a la app", que siempre cuenta como toque.
 import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import { GetCommand } from '@aws-sdk/lib-dynamodb';
 import { dynamo, env, validateReturnUrl, verifyInteractHash, type PaymentRecord } from './shared';
@@ -24,19 +28,13 @@ const RESULT: Record<string, string> = { completed: 'ok', rejected: 'rejected', 
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 
-const page = (statusCode: number, title: string, message: string, link?: string) => ({
+const page = (statusCode: number, title: string, message: string) => ({
   statusCode,
-  headers: {
-    'Content-Type': 'text/html; charset=utf-8',
-    'Cache-Control': 'no-store',
-    ...(link ? { Location: link } : {}),
-  },
+  headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
   body:
     `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">` +
     `<title>${escapeHtml(title)}</title></head><body style="font-family:system-ui;padding:24px;max-width:480px;margin:auto">` +
-    `<h1 style="font-size:20px">${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p>` +
-    (link ? `<p><a href="${escapeHtml(link)}">Volver a Natillera</a></p>` : '') +
-    `</body></html>`,
+    `<h1 style="font-size:20px">${escapeHtml(title)}</h1><p>${escapeHtml(message)}</p></body></html>`,
 });
 
 const backToApp = (p: PaymentRecord, result: string) => {
@@ -50,10 +48,27 @@ const backToApp = (p: PaymentRecord, result: string) => {
     ok: 'Pago hecho',
     rejected: 'Pago rechazado',
     failed: 'El pago no se pudo hacer',
-    pending: 'Pago en proceso',
+    pending: 'Su pago va en camino',
   };
-  return page(302, titles[result] ?? 'Natillera', 'Puede volver a la app.', target);
+  return returnPage(titles[result] ?? 'Natillera', target);
 };
+
+// 200 con la página de vuelta. JSON.stringify deja la URL como literal de JS seguro; "<" se escapa para que
+// no pueda cerrar el <script>.
+const returnPage = (title: string, target: string) => ({
+  statusCode: 200,
+  headers: { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store' },
+  body:
+    `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">` +
+    `<title>${escapeHtml(title)}</title></head>` +
+    `<body style="font-family:system-ui;padding:32px 24px;max-width:480px;margin:auto;text-align:center;background:#FBF7F0;color:#1F1A17">` +
+    `<h1 style="font-size:24px;margin:24px 0 8px">${escapeHtml(title)}</h1>` +
+    `<p style="font-size:18px;margin:0 0 32px">Ya puede volver a Natillera. No toque nada más en la billetera.</p>` +
+    `<a href="${escapeHtml(target)}" style="display:block;padding:18px;border-radius:14px;background:#1F4E3D;color:#fff;` +
+    `font-size:20px;font-weight:700;text-decoration:none">Volver a la app</a>` +
+    `<script>setTimeout(function(){location.replace(${JSON.stringify(target).replace(/</g, '\\u003c')})},150)</script>` +
+    `</body></html>`,
+});
 
 const lambda = new LambdaClient({ region: process.env.AWS_REGION });
 const SELF = process.env.AWS_LAMBDA_FUNCTION_NAME;
