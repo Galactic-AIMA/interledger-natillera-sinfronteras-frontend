@@ -1,0 +1,108 @@
+// Lambda "pre-signup" (trigger Pre sign-up de Cognito) — versión para pegar en la consola.
+// Basada en app/src/handlers/cognito-pre-signup.handler.ts de Duvan (rama duvdev), con arreglos:
+//  - región tomada del entorno de Lambda (estamos en us-east-2), no fija en us-east-1
+//  - la wallet se verifica con un GET público (no requiere llaves ni @interledger/open-payments,
+//    que no viene incluido en el runtime de Lambda)
+//  - si la wallet no existe se rechaza (antes se usaba && y pasaba igual)
+//  - devuelve el event (Cognito lo exige) y auto-confirma al usuario (flujo 1 del diagrama)
+//  - usa event.userPoolId en vez de la variable de entorno USER_POOL_ID
+//  - guarda el usuario en DynamoDB (commit fbd01d3 de Duvan): el campo es event.userName (no
+//    event.Username); en Pre sign-up todavía no existe el `sub`, así que la llave es el username
+//    en `source` + `id: 1` (llaves de la tabla `user-info` que creó el equipo; el access token trae
+//    el claim `username`). No sobreescribe un registro existente.
+// Runtime: Node.js 22.x · archivo index.mjs · handler index.handler · timeout 5 s.
+// Variable de entorno: USER_VIEW_TABLE (por defecto `user-info`: PK `source` String, SK `id` Number).
+// Permisos extra del rol: cognito-idp:ListUsers sobre el user pool y dynamodb:PutItem sobre la tabla.
+import { CognitoIdentityProviderClient, ListUsersCommand } from '@aws-sdk/client-cognito-identity-provider';
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocumentClient, PutCommand } from '@aws-sdk/lib-dynamodb';
+
+const cognito = new CognitoIdentityProviderClient({ region: process.env.AWS_REGION });
+const dynamo = DynamoDBDocumentClient.from(new DynamoDBClient({ region: process.env.AWS_REGION }));
+const USERS_TABLE = process.env.USER_VIEW_TABLE || 'user-info';
+const WALLET_HOST = 'https://ilp.interledger-test.dev';
+
+export const handler = async (event) => {
+  const attrs = event?.request?.userAttributes ?? {};
+  const walletId = attrs['custom:walletId'];
+
+  if (!walletId) throw new Error('Wallet address is required');
+
+  const wallet = await getWalletAddress(walletId);
+  if (!wallet) throw new Error('Invalid wallet address');
+
+  if (attrs.email && (await existsUserWith(event.userPoolId, 'email', attrs.email))) {
+    throw new Error('Email already registered');
+  }
+  if (attrs.phone_number && (await existsUserWith(event.userPoolId, 'phone_number', attrs.phone_number))) {
+    throw new Error('Phone number already registered');
+  }
+
+  await saveUser(event.userName, attrs, wallet);
+
+  // Auto-confirma la cuenta (diagrama, flujo 1), pero NO marca email/teléfono como verificados:
+  // nadie comprobó que le pertenezcan, y un atributo verificado habilita recuperar la cuenta por él.
+  event.response.autoConfirmUser = true;
+  return event;
+};
+
+// assetCode/assetScale salen de la wallet, no del cliente (regla 0 del diagrama).
+const saveUser = async (username, attrs, wallet) => {
+  try {
+    await dynamo.send(new PutCommand({
+      TableName: USERS_TABLE,
+      Item: {
+        source: username,
+        id: 1,
+        email: attrs.email,
+        phone: attrs.phone_number,
+        walletAddress: wallet.id,
+        assetCode: wallet.assetCode,
+        assetScale: wallet.assetScale,
+        createdAt: new Date().toISOString(),
+      },
+      ConditionExpression: 'attribute_not_exists(#source)',
+      ExpressionAttributeNames: { '#source': 'source' },
+    }));
+  } catch (error) {
+    if (error?.name === 'ConditionalCheckFailedException') throw new Error('Username already registered');
+    console.log('Users table put failed', error);
+    throw error;
+  }
+};
+
+// Acepta la URL completa (https://ilp.interledger-test.dev/abc) o solo el id (abc).
+// Solo consulta el host de la Test Wallet, para no hacer peticiones a URLs arbitrarias (SSRF).
+const getWalletAddress = async (walletId) => {
+  let url;
+  try {
+    url = walletId.startsWith('https://')
+      ? new URL(walletId)
+      : /^[A-Za-z0-9_-]+$/.test(walletId) ? new URL(`${WALLET_HOST}/${walletId}`) : null;
+  } catch {
+    return null;
+  }
+  if (!url || url.origin !== WALLET_HOST || url.username || url.password) return null;
+  try {
+    const res = await fetch(url, {
+      headers: { Accept: 'application/json' },
+      redirect: 'manual',
+      signal: AbortSignal.timeout(3000),
+    });
+    if (!res.ok) return null;
+    const body = await res.json();
+    return body?.id && body?.assetCode ? body : null;
+  } catch (error) {
+    console.log('Wallet lookup failed', url, error?.message);
+    return null;
+  }
+};
+
+const existsUserWith = async (userPoolId, attribute, value) => {
+  const response = await cognito.send(new ListUsersCommand({
+    UserPoolId: userPoolId,
+    Filter: `${attribute} = "${value.replace(/"/g, '')}"`,
+    Limit: 1,
+  }));
+  return (response.Users?.length ?? 0) > 0;
+};
