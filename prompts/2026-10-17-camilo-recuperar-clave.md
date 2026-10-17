@@ -1,0 +1,6 @@
+# Prompts · Camilo · 2026-10-17 · recuperar contraseña
+
+Sesión de Claude Code (Opus 5.5, escritorio) abierta en la raíz del workspace, sin hook. Prompts literales:
+
+1. `No tiene para recuperar la contraseña. Tenemos que aplicarle eso Sí, válida, no está el botoncito en el login para recuperar contraseña. Pues es algo natural, natural de, de las aplicaciones. Entonces, tenemos que hacer esto. Válida para que lo tengamos en el front solo en el front porque ahorita pues no podríamos crear la, las funciones pues mira si lo puedes aplicar de otra manera con JavaScript otro código el enviar contraseña no es tan consideración y me preguntas me preguntas cómo hacemos este cambio pues esta mejora Si validas, no está el botoncito en el login para recuperar contraseña. Y pues es algo natural, natural de, de las aplicaciones. Entonces, tenemos que hacer esto. Valida para que lo tengamos en el front. Solo en el front. Porque ahorita pues no podríamos crear la, las funciones. Y mira si lo puedes aplicar de otra manera con JavaScript y otro código. El enviar contraseña. Con esto en consideración. Y me preguntas, me preguntas cómo hacemos este cambio. Pues esta mejora, solo una mejora. I was on the double job.`
+2. Respuesta a las preguntas de Claude: enfoque «Solo visual (demo)»; prueba «Sin prueba real».
