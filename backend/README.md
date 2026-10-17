@@ -4,7 +4,7 @@
 > savings circle. Every payment goes through **Open Payments**: incoming payment on the receiver's wallet,
 > quote on the sender's, and an interactive grant the person approves in their own wallet. Only the backend
 > holds the client key. Built for the Interledger Open Payments Hackathon (Medellín, Oct 16–17, 2026).
-> Mobile app: [interledger-natillera-sinfronteras-frontend](https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend).
+> Mobile app: the root of this same repo ([interledger-natillera-sin-fronteras](https://github.com/Galactic-AIMA/interledger-natillera-sin-fronteras)).
 
 Una **natillera** es un fondo de ahorro en familia. Este backend permite que cada integrante ponga su cuota desde
 su propia billetera, en su moneda, a la billetera común del fondo. También permite pagarle a otra persona y llevar
@@ -61,7 +61,7 @@ Detalle en [docs/API-PAGOS.md](docs/API-PAGOS.md).
 | Cuota automática | `POST /recurring`, `POST /recurring/{grantId}/finish`, `POST /recurring/{grantId}/charge-now` | `deploy/prestamos` | [API-PRESTAMOS](docs/API-PRESTAMOS.md#fase-2-y-cuota-automática-con-open-payments) |
 
 Todos los `curl`, incluidas las pruebas negativas, están en [docs/CURLS.md](docs/CURLS.md). El contrato que usa la
-app está en [`docs/openapi.yaml`](https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/blob/main/docs/openapi.yaml) del front.
+app está en [`docs/openapi.yaml`](../docs/openapi.yaml) de la app (raíz del repo).
 
 ## Estado en `dev` (2026-10-17)
 

@@ -115,7 +115,7 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 - [ ] APK instalado en un Android real
 - [ ] `AI_USAGE.md` completo y `node scripts/ai-usage-check.mjs` limpio (front y back)
 - [ ] Todo en `main`, repos públicos
-- [ ] **Un solo repo (regla de la hackatón):** el back ya está en `backend/` (PR #10, 2026-10-17 04:47). Falta renombrar este repo a `interledger-natillera-sin-fronteras` (lo hace un admin de Galactic-AIMA; GitHub redirige el nombre viejo). No se cambian los links viejos que están en `prompts/`
+- [x] **Un solo repo (regla de la hackatón):** el back está en `backend/` (PR #10, 2026-10-17 04:47) y el repo se renombró a `Galactic-AIMA/interledger-natillera-sin-fronteras` (2026-10-17 ~08:45; GitHub redirige el nombre viejo). Los links viejos de `prompts/` no se cambian
 - [ ] Oír los sonidos de `v0.12.0` en el celular (cuota → monedas, pago → «ding-ding»)
 - [ ] Tag `v1.0.0` y Release sobre el commit entregado a las 11:00
 - [ ] Slides en la plantilla oficial + link de demo en el Drive del equipo + formulario enviado
