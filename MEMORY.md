@@ -30,7 +30,7 @@ terminar. Fechas absolutas (YYYY-MM-DD). Reglas de uso en [CLAUDE.md](CLAUDE.md)
 | Llaves | Una sola: `natillera/open-payments-client`. Restos a borrar post-hackatón: secretos `prueba1`, `ciro` y `privateKey` de prueba1 en user-info |
 | CLI de AWS | **Solo David** despliega (Camilo sin acceso) |
 | `return-payment` | 2026-10-17: responde el 302 de una (`result=pending`) y completa el pago con auto-invocación asíncrona (política inline `pagos-async`). Respaldo v3. Motivo: el "Internal Server Error" de la Test Wallet sale al tocar Accept otra vez mientras espera la redirección |
-| Rama `main` | Existe; `david` tiene lo último. PR #6 de Henry **no se debe correr** (vuelve a `payments-history`) |
+| Rama `main` | Al día con `david` el 2026-10-17 (PR #11, merge `25fcb5f`). PR #6 de Henry ya no está abierto |
 
 ## Metas acordadas con todo el equipo (2026-10-16)
 

@@ -354,3 +354,15 @@ contacto y un token de sesión de Cognito.
 
 ### 85
 > [captura de las instrucciones de prueba de Henry, pasos 6–8] Un aporte de Henry analizalo
+
+### 86
+> Dime y dame la guia para que Henry haga el pago pequeño, como donde y cuando
+
+### 87
+> [captura "Cirugía de la abuela Carmen" + logs de la app] Resultado de la prueba de henry, revisa bien que si sea de la prueba, creo que está haciendo otra en estos momentos
+
+### 88
+> [capturas: PR #9 del front fusionado] Listo, nos hace falta algo para hacer los commits a main?
+
+### 89
+> Sí: abre el PR david → main con el resumen de cambios y fusiónalo.
