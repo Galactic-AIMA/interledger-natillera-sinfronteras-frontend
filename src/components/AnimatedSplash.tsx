@@ -17,6 +17,8 @@ export const SLOGAN = 'Lejos en distancia, juntos en el ahorro.';
 // Mismo tamaño y posición que el splash nativo (`imageWidth` en app.json): el relevo no se nota.
 const SYMBOL_SIZE = 220;
 const LIFT = 84;
+// Aire transparente bajo los anillos dentro del PNG (la imagen es cuadrada y los anillos no).
+const SYMBOL_BOTTOM_PAD = 47;
 const FADE_OUT_MS = 350;
 // Si la imagen no avisa que cargó, no dejamos a nadie mirando el splash nativo.
 const READY_FALLBACK_MS = 1500;
@@ -64,7 +66,7 @@ export function AnimatedSplash({ onReady, onFinish }: AnimatedSplashProps) {
   }, [ready, reduced, lift, name, slogan, layer, onReady, onFinish]);
 
   const layerStyle = useAnimatedStyle(() => ({ opacity: layer.value }));
-  const symbolStyle = useAnimatedStyle(() => ({ transform: [{ translateY: -LIFT * lift.value }] }));
+  const columnStyle = useAnimatedStyle(() => ({ transform: [{ translateY: -LIFT * lift.value }] }));
   const nameStyle = useAnimatedStyle(() => ({
     opacity: name.value,
     transform: [{ translateY: (1 - name.value) * 12 }],
@@ -76,7 +78,7 @@ export function AnimatedSplash({ onReady, onFinish }: AnimatedSplashProps) {
 
   return (
     <Animated.View style={[StyleSheet.absoluteFill, styles.layer, layerStyle]}>
-      <StatusBar style="light" />
+      <StatusBar style="dark" />
       <Pressable
         style={styles.fill}
         onPress={onFinish}
@@ -84,46 +86,54 @@ export function AnimatedSplash({ onReady, onFinish }: AnimatedSplashProps) {
         accessibilityLabel={`Natillera sin Fronteras. ${SLOGAN}`}
         accessibilityHint="Toque para continuar"
       >
-        <Animated.View style={[styles.symbol, symbolStyle]}>
+        {/* Símbolo y textos en una sola columna: suben juntos y el texto nunca tapa los anillos. */}
+        <Animated.View style={[styles.column, columnStyle]}>
           <Image
             source={require('../../assets/brand/splash-icon.png')}
             style={styles.symbolImage}
             onLoad={() => setReady(true)}
             onError={() => setReady(true)}
           />
+          <View style={styles.texts}>
+            <Animated.View style={nameStyle}>
+              <Text style={styles.name} maxFontSizeMultiplier={1.2}>
+                Natillera
+              </Text>
+              <Text style={styles.borderless} maxFontSizeMultiplier={1.2}>
+                SIN FRONTERAS
+              </Text>
+            </Animated.View>
+            <Animated.Text style={[styles.slogan, sloganStyle]} maxFontSizeMultiplier={1.3}>
+              {SLOGAN.replace(', ', ',\n')}
+            </Animated.Text>
+          </View>
         </Animated.View>
-        <View style={styles.texts}>
-          <Animated.View style={nameStyle}>
-            <Text style={styles.name} maxFontSizeMultiplier={1.2}>
-              Natillera
-            </Text>
-            <Text style={styles.borderless} maxFontSizeMultiplier={1.2}>
-              SIN FRONTERAS
-            </Text>
-          </Animated.View>
-          <Animated.Text style={[styles.slogan, sloganStyle]} maxFontSizeMultiplier={1.3}>
-            {SLOGAN.replace(', ', ',\n')}
-          </Animated.Text>
-        </View>
       </Pressable>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  layer: { backgroundColor: colors.indigo, zIndex: 10 },
-  fill: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  symbol: { width: SYMBOL_SIZE, height: SYMBOL_SIZE },
+  layer: { backgroundColor: colors.fondo, zIndex: 10 },
+  fill: { flex: 1 },
+  // Arranca con el símbolo justo en el centro, donde lo deja el splash nativo.
+  column: {
+    position: 'absolute',
+    top: '50%',
+    left: 24,
+    right: 24,
+    marginTop: -SYMBOL_SIZE / 2,
+    alignItems: 'center',
+  },
   symbolImage: { width: SYMBOL_SIZE, height: SYMBOL_SIZE },
-  // El dibujo del símbolo, ya subido, termina unos 20 px arriba del centro.
-  texts: { position: 'absolute', top: '50%', left: 24, right: 24, marginTop: 8, alignItems: 'center' },
-  name: { fontFamily: fonts.display, fontSize: 44, lineHeight: 50, color: colors.fondo, textAlign: 'center' },
+  texts: { marginTop: 28 - SYMBOL_BOTTOM_PAD, alignItems: 'center' },
+  name: { fontFamily: fonts.display, fontSize: 44, lineHeight: 50, color: colors.indigo, textAlign: 'center' },
   borderless: {
     fontFamily: fonts.monoBold,
     fontSize: 13,
     lineHeight: 18,
     letterSpacing: 3,
-    color: colors.menta,
+    color: colors.verdeDinero,
     textAlign: 'center',
     marginTop: 4,
   },
@@ -131,7 +141,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodyMedium,
     fontSize: 21,
     lineHeight: 29,
-    color: colors.fondo,
+    color: colors.indigo,
     textAlign: 'center',
     marginTop: 28,
   },

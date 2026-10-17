@@ -5,6 +5,9 @@ modo que ninguno se sostiene solo (anillos borromeos). Si se suelta uno, se
 sueltan los tres: así funciona la natillera, el fondo existe porque todos ponen.
 Cada color es un socio, en su país y su moneda.
 
+Versión principal: anillos índigo, verde e índigo2 sobre fondo claro (#F5F6FA),
+la que Henry marcó como definitiva el 17/10. La de anillos claros es para fondos oscuros.
+
 Uso:  PYTHONUTF8=1 python scripts/build-logo.py
 Requiere Pillow y Chrome o Edge (render headless, respeta clipPath y máscaras).
 """
@@ -27,8 +30,12 @@ MENTA = "#A7C9B9"
 VERDE = "#2F6F63"
 FONDO = "#F5F6FA"
 INDIGO2 = "#3F4C9A"
-# Tercer anillo: lavanda derivada del índigo2, legible sobre el fondo índigo
+# Tercer anillo de la versión oscura: lavanda derivada del índigo2
 LAVANDA = "#9AA6F0"
+
+# Colores de los anillos (arriba, izquierda, derecha)
+RINGS_LIGHT = (INDIGO, VERDE, INDIGO2)  # principal, sobre fondo claro
+RINGS_DARK = (FONDO, MENTA, LAVANDA)  # para fondos oscuros
 
 
 # Geometría de los anillos en la caja de 1024: centros en un triángulo de radio 111.
@@ -65,7 +72,7 @@ def _arc(ring: int, point: tuple[float, float], spread: float = 0.36) -> str:
     return f"M{at(a - spread)} A{RING_R} {RING_R} 0 0 1 {at(a + spread)}"
 
 
-def symbol(colors: tuple[str, str, str] = (FONDO, MENTA, LAVANDA), weight: float = 1.0) -> str:
+def symbol(colors: tuple[str, str, str] = RINGS_LIGHT, weight: float = 1.0) -> str:
     """Los tres anillos, centrados ópticamente en una caja de 1024x1024.
 
     El entrelazado se hace con máscaras (no con trazos del color del fondo), así
@@ -96,16 +103,8 @@ def symbol(colors: tuple[str, str, str] = (FONDO, MENTA, LAVANDA), weight: float
 
 
 def svg(body: str, bg: str | None = None, radius: int = 0, size: int = 1024,
-        scale: float = 1.0, glow: bool = False) -> str:
-    """`glow` aclara el centro del fondo índigo para que el ícono no se pierda
-    sobre fondos de pantalla oscuros."""
-    back = ""
-    if bg:
-        fill = "url(#glow)" if glow else bg
-        back = (f'<defs><radialGradient id="glow" cx="50%" cy="38%" r="70%">'
-                f'<stop offset="0" stop-color="#2A2E6E"/><stop offset="1" stop-color="{bg}"/>'
-                f'</radialGradient></defs>'
-                f'<rect width="1024" height="1024" rx="{radius}" fill="{fill}"/>')
+        scale: float = 1.0) -> str:
+    back = f'<rect width="1024" height="1024" rx="{radius}" fill="{bg}"/>' if bg else ""
     off = 512 * (1 - scale)
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{size}" height="{size}" '
             f'viewBox="0 0 1024 1024">{back}'
@@ -150,21 +149,22 @@ ANDROID_SCALE = 0.78
 
 variants = {
     # Logo con fondo redondeado (presentaciones, README, pitch)
-    "logo.svg": (svg(symbol(), INDIGO, radius=232, scale=0.94, glow=True), [("logo.png", 1024)]),
+    "logo.svg": (svg(symbol(), FONDO, radius=232, scale=0.94), [("logo.png", 1024)]),
     # Ícono de la app: cuadrado a sangre, iOS y Expo recortan las esquinas
-    "icon.svg": (svg(symbol(), INDIGO, scale=1.04, glow=True), [("icon.png", 1024)]),
+    "icon.svg": (svg(symbol(), FONDO, scale=1.04), [("icon.png", 1024)]),
     # Favicon y tamaños chicos: trazo más grueso y símbolo más grande
-    "favicon.svg": (svg(symbol(weight=1.3), INDIGO, scale=1.1, glow=True), [("favicon.png", 48)]),
+    "favicon.svg": (svg(symbol(weight=1.3), FONDO, scale=1.1), [("favicon.png", 48)]),
     "android-foreground.svg": (svg(symbol(), scale=ANDROID_SCALE),
                                [("android-icon-foreground.png", 1024)]),
-    "android-background.svg": (svg("", INDIGO, glow=True), [("android-icon-background.png", 1024)]),
+    "android-background.svg": (svg("", FONDO), [("android-icon-background.png", 1024)]),
     # Monocromo (temas de Android 13): los cruces quedan calados por las máscaras
     "android-monochrome.svg": (svg(symbol(colors=("#FFFFFF",) * 3), scale=ANDROID_SCALE),
                                [("android-icon-monochrome.png", 1024)]),
-    # Splash: símbolo transparente sobre backgroundColor índigo
+    # Splash: símbolo transparente sobre backgroundColor claro (#F5F6FA)
     "splash.svg": (svg(symbol(), scale=1.0), [("splash-icon.png", 1024)]),
-    # Versión para fondos claros (#F5F6FA)
-    "symbol-light.svg": (svg(symbol(colors=(INDIGO, VERDE, INDIGO2))), [("symbol-light.png", 512)]),
+    # Símbolo suelto para fondos claros (principal) y para fondos oscuros
+    "symbol-light.svg": (svg(symbol()), [("symbol-light.png", 512)]),
+    "symbol-dark.svg": (svg(symbol(colors=RINGS_DARK)), [("symbol-dark.png", 512)]),
 }
 
 for name, (content, pngs) in variants.items():
@@ -202,13 +202,13 @@ h2 {{ font: 500 54px/1.2 Hanken, sans-serif; color: {title}; opacity: .88; margi
 
 
 # Con slogan: para el pitch, el README y las slides
-for name, bg, title, sub, slogan, height in [
-    ("wordmark-dark", INDIGO, FONDO, MENTA, "", 520),
-    ("wordmark-light", FONDO, INDIGO, VERDE, "", 520),
-    ("wordmark-slogan-dark", INDIGO, FONDO, MENTA, SLOGAN, 640),
-    ("wordmark-slogan-light", FONDO, INDIGO, VERDE, SLOGAN, 640),
+for name, bg, title, sub, slogan, height, rings in [
+    ("wordmark-dark", INDIGO, FONDO, MENTA, "", 520, RINGS_DARK),
+    ("wordmark-light", FONDO, INDIGO, VERDE, "", 520, RINGS_LIGHT),
+    ("wordmark-slogan-dark", INDIGO, FONDO, MENTA, SLOGAN, 640, RINGS_DARK),
+    ("wordmark-slogan-light", FONDO, INDIGO, VERDE, SLOGAN, 640, RINGS_LIGHT),
 ]:
-    sym = svg(symbol(), INDIGO, radius=232, scale=0.94, glow=True)
+    sym = svg(symbol(colors=rings), scale=1.08)
     html = OUT / f"{name}.html"
     html.write_text(wordmark_html(bg, title, sub, sym, slogan, height), encoding="utf-8")
     screenshot(html, OUT / f"{name}.png", 1600, height)
