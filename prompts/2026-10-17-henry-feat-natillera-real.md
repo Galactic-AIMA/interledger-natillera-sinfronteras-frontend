@@ -109,3 +109,11 @@ Sí, prepara el mensaje para Duvan con el diagnóstico y la propuesta de volver 
 ## 00:21 · sesión 62c1a6fb
 
 Camilo está diciendo que saquemos otras cuatro opciones totalmente diferentes, pero que enfoquen al propósito de, de, de la aplicación en un artefacto. Lucete, sé creativo.
+
+## 00:27 · sesión 9ef31aea
+
+ya quedo fusionado, que le mandamos a camilo para que apoye en el frond?
+
+## 00:30 · sesión 9ef31aea
+
+adelante
