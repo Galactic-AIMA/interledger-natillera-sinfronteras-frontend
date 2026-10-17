@@ -76,3 +76,8 @@ Sesiones de Claude Code (Opus 5.5, escritorio) abiertas en la raíz del workspac
 - `y mantén eh, todas las otras instrucciones. O sea, mantén los otros slides y el slide de introducción corto. Con los cinco puntos que debemos dar. Y también siguiendo esos lineamientos.`
 - (con una captura de la lámina del equipo adjunta) `Listo, déjame. Más hacia los roles que ya teníamos. Además, es el like corto, está muy largo. Necesitamos que sea más corto. O sea, esto lo tenemos que exponer en un minuto para poder presentar el video.`
 - `P Perfecto, entonces ya quedaron los SLA listos. En este caso, recuerda que el HTML general el pitch normal tiene que tener toda la parte técnica de Open Payments y todo como lo integramos bien detallado. Y el y el y el y el pitch corto que sea un único slide. Para eh, hacer la introducción.` (con el texto de los 5 puntos pegado: reto, usuario, solución, cómo usamos Open Payments y aprendizajes clave)
+- `Válida si ya cambiamos el nombre y le damos listo, va a decir porque termino de organizarme.` / `para que termine de organizar main en los repositorios. en los repositorios.`
+- `Listo de mi lado: la parte del back en main quedó ordenada (PR Galactic-AIMA/interledger-natillera-sin-fronteras#17 · docs(back): cierre del back para…, dac99ac). El arreglo del «Internal Server Error» está desplegado y probado con el aporte de las 9:05. Ya pueden sacar la v1.0.0. Si alguien sube algo más, que sea por PR a main antes de las 10:45.`
+- `Deja v1.0.0 como está y a las 10:45 crea v1.0.1 sobre el último commit de main, con su entrada en el CHANGELOG y la Release de GitHub ahí.`
+- `Valida que toda las memorias esten al día`
+- `Sí, actualiza frontend/MEMORY.md (estado y checklist de entrega) en un PR a main y fusiónalo antes de las 10:45.`
