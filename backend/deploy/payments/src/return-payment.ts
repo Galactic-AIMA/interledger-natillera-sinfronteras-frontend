@@ -70,6 +70,31 @@ const returnPage = (title: string, target: string) => ({
     `</body></html>`,
 });
 
+// Grants recurrentes (cuotas del préstamo y cuota automática, backend/deploy/prestamos): la billetera también
+// vuelve aquí con el id del grant. No se toca nada: solo se pasa interact_ref y hash a la app, que llama a
+// …/finish (allí se verifica el hash y se continúa el grant). Así la persona ve la página «Volver a la app»
+// en vez de quedarse en la billetera (Chrome en Android bloquea natillera:// sin un toque reciente).
+const GRANTS_TABLE = process.env.GRANTS_TABLE || 'natillera-grants';
+const REF = /^[A-Za-z0-9._~+\/=-]{1,512}$/;
+
+const grantReturn = async (grantId: string, q: Record<string, string | undefined>) => {
+  const { Item } = await dynamo.send(new GetCommand({ TableName: GRANTS_TABLE, Key: { grantId } }));
+  if (!Item) return page(404, 'Enlace no encontrado', 'Este enlace de retorno no existe.');
+  let base = 'natillera://retorno';
+  try {
+    base = validateReturnUrl(Item.appReturnUrl);
+  } catch {}
+  const params = new URLSearchParams({ grantId });
+  const approved = typeof q.interact_ref === 'string' && REF.test(q.interact_ref) && typeof q.hash === 'string' && REF.test(q.hash);
+  if (approved) {
+    params.set('interact_ref', q.interact_ref!);
+    params.set('hash', q.hash!);
+  } else {
+    params.set('result', 'grant_rejected');
+  }
+  return returnPage(approved ? 'Permiso aprobado' : 'Permiso rechazado', `${base}?${params.toString()}`);
+};
+
 const lambda = new LambdaClient({ region: process.env.AWS_REGION });
 const SELF = process.env.AWS_LAMBDA_FUNCTION_NAME;
 
@@ -94,7 +119,7 @@ export const handler = async (event: any) => {
     }
     const q = event?.queryStringParameters ?? {};
     const { Item } = await dynamo.send(new GetCommand({ TableName: env.paymentsTable, Key: { paymentId } }));
-    if (!Item) return page(404, 'Pago no encontrado', 'Este pago no existe.');
+    if (!Item) return grantReturn(paymentId, q);
     const payment = Item as PaymentRecord;
 
     if (payment.status !== 'pending') {
