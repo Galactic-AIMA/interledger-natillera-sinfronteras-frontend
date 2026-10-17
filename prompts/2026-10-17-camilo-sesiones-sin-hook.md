@@ -91,3 +91,4 @@ Sesiones de Claude Code (Opus 5.5, escritorio) abiertas en la raíz del workspac
 - `No, todavía no hagas nada y no olvides colocarle el QR. Coloca el QR, papá.`
 - `"D:\GalacticAIMA\NatilleraSinFronteras\entrega-2026-10-17\01-videos\0 - Demo con voz y subtitulos EN (para el jurado) 4m02.mp4" sube el video al último slide. Listo.`
 - `Listo, ya quedó último ajuste. Eh, los QR pongámoslos en un slide final. Con los dos QR, eh, descargan nuestra aplicación, una promoción ahí. Un llamado a la acción y dejas el eslogan. Y todo con todo el branding de, de, Natillera Sin Fronteras. Haz esto de una que ya vamos a subir esta vuelta, papá.`
+- `Revisa la, toda la memoria, todo documenta que revisa que todo quedó en, quedó al día. Los repos están al día, nuestra memoria, actualízate, emailo. Eso lo tenemos 10 minutos, entonces haz esto de una.`
