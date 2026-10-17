@@ -140,3 +140,28 @@ test('aprobar con cuotas autorizadas: 501 hasta que exista el desembolso (fase 2
   await fails(decideLoan(ev('rosa', { params: { requestId: 'r2' }, body: { accepted: true } })), 501, 'DisbursementNotAvailable');
   await fails(decideLoan(ev('rosa', { params: { requestId: 'r2' }, body: {} })), 400, 'BadRequest');
 });
+
+test('varias natilleras: pendientes de todas las que administra, un préstamo activo por natillera', async () => {
+  // Luz administra n2 y es socia de n1 (de Rosa). Andrés está en las dos.
+  rows(env.natillerasTable).push({ natilleraId: 'n2', author: 'luz', integrants: ['luz', 'andres'], assetCode: 'EUR', assetScale: 2, disbursedTotal: '0' });
+  rows(env.recordsTable).push({ natilleraId: 'n2', id: 1, author: 'luz', amount: eur('5000') });
+  const body = (natilleraId: string) => ({ body: { natilleraId, value: '1000', assetCode: 'EUR', assetScale: 2, installments: 2 } });
+
+  const enN1: any = await requestLoan(ev('andres', body('n1')));
+  // Ya tiene una pendiente en n1, pero en n2 puede pedir.
+  await fails(requestLoan(ev('andres', body('n1'))), 409, 'LoanAlreadyActive');
+  const enN2: any = await requestLoan(ev('andres', body('n2')));
+
+  // Cada tesorera ve solo las de su natillera; con natilleraId se filtra.
+  assert.deepEqual(((await listLoanRequests(ev('rosa'))) as any[]).map((r) => r.requestId), [enN1.requestId]);
+  assert.deepEqual(((await listLoanRequests(ev('luz'))) as any[]).map((r) => r.requestId), [enN2.requestId]);
+  assert.deepEqual(await listLoanRequests(ev('luz', { params: { natilleraId: 'n1' } })), []); // en n1 Luz no es ADMIN
+
+  // Mi préstamo: el más reciente, o el de la natillera indicada.
+  assert.equal(((await getMyLoans(ev('andres', { params: { natilleraId: 'n1' } }))) as any).request.requestId, enN1.requestId);
+  assert.equal(((await getMyLoans(ev('andres', { params: { natilleraId: 'n2' } }))) as any).request.natilleraId, 'n2');
+
+  // Luz no puede decidir la de n1 (no es ADMIN ahí) aunque administre otra natillera.
+  await fails(decideLoan(ev('luz', { params: { requestId: enN1.requestId }, body: { accepted: false } })), 404, 'LoanRequestNotFound');
+  assert.deepEqual(await decideLoan(ev('luz', { params: { requestId: enN2.requestId }, body: { accepted: false } })), { status: 'rejected' });
+});
