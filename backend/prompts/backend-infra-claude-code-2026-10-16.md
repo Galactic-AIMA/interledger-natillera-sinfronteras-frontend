@@ -399,3 +399,6 @@ contacto y un token de sesión de Cognito.
 
 ### 100
 > [captura: Test Wallet "Internal Server Error" al autorizar las cuotas] A la hora de henry aceptar las cuotas le dimos una vez y no pasó nada, le dimos otra vez y dio Internal server error. Como vas?
+
+### 101
+> [captura: pantalla «Permiso para cobrar las cuotas»] 9:41 Al darle al boton autorizar cuotas, lleva a henry a la pantalla con el boton verde, pero no se aplican los cambios, en mi apartado de prestamos no se actualizan las cuotas autorizadas, habia que aprobar primero el pr antes de la prueba? Debo reiniciar la app yo tambien?

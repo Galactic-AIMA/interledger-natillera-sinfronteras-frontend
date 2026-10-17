@@ -71,9 +71,11 @@ const returnPage = (title: string, target: string) => ({
 });
 
 // Grants recurrentes (cuotas del préstamo y cuota automática, backend/deploy/prestamos): la billetera también
-// vuelve aquí con el id del grant. No se toca nada: solo se pasa interact_ref y hash a la app, que llama a
-// …/finish (allí se verifica el hash y se continúa el grant). Así la persona ve la página «Volver a la app»
-// en vez de quedarse en la billetera (Chrome en Android bloquea natillera:// sin un toque reciente).
+// vuelve aquí con el id del grant. Se muestra la página «Volver a la app» (Chrome en Android bloquea
+// natillera:// sin un toque reciente) y, como la app no siempre procesa el enlace al volver por el botón, el
+// back termina el grant por su cuenta: invoca de forma asíncrona la Lambda `finish-*` de préstamos con la
+// dueña del grant; allí se verifica el hash y se continúa el grant (idempotente si la app también llama).
+const lambda = new LambdaClient({ region: process.env.AWS_REGION });
 const GRANTS_TABLE = process.env.GRANTS_TABLE || 'natillera-grants';
 const REF = /^[A-Za-z0-9._~+\/=-]{1,512}$/;
 
@@ -89,13 +91,20 @@ const grantReturn = async (grantId: string, q: Record<string, string | undefined
   if (approved) {
     params.set('interact_ref', q.interact_ref!);
     params.set('hash', q.hash!);
+    const fn = Item.kind === 'recurring' ? 'finish-recurring' : 'finish-repayment-grant';
+    try {
+      const payload = { auth: { username: Item.author }, params: { grantId }, body: { interact_ref: q.interact_ref, hash: q.hash } };
+      await lambda.send(new InvokeCommand({ FunctionName: fn, InvocationType: 'Event', Payload: Buffer.from(JSON.stringify(payload)) }));
+      console.log('grant finish invoked', fn, grantId);
+    } catch (error) {
+      console.log('grant finish invoke failed (la app aún puede llamar a …/finish)', fn, grantId, error);
+    }
   } else {
     params.set('result', 'grant_rejected');
   }
   return returnPage(approved ? 'Permiso aprobado' : 'Permiso rechazado', `${base}?${params.toString()}`);
 };
 
-const lambda = new LambdaClient({ region: process.env.AWS_REGION });
 const SELF = process.env.AWS_LAMBDA_FUNCTION_NAME;
 
 // Evento interno (solo por lambda:Invoke, nunca desde API Gateway): completa el pago en segundo plano.
