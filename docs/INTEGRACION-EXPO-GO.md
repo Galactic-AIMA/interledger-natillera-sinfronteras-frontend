@@ -2,6 +2,8 @@
 
 De Henry a Camilo. Todo lo de Henry está en **una sola rama**, lista para el PR a `main`. Este documento dice qué trae, cómo probarla en Expo Go y qué queda abierto.
 
+> **23:40:** el `.env` y la prueba de punta a punta vigentes están en [estado-2026-10-16-noche.md](estado-2026-10-16-noche.md).
+
 > **17:15:** integrado. El PR #1 se fusionó en `main` a las 16:39; desde ahí `main` también trae el modo híbrido y Metas de Camilo. Lo que sigue vigente de este documento es la **lista de 8 pruebas en Expo Go** (Camilo). Estado general: [estado-2026-10-16-tarde.md](estado-2026-10-16-tarde.md).
 
 > **15:45:** la rama ya está **en el repo del equipo**: `origin/feat/cuenta-celular` (`b7729fa`, ahora con `feat/creditos` fusionada; 22 commits por delante de `main`, 0 por detrás). PR: https://github.com/Galactic-AIMA/interledger-natillera-sinfronteras-frontend/compare/main...feat/cuenta-celular · **Las pruebas en Expo Go las hace Camilo en su PC** (Henry no tiene Expo Go): la lista de 8 pruebas de abajo es para él.

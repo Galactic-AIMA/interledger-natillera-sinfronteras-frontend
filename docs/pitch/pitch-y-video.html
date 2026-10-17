@@ -1,0 +1,891 @@
+<title>Cuatro caminos del pitch</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Hanken+Grotesk:wght@400;600;800&family=Martian+Mono:wght@400;600&family=Kalam:wght@400;700&family=Special+Elite&family=Archivo+Black&family=Young+Serif&display=swap">
+<style>
+/* Layout: una columna de lectura; cada camino es una banda con su propio mundo visual (diapositivas de muestra 16:9) y su ficha. */
+:root {
+  /* Marco: Paleta G de la app */
+  --bg: #F5F6FA;
+  --surface: #FFFFFF;
+  --ink: #1A1B4B;
+  --ink-2: #5F626B;
+  --accent: #3F4C9A;
+  --money: #2F6F63;
+  --line: #D9DCE8;
+  --display: "Gloock", Georgia, serif;
+  --body: "Hanken Grotesk", system-ui, sans-serif;
+  --mono: "Martian Mono", ui-monospace, monospace;
+
+  /* Mundos de cada camino: fijos a propósito (son muestras de diapositiva) */
+  --paper: #FBF8EE; --rule: #A9C4E3; --margin: #D4493A; --pen: #1F3A8A; --pencil: #4B4B4B;
+  --env: #F3EEDF; --air-r: #C8322B; --air-b: #1F3F8F; --stamp: #2F6F63; --type-ink: #2A2622;
+  --sign: #FFD23F; --sign-ink: #111111;
+  --night: #0E1238; --bulb: #FFC86B; --bulb-2: #FF8A5B; --bulb-3: #9BE3C6; --snow: #F6F1E7;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0F1030; --surface: #17194A; --ink: #ECEEF8; --ink-2: #A9ADC4; --accent: #A9B4F2; --money: #8FD1BE; --line: #2C2F66;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0F1030; --surface: #17194A; --ink: #ECEEF8; --ink-2: #A9ADC4; --accent: #A9B4F2; --money: #8FD1BE; --line: #2C2F66;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink);
+  font: 400 1.0625rem/1.6 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1080px; margin: 0 auto; padding-block: 48px 72px; display: grid; gap: 64px; }
+h1, h2, h3 { text-wrap: balance; margin: 0; }
+p { margin: 0; }
+.mono { font-family: var(--mono); font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+
+header.top { display: grid; gap: 18px; max-width: 760px; }
+header.top h1 { font-family: var(--display); font-weight: 400; font-size: clamp(2.4rem, 6vw, 4rem); line-height: 1.02; }
+header.top h1 em { font-style: normal; color: var(--money); }
+header.top p.lead { font-size: 1.15rem; color: var(--ink-2); max-width: 62ch; }
+nav.jump { display: flex; flex-wrap: wrap; gap: 8px; }
+nav.jump a {
+  font: 600 .95rem var(--body); color: var(--ink); text-decoration: none;
+  border: 1px solid var(--line); background: var(--surface); padding: 10px 14px; border-radius: 999px; min-height: 44px; display: inline-flex; align-items: center; gap: 8px;
+}
+nav.jump a:hover, nav.jump a:focus-visible { border-color: var(--accent); outline: none; }
+nav.jump b { font-family: var(--mono); font-size: .72rem; color: var(--accent); }
+
+section.camino { display: grid; gap: 22px; scroll-margin-top: 24px; }
+.camino-head { display: grid; gap: 6px; }
+.camino-head h2 { font-family: var(--display); font-weight: 400; font-size: clamp(1.9rem, 4.2vw, 2.8rem); line-height: 1.05; }
+.camino-head .idea { font-size: 1.15rem; color: var(--ink-2); max-width: 64ch; }
+
+.slides { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 760px) { .slides { grid-template-columns: 1fr; } }
+.slide {
+  aspect-ratio: 16 / 9; max-width: 100%; position: relative; overflow: hidden;
+  container-type: inline-size; border-radius: 6px; box-shadow: 0 1px 0 var(--line), 0 10px 30px -18px rgba(10,12,40,.45);
+}
+.cap { font-family: var(--mono); font-size: .7rem; letter-spacing: .05em; color: var(--ink-2); margin-top: 6px; }
+figure { margin: 0; min-width: 0; }
+
+.ficha { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+@media (max-width: 760px) { .ficha { grid-template-columns: 1fr; } }
+.ficha > div { background: var(--surface); padding: 16px 18px; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.ficha h3 { font: 600 .72rem var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--accent); }
+.ficha p, .ficha li { font-size: .98rem; }
+.ficha ol { margin: 0; padding-left: 1.2em; display: grid; gap: 2px; }
+.ficha q { font-family: var(--display); font-size: 1.1rem; quotes: "«" "»"; }
+.ficha .wide { grid-column: 1 / -1; }
+
+/* ---------- 1 · El cuaderno ---------- */
+.cuaderno {
+  background:
+    linear-gradient(90deg, transparent 0 9%, var(--margin) 9% calc(9% + 1.5px), transparent calc(9% + 1.5px)),
+    repeating-linear-gradient(180deg, var(--paper) 0 6.2cqw, var(--rule) 6.2cqw calc(6.2cqw + 1px));
+  background-color: var(--paper); color: var(--pen); font-family: "Kalam", "Comic Sans MS", cursive;
+}
+.cuaderno .in { position: absolute; inset: 7% 6% 6% 12%; display: grid; align-content: start; gap: 1.2cqw; }
+.cuaderno h4 { font: 700 6.6cqw/1 "Kalam", cursive; margin: 0; color: var(--pen); }
+.cuaderno .sub { font-size: 2.8cqw; color: var(--pencil); }
+.cuaderno .holes { position: absolute; left: 3%; top: 0; bottom: 0; display: grid; align-content: space-evenly; }
+.cuaderno .holes i { width: 2.4cqw; height: 2.4cqw; border-radius: 50%; background: var(--bg); box-shadow: inset 0 1px 2px rgba(0,0,0,.25); display: block; }
+.ledger { width: 100%; border-collapse: collapse; font-size: 2.6cqw; line-height: 6.2cqw; }
+.ledger th { text-align: left; font-weight: 700; color: var(--pencil); border-bottom: 2px solid var(--pen); }
+.ledger td { padding: 0; }
+.ledger .debe { color: var(--margin); }
+.ledger .tachado { text-decoration: line-through; text-decoration-color: var(--margin); text-decoration-thickness: .3cqw; color: var(--pencil); }
+.ledger .nuevo { font-family: var(--mono); font-size: 2.2cqw; color: var(--stamp); }
+.sello-ok { position: absolute; right: 6%; bottom: 10%; transform: rotate(-8deg); border: .5cqw solid var(--stamp); color: var(--stamp); font: 600 2.4cqw/1.2 var(--mono); padding: 1cqw 1.6cqw; border-radius: 1cqw; text-align: center; text-transform: uppercase; letter-spacing: .08em; }
+
+/* ---------- 2 · Correo aéreo ---------- */
+.aereo { background: var(--env); color: var(--type-ink); font-family: "Special Elite", "Courier New", monospace; }
+.aereo::before {
+  content: ""; position: absolute; inset: 0; border: 2.4cqw solid transparent;
+  border-image: repeating-linear-gradient(45deg, var(--air-r) 0 3cqw, var(--env) 3cqw 4.5cqw, var(--air-b) 4.5cqw 7.5cqw, var(--env) 7.5cqw 9cqw) 30;
+}
+.aereo .in { position: absolute; inset: 11% 9%; display: grid; gap: 2cqw; align-content: center; }
+.aereo .par-avion { font-size: 2.3cqw; letter-spacing: .3em; color: var(--air-b); text-transform: uppercase; }
+.aereo h4 { font: 400 5.6cqw/1.1 "Special Elite", monospace; margin: 0; }
+.aereo .addr { display: grid; grid-template-columns: auto 1fr; gap: .4cqw 2cqw; font-size: 2.6cqw; }
+.aereo .addr span:nth-child(odd) { color: var(--air-b); }
+.stamp {
+  position: absolute; right: 9%; top: 12%; width: 15cqw; aspect-ratio: 4/5; max-width: 100%; background: var(--stamp); color: var(--env);
+  display: grid; place-items: center; text-align: center; font: 600 2.4cqw/1.15 var(--mono);
+  outline: .7cqw dotted var(--env); outline-offset: -1.3cqw; box-shadow: 0 0 0 .5cqw var(--stamp);
+}
+.stamp b { display: block; font-size: 3.6cqw; }
+.postmark { position: absolute; right: 18%; top: 34%; width: 15cqw; aspect-ratio: 1; border: .35cqw solid var(--air-r); border-radius: 50%; color: var(--air-r); display: grid; place-items: center; font: 600 1.7cqw/1.2 var(--mono); text-align: center; transform: rotate(-14deg); opacity: .85; }
+.ruta { position: absolute; inset: 14% 8% 12%; display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items: center; gap: 1.4cqw; }
+.ruta .stop { display: grid; gap: .8cqw; justify-items: center; text-align: center; }
+.ruta .stop .pm { width: 17cqw; aspect-ratio: 1; max-width: 100%; border: .4cqw solid var(--air-r); border-radius: 50%; display: grid; place-items: center; color: var(--air-r); font: 600 2cqw/1.25 var(--mono); }
+.ruta .stop .pm.blue { border-color: var(--air-b); color: var(--air-b); border-style: dashed; }
+.ruta .stop .pm.green { border-color: var(--stamp); color: var(--stamp); }
+.ruta .stop p { font-size: 2.3cqw; }
+.ruta .arrow { font-size: 4cqw; color: var(--air-b); }
+.ruta .title { position: absolute; top: -7cqw; left: 0; right: 0; text-align: center; font-size: 3.4cqw; }
+
+/* ---------- 3 · Letra grande ---------- */
+.letrero { background: var(--sign); color: var(--sign-ink); font-family: "Archivo Black", "Arial Black", sans-serif; }
+.letrero .in { position: absolute; inset: 8% 7%; display: grid; align-content: space-between; }
+.letrero .big { font-size: 13cqw; line-height: .92; letter-spacing: -.02em; transition: font-size .25s ease; }
+.letrero .small { font: 800 2.6cqw/1.3 var(--body); max-width: 60%; }
+.letrero .aplus {
+  position: absolute; right: 6%; top: 8%; width: 9cqw; aspect-ratio: 1; max-width: 100%; border-radius: 50%; background: var(--sign-ink); color: var(--sign);
+  display: grid; place-items: center; font: 400 3.4cqw "Archivo Black", sans-serif; border: 0; cursor: pointer;
+}
+.letrero .aplus:focus-visible { outline: .6cqw solid var(--sign-ink); outline-offset: .6cqw; }
+.letrero[data-a="2"] .big { font-size: 16cqw; }
+.letrero[data-a="3"] .big { font-size: 19cqw; }
+.letrero .row { display: flex; align-items: baseline; gap: 2cqw; flex-wrap: wrap; }
+.letrero .unit { font: 800 3.4cqw var(--body); }
+.letrero .strip { display: grid; grid-template-columns: repeat(3, 1fr); border-top: .6cqw solid var(--sign-ink); padding-top: 1.6cqw; gap: 2cqw; font: 800 2.4cqw/1.25 var(--body); }
+.letrero .strip b { display: block; font: 400 4.4cqw "Archivo Black", sans-serif; }
+
+/* ---------- 4 · Faltan 59 días ---------- */
+.alumbrado { background: radial-gradient(120% 90% at 50% 120%, #232a6e 0%, var(--night) 60%); color: var(--snow); font-family: "Young Serif", Georgia, serif; }
+.alumbrado canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.alumbrado .in { position: absolute; inset: 10% 8%; display: grid; align-content: center; gap: 1.6cqw; }
+.alumbrado .count { font-size: 17cqw; line-height: .9; color: var(--bulb); text-shadow: 0 0 3cqw rgba(255,200,107,.45); }
+.alumbrado .count small { font: 600 2.4cqw var(--mono); color: var(--snow); letter-spacing: .1em; text-transform: uppercase; display: block; margin-top: 1cqw; text-shadow: none; }
+.alumbrado h4 { font: 400 4.2cqw/1.1 "Young Serif", serif; margin: 0; }
+.year { position: absolute; inset: auto 6% 12% 6%; display: grid; grid-template-columns: repeat(12, 1fr); gap: .8cqw; }
+.year div { display: grid; gap: .8cqw; justify-items: center; font: 600 1.7cqw var(--mono); color: rgba(246,241,231,.75); }
+.year .jar { width: 100%; aspect-ratio: 3/5; max-width: 100%; border: .3cqw solid rgba(246,241,231,.55); border-radius: .8cqw .8cqw 1.4cqw 1.4cqw; position: relative; overflow: hidden; }
+.year .jar i { position: absolute; left: 0; right: 0; bottom: 0; background: var(--bulb-3); display: block; }
+.year .hoy .jar { border-color: var(--bulb); box-shadow: 0 0 2cqw rgba(255,200,107,.6); }
+.year .hoy { color: var(--bulb); }
+.year .dic .jar { border-style: dashed; border-color: var(--bulb-2); }
+.year .dic { color: var(--bulb-2); }
+.alumbrado .top4 { position: absolute; top: 9%; left: 6%; right: 6%; display: flex; justify-content: space-between; align-items: baseline; gap: 2cqw; flex-wrap: wrap; }
+.alumbrado .top4 h4 { font-size: 3.8cqw; }
+.alumbrado .top4 span { font: 600 2cqw var(--mono); color: var(--bulb); }
+
+/* ---------- Comparación ---------- */
+.compara { display: grid; gap: 14px; }
+.compara h2 { font-family: var(--display); font-weight: 400; font-size: clamp(1.7rem, 3.6vw, 2.3rem); }
+.tabla { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+table.cmp { border-collapse: collapse; width: 100%; min-width: 640px; font-size: .95rem; }
+table.cmp th, table.cmp td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.cmp thead th { font: 600 .72rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-2); }
+table.cmp tbody th { font-weight: 800; white-space: nowrap; }
+table.cmp tr:last-child td, table.cmp tr:last-child th { border-bottom: 0; }
+.dots { font-family: var(--mono); letter-spacing: .15em; color: var(--money); white-space: nowrap; }
+.dots s { text-decoration: none; color: var(--line); }
+.nota { color: var(--ink-2); font-size: .95rem; max-width: 70ch; }
+
+@media (prefers-reduced-motion: reduce) { .letrero .big { transition: none; } }
+
+/* ---------- Horario, video y pitch (secciones nuevas, 17 oct 01:30) ---------- */
+:root { --warn: #9A5B12; --warn-bg: #FBF1E2; --ok-bg: #E7F2EE; --now: #3F4C9A; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --warn: #F2C27A; --warn-bg: #2E2614; --ok-bg: #153029; --now: #A9B4F2; } }
+:root[data-theme="dark"] { --warn: #F2C27A; --warn-bg: #2E2614; --ok-bg: #153029; --now: #A9B4F2; }
+
+section.bloque { display: grid; gap: 18px; scroll-margin-top: 24px; }
+section.bloque > .head { display: grid; gap: 6px; max-width: 760px; }
+section.bloque h2 { font-family: var(--display); font-weight: 400; font-size: clamp(1.9rem, 4.2vw, 2.8rem); line-height: 1.05; }
+section.bloque .idea { font-size: 1.1rem; color: var(--ink-2); max-width: 64ch; }
+.divisor { border: 0; border-top: 1px solid var(--line); margin: 0; }
+
+.leyenda { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: .9rem; color: var(--ink-2); }
+.pill { font: 600 .66rem var(--mono); letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.of { color: var(--money); }
+.pill.eq { color: var(--accent); }
+.pill.cf { color: var(--warn); background: var(--warn-bg); border-color: transparent; }
+
+ol.horas { list-style: none; margin: 0; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--surface); overflow: hidden; }
+ol.horas li { display: grid; grid-template-columns: 7.2rem minmax(0,1fr); gap: 4px 16px; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+ol.horas li:last-child { border-bottom: 0; }
+ol.horas time { font: 600 .95rem var(--mono); font-variant-numeric: tabular-nums; color: var(--ink); }
+ol.horas .q { display: grid; gap: 4px; min-width: 0; }
+ol.horas .q b { font-weight: 800; }
+ol.horas .q p { color: var(--ink-2); font-size: .98rem; }
+ol.horas .q .who { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+ol.horas li.pasado { opacity: .5; }
+ol.horas li.ahora { background: var(--ok-bg); box-shadow: inset 4px 0 0 var(--now); }
+ol.horas li.ahora time::after { content: " · ahora"; color: var(--now); font-size: .7rem; }
+ol.horas li.hito time { color: var(--money); }
+@media (max-width: 560px) { ol.horas li { grid-template-columns: 1fr; } }
+
+.aviso { background: var(--warn-bg); color: var(--ink); border-radius: 8px; padding: 14px 18px; display: grid; gap: 6px; font-size: .98rem; }
+.aviso b { color: var(--warn); }
+
+.pasos { display: grid; gap: 12px; counter-reset: paso; }
+.paso { display: grid; grid-template-columns: 2.6rem minmax(0,1fr); gap: 14px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
+.paso::before { counter-increment: paso; content: counter(paso); font: 400 1.7rem/1 var(--display); color: var(--accent); }
+.paso > div { display: grid; gap: 8px; min-width: 0; }
+.paso h3 { font: 800 1.05rem var(--body); }
+.paso ul { margin: 0; padding-left: 1.1em; display: grid; gap: 4px; }
+.paso li { font-size: .98rem; }
+.paso .t { font: 600 .7rem var(--mono); letter-spacing: .05em; color: var(--ink-2); text-transform: uppercase; }
+code, .cmd { font-family: var(--mono); font-size: .82em; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 5px; overflow-wrap: anywhere; }
+
+.tabla.tomas table { min-width: 620px; }
+table.cmp td.n { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink-2); }
+
+.controles { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn { font: 600 .95rem var(--body); color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 10px 16px; min-height: 44px; cursor: pointer; }
+.btn[aria-pressed="true"] { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+.btn:focus-visible, .seg button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; background: var(--surface); }
+.seg button { font: 600 .9rem var(--body); color: var(--ink); background: transparent; border: 0; padding: 10px 14px; min-height: 44px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+
+.reloj { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.reloj output { font: 600 1.6rem var(--mono); font-variant-numeric: tabular-nums; min-width: 5ch; }
+.reloj .bloque-actual { color: var(--ink-2); font-size: .95rem; }
+
+.guion { display: grid; gap: 14px; }
+.parte { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 18px 20px; display: grid; gap: 10px; }
+.parte.activo { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent) inset; }
+.parte header { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 14px; align-items: baseline; }
+.parte h3 { font-family: var(--display); font-weight: 400; font-size: 1.5rem; }
+.parte .meta { font: 600 .72rem var(--mono); letter-spacing: .05em; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.parte .habla { font: 600 .72rem var(--mono); letter-spacing: .05em; text-transform: uppercase; color: var(--accent); }
+.parte .slide-txt { font-size: .92rem; color: var(--ink-2); }
+.parte .dice { display: grid; gap: 4px; font-size: 1.12rem; line-height: 1.5; max-width: 62ch; }
+.parte .dice p::before { content: "— "; color: var(--line); }
+.parte .clave { font-weight: 800; }
+.parte .ojo { font-size: .9rem; color: var(--warn); }
+body.memoria .parte .dice p .resto { filter: blur(6px); transition: filter .2s; cursor: pointer; }
+body.memoria .parte .dice p:hover .resto, body.memoria .parte .dice p:focus .resto, body.memoria .parte .dice p.ver .resto { filter: none; }
+.demo-pasos { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; font-size: 1rem; }
+.demo-pasos b { font-family: var(--mono); font-size: .8rem; color: var(--ink-2); font-weight: 600; }
+
+.preguntas { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+@media (max-width: 760px) { .preguntas { grid-template-columns: 1fr; } }
+.preguntas details { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; }
+.preguntas summary { font-weight: 800; cursor: pointer; min-height: 28px; }
+.preguntas details p { margin-top: 8px; color: var(--ink-2); }
+@media (prefers-reduced-motion: reduce) { body.memoria .parte .dice p .resto { transition: none; } }
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <span class="mono">Natillera sin Fronteras · Hackatón Open Payments · Ruta N, sábado 17 oct 2026</span>
+    <h1>Del código <em>al escenario</em>: horario, video y pitch</h1>
+    <p class="lead">Lo que falta de aquí a las 12:00, en orden. Primero el horario del sábado; después cómo grabar el video de respaldo paso a paso; después el pitch completo para estudiar entre Henry y Camilo. Los cuatro caminos de estilo siguen abajo, para elegir el look.</p>
+    <nav class="jump" aria-label="Secciones">
+      <a href="#horario"><b>⏱</b> Horario</a>
+      <a href="#video"><b>▶</b> El video</a>
+      <a href="#pitch"><b>✎</b> El pitch</a>
+      <a href="#jurado"><b>?</b> Preguntas</a>
+      <a href="#cuaderno"><b>A–D</b> Los cuatro caminos</a>
+    </nav>
+  </header>
+
+  <!-- HORARIO -->
+  <section class="bloque" id="horario">
+    <div class="head">
+      <span class="mono">Sábado 17 de octubre · hora de Colombia</span>
+      <h2>El horario, de ahora al pitch</h2>
+      <p class="idea">La fila resaltada es la que toca ahora. Dos horas no se mueven: la entrega a las 11:00 y el pitch a las 12:00. Lo demás es nuestro plan para llegar bien a esas dos.</p>
+    </div>
+    <div class="leyenda">
+      <span><span class="pill of">Hackatón</span> regla del evento, tal como la tenemos en el plan</span>
+      <span><span class="pill eq">Equipo</span> plan nuestro, se puede mover</span>
+      <span><span class="pill cf">Confirmar</span> preguntar en Slack #co-hackathon-2026</span>
+    </div>
+    <ol class="horas" id="horas">
+      <li data-t="2026-10-17T01:30:00-05:00" data-fin="2026-10-17T02:30:00-05:00"><time>01:30</time><div class="q"><div class="who"><b>Decidir y dejar todo cargando</b><span class="pill eq">Equipo</span></div><p>Elegir el camino del pitch (recomendado: A, el cuaderno, con el A+ en vivo). Repartir quién dice qué. Celulares y portátil a cargar. Si el pago real con la Test Wallet todavía no sale, último intento hasta las 02:30 y se para.</p></div></li>
+      <li data-t="2026-10-17T02:30:00-05:00" data-fin="2026-10-17T06:00:00-05:00"><time>02:30</time><div class="q"><div class="who"><b>Dormir</b><span class="pill eq">Equipo</span></div><p>Mínimo tres horas. El pitch se gana con la voz firme y la cabeza clara, no con un commit más a las 4 de la mañana.</p></div></li>
+      <li data-t="2026-10-17T06:00:00-05:00" data-fin="2026-10-17T07:00:00-05:00"><time>06:00</time><div class="q"><div class="who"><b>APK en un Android real</b><span class="pill eq">Equipo</span></div><p>Instalar, abrir sin red y confirmar que «Empezar con datos de ejemplo» funciona solo. Probar el modo real una vez con las dos cuentas de prueba.</p></div></li>
+      <li data-t="2026-10-17T07:00:00-05:00" data-fin="2026-10-17T08:00:00-05:00"><time>07:00</time><div class="q"><div class="who"><b>Grabar el video de respaldo</b><span class="pill eq">Equipo</span></div><p>Siga la guía de abajo. Una toma buena, cronometrada, sin voz.</p></div></li>
+      <li class="hito" data-t="2026-10-17T08:00:00-05:00" data-fin="2026-10-17T08:15:00-05:00"><time>08:00</time><div class="q"><div class="who"><b>Límite del video</b><span class="pill eq">Equipo</span></div><p>Subido al Drive del equipo y descargado en el portátil y en el celular. Desde aquí no se graba más.</p></div></li>
+      <li data-t="2026-10-17T08:15:00-05:00" data-fin="2026-10-17T10:00:00-05:00"><time>08:15</time><div class="q"><div class="who"><b>Tres ensayos con cronómetro</b><span class="pill eq">Equipo</span><span class="pill cf">¿Plantilla oficial?</span></div><p>La presentación es <code>docs/pitch/pitch.html</code> (10 láminas, ya con las capturas nuevas). Si la organización exige su plantilla, pasarla allá. Ensayar con el cronómetro de esta página: si pasa de 5:00, se recorta la lámina 9. Duvan y David ensayan las preguntas técnicas.</p></div></li>
+      <li data-t="2026-10-17T10:00:00-05:00" data-fin="2026-10-17T11:00:00-05:00"><time>10:00</time><div class="q"><div class="who"><b>Cierre de código</b><span class="pill eq">Equipo</span></div><p>Todo en <code>main</code> (front y back). <code>AI_USAGE.md</code> con «What We Did Ourselves» lleno y <code>node scripts/ai-usage-check.mjs</code> limpio.</p></div></li>
+      <li class="hito" data-t="2026-10-17T11:00:00-05:00" data-fin="2026-10-17T11:30:00-05:00"><time>11:00</time><div class="q"><div class="who"><b>Entrega</b><span class="pill of">Hackatón</span><span class="pill cf">Formulario y Drive</span></div><p>Formulario enviado y link de demo en el Drive del equipo. Después de esta hora no se toca código.</p></div></li>
+      <li data-t="2026-10-17T11:30:00-05:00" data-fin="2026-10-17T12:00:00-05:00"><time>11:30</time><div class="q"><div class="who"><b>Prueba técnica en sala</b><span class="pill eq">Equipo</span><span class="pill cf">Cómo se proyecta</span></div><p>Proyectar el celular (cable o scrcpy), batería al 100 %, «No molestar» activado, A+ en tamaño normal para empezar, video abierto en el portátil.</p></div></li>
+      <li class="hito" data-t="2026-10-17T12:00:00-05:00" data-fin="2026-10-17T13:00:00-05:00"><time>12:00</time><div class="q"><div class="who"><b>Pitch: 5 minutos con demo, en español</b><span class="pill of">Hackatón</span><span class="pill cf">Orden de salida</span></div><p>Respire. Usted conoce a Doña Rosa mejor que nadie.</p></div></li>
+    </ol>
+    <div class="aviso">
+      <b>Lo que no encontramos escrito</b>
+      <p>El correo oficial de Interledger (28 sep) solo fija el 16 y 17 de octubre, presencial en Ruta N, equipos de 4 a 5. La agenda hora por hora no está publicada en la web ni llegó al correo. Las 11:00 y 12:00 son las del plan del equipo. Pregunte esta mañana en Slack #co-hackathon-2026: orden de salida de los equipos, si la demo cuenta dentro de los 5 minutos, cómo se proyecta, link de la plantilla y del formulario, y hora de la premiación.</p>
+    </div>
+  </section>
+
+  <hr class="divisor">
+
+  <!-- VIDEO -->
+  <section class="bloque" id="video">
+    <div class="head">
+      <span class="mono">Video de respaldo · listo a las 08:00</span>
+      <h2>Cómo grabar el video, paso a paso</h2>
+      <p class="idea">Es el seguro del pitch: si en vivo falla la red, la billetera o el celular, se pone el video y se sigue hablando encima. Por eso se graba <b>sin voz</b>: la voz la pone Camilo en vivo, con el mismo texto de la lámina 5.</p>
+    </div>
+    <div class="pasos">
+      <div class="paso"><div>
+        <span class="t">Antes de grabar · 10 min</span>
+        <h3>Deje el celular limpio</h3>
+        <ul>
+          <li>«No molestar» activado y notificaciones borradas. Batería sobre 80 %, brillo alto.</li>
+          <li>Hora visible en la barra: dice que es en vivo. Wi-Fi estable (o datos).</li>
+          <li>Letra del sistema en tamaño normal; el A+ de la app se muestra dentro del video.</li>
+          <li>Abra la app una vez para que cargue fuentes y datos, ciérrela y vuelva a abrirla.</li>
+          <li>Revise que ninguna pantalla muestre correos, contraseñas ni direcciones de billetera completas. El video se publica.</li>
+        </ul>
+      </div></div>
+      <div class="paso"><div>
+        <span class="t">Elegir el modo · 2 min</span>
+        <h3>Pago real si sale, modo de ejemplo si no</h3>
+        <ul>
+          <li><b>Mejor:</b> modo real, entrando como el socio que paga en euros, con la Test Wallet de Interledger aprobando el pago. Es lo que más valora el jurado técnico.</li>
+          <li><b>Plan B:</b> «Empezar con datos de ejemplo» y entrar como <code>andres</code> en «Ya tengo cuenta». La billetera es un diálogo Aprobar / Rechazar. En el pitch se dice tal cual: «esto es con datos de ejemplo».</li>
+          <li>No grabe en el navegador del portátil: la billetera de ejemplo se ve como un cuadro del navegador.</li>
+        </ul>
+      </div></div>
+      <div class="paso"><div>
+        <span class="t">Grabar · 15 min con repeticiones</span>
+        <h3>Grabe la pantalla del celular</h3>
+        <ul>
+          <li><b>Android:</b> baje el panel rápido → «Grabar pantalla» → sin audio, con «Mostrar toques en pantalla». Así el jurado ve dónde toca el dedo.</li>
+          <li><b>Alternativa en el portátil:</b> con el celular por cable y scrcpy instalado: <span class="cmd">scrcpy --no-audio --record natillera-demo.mp4</span>. Sirve también para proyectar en sala.</li>
+          <li>Toques lentos y una pausa de 2 segundos en cada pantalla, para que se alcance a leer.</li>
+          <li>Siga la tabla de tomas de abajo. Si se equivoca, no corte: termine y repita completo. Al final se escoge la mejor toma.</li>
+        </ul>
+      </div></div>
+      <div class="paso"><div>
+        <span class="t">Editar · 15 min</span>
+        <h3>Edición mínima en Clipchamp</h3>
+        <ul>
+          <li>Clipchamp viene con Windows 11. Importe el video y corte el principio y el final.</li>
+          <li>Si la espera de «Volviendo de su billetera» pasa de 5 segundos, acelérela ×2 y ponga el texto «×2» en una esquina. No esconda la espera.</li>
+          <li>Portada de 3 segundos: «Natillera sin Fronteras · pago real con Open Payments · 17 oct 2026» (o «modo de ejemplo» si es el plan B).</li>
+          <li>Meta: alrededor de 1:20, lo mismo que dura la demo (lámina 5) del pitch.</li>
+          <li>Exportar en 1080p, MP4.</li>
+        </ul>
+      </div></div>
+      <div class="paso"><div>
+        <span class="t">Guardar · 5 min · antes de las 08:00</span>
+        <h3>Tres copias, tres lugares</h3>
+        <ul>
+          <li>Drive del equipo, con nombre claro: <code>natillera-demo-17oct.mp4</code>. Es el link de demo que pide la entrega.</li>
+          <li>Descargado en el portátil que va al escenario, abierto en el reproductor y pausado en el primer cuadro.</li>
+          <li>Copia en el celular, por si el portátil no conecta.</li>
+          <li>Véalo completo una vez con el guion de la lámina 5 en voz alta, para medir que la voz y la imagen coinciden.</li>
+        </ul>
+      </div></div>
+    </div>
+
+    <div class="tabla tomas">
+      <table class="cmp">
+        <thead><tr><th>Tiempo</th><th>Pantalla</th><th>Qué hace el dedo</th><th>Qué tiene que verse</th></tr></thead>
+        <tbody>
+          <tr><td class="n">0:00</td><td>Portada</td><td>Nada (se pone al editar)</td><td>Nombre de la app y si es pago real o de ejemplo</td></tr>
+          <tr><td class="n">0:03</td><td>01 Bienvenida</td><td>Toca A+ dos veces, luego vuelve a normal</td><td>«Ahorre en familia» creciendo en pantalla</td></tr>
+          <tr><td class="n">0:15</td><td>03 Entrar</td><td>Entra como el socio de España</td><td>Usuario visible, contraseña en puntos</td></tr>
+          <tr><td class="n">0:25</td><td>10 Mi natillera</td><td>Señala el fondo y su estado</td><td>«Entre todos llevan…» y que él debe la cuota</td></tr>
+          <tr><td class="n">0:40</td><td>11 Poner la cuota</td><td>Pausa en el resumen, toca «Poner la cuota»</td><td>Sale en euros, llega en pesos, costo del envío</td></tr>
+          <tr><td class="n">0:55</td><td>28 Va a su billetera</td><td>Pausa en los tres pasos, «Ir a la billetera»</td><td>1. Se abre · 2. Aprobar · 3. Vuelve sola</td></tr>
+          <tr><td class="n">1:05</td><td>Billetera</td><td>Revisa montos y toca «Aprobar»</td><td>Que es otra app (Test Wallet) y pide permiso</td></tr>
+          <tr><td class="n">1:15</td><td>30 Volviendo</td><td>Nada, espera</td><td>«Estamos confirmando lo que usted decidió»</td></tr>
+          <tr><td class="n">1:20</td><td>34 Cuota puesta</td><td>Pausa 3 s y «Listo»</td><td>✓ Llegó a la natillera · Salió de su billetera</td></tr>
+          <tr><td class="n">1:30</td><td>10 otra vez</td><td>Baja a «Lo último que pasó»</td><td>El aporte nuevo y el fondo más alto</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">Si queda tiempo, una segunda toma corta (20 s) de la Test Wallet del fondo en el navegador mostrando el pago recibido. Es la prueba de que la plata sí llegó por Open Payments, y sirve para las preguntas del jurado.</p>
+  </section>
+
+  <hr class="divisor">
+
+  <!-- PITCH -->
+  <section class="bloque" id="pitch">
+    <div class="head">
+      <span class="mono">Pitch · 5:00 · Henry y Camilo</span>
+      <h2>El pitch, para estudiar</h2>
+      <p class="idea">Es el mismo texto de las notas del presentador de <code>docs/pitch/pitch.html</code>, la presentación de Camilo: 10 láminas, en el mismo orden y con el mismo reparto. Camilo abre, presenta la solución, hace la demo y cierra; Henry cuenta la historia, el problema, lo que ve Doña Rosa, la inclusión y el equipo. Si cambian una frase, cámbienla allá también.</p>
+    </div>
+    <div class="controles">
+      <div class="reloj">
+        <button class="btn" type="button" id="crono-btn">Empezar ensayo</button>
+        <button class="btn" type="button" id="crono-reset">Reiniciar</button>
+        <output id="crono" aria-live="off">0:00</output>
+        <span class="bloque-actual" id="crono-bloque">Toque «Empezar ensayo» y la lámina que toca se marca sola.</span>
+      </div>
+      <button class="btn" type="button" id="memoria-btn" aria-pressed="false">Modo memoria</button>
+      <div class="seg" role="group" aria-label="Mostrar partes de">
+        <button type="button" data-quien="todos" aria-pressed="true">Todos</button>
+        <button type="button" data-quien="Henry" aria-pressed="false">Henry</button>
+        <button type="button" data-quien="Camilo" aria-pressed="false">Camilo</button>
+      </div>
+    </div>
+    <p class="nota">Modo memoria: cada frase deja ver solo las primeras palabras; pase el dedo o toque la frase para verla completa. Es para decir el texto de memoria y comprobar.</p>
+    <p class="nota"><b>Ojo:</b> los tiempos de las notas suman 5:10. Sobran 10 segundos: la lámina 9 es la que se recorta si van tarde.</p>
+
+    <div class="guion" id="guion">
+      <article class="parte" data-ini="0" data-fin="15" data-quien="Camilo">
+        <header><h3>1 · Portada</h3><span class="meta">0:00 – 0:15</span></header>
+        <span class="habla">Camilo · espera a que se dibujen los anillos</span>
+        <p class="slide-txt">Lámina: el logo de los tres anillos que se dibuja solo y el eslogan.</p>
+        <div class="dice">
+          <p>Somos Natillera sin Fronteras.</p>
+          <p>Tres anillos: una familia que vive en tres países y que solo se sostiene junta.</p>
+          <p class="clave">Lejos en distancia, juntos en el ahorro.</p>
+        </div>
+      </article>
+
+      <article class="parte" data-ini="15" data-fin="45" data-quien="Henry">
+        <header><h3>2 · Doña Rosa y el cuaderno</h3><span class="meta">0:15 – 0:45</span></header>
+        <span class="habla">Henry</span>
+        <p class="slide-txt">Lámina: «Ella es Doña Rosa. Su natillera vive en un cuaderno.» Una familia, tres países.</p>
+        <div class="dice">
+          <p>Ella es Doña Rosa. Vive en Medellín.</p>
+          <p>Toda la vida ha hecho natillera con la familia.</p>
+          <p>Pero hoy la familia está regada: Luz vive en Estados Unidos, Andrés en España.</p>
+          <p class="clave">Cada uno gana en otra moneda. Y la natillera… sigue en un cuaderno.</p>
+        </div>
+      </article>
+
+      <article class="parte" data-ini="45" data-fin="80" data-quien="Henry">
+        <header><h3>3 · La plata sí cruza. La natillera, no.</h3><span class="meta">0:45 – 1:20</span></header>
+        <span class="habla">Henry · pausa antes de «el mismo mes»</span>
+        <p class="slide-txt">Lámina: las cifras de remesas de 2025 y diciembre como mes récord. Fuente: Banco de la República.</p>
+        <div class="dice">
+          <p>En 2025 entraron a Colombia más de 13 mil millones de dólares en remesas.</p>
+          <p>Casi uno de cada cinco hogares recibe plata de afuera.</p>
+          <p>¿Y saben cuál fue el mes récord? Diciembre.</p>
+          <p class="clave">El mismo mes en que se reparte la natillera.</p>
+          <p>Pero esa plata llega suelta: nadie sabe quién puso, quién debe ni cuánto hay.</p>
+        </div>
+      </article>
+
+      <article class="parte" data-ini="80" data-fin="105" data-quien="Camilo">
+        <header><h3>4 · La solución</h3><span class="meta">1:20 – 1:45</span></header>
+        <span class="habla">Camilo · al final pasa al celular proyectado</span>
+        <p class="slide-txt">Lámina: «La natillera de siempre, ahora en el celular.» con la captura nueva de Mi natillera.</p>
+        <div class="dice">
+          <p>Natillera sin Fronteras es la natillera de toda la vida, pero en el celular.</p>
+          <p>Cada uno pone su cuota desde su billetera, en su moneda. Al fondo le llegan pesos.</p>
+          <p>Y todos ven lo mismo. Ahorre en familia, aunque vivan en países distintos.</p>
+          <p class="clave">Se lo mostramos.</p>
+        </div>
+      </article>
+
+      <article class="parte" data-ini="105" data-fin="185" data-quien="Camilo">
+        <header><h3>5 · Demo en vivo</h3><span class="meta">1:45 – 3:05</span></header>
+        <span class="habla">Camilo · celular proyectado. Si algo falla: «les muestro el mismo camino grabado esta mañana» y al video</span>
+        <p class="slide-txt">Lámina de respaldo: «Andrés pone su cuota desde España.» con Poner la cuota → Va a su billetera → permiso → Cuota puesta.</p>
+        <ol class="demo-pasos">
+          <li><b>1</b> «Andrés pone en euros; a la natillera le llegan pesos. Antes de tocar nada sabe cuánto sale, cuánto llega y cuánto cuesta.» Lea en voz alta los números que salgan.</li>
+          <li><b>2</b> «Le contamos en tres pasos qué va a pasar. Nadie se pierde.»</li>
+          <li><b>3</b> «Andrés da el permiso en su propia billetera.»</li>
+          <li><b>4</b> <span class="clave">«Cuota puesta. Desde España, en menos de un minuto.»</span></li>
+        </ol>
+        <p class="ojo">Antes del pitch, cronometre cuánto tarda el pago de verdad y ajuste «en menos de un minuto». La Test Wallet puede decir «Internal Server Error» al aceptar y el pago igual entra: siga hablando y vuelva a la app.</p>
+      </article>
+
+      <article class="parte" data-ini="185" data-fin="210" data-quien="Camilo">
+        <header><h3>6 · Por debajo, y de verdad</h3><span class="meta">3:05 – 3:30</span></header>
+        <span class="habla">Camilo · mirando al jurado</span>
+        <p class="slide-txt">Lámina: «La app nunca toca la plata. Solo pide permiso.»</p>
+        <div class="dice">
+          <p>Esto no es una maqueta: el pago de euros a pesos ya corrió de verdad con Open Payments, en la billetera de prueba de Interledger.</p>
+          <p>La app nunca guarda llaves ni toca la plata. Arma el pago y la persona da el permiso en su billetera.</p>
+          <p class="clave">Por debajo va Interledger con Open Payments: la tubería que mueve la plata entre billeteras y entre monedas.</p>
+        </div>
+      </article>
+
+      <article class="parte" data-ini="210" data-fin="225" data-quien="Henry">
+        <header><h3>7 · Doña Rosa lo ve de una</h3><span class="meta">3:30 – 3:45</span></header>
+        <span class="habla">Henry</span>
+        <p class="slide-txt">Lámina: «Y en Medellín… Doña Rosa lo ve de una.» Mi natillera al día, +$50.000 y «¿Quién ya puso?» con un anillo por socio.</p>
+        <div class="dice">
+          <p>Y Doña Rosa lo ve de una: el fondo sube en ese momento y Andrés queda al día.</p>
+          <p>En «¿Quién ya puso?» cada socio es un anillo: con color, al día; en gris, le falta la cuota.</p>
+          <p class="clave">Sin cuaderno y sin pantallazos.</p>
+        </div>
+      </article>
+
+      <article class="parte" data-ini="225" data-fin="260" data-quien="Henry">
+        <header><h3>8 · Hecha para Doña Rosa</h3><span class="meta">3:45 – 4:20</span></header>
+        <span class="habla">Henry</span>
+        <p class="slide-txt">Lámina: «Hecha para Doña Rosa, no para un banquero.» Cinco fichas (A+ en todo, botones grandes, sin letra menuda, siempre pide permiso, ayuda a la mano) y las capturas de letra grande y Ayuda.</p>
+        <div class="dice">
+          <p>La hicimos pensando en Doña Rosa, no en un banquero.</p>
+          <p>Le hablamos de «usted», con frases cortas.</p>
+          <p>Un botón para agrandar la letra en todas las pantallas. Botones grandes, para el dedo.</p>
+          <p>Su billetera siempre le pide permiso. Si dice que no, no sale ni un peso. Y el costo se ve antes de pagar.</p>
+          <p class="clave">Y si tiene dudas, la Ayuda le contesta en sus palabras: ¿cuánto llevo?, ¿qué es el permiso?</p>
+        </div>
+      </article>
+
+      <article class="parte" data-ini="260" data-fin="285" data-quien="Henry">
+        <header><h3>9 · Lo que viene y el equipo</h3><span class="meta">4:20 – 4:45</span></header>
+        <span class="habla">Henry · si van tarde, esta lámina es la que se recorta</span>
+        <p class="slide-txt">Lámina: «La natillera completa.» con lo que ya está y lo que sigue, y los cuatro del equipo con sus roles.</p>
+        <div class="dice">
+          <p>La natillera completa ya se está armando: los préstamos del fondo, que decide la tesorera, y las metas en familia.</p>
+          <p>Lo que sigue: la cuota que se pone sola cada mes, con un solo permiso.</p>
+          <p class="clave">Somos cuatro: Henry, marca y frontend; Camilo, integración y frontend; Duvan, arquitectura y pagos; Ciro, servidor y nube.</p>
+        </div>
+        <p class="ojo">Diga «ya funciona» solo de lo que se pueda mostrar hoy. Si no, «se está armando».</p>
+      </article>
+
+      <article class="parte" data-ini="285" data-fin="310" data-quien="Camilo">
+        <header><h3>10 · Cierre</h3><span class="meta">4:45 – 5:10</span></header>
+        <span class="habla">Camilo · al final, quietos dos segundos</span>
+        <p class="slide-txt">Lámina oscura: «Este diciembre, Doña Rosa no va a sacar el cuaderno.» y el logo.</p>
+        <div class="dice">
+          <p>Este diciembre, Doña Rosa no va a sacar el cuaderno.</p>
+          <p>Va a abrir el celular. Va a ver que Luz puso. Que Andrés puso.</p>
+          <p>Y va a repartir la natillera con toda la familia… aunque estén lejos.</p>
+          <p class="clave">Natillera sin Fronteras. Lejos en distancia, juntos en el ahorro. Gracias.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="bloque" id="jurado">
+    <div class="head">
+      <span class="mono">Para después de los 5 minutos</span>
+      <h2>Preguntas que puede hacer el jurado</h2>
+      <p class="idea">Aquí sí se usan las palabras técnicas. Responde quien sepa más: lo técnico del pago, Duvan o David; la app, Camilo; la historia y la inclusión, Henry.</p>
+    </div>
+    <div class="preguntas">
+      <details><summary>¿Dónde están las llaves de Open Payments?</summary><p>Solo en el back, en AWS. La app nunca firma ni guarda llaves: abre la billetera del socio y vuelve por <code>natillera://retorno</code>. Toda llamada pasa por nuestra API.</p></details>
+      <details><summary>¿Qué parte de Open Payments usan?</summary><p>Un incoming payment en la billetera del fondo, una quote para saber cuánto sale y cuánto llega, y un outgoing payment con grant interactivo que el socio aprueba en su billetera.</p></details>
+      <details><summary>¿Y si el socio rechaza en la billetera?</summary><p>La app lo dice claro: «Permiso rechazado · No salió plata» (pantalla 32). No se crea ningún pago.</p></details>
+      <details><summary>¿Cómo resuelven el cambio de moneda?</summary><p>Lo hace la red de Interledger. La quote nos da lo que sale en euros y lo que llega en pesos, y lo mostramos antes de pedir permiso.</p></details>
+      <details><summary>¿Qué falta para usarla de verdad?</summary><p>Billeteras reales en lugar de la Test Wallet, el cobro automático de cada mes y los desembolsos de préstamos por Open Payments. El diseño de las tres ya está en el repo.</p></details>
+      <details><summary>¿Cómo usaron IA?</summary><p>Está documentado en <code>AI_USAGE.md</code> y los prompts literales en <code>/prompts</code>, según la política de la hackatón. El código y las decisiones las revisamos nosotros.</p></details>
+    </div>
+  </section>
+
+  <hr class="divisor">
+
+  <!-- A -->
+  <section class="camino" id="cuaderno">
+    <div class="camino-head">
+      <span class="mono">Camino A · el objeto</span>
+      <h2>El cuaderno de Doña Rosa</h2>
+      <p class="idea">Toda natillera vive en un cuaderno de rayas. El pitch abre ese cuaderno y muestra lo que no sabe hacer: cobrarle a un hijo en España. La app es el mismo cuaderno, ahora capaz de cruzar el mar.</p>
+    </div>
+    <div class="slides">
+      <figure>
+        <div class="slide cuaderno" role="img" aria-label="Portada: página de cuaderno con la lista de cuotas de octubre">
+          <div class="holes"><i></i><i></i><i></i></div>
+          <div class="in">
+            <h4>Natillera familia Gómez</h4>
+            <p class="sub">Cuotas de octubre · $50.000 c/u</p>
+            <table class="ledger">
+              <thead><tr><th>Nombre</th><th>Cuota</th><th>Firma</th></tr></thead>
+              <tbody>
+                <tr><td>Rosa</td><td>$50.000</td><td>✓</td></tr>
+                <tr><td>Luz (EE. UU.)</td><td class="debe">debe</td><td class="debe">¿giro?</td></tr>
+                <tr><td>Andrés (España)</td><td class="debe">¿cómo paga?</td><td></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <figcaption class="cap">Portada · el cuaderno real, con lo que no resuelve</figcaption>
+      </figure>
+      <figure>
+        <div class="slide cuaderno" role="img" aria-label="Diapositiva de la demo: el renglón de Andrés queda pagado">
+          <div class="holes"><i></i><i></i><i></i></div>
+          <div class="in">
+            <h4>El mismo renglón, un minuto después</h4>
+            <table class="ledger">
+              <thead><tr><th>Nombre</th><th>Cuota</th><th>Firma</th></tr></thead>
+              <tbody>
+                <tr><td>Andrés (España)</td><td class="tachado">¿cómo paga?</td><td></td></tr>
+                <tr><td></td><td>$50.000</td><td class="nuevo">11,13 € · 17 oct</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sello-ok">Cuota puesta<br>al día</div>
+        </div>
+        <figcaption class="cap">Momento fuerte · después de la demo, el renglón se tacha y se sella</figcaption>
+      </figure>
+    </div>
+    <div class="ficha">
+      <div><h3>Primeros 20 segundos</h3><q>Este es el cuaderno de la natillera de mi familia. Tiene 14 años de cuotas. Y desde que Andrés se fue a España, tiene un renglón vacío.</q></div>
+      <div><h3>Cómo va el pitch</h3><ol><li>El cuaderno y el renglón vacío</li><li>Remesas: la plata cruza, el cuaderno no</li><li>Demo en vivo: Andrés pone la cuota</li><li>El renglón se llena solo, para todos</li><li>Cierre: se cierra el cuaderno físico</li></ol></div>
+      <div><h3>Qué se lleva el jurado</h3><p>Una imagen física y querible. La app no reemplaza a la abuela: le hereda el cuaderno.</p></div>
+      <div><h3>Pide</h3><p>Un cuaderno real en el escenario (o una foto) y letra manuscrita en las diapositivas.</p></div>
+      <div><h3>Riesgo</h3><p>Puede sonar nostálgico. Hay que pasar rápido a la demo para que no parezca solo una historia.</p></div>
+      <div><h3>Mejor para</h3><p>Premio de inclusión financiera y un jurado que valora el problema real.</p></div>
+    </div>
+  </section>
+
+  <!-- B -->
+  <section class="camino" id="aereo">
+    <div class="camino-head">
+      <span class="mono">Camino B · el viaje</span>
+      <h2>Por avión</h2>
+      <p class="idea">Seguimos una sola cuota desde que sale de Madrid hasta que cae en el frasco en Medellín, como una carta de correo aéreo con sus matasellos. Open Payments es la ruta del sobre: se explica sin jerga y la parte técnica se vuelve visible.</p>
+    </div>
+    <div class="slides">
+      <figure>
+        <div class="slide aereo" role="img" aria-label="Portada: sobre de correo aéreo de Andrés en Madrid para la natillera en Medellín">
+          <div class="in">
+            <span class="par-avion">Par avion · por avión</span>
+            <h4>Una cuota<br>cruza el mar</h4>
+            <div class="addr">
+              <span>De:</span><span>Andrés · Madrid, España</span>
+              <span>Para:</span><span>La natillera · Medellín, Colombia</span>
+            </div>
+          </div>
+          <div class="stamp"><span><b>11,13 €</b>cuota<br>de octubre</span></div>
+          <div class="postmark">MADRID<br>17·OCT<br>18:04</div>
+        </div>
+        <figcaption class="cap">Portada · el sobre con sello en euros</figcaption>
+      </figure>
+      <figure>
+        <div class="slide aereo" role="img" aria-label="Diapositiva técnica: tres matasellos de Madrid, la ruta de Open Payments y Medellín">
+          <div class="ruta">
+            <p class="title">El recorrido de una cuota</p>
+            <div class="stop"><div class="pm">MADRID<br>18:04<br>sale<br>11,13 €</div><p>Andrés aprueba en su billetera</p></div>
+            <div class="arrow">→</div>
+            <div class="stop"><div class="pm blue">OPEN<br>PAYMENTS<br>cambia<br>€ → $</div><p>La ruta: nadie toca la plata en el camino</p></div>
+            <div class="arrow">→</div>
+            <div class="stop"><div class="pm green">MEDELLÍN<br>11:04<br>llega<br>$50.000</div><p>El frasco lo ve toda la familia</p></div>
+          </div>
+        </div>
+        <figcaption class="cap">Momento fuerte · los tres matasellos, con la hora de cada ciudad</figcaption>
+      </figure>
+    </div>
+    <div class="ficha">
+      <div><h3>Primeros 20 segundos</h3><q>Esta cuota salió de Madrid a las 6 de la tarde. Aquí son las 11 de la mañana. Ya llegó. Les mostramos el camino que hizo.</q></div>
+      <div><h3>Cómo va el pitch</h3><ol><li>El sobre: una cuota, dos países</li><li>Remesas: US$13.098 millones en 2025, mes a mes</li><li>Demo: la cuota sale en vivo</li><li>Los matasellos: cuánto salió, cuánto llegó, cuánto costó</li><li>Lo que viene: cobro automático cada mes</li></ol></div>
+      <div><h3>Qué se lleva el jurado</h3><p>Entiende Open Payments sin una sola sigla de más. Es el camino más claro para el criterio técnico.</p></div>
+      <div><h3>Pide</h3><p>Mostrar en vivo las horas reales de Madrid y Medellín (7 horas de diferencia) y los montos de la pantalla 34.</p></div>
+      <div><h3>Riesgo</h3><p>Si la Test Wallet tarda, el «llegó en un minuto» se cae. Tener el video de respaldo listo.</p></div>
+      <div><h3>Mejor para</h3><p>Jurado técnico de Interledger: muestra que entendimos el flujo de grants y la conversión.</p></div>
+    </div>
+  </section>
+
+  <!-- C -->
+  <section class="camino" id="letrero">
+    <div class="camino-head">
+      <span class="mono">Camino C · la experiencia</span>
+      <h2>Léalo sin gafas</h2>
+      <p class="idea">El pitch se presenta como si el público fuera Doña Rosa: una palabra por diapositiva, letra enorme, todo en «usted». El jurado vive la accesibilidad en vez de oír hablar de ella. El botón A+ de la app aparece también en las diapositivas, y se usa en vivo.</p>
+    </div>
+    <div class="slides">
+      <figure>
+        <div class="slide letrero" id="letreroDemo" data-a="1" role="group" aria-label="Portada en letra grande con botón A+ que funciona">
+          <button class="aplus" id="aplusBtn" type="button" aria-label="Agrandar la letra">A+</button>
+          <div class="in">
+            <p class="big">¿Cuánto<br>sale?</p>
+            <p class="small">Antes de tocar nada, Andrés sabe cuánto sale, cuánto llega y cuánto cuesta. Toque A+.</p>
+          </div>
+        </div>
+        <figcaption class="cap">Portada · el botón A+ funciona aquí, tóquelo</figcaption>
+      </figure>
+      <figure>
+        <div class="slide letrero" role="img" aria-label="Diapositiva de la demo: sale 11,13 euros, llegan 50.000 pesos, cuesta 0,13 euros">
+          <div class="in">
+            <div class="row"><p class="big">11,13</p><span class="unit">euros</span></div>
+            <div class="strip">
+              <span><b>Sale</b>de su billetera</span>
+              <span><b>$50.000</b>llegan a la natillera</span>
+              <span><b>0,13 €</b>cuesta el envío</span>
+            </div>
+          </div>
+        </div>
+        <figcaption class="cap">Momento fuerte · los tres números de la pantalla 11, del tamaño de un letrero de bus</figcaption>
+      </figure>
+    </div>
+    <div class="ficha">
+      <div><h3>Primeros 20 segundos</h3><q>Les pedimos un favor: quítense las gafas. Si pueden leer esto, Doña Rosa también puede usar la app.</q></div>
+      <div><h3>Cómo va el pitch</h3><ol><li>«Quítense las gafas»</li><li>Una cifra por pantalla: 13.098 millones, 1 de cada 5 hogares</li><li>Demo con A+ al máximo</li><li>Tres reglas: usted, frases cortas, botones de 48 px</li><li>Cierre: «Así de grande es la letra. Así de fácil es ahorrar.»</li></ol></div>
+      <div><h3>Qué se lleva el jurado</h3><p>Que la inclusión no es un párrafo del pitch: es el diseño entero, y lo comprobaron con sus propios ojos.</p></div>
+      <div><h3>Pide</h3><p>Diapositivas casi vacías y un presentador con voz firme. La demo se proyecta con A+ activado.</p></div>
+      <div><h3>Riesgo</h3><p>Con tan poco texto, cualquier silencio se nota. Ensayar el ritmo con cronómetro.</p></div>
+      <div><h3>Mejor para</h3><p>El premio de inclusión financiera, sin discusión. Es el camino más audaz.</p></div>
+    </div>
+  </section>
+
+  <!-- D -->
+  <section class="camino" id="alumbrado">
+    <div class="camino-head">
+      <span class="mono">Camino D · el tiempo</span>
+      <h2>Faltan 59 días</h2>
+      <p class="idea">La natillera existe para un solo día: el reparto de diciembre, bajo los alumbrados de Medellín. El pitch es una cuenta regresiva hacia ese día. Diciembre de 2025 fue además el mes con más remesas de la historia: el dato y la emoción caen en el mismo mes.</p>
+    </div>
+    <div class="slides">
+      <figure>
+        <div class="slide alumbrado" role="img" aria-label="Portada: cuenta regresiva de 59 días hasta el reparto de diciembre, con luces">
+          <canvas data-lights="44"></canvas>
+          <div class="in">
+            <p class="count">59<small>días para repartir la natillera · 15 de diciembre</small></p>
+            <h4>¿Llegará la cuota de Andrés?</h4>
+          </div>
+        </div>
+        <figcaption class="cap">Portada · la cuenta regresiva bajo los alumbrados</figcaption>
+      </figure>
+      <figure>
+        <div class="slide alumbrado" role="img" aria-label="Diapositiva: un año de frascos que se llenan, octubre encendido y diciembre por llegar">
+          <canvas data-lights="18"></canvas>
+          <div class="top4"><h4>Un año de cuotas, mes a mes</h4><span>dic 2025 · US$1.173 millones en remesas, récord</span></div>
+          <div class="year" id="year"></div>
+        </div>
+        <figcaption class="cap">Momento fuerte · la demo llena el frasco de octubre y encienden la luz</figcaption>
+      </figure>
+    </div>
+    <div class="ficha">
+      <div><h3>Primeros 20 segundos</h3><q>Faltan 59 días para que Doña Rosa reparta la natillera. Andrés todavía no ha puesto la de octubre. Vamos a ponerla ahora.</q></div>
+      <div><h3>Cómo va el pitch</h3><ol><li>El contador: 59 días</li><li>Diciembre: récord de remesas y mes del reparto</li><li>Demo: se llena el frasco de octubre</li><li>Préstamos: el fondo también presta en el año</li><li>Cierre: el contador baja a 0 y se reparte</li></ol></div>
+      <div><h3>Qué se lleva el jurado</h3><p>Un deadline emocional. Además del dato, recuerda la escena de la familia reunida en diciembre.</p></div>
+      <div><h3>Pide</h3><p>Una fila de 12 frascos (ya existe el frasco en la pantalla 10) y el contador actualizado al día del pitch.</p></div>
+      <div><h3>Riesgo</h3><p>La fecha del reparto (15 de dic) es una convención, no un dato del repo: confirmar con la familia del ejemplo.</p></div>
+      <div><h3>Mejor para</h3><p>Un cierre memorable y para mostrar préstamos y recurrencia como parte del año.</p></div>
+    </div>
+  </section>
+
+  <section class="compara" id="comparar">
+    <span class="mono">Para decidir con Camilo</span>
+    <h2>Los cuatro, lado a lado</h2>
+    <div class="tabla">
+      <table class="cmp">
+        <thead><tr><th>Camino</th><th>Emoción</th><th>Claridad técnica</th><th>Inclusión</th><th>Esfuerzo esta noche</th><th>Recuerdo en una frase</th></tr></thead>
+        <tbody>
+          <tr><th>A · El cuaderno</th><td class="dots">●●●●<s>●</s></td><td class="dots">●●<s>●●●</s></td><td class="dots">●●●●<s>●</s></td><td>Bajo: fotos de un cuaderno y letra manuscrita</td><td>«La app que heredó el cuaderno de la abuela»</td></tr>
+          <tr><th>B · Por avión</th><td class="dots">●●●<s>●●</s></td><td class="dots">●●●●●</td><td class="dots">●●<s>●●●</s></td><td>Medio: diagrama de la ruta y matasellos</td><td>«Vi la cuota viajar de Madrid a Medellín»</td></tr>
+          <tr><th>C · Léalo sin gafas</th><td class="dots">●●●<s>●●</s></td><td class="dots">●●●<s>●●</s></td><td class="dots">●●●●●</td><td>Bajo en diseño, alto en ensayo</td><td>«Nos hicieron quitar las gafas»</td></tr>
+          <tr><th>D · Faltan 59 días</th><td class="dots">●●●●●</td><td class="dots">●●●<s>●●</s></td><td class="dots">●●●<s>●●</s></td><td>Medio: fila de frascos y contador</td><td>«Faltan 59 días para el reparto»</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">Se pueden combinar: el contador de D sirve como apertura de cualquiera, y el A+ en vivo de C cabe en la demo de los cuatro. Lo que no conviene es mezclar dos estéticas en la misma presentación. Las cifras de remesas vienen de <code>docs/pitch/CONTEXTO.md</code> (Banco de la República); los montos de la demo, de las pantallas 11 y 34.</p>
+  </section>
+</div>
+
+<script>
+(function () {
+  // A+ en la muestra del camino C: tres tamaños, como en la app.
+  var demo = document.getElementById('letreroDemo');
+  var btn = document.getElementById('aplusBtn');
+  if (demo && btn) btn.addEventListener('click', function () {
+    var n = (Number(demo.dataset.a) % 3) + 1;
+    demo.dataset.a = String(n);
+    btn.textContent = n === 3 ? 'A' : 'A+';
+    btn.setAttribute('aria-label', n === 3 ? 'Volver al tamaño normal' : 'Agrandar la letra');
+  });
+
+  // Fila de frascos del camino D: octubre es hoy, diciembre es el reparto.
+  var year = document.getElementById('year');
+  var meses = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  if (year) meses.forEach(function (m, i) {
+    var lleno = i <= 9 ? Math.round(((i + 1) / 12) * 100) : 0;
+    var d = document.createElement('div');
+    if (i === 9) d.className = 'hoy';
+    if (i === 11) d.className = 'dic';
+    d.innerHTML = '<span class="jar"><i style="height:' + lleno + '%"></i></span>' + m;
+    year.appendChild(d);
+  });
+
+  // Alumbrados: guirnaldas de bombillos con un parpadeo lento.
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var colors = ['#FFC86B', '#FF8A5B', '#9BE3C6', '#F6F1E7'];
+  var canvases = Array.prototype.slice.call(document.querySelectorAll('.alumbrado canvas'));
+  var scenes = canvases.map(function (c, k) {
+    var n = Number(c.dataset.lights) || 30, bulbs = [];
+    for (var r = 0; r < 2; r++) for (var i = 0; i < n / 2; i++) {
+      var t = i / (n / 2 - 1);
+      bulbs.push({ t: t, row: r, col: colors[(i + r + k) % 4], ph: Math.random() * 6.28 });
+    }
+    return { c: c, bulbs: bulbs };
+  });
+  function draw(time) {
+    scenes.forEach(function (s) {
+      var c = s.c, dpr = window.devicePixelRatio || 1, w = c.clientWidth, h = c.clientHeight;
+      if (!w) return;
+      if (c.width !== Math.round(w * dpr)) { c.width = Math.round(w * dpr); c.height = Math.round(h * dpr); }
+      var g = c.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, w, h);
+      s.bulbs.forEach(function (b) {
+        var x = b.t * w, sag = b.row ? 0.16 : 0.07;
+        var y = h * (b.row ? 0.03 : 0.0) + Math.sin(b.t * Math.PI) * h * sag + h * 0.02;
+        var a = reduce ? 0.85 : 0.55 + 0.45 * Math.sin(time / 900 + b.ph);
+        var rad = Math.max(1.5, w / 260);
+        g.globalAlpha = a * 0.35; g.fillStyle = b.col; g.beginPath(); g.arc(x, y, rad * 3.2, 0, 6.29); g.fill();
+        g.globalAlpha = a; g.beginPath(); g.arc(x, y, rad, 0, 6.29); g.fill();
+      });
+      g.globalAlpha = 1;
+    });
+    if (!reduce) requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
+})();
+</script>
+<script>
+(function () {
+  // Horario: marca lo pasado y lo que toca ahora.
+  function marcarHoras() {
+    var ahora = Date.now();
+    document.querySelectorAll('#horas li').forEach(function (li) {
+      var ini = Date.parse(li.dataset.t), fin = Date.parse(li.dataset.fin);
+      li.classList.toggle('pasado', ahora >= fin);
+      li.classList.toggle('ahora', ahora >= ini && ahora < fin);
+    });
+  }
+  marcarHoras();
+  setInterval(marcarHoras, 30000);
+
+  // Modo memoria: deja ver las tres primeras palabras de cada frase.
+  document.querySelectorAll('.parte .dice p').forEach(function (p) {
+    var palabras = p.textContent.split(' ');
+    if (palabras.length <= 3) return;
+    p.textContent = '';
+    p.appendChild(document.createTextNode(palabras.slice(0, 3).join(' ') + ' '));
+    var resto = document.createElement('span');
+    resto.className = 'resto';
+    resto.textContent = palabras.slice(3).join(' ');
+    p.appendChild(resto);
+    p.tabIndex = 0;
+    p.addEventListener('click', function () { p.classList.toggle('ver'); });
+  });
+  var memBtn = document.getElementById('memoria-btn');
+  memBtn.addEventListener('click', function () {
+    var on = !document.body.classList.contains('memoria');
+    document.body.classList.toggle('memoria', on);
+    memBtn.setAttribute('aria-pressed', String(on));
+    document.querySelectorAll('.parte .dice p.ver').forEach(function (p) { p.classList.remove('ver'); });
+  });
+
+  // Filtro por quién habla.
+  var segBtns = document.querySelectorAll('.seg button');
+  segBtns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      segBtns.forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); });
+      document.querySelectorAll('.parte').forEach(function (a) {
+        a.hidden = b.dataset.quien !== 'todos' && a.dataset.quien !== b.dataset.quien;
+      });
+    });
+  });
+
+  // Cronómetro de ensayo: marca el bloque que toca.
+  var out = document.getElementById('crono'), lbl = document.getElementById('crono-bloque');
+  var btn = document.getElementById('crono-btn'), reset = document.getElementById('crono-reset');
+  var partes = Array.prototype.slice.call(document.querySelectorAll('.parte'));
+  var inicio = 0, acumulado = 0, timer = null;
+  function fmt(s) { var m = Math.floor(s / 60), r = Math.floor(s % 60); return m + ':' + (r < 10 ? '0' : '') + r; }
+  function pintar() {
+    var s = (acumulado + (timer ? Date.now() - inicio : 0)) / 1000;
+    out.textContent = fmt(s);
+    var actual = null;
+    partes.forEach(function (a) {
+      var dentro = s >= Number(a.dataset.ini) && s < Number(a.dataset.fin);
+      a.classList.toggle('activo', dentro && (timer || s > 0));
+      if (dentro) actual = a;
+    });
+    if (s >= 300) lbl.textContent = 'Pasó de 5:00. Recorte la lámina 9.';
+    else if (actual && (timer || s > 0)) lbl.textContent = actual.querySelector('h3').textContent + ' · ' + actual.dataset.quien;
+  }
+  btn.addEventListener('click', function () {
+    if (timer) { acumulado += Date.now() - inicio; clearInterval(timer); timer = null; btn.textContent = 'Seguir'; }
+    else { inicio = Date.now(); timer = setInterval(pintar, 250); btn.textContent = 'Pausar'; }
+    pintar();
+  });
+  reset.addEventListener('click', function () {
+    clearInterval(timer); timer = null; acumulado = 0; btn.textContent = 'Empezar ensayo';
+    partes.forEach(function (a) { a.classList.remove('activo'); });
+    out.textContent = '0:00'; lbl.textContent = 'Toque «Empezar ensayo» y la lámina que toca se marca sola.';
+  });
+})();
+</script>

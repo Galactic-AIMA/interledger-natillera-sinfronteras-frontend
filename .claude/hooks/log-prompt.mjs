@@ -63,6 +63,8 @@ function main() {
   const input = JSON.parse(readFileSync(0, "utf8") || "{}");
   const prompt = typeof input.prompt === "string" ? input.prompt : "";
   if (!prompt.trim()) return;
+  // Los avisos de la app (Auto-fix, tareas en segundo plano, otras sesiones) llegan como prompts pero no son de la persona.
+  if (/^\s*<(ci-monitor-event|task-notification|side-sessions-event|system-reminder)\b/.test(prompt)) return;
 
   const root = process.env.CLAUDE_PROJECT_DIR || input.cwd || process.cwd();
   const dir = join(root, "prompts");

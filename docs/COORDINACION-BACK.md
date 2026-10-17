@@ -1,5 +1,9 @@
 # Coordinación front ↔ back (2026-10-16 ~16:00)
 
+> **Actualización 2026-10-17 ~01:00:** en `dev` ya están perfil, natilleras, invitaciones, cuentas guardadas y pagos (bloque A de Camilo, desplegado por Ciro; `GET /me` con `userId = username`, PR #2 del back). **Préstamos fase 1** (sin Open Payments: simular, pedir, listar pendientes, mi préstamo, rechazar) en el PR https://github.com/duvanjaramillomarin/interterledger-natillera-sin-fronteras-backend/pull/3 (rama `back/feat-prestamos`, Ciro revisa y despliega con `infra/deploy-prestamos.sh`). Aprobar responde 501 hasta la fase 2 (grant de cuotas y desembolso con Open Payments, con Duvan); para el pitch, préstamos sigue en demo.
+
+> **Actualización ~23:40:** el back desplegó el bloque A (perfil, cuentas, natilleras, invitaciones y pagos por `POST /payments` con opción B) y el front ya lo usa en modo híbrido. Lo que queda (`main` en el back, `GET /natilleras`, préstamos, recurrentes) está en [estado-2026-10-16-noche.md](estado-2026-10-16-noche.md). Lo de abajo es histórico.
+
 > **Actualización ~22:00 (rama `david` `dc3a428`, API probada por curl):**
 > - **Pagos listos en AWS:** `POST /payments`, `GET /payments`, `GET /payments/{id}`, `POST /payments/{id}/finish` responden 401 sin token (existen y tienen autorizador) y `GET /payments/{id}/return` (opción B, pública) responde. Primer inicio de pago real verificado por David (`melos` COP → `f9a1abde` EUR).
 > - **El front ya es compatible con la opción B:** la billetera vuelve a `return-payment`, que finaliza y redirige a `natillera://retorno?paymentId=…&result=ok|rejected|failed|pending`. La 30 llama `finish` sin `interact_ref`; como el pago ya no está `pending`, el back devuelve el estado (idempotente) y la 30 consulta hasta el final. `rejected` ya está en `WALLET_REJECTIONS`.
