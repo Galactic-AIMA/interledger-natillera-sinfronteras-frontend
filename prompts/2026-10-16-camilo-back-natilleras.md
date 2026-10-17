@@ -80,3 +80,14 @@ cambiaron el front.
 ## 17
 
 > Sí, haz el selector de natilleras en el front, que funcione aunque el back nuevo no esté desplegado.
+
+## 18
+
+> Sí, haz push del selector a main.
+
+## 19
+
+> que mas hay pendiente
+>
+>
+> además valida que tengamos toda las memorias al día y uso de IA actualiza todo hasta ahora revisa en los dos repos que este actualizado
