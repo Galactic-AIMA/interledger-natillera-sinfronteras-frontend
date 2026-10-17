@@ -152,30 +152,42 @@ render_png(write_svg("android-monochrome.svg", mono_svg), "android-icon-monochro
 FONTS = ROOT / "node_modules" / "@expo-google-fonts"
 gloock = (FONTS / "gloock/400Regular/Gloock_400Regular.ttf").as_uri()
 martian = (FONTS / "martian-mono/600SemiBold/MartianMono_600SemiBold.ttf").as_uri()
+hanken = (FONTS / "hanken-grotesk/500Medium/HankenGrotesk_500Medium.ttf").as_uri()
+
+# Mismo texto que SLOGAN en src/components/AnimatedSplash.tsx
+SLOGAN = "Lejos en distancia, juntos en el ahorro."
 
 
-def wordmark_html(bg: str, title: str, sub: str, sym: str) -> str:
+def wordmark_html(bg: str, title: str, sub: str, sym: str, slogan: str = "",
+                  height: int = 520) -> str:
+    tagline = f"<h2>{slogan}</h2>" if slogan else ""
     return f"""<!doctype html><html><head><meta charset="utf-8"><style>
 @font-face {{ font-family: Gloock; src: url('{gloock}'); }}
 @font-face {{ font-family: Martian; src: url('{martian}'); }}
+@font-face {{ font-family: Hanken; src: url('{hanken}'); }}
 html, body {{ margin: 0; background: {bg}; }}
-.w {{ width: 1600px; height: 520px; display: flex; align-items: center; gap: 44px;
+.w {{ width: 1600px; height: {height}px; display: flex; align-items: center; gap: 44px;
      padding: 0 80px; box-sizing: border-box; }}
 .w svg {{ width: 360px; height: 360px; flex: none; }}
 h1 {{ font: 184px/0.95 Gloock, serif; color: {title}; margin: 0; letter-spacing: -2px; }}
 p {{ font: 600 47px/1 Martian, monospace; color: {sub}; margin: 26px 0 0 6px;
      letter-spacing: 7px; }}
-</style></head><body><div class="w">{sym}<div><h1>Natillera</h1><p>SIN FRONTERAS</p></div>
+h2 {{ font: 500 54px/1.2 Hanken, sans-serif; color: {title}; opacity: .88; margin: 44px 0 0 6px; }}
+</style></head><body><div class="w">{sym}<div><h1>Natillera</h1><p>SIN FRONTERAS</p>{tagline}</div>
 </div></body></html>"""
 
 
-for name, bg, title, sub, sym in [
-    ("wordmark-dark", INDIGO, FONDO, MENTA, svg(symbol(), INDIGO, radius=232, glow=True)),
-    ("wordmark-light", FONDO, INDIGO, VERDE, svg(symbol(), INDIGO, radius=232, glow=True)),
+# Con slogan: para el pitch, el README y las slides
+for name, bg, title, sub, slogan, height in [
+    ("wordmark-dark", INDIGO, FONDO, MENTA, "", 520),
+    ("wordmark-light", FONDO, INDIGO, VERDE, "", 520),
+    ("wordmark-slogan-dark", INDIGO, FONDO, MENTA, SLOGAN, 640),
+    ("wordmark-slogan-light", FONDO, INDIGO, VERDE, SLOGAN, 640),
 ]:
+    sym = svg(symbol(), INDIGO, radius=232, glow=True)
     html = OUT / f"{name}.html"
-    html.write_text(wordmark_html(bg, title, sub, sym), encoding="utf-8")
-    screenshot(html, OUT / f"{name}.png", 1600, 520)
+    html.write_text(wordmark_html(bg, title, sub, sym, slogan, height), encoding="utf-8")
+    screenshot(html, OUT / f"{name}.png", 1600, height)
     html.unlink()
 
 print("Listo:", ", ".join(sorted(p.name for p in OUT.iterdir())))

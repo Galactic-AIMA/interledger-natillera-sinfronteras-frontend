@@ -44,6 +44,8 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 
 ## Pedidos entre carriles
 
+- 2026-10-16 · de Henry a base (aviso, ya hecho en `feat/cuenta-celular`): **logo y splash animado con slogan**. Toqué archivos de `base` con permiso de Henry: `app.json` (ícono, adaptive icon, favicon y splash apuntan a `assets/brand/`, fondo índigo), `src/app/_layout.tsx` (el splash nativo se oculta cuando la capa animada ya cargó) y `src/components/` (nuevo `AnimatedSplash` + `SLOGAN`). Slogan: «Lejos en distancia, juntos en el ahorro.». Al fusionar en `main`, revisar `_layout.tsx` si cambió en otra rama. Regenerar el logo: `PYTHONUTF8=1 python scripts/build-logo.py`.
+
 - 2026-10-16 · de base a todos: **los prompts ahora se guardan en `prompts/AAAA-MM-DD-<persona>-<rama>.md`** (el hook incluye la rama). Al traer `main` a su rama, el hook nuevo queda activo. Si al integrar chocan dos `prompts/2026-10-16-camilo.md` de ramas distintas, se concatenan; nunca se descarta ninguno.
 
 - 2026-10-16 · de base a pagos: Henry, empieza por la Parte A de [docs/HENRY.md](docs/HENRY.md) (wallets de prueba, monedas, `natillera://`, curso, slides). Camilo avisa aquí cuando `base` esté lista para que arranques las pantallas.
