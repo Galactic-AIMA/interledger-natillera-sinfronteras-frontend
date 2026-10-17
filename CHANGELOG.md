@@ -10,6 +10,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## App (front)
 
+## [0.12.0] · 2026-10-17 06:50 · 🔊 sonidos
+Única excepción a la interfaz congelada, por pedido de Camilo: solo sonido, sin cambio visual.
+### Agregado
+- Aviso sonoro «ding-ding» al completar un pago (P2P, aporte a una meta o desembolso de un préstamo).
+- Sonido de monedas cayendo al bote al poner la cuota y cuando crece el fondo de la natillera mientras se mira el inicio (aporte propio o de otro socio). Sonidos sintetizados por código, sin derechos de terceros.
+
 ## [0.11.0] · 2026-10-17 06:10 · `b35f29d` · 🔒 interfaz final
 Versión final de la interfaz: desde aquí la interfaz queda **congelada** (ver «Interfaz congelada» en `CLAUDE.md`). La `v1.0.0` de la entrega no cambia la interfaz.
 ### Agregado
