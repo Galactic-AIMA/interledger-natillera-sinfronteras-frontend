@@ -168,7 +168,7 @@ function AskLoan({
   return (
     <Screen headerLeft={<BackButton />} title="Préstamos" inTabs footer={<Button label="Pedir el préstamo" onPress={ask} loading={sending} disabled={!amount} />}>
       {adminRow}
-      <TextField label="1. ¿Cuánto necesita?" value={text} onChangeText={setText} keyboardType="decimal-pad" mono placeholder="0" error={error} />
+      <TextField label="1. ¿Cuánto necesita?" value={text} onChangeText={setText} keyboardType="decimal-pad" mono error={error} />
       <Choice label="2. ¿En cuántas cuotas?" options={INSTALLMENT_OPTIONS} value={installments} onChange={setInstallments} />
       <Card title="Resumen">
         {sim.data ? (

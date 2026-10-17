@@ -50,7 +50,8 @@ function retryActions(ctx: Ctx) {
 const VARIANTS: Record<ResultKind, (ctx: Ctx) => ReactElement> = {
   // 34
   'cuota-puesta': (ctx) => (
-    <SuccessResult title="Cuota puesta" actions={done('/natillera')}>
+    // Solo la cuota celebra con los tres anillos enlazados; los demás éxitos siguen con el chulo.
+    <SuccessResult celebrate title="Cuota puesta" actions={done('/natillera')}>
       <Card title="Resumen">
         {ctx.receive ? <InfoRow label="Llegó a la natillera" right={<AmountValue amount={ctx.receive} tone="money" />} /> : null}
         {ctx.debit ? <InfoRow label="Salió de su billetera" right={<AmountValue amount={ctx.debit} />} /> : null}

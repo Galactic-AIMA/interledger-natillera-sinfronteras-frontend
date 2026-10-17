@@ -5,6 +5,7 @@ import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withSprin
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AppText, TextSizeButton } from '@/components';
+import { RingsJoin } from '@/components/RingsJoin';
 import { palette, space } from '@/theme';
 
 import { Reveal } from './Reveal';
@@ -14,10 +15,12 @@ type SuccessResultProps = {
   message?: string;
   children?: ReactNode;
   actions?: ReactNode;
+  // Cuota puesta: los tres anillos se enlazan en lugar del chulo («Usted ya está dentro»).
+  celebrate?: boolean;
 };
 
 /** Resultado ✓ con el check entrando con un resorte sutil. Mismo esqueleto que `ResultScreen`. */
-export function SuccessResult({ title, message, children, actions }: SuccessResultProps) {
+export function SuccessResult({ title, message, children, actions, celebrate = false }: SuccessResultProps) {
   const reduced = useReducedMotion();
   const progress = useSharedValue(reduced ? 1 : 0);
 
@@ -37,13 +40,22 @@ export function SuccessResult({ title, message, children, actions }: SuccessResu
         <TextSizeButton />
       </View>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.body} accessibilityLiveRegion="polite">
-        <Animated.View style={[styles.badge, badge]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
-          <Ionicons name="checkmark" size={72} color={palette.money} />
-        </Animated.View>
+        {celebrate ? (
+          <RingsJoin size={140} />
+        ) : (
+          <Animated.View style={[styles.badge, badge]} accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+            <Ionicons name="checkmark" size={72} color={palette.money} />
+          </Animated.View>
+        )}
         <Reveal index={1}>
           <AppText variant="title" align="center" accessibilityRole="header">
             {title}
           </AppText>
+          {celebrate ? (
+            <AppText variant="body" align="center">
+              Usted ya está dentro
+            </AppText>
+          ) : null}
         </Reveal>
         {message ? (
           <Reveal index={2}>

@@ -1,13 +1,14 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { Pressable, StyleSheet, Switch, View } from 'react-native';
 
 import { demoUsers, useApiContext, useMe } from '@/api';
 import { isHybrid } from '@/api/hybridApi';
-import { AppText, Button, Card, Choice, InfoRow, Screen } from '@/components';
-import { palette } from '@/theme';
+import { AppText, BrandLoader, Button, Card, Choice, InfoRow, Screen } from '@/components';
 import { currencyName } from '@/utils/money';
 import { BackButton } from '@/features/navegacion/BackButton';
+import { setShowOverlay, useShowOverlay } from '@/features/registro/overlayPreference';
+import { palette, space, touch } from '@/theme';
 
 // 04 · Su cuenta
 export default function ScreenCuenta() {
@@ -15,6 +16,7 @@ export default function ScreenCuenta() {
   const { data: me, isLoading, isError, refetch, isFetching } = useMe();
   const [leaving, setLeaving] = useState(false);
   const [failed, setFailed] = useState(false);
+  const showOverlay = useShowOverlay();
 
   async function signOut() {
     setLeaving(true);
@@ -40,7 +42,7 @@ export default function ScreenCuenta() {
     <Screen headerLeft={<BackButton fallback={'/natillera'} />} title="Su cuenta" footer={footer}>
       {isLoading ? (
         <View style={{ alignItems: 'center', padding: 24 }}>
-          <ActivityIndicator size="large" color={palette.primary} accessibilityLabel="Cargando sus datos" />
+          <BrandLoader size={72} label="Cargando sus datos" />
         </View>
       ) : isError || !me ? (
         <Card tone="danger" title="No pudimos cargar sus datos">
@@ -79,7 +81,35 @@ export default function ScreenCuenta() {
         </Card>
       ) : null}
 
+      <Pressable
+        onPress={() => setShowOverlay(!showOverlay)}
+        style={styles.switchRow}
+        accessibilityRole="switch"
+        accessibilityState={{ checked: showOverlay }}
+        accessibilityLabel="Mostrar el registro en pantalla"
+        accessibilityHint="Para la presentación: un botón flotante con el registro en vivo"
+      >
+        <View style={styles.switchText}>
+          <AppText>Mostrar el registro en pantalla</AppText>
+          <AppText variant="caption" tone="muted">
+            Para la presentación: un botón flotante con el registro en vivo
+          </AppText>
+        </View>
+        <Switch
+          value={showOverlay}
+          onValueChange={setShowOverlay}
+          trackColor={{ false: palette.borderSoft, true: palette.primary }}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants"
+        />
+      </Pressable>
+
       <Button label="Registro técnico" variant="ghost" onPress={() => router.push('/registro')} accessibilityHint="Para el equipo: muestra las llamadas al servidor" />
     </Screen>
   );
 }
+
+const styles = StyleSheet.create({
+  switchRow: { flexDirection: 'row', alignItems: 'center', gap: space.md, minHeight: touch.buttonHeight, paddingVertical: space.sm },
+  switchText: { flex: 1, gap: 2 },
+});

@@ -4,13 +4,14 @@ import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated'
 
 import { setActiveNatillera, useGoals, useMyNatillera, useMyNatilleras } from '@/api';
 import type { Natillera, NatilleraRecord } from '@/api/types';
-import { AppText, Button, Card, Choice, InfoRow, LinkRow, Screen, StatusPill } from '@/components';
+import { AppText, BrandSymbol, Button, Card, Choice, InfoRow, LinkRow, Screen, StatusPill } from '@/components';
 import { GoalCard } from '@/features/metas/GoalCard';
 import { palette, radius, space } from '@/theme';
 import { formatMovementDate } from '@/utils/dates';
 import { formatAmount } from '@/utils/money';
 
 import { JarIllustration } from './JarIllustration';
+import { MemberRings } from './MemberRings';
 import { AccountButton } from './AccountButton';
 
 const MONTHS_IN_YEAR = 12;
@@ -104,7 +105,7 @@ export function HomeNatillera() {
 
   if (isPending) {
     return (
-      <Screen title="Mi natillera" inTabs headerRight={<AccountButton />}>
+      <Screen title="Mi natillera" inTabs headerLeft={<BrandSymbol />} headerRight={<AccountButton />}>
         <LoadingSkeleton />
       </Screen>
     );
@@ -112,7 +113,7 @@ export function HomeNatillera() {
 
   if (isError || !natillera) {
     return (
-      <Screen title="Mi natillera" inTabs headerRight={<AccountButton />}>
+      <Screen title="Mi natillera" inTabs headerLeft={<BrandSymbol />} headerRight={<AccountButton />}>
         <Card title={isError ? 'No pudimos cargar su natillera' : 'Todavía no tiene natillera'}>
           <AppText tone="muted">{isError ? 'Revise su conexión e inténtelo otra vez.' : 'Cuando se una a una, la verá aquí.'}</AppText>
           {isError ? <Button label="Intentar de nuevo" variant="secondary" onPress={() => void refetch()} /> : null}
@@ -127,7 +128,7 @@ export function HomeNatillera() {
   const fund = formatAmount(natillera.fundTotal);
 
   return (
-    <Screen title="Mi natillera" inTabs headerRight={<AccountButton />} footer={<Button label="Poner la cuota" onPress={() => router.push('/natillera/cuota')} />}>
+    <Screen title="Mi natillera" inTabs headerLeft={<BrandSymbol />} headerRight={<AccountButton />} footer={<Button label="Poner la cuota" onPress={() => router.push('/natillera/cuota')} />}>
       <NatilleraSwitcher currentId={natillera.natilleraId} />
 
       <Animated.View entering={enter}>
@@ -157,6 +158,14 @@ export function HomeNatillera() {
         <InfoRow label="Lleva" amount={natillera.myTotal} tone="money" />
         <InfoRow label="Estado" right={<StatusPill label={upToDate ? 'Al día' : 'Debe cuota'} tone={upToDate ? 'ok' : 'danger'} />} />
       </Card>
+
+      {natillera.members.length > 0 ? (
+        <Animated.View entering={enter}>
+          <Card title="¿Quién ya puso?">
+            <MemberRings members={natillera.members} />
+          </Card>
+        </Animated.View>
+      ) : null}
 
       <GoalsSection />
 

@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { ActivityIndicator } from 'react-native';
 
 import { ApiError, keys, setActiveNatillera, useApi } from '@/api';
-import { AppText, Button, Card, InfoRow, LinkRow, Screen } from '@/components';
+import { AppText, BrandSymbol, Button, Card, InfoRow, LinkRow, Screen } from '@/components';
 import { palette } from '@/theme';
 
 function messageOf(error: unknown, fallback: string): string {
@@ -36,7 +36,7 @@ export function InvitedToNatillera({ code }: { code: string }) {
 
   if (preview.isLoading) {
     return (
-      <Screen title="Mi natillera" inTabs>
+      <Screen title="Mi natillera" headerLeft={<BrandSymbol />} inTabs>
         <ActivityIndicator size="large" color={palette.primary} accessibilityLabel="Cargando la invitación" />
         <AppText variant="body" tone="muted" align="center">
           Buscando su invitación…
@@ -49,6 +49,7 @@ export function InvitedToNatillera({ code }: { code: string }) {
     return (
       <Screen
         title="Mi natillera"
+        headerLeft={<BrandSymbol />}
         inTabs
         footer={
           <>
@@ -70,6 +71,7 @@ export function InvitedToNatillera({ code }: { code: string }) {
   return (
     <Screen
       title="Mi natillera"
+      headerLeft={<BrandSymbol />}
       inTabs
       footer={
         <Button
