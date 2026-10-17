@@ -18,3 +18,39 @@ Válida si esto puede estar solo en el front sin necesidad de hacer una nueva fu
 ## Prompt 3
 
 dale de acuerdo empieza ejcutar
+
+## Prompt 4
+
+Sí, haz push de feat/metas a main.
+
+## Prompt 5
+
+Perfecto, actualiza las memorias de nuestro workspace y que esté todo al día, listo. Y en la aplicación que quede todo listo. También en esa parte que ponga una fecha pequeñita. Cada, eh, en, en gris pequeño. Que muestre cuándo se realizó eh, la transferencia.
+
+(Adjuntó una captura de la tarjeta «Lo último que pasó» de la pantalla 10.)
+
+## Prompt 6
+
+Sí, haz push de main.
+
+## Prompt 7
+
+Mándame todos los logs aquí en, en un texto para pasárselos al equipo de back.
+
+## Prompt 8
+
+Requiero que envíes los logs, pero con el token de autenticación.
+
+- ¿Te preparo un script para que lo corras tú? → sin respuesta; Camilo inició sesión él mismo en el emulador.
+
+## Prompt 9
+
+Listo, ahí inicié sesión, válida.
+
+## Prompt 10
+
+} Documento la memoria de esta sesión y valida que esté la documentación del uso de ella actualizada.
+
+## Prompt 11
+
+} Documento la memoria de esta sesión y valida que esté la documentación del uso de IA actualizada.

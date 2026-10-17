@@ -29,7 +29,10 @@ export function parseWalletReturn(url: string): WalletReturn {
  * Modo real: navegador del sistema con openAuthSessionAsync. Modo demo: un diálogo hace de billetera.
  */
 export async function openWallet(api: NatilleraApi, req: WalletRequest): Promise<WalletOutcome> {
-  if (api.mode === 'demo' && Platform.OS === 'web') {
+  // La billetera de prueba se decide por pago, no por modo: en el modo híbrido conviven pagos reales
+  // (redirectUrl de la Test Wallet) y de ejemplo (demo://).
+  const isDemo = req.redirectUrl.startsWith('demo://') || (api.mode === 'demo' && !/^https:\/\//i.test(req.redirectUrl));
+  if (isDemo && Platform.OS === 'web') {
     // react-native-web no implementa Alert con botones: sin esto la promesa nunca se resolvería.
     const approved = window.confirm(`Billetera de prueba · ${req.demoTitle}
 
@@ -38,7 +41,7 @@ ${req.demoDetail}
 Aceptar = Aprobar · Cancelar = Rechazar`);
     return { kind: 'returned', ret: approved ? { result: 'ok', interactRef: 'demo' } : { result: 'grant_rejected' } };
   }
-  if (api.mode === 'demo') {
+  if (isDemo) {
     return new Promise((resolve) => {
       Alert.alert(`Billetera de prueba · ${req.demoTitle}`, req.demoDetail, [
         { text: 'Rechazar', style: 'destructive', onPress: () => resolve({ kind: 'returned', ret: { result: 'grant_rejected' } }) },

@@ -11,6 +11,7 @@ import type {
   LoanSimulation,
   MyLoans,
   Natillera,
+  NatilleraSummary,
   Payment,
   QuotePreview,
   RecurringGrant,
@@ -110,6 +111,40 @@ async function request<T>(method: Method, path: string, body?: unknown, auth = t
     // Auditoría 2026-10-16: un 502/HTML de API Gateway no debe reventar la app.
     if (response.ok) throw new ApiError('Recibimos una respuesta rara del servidor. Intente de nuevo.', response.status, 'bad_response');
   }
+  // API REST sin proxy (VTL): si faltan las respuestas de integración, un error llega como 200 con
+  // {"errorMessage": "[400] {\"error\":…}"}. Se recupera el status real para no tomarlo como éxito.
+  const lambdaError = (data as { errorMessage?: unknown } | null)?.errorMessage;
+  if (response.ok && typeof lambdaError === 'string') {
+    const match = /^\[(\d{3})\]\s*(.*)$/s.exec(lambdaError);
+    const status = match ? Number(match[1]) : 502;
+    let parsed: { error?: string; message?: string } = {};
+    try {
+      parsed = JSON.parse(match?.[2] ?? '') as typeof parsed;
+    } catch {
+      parsed = { message: match?.[2] ?? lambdaError };
+    }
+    logEvent({ kind: 'api', label, ok: false, status, ms, detail: [parsed.error, parsed.message].filter(Boolean).join(': ') || 'error de Lambda' });
+    throw new ApiError(friendlyError(status), status, parsed.error ?? 'error');
+  }
+  // Lambda en modo proxy detrás de una integración sin proxy: la respuesta entera de la Lambda llega
+  // como 200 con {"statusCode": 401, "body": "{…}"} (visto el 2026-10-16). Se desenvuelve.
+  const wrapped = data as { statusCode?: unknown; body?: unknown } | null;
+  if (response.ok && typeof wrapped?.statusCode === 'number' && typeof wrapped.body === 'string') {
+    const status = wrapped.statusCode;
+    let inner: unknown = null;
+    try {
+      inner = JSON.parse(wrapped.body) as unknown;
+    } catch {
+      inner = { message: wrapped.body };
+    }
+    if (status >= 400) {
+      const innerError = (inner as { error?: string; message?: string } | null) ?? {};
+      logEvent({ kind: 'api', label, ok: false, status, ms, detail: `${[innerError.error, innerError.message].filter(Boolean).join(': ')} (respuesta proxy envuelta en 200)` });
+      throw new ApiError(friendlyError(status), status, innerError.error ?? 'error');
+    }
+    logEvent({ kind: 'api', label, ok: true, status, ms, detail: 'respuesta proxy envuelta en 200' });
+    return inner as T;
+  }
   const backError = (data as { error?: string; message?: string } | null) ?? null;
   logEvent({ kind: 'api', label, ok: response.ok, status: response.status, ms, detail: response.ok ? undefined : [backError?.error, backError?.message].filter(Boolean).join(': ') || undefined });
   if (!response.ok) throw new ApiError(friendlyError(response.status), response.status, backError?.error ?? 'error');
@@ -137,7 +172,13 @@ export const httpApi: NatilleraApi = {
   // El GET /me del back trae la fila de Users-info (sin displayName): toUser lo completa con el usuario.
   getMe: async () => {
     if (!config.apiUrl) return profileFromToken();
-    return toUser(await request<BackUser>('GET', '/me'), await getIdTokenClaims());
+    try {
+      return toUser(await request<BackUser>('GET', '/me'), await getIdTokenClaims());
+    } catch (error) {
+      // API REST: 403 "Missing Authentication Token" = la ruta todavía no está desplegada.
+      if (error instanceof ApiError && (error.status === 403 || error.status === 404)) return profileFromToken();
+      throw error;
+    }
   },
   // Con sesión, verifica el back. Sin sesión (pantalla 02, antes del SignUp) se consulta la dirección de
   // pago pública de Open Payments: no firma ni usa llaves. El back vuelve a validar la wallet en el SignUp.
@@ -147,13 +188,25 @@ export const httpApi: NatilleraApi = {
         return await request<WalletInfo>('GET', `/wallets/verify?url=${encodeURIComponent(walletAddress)}`);
       } catch (error) {
         // El back aún no publica /wallets/verify: se usa la consulta pública.
-        if (!(error instanceof ApiError && error.status === 404)) throw error;
+        if (!(error instanceof ApiError && (error.status === 403 || error.status === 404))) throw error;
       }
     }
     return lookupPublicWallet(walletAddress);
   },
 
-  getMyNatillera: () => request<Natillera | null>('GET', '/natilleras/mine'),
+  getMyNatillera: (natilleraId) =>
+    request<Natillera | null>('GET', natilleraId ? `/natilleras/mine?natilleraId=${encodeURIComponent(natilleraId)}` : '/natilleras/mine'),
+  // GET /natilleras es del back de varias natilleras. Si aún no está desplegado (403 en el API REST),
+  // la lista sale de la única natillera que devuelve /natilleras/mine: el selector no aparece.
+  listMyNatilleras: async () => {
+    try {
+      return await request<NatilleraSummary[]>('GET', '/natilleras');
+    } catch (error) {
+      if (!(error instanceof ApiError && (error.status === 403 || error.status === 404 || error.status === 405))) throw error;
+      const only = await request<Natillera | null>('GET', '/natilleras/mine');
+      return only ? [toSummary(only)] : [];
+    }
+  },
   createNatillera: (input) => request<Natillera>('POST', '/natilleras', input),
   getInvitation: (code) => request('GET', `/invitations/${encodeURIComponent(code)}`),
   joinNatillera: (code) => request<Natillera>('POST', '/natilleras/join', { natilleraInvitation: code }),
@@ -163,11 +216,20 @@ export const httpApi: NatilleraApi = {
       return await request<QuotePreview>('POST', '/payments/preview', toPaymentBody(input));
     } catch (error) {
       // Si el back aún no tiene vista previa, la pantalla muestra "se calcula al confirmar".
-      if (error instanceof ApiError && (error.status === 404 || error.status === 405)) return null;
+      // API REST: una ruta que no existe responde 403 (pedido de Henry, 17:15).
+      if (error instanceof ApiError && (error.status === 403 || error.status === 404 || error.status === 405)) return null;
       throw error;
     }
   },
-  startPayment: (input) => request<WalletRedirect>('POST', '/payments', { ...toPaymentBody(input), returnUrl: returnUrl() }),
+  async startPayment(input) {
+    const start = await request<WalletRedirect>('POST', config.paymentsStartPath, { ...toPaymentBody(input), returnUrl: returnUrl() });
+    // Sin estos dos campos no hay billetera que abrir: mejor un error claro que una pantalla en blanco.
+    if (!start?.paymentId || !start.redirectUrl) {
+      logEvent({ kind: 'api', label: `POST ${pathOnly(config.paymentsStartPath)}`, ok: false, detail: 'respuesta sin paymentId o redirectUrl' });
+      throw new ApiError('Recibimos una respuesta rara del servidor. Intente de nuevo.', 502, 'bad_response');
+    }
+    return start;
+  },
   finishPayment: async (paymentId, ret) => {
     // Opción B del contrato: el back ya finalizó y solo consultamos el estado.
     if (!ret.interactRef) return request<Payment>('GET', `/payments/${paymentId}`);
@@ -198,6 +260,10 @@ export const httpApi: NatilleraApi = {
   createGoal: async (input) => goals.create(input, 'Usted'),
   addGoalContribution: async (goalId, input) => goals.contribute(goalId, input, 'Usted'),
 };
+
+function toSummary(n: Natillera): NatilleraSummary {
+  return { natilleraId: n.natilleraId, natilleraName: n.natilleraName, isAdmin: n.isAdmin, membersCount: n.members.length, asset: n.asset, quota: n.quota };
+}
 
 function toPaymentBody(input: StartPaymentInput) {
   if (input.kind === 'aporte') return { kind: 'aporte', natilleraId: input.natilleraId, author: input.onBehalfOfUserId, ...input.amount };

@@ -74,6 +74,16 @@ export type Natillera = {
   lastRecords: NatilleraRecord[];
 };
 
+/** Resumen para el selector de natilleras (una persona puede estar en varias). */
+export type NatilleraSummary = {
+  natilleraId: string;
+  natilleraName: string;
+  isAdmin: boolean;
+  membersCount: number;
+  asset: { assetCode: string; assetScale: number };
+  quota: Amount;
+};
+
 export type CreateNatilleraInput = { natilleraName: string; walletAddress: string };
 
 export type InvitationPreview = {

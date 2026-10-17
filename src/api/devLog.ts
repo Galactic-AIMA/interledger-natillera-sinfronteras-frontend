@@ -25,8 +25,16 @@ function emit() {
   listeners.forEach((listener) => listener());
 }
 
+// API Gateway responde a una ruta no desplegada con un error SigV4 que trae un hash del header
+// Authorization: se cambia por un texto claro y nunca se guarda nada derivado del token.
+function safeDetail(detail: string | undefined): string | undefined {
+  if (!detail) return detail;
+  if (/authorization|signature|sigv4|credential/i.test(detail)) return 'Ruta no desplegada en el API (API Gateway pidió firma)';
+  return detail.length > 200 ? `${detail.slice(0, 200)}…` : detail;
+}
+
 export function logEvent(entry: Omit<LogEntry, 'id' | 'at'>) {
-  entries = [{ ...entry, id: nextId++, at: Date.now() }, ...entries].slice(0, MAX_ENTRIES);
+  entries = [{ ...entry, detail: safeDetail(entry.detail), id: nextId++, at: Date.now() }, ...entries].slice(0, MAX_ENTRIES);
   emit();
 }
 

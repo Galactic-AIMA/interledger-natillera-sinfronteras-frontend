@@ -2,11 +2,12 @@ import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated';
 
-import { useGoals, useMyNatillera } from '@/api';
+import { setActiveNatillera, useGoals, useMyNatillera, useMyNatilleras } from '@/api';
 import type { Natillera, NatilleraRecord } from '@/api/types';
-import { AppText, Button, Card, InfoRow, LinkRow, Screen, StatusPill } from '@/components';
+import { AppText, Button, Card, Choice, InfoRow, LinkRow, Screen, StatusPill } from '@/components';
 import { GoalCard } from '@/features/metas/GoalCard';
 import { palette, radius, space } from '@/theme';
+import { formatMovementDate } from '@/utils/dates';
 import { formatAmount } from '@/utils/money';
 
 import { JarIllustration } from './JarIllustration';
@@ -27,13 +28,19 @@ function jarProgress(natillera: Natillera): { fill: number; monthsReached: numbe
 
 function RecentRecord({ record }: { record: NatilleraRecord }) {
   const note = record.paidByName !== record.authorName ? `Lo puso ${record.paidByName}` : undefined;
+  const when = formatMovementDate(record.createdAt);
   return (
-    <View style={styles.record} accessible accessibilityLabel={`${record.authorName}, ${formatAmount(record.amount, { signed: true })}`}>
+    <View style={styles.record} accessible accessibilityLabel={`${record.authorName}, ${formatAmount(record.amount, { signed: true })}${when ? `, ${when}` : ''}`}>
       <View style={styles.recordText}>
         <AppText variant="bodyStrong">{record.authorName}</AppText>
         {note ? (
           <AppText variant="caption" tone="muted">
             {note}
+          </AppText>
+        ) : null}
+        {when ? (
+          <AppText variant="caption" tone="muted">
+            {when}
           </AppText>
         ) : null}
       </View>
@@ -60,6 +67,22 @@ function GoalsSection() {
         ))
       )}
       <LinkRow label={shown.length === 0 ? 'Crear una meta' : 'Ver todas las metas'} onPress={() => router.push(shown.length === 0 ? '/natillera/metas/nueva' : '/natillera/metas')} />
+    </Card>
+  );
+}
+
+/** Selector arriba cuando la persona está en más de una natillera (back de varias natilleras). */
+function NatilleraSwitcher({ currentId }: { currentId: string }) {
+  const { data: list } = useMyNatilleras();
+  if (!list || list.length < 2) return null;
+  return (
+    <Card>
+      <Choice
+        label="Sus natilleras"
+        options={list.map((n) => ({ value: n.natilleraId, label: n.natilleraName }))}
+        value={currentId}
+        onChange={(natilleraId) => setActiveNatillera(natilleraId)}
+      />
     </Card>
   );
 }
@@ -105,6 +128,8 @@ export function HomeNatillera() {
 
   return (
     <Screen title="Mi natillera" inTabs headerRight={<AccountButton />} footer={<Button label="Poner la cuota" onPress={() => router.push('/natillera/cuota')} />}>
+      <NatilleraSwitcher currentId={natillera.natilleraId} />
+
       <Animated.View entering={enter}>
         <Card tone="soft">
           <AppText variant="label" tone="muted" align="center">
@@ -146,6 +171,12 @@ export function HomeNatillera() {
         ) : (
           natillera.lastRecords.map((record) => <RecentRecord key={record.id} record={record} />)
         )}
+      </Card>
+
+      <Card title="¿Otra natillera?">
+        <AppText tone="muted">Puede estar en varias: la de la familia, la de los amigos, la del trabajo.</AppText>
+        <LinkRow label="Crear otra natillera" onPress={() => router.push('/natillera/crear')} />
+        <LinkRow label="Unirme con un código" onPress={() => router.push('/natillera/unirse')} />
       </Card>
     </Screen>
   );

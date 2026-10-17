@@ -11,7 +11,10 @@
       },
       "env": {
         "EXPO_PUBLIC_COGNITO_REGION": "us-east-2",
-        "EXPO_PUBLIC_COGNITO_CLIENT_ID": "20b10a2tnnr69lqlp2sf62orv0"
+        "EXPO_PUBLIC_COGNITO_CLIENT_ID": "20b10a2tnnr69lqlp2sf62orv0",
+        "EXPO_PUBLIC_API_URL": "https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev",
+        "EXPO_PUBLIC_AUTH_TOKEN_TYPE": "id",
+        "EXPO_PUBLIC_REAL_METHODS": "startPayment,finishPayment,getPayment,listPayments,previewQuote,listAccounts,saveAccount,getMyNatillera,createNatillera,getInvitation,joinNatillera,simulateLoan,requestLoan,listPendingLoanRequests,getMyLoans,decideLoan"
       }
     }
   }
