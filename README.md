@@ -3,7 +3,7 @@
 > **EN:** A family savings circle ("natillera") whose members live in different countries. Each member pays
 > the shared fund in their own currency with **Open Payments**. The fund can also lend to its members.
 > Built for the Interledger Open Payments Hackathon (Ruta N, Medellín, Oct 16–17, 2026).
-> Backend: [interterledger-natillera-sin-fronteras-backend](https://github.com/duvanjaramillomarin/interterledger-natillera-sin-fronteras-backend).
+> One repo: the Expo app at the root and the AWS backend in [`backend/`](backend/).
 
 Una **natillera** es un fondo de ahorro en familia: cada periodo todos ponen una cuota en una billetera común,
 y el fondo les presta cuando lo necesitan. En muchas familias colombianas sus integrantes viven en países
@@ -87,7 +87,17 @@ src/
   theme/        Paleta G, tipografías y escala de texto (A+)
 tests/          pruebas con node:test (sin red)
 docs/           plan, contrato con el backend (openapi.yaml), pantallas, pitch
+backend/        el backend completo en AWS (ver abajo)
 ```
+
+## Backend
+
+El backend vive en [`backend/`](backend/): Lambdas en TypeScript detrás de API Gateway, Cognito para el registro y
+DynamoDB. Es el único lugar donde corre el SDK de Open Payments y donde están las llaves (en Secrets Manager).
+Cómo está hecho, sus rutas y cómo desplegarlo: [backend/README.md](backend/README.md).
+
+Se trabajó en un repo aparte y se unió aquí el 17/10 con `git subtree` sin `--squash`, así que conserva la
+historia y los commits de cada persona. El repo original queda archivado.
 
 ## Seguridad
 
@@ -107,6 +117,7 @@ docs/           plan, contrato con el backend (openapi.yaml), pantallas, pitch
 Usamos IA (Claude Code) para construir buena parte del código y la documentación, siempre con revisión humana.
 Qué herramienta se usó, para qué y en qué archivos está en [AI_USAGE.md](AI_USAGE.md); los prompts literales están
 en [`/prompts`](prompts/), según la [política de IA de la hackatón](https://interledger.org/hackathon/ai-policy/).
+La declaración del backend está en [backend/AI_USAGE.md](backend/AI_USAGE.md) y sus prompts en [`backend/prompts/`](backend/prompts/).
 
 ## Equipo
 
