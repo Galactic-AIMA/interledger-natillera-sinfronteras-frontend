@@ -58,3 +58,12 @@ Sesiones de Claude Code (Opus 5.5, escritorio) abiertas en la raíz del workspac
 ## 2026-10-17 08:18 · sesión en la raíz (memorias y lo que falta para entregar)
 
 > ahora memoria todo lo que tenemos hasta ahora ya tenemos el video y demás ¿qué más nos hace falta para los entregables? son las 8 y 18 de la mañana dale a toda la memoria todo lo que tenemos hasta ahora. Ya tenemos el video y demás. ¿Qué más nos hace falta para los entregables? Son las 8 y 10 de la mañana. Ya tenemos el video. revisa el repo
+- `Sí, haz commit y push del prompt de esta sesión a main.`
+- `El video ya está. Tenemos listo. Eh, la, las diapositivas, los slides también ya están listos. ¿Qué es lo del formulario de entrega? ¿Qué hay que llenar ahí? Eh, quedamos pendientes del repo. Y ponme en una carpetica todo ordenado lo de la entrega. Listo. Eh, lo que es la diapositiva, los videos y demás. Todos los videos que hiciste.`
+- `que necesitamos para el repo, revisa en la memoria que cuál es la estrategia para que nos quede de manera inteligente el repo. Habíamos quedado que entonces este repo de front renombrado eh, tuviera el de backend, ¿cierto?`
+- `Sí: renombra el repo a interledger-natillera-sin-fronteras, actualiza el remote, los 2 links de backend/README.md, la descripción en GitHub y la carpeta de entrega.`
+- (con una captura de pantalla adjunta) `el video no reproduce` / `revisa rapido`
+- (con dos capturas de pantalla adjuntas) `y revisa esto lo que falta para organizar el main segun ciroy rprioriodades`
+- `Davidciro-333`
+- `revisemos lo del formulario` / `y me deajas el paso a paso para lo del drive`
+- `Estuve pensando que podemos poner el video con subtítulos en ingles ya que los directivos son de este idioma eso nos dejaria bien melos` / `Puedes hacer esta tarea con unos buenos subtítulos legibles`
