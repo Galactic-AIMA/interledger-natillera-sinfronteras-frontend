@@ -8,7 +8,7 @@
 // y el nonce del servidor de autorización, así que no se puede fabricar. Un "rechazo" sin hash no
 // modifica el pago (queda pending y vence solo): nadie puede anular el pago de otra persona.
 import { GetCommand } from '@aws-sdk/lib-dynamodb';
-import { dynamo, env, verifyInteractHash, type PaymentRecord } from './shared';
+import { dynamo, env, validateReturnUrl, verifyInteractHash, type PaymentRecord } from './shared';
 import { completePayment } from './complete';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -33,7 +33,12 @@ const page = (statusCode: number, title: string, message: string, link?: string)
 });
 
 const backToApp = (p: PaymentRecord, result: string) => {
-  const target = `${p.appReturnUrl || 'natillera://retorno'}?paymentId=${encodeURIComponent(p.paymentId)}&result=${result}`;
+  // Se vuelve a validar la URL guardada (lista cerrada); si no pasa, se usa la del APK.
+  let base = 'natillera://retorno';
+  try {
+    base = validateReturnUrl(p.appReturnUrl);
+  } catch {}
+  const target = `${base}?paymentId=${encodeURIComponent(p.paymentId)}&result=${result}`;
   const titles: Record<string, string> = {
     ok: 'Pago hecho',
     rejected: 'Pago rechazado',
