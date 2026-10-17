@@ -118,3 +118,19 @@ Henry subirá préstamos igual, en `back/feat-prestamos`.
 - `docs/CURLS.md` — todos los requests. `scripts/probar-pago.sh` — prueba interactiva.
 - `docs/ARQUITECTURA.md` — flujos y tablas. `docs/AWS-SETUP.md` — recursos en AWS.
 - `MEMORY.md` — bitácora de decisiones e infraestructura.
+
+## 9. Actualización 2026-10-17 ~01:30 — tu `start-payment`, ya funcionando
+
+- **Tu código quedó desplegado**, con tu estructura (`getUserInfo`, `savePaymentHistory`, los 3 grants),
+  más 6 cambios marcados `// [fix]` en `deploy/payments/src/start-payment-duvan.ts`. Tu versión anterior es
+  la **versión 6** de la Lambda.
+- El cambio de fondo: la llave es **la del cliente** (`OP_SECRET_ID`). La fase 3 (`return-payment` →
+  `complete.ts`: `grant.continue` + outgoing payment) tiene que continuar el grant **con el mismo cliente**
+  que lo pidió. El código que pegaste (Step 6–7 del ejemplo) es justo eso y ya está en `complete.ts`
+  (sin `process.exit()`, que mataría la Lambda, y con el `interact_ref` del retorno).
+- **Permisos:** al rol le quitaron `PowerUserAccess` (CloudTrail: 22:27). Se agregó la inline
+  `pagos-dynamo`. Ojo: `infra/deploy-natilleras.sh` reescribe `natilleras-dynamo` y borraría los permisos
+  de logs y secrets que le agregaste; hay que sumarlos al script antes de volver a correrlo.
+- **Tabla:** `payments-history` quedó con tu esquema (`source` + `id`) para tus eventos. Los pagos del flujo
+  van en **`natillera-payments`** (`paymentId`, índice `author-index`).
+- Probado: pago real 1,85 EUR → 3.000 COP, `completed`.

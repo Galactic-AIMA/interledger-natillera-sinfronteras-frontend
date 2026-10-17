@@ -56,8 +56,8 @@ Ejemplo probado (EUR → COP): monto fijo **en la moneda de quien recibe** (4.00
 curl -s -X POST "$API/payments" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"kind":"p2p","walletAddress":"https://ilp.interledger-test.dev/<wallet-que-recibe>","value":"400000","assetCode":"COP","assetScale":2,"returnUrl":"natillera://retorno"}'
 ```
 
-> Con monto fijo en EUR hacia una wallet COP, Rafiki falla la cotización
-> (`502 OpenPaymentsError: non-positive receive amount`). Pendiente de revisar.
+> El monto va **en la moneda de quien recibe** (`assetCode`/`assetScale` de esa wallet); otra moneda →
+> **400** `InvalidAmount`. (Con monto fijo en la moneda de quien paga, Rafiki fallaba la cotización.)
 
 Pagar con una cuenta guardada (sección 11): `"customWalletName":"<nombre>"` en lugar de `walletAddress`.
 

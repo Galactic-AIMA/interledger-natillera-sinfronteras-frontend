@@ -12,6 +12,21 @@ terminar. Fechas absolutas (YYYY-MM-DD). Reglas de uso en [CLAUDE.md](CLAUDE.md)
   conexión con el frontend), `david` (David + sus
   sesiones de Claude; las sesiones salen de `david` con `feat/<carril>-...` y vuelven a `david`).
 
+### Foto al 2026-10-17 ~01:30 COL (stage `dev`, API `lofoyfhz52`, us-east-2)
+
+| Parte | Estado |
+|---|---|
+| Registro / login (Cognito + `pre-signup`) | ✅ funciona |
+| Pago 1 a 1 (`POST /payments` → aprobar → `return-payment` → `GET /payments/{id}`) | ✅ **probado de punta a punta 2 veces** (21:32 y 01:23): EUR→COP |
+| `start-payment` desplegado | Código de **Duvan con `[fix]`** (`deploy/payments/src/start-payment-duvan.ts`); su versión sin fix = **v6** |
+| Tabla de pagos | **`natillera-payments`** (PK `paymentId`, GSI `author-index`). `payments-history` = tabla de eventos de Duvan (`source`+`id`), vacía |
+| Permisos del rol `PowerUserRole` | **Sin `PowerUserAccess`** (lo quitó otra sesión a las 22:27). Inline: `natilleras-dynamo` (incluye logs y secrets), `prestamos-dynamo`, `pagos-dynamo` |
+| Bloque A (perfil, wallets, cuentas, natilleras) | ✅ desplegado y probado |
+| Préstamos fase 1 (+ multi-natillera) | ✅ desplegado y probado; aprobar/desembolsar = fase 2 (501) |
+| Aportes (`kind:'aporte'`) | Soportado en el `start-payment` actual; falta probar uno real |
+| Recurrente, desembolso, cobro de cuotas | ❌ sin código (modo demo en el front) |
+| Rama `main` | Existe; `david` tiene lo último. PR #6 de Henry **no se debe correr** (vuelve a `payments-history`) |
+
 ## Metas acordadas con todo el equipo (2026-10-16)
 
 Enfoque actual: **pagos 1 a 1**. Lo demás espera a que P0 funcione.
@@ -201,6 +216,18 @@ Decisiones técnicas aún sin tomar:
   completo: `request-loan`, `get-my-loans`, `list-loan-requests` (respaldo v1 de cada una) y plantillas de
   `GET /loans/requests` y `GET /loans/mine` con `natilleraId` opcional (escapado). Deployment `pxnk9k`.
   Probado: listas vacías, 409 `InsufficientFunds`, 401 sin token.
+- 2026-10-17 (~01:25 COL) · **`start-payment` arreglado sobre el código de Duvan y pago real completo.**
+  Tres causas: (1) su código devolvía la quote (`return quote`) sin grant ni registro; se corrigió con
+  6 `[fix]` (enlace con `interact.finish` → `return-payment`, guardar, respuesta del contrato, `value`,
+  aporte/cuenta guardada, **llave única del cliente**: `return-payment` continúa el grant con ese mismo
+  cliente). (2) CloudTrail: a las 22:27 la sesión `AccountFullAccessRole/64086418…` quitó
+  `PowerUserAccess` y `SecretsManagerReadWrite` del rol → se agregó inline `pagos-dynamo`. (3) A las 00:47
+  `payments-history` fue borrada y recreada con `source`+`id` (se perdieron los pagos viejos) → tabla nueva
+  `natillera-payments` y `PAYMENTS_TABLE` en las 4 Lambdas de pagos. Prueba: `ciro-demo-euro` →
+  `cirocol`, 1,85 EUR → 3.000 COP, pago `b3b045cc…` **completed** (outgoing `7bc3a425…`); la Test Wallet
+  mostró otra vez "Internal Server Error". `infra/deploy-payments.sh` quedó alineado (tabla, política y
+  zip `start-payment-duvan`). Lo que Duvan pegó (grant.continue + outgoing con `process.exit`) es la
+  fase 3 y ya existe en `complete.ts`.
 
 ### op-core
 - (vacío)

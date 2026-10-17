@@ -15,7 +15,7 @@ ACCOUNT="349607459198"
 API_ID="${API_ID:-lofoyfhz52}"
 STAGE="${STAGE:-dev}"
 AUTHORIZER_NAME="cognito_authorizer"
-PAYMENTS_TABLE="payments-history"
+PAYMENTS_TABLE="natillera-payments"  # payments-history ahora es la tabla de eventos de Duvan (source + id)
 USERS_TABLE="user-info"
 SECRET_ID="natillera/open-payments-client"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -37,7 +37,7 @@ log() { echo; echo "== $*"; }
 
 aws sts get-caller-identity --query Account --output text | grep -q "$ACCOUNT" || { echo "Sesión en otra cuenta"; exit 1; }
 
-# ---------------------------------------------------------------- 1. Tabla payments-history
+# ---------------------------------------------------------------- 1. Tabla de pagos (natillera-payments)
 log "Tabla $PAYMENTS_TABLE"
 if aws dynamodb describe-table --table-name "$PAYMENTS_TABLE" >/dev/null 2>&1; then
   echo "ya existe"
@@ -50,6 +50,12 @@ else
   aws dynamodb wait table-exists --table-name "$PAYMENTS_TABLE"
   echo "creada"
 fi
+
+log "Política inline pagos-dynamo (el rol ya no tiene PowerUserAccess)"
+ROLE_NAME_P="$(aws lambda get-function-configuration --function-name start-payment --query Role --output text)"; ROLE_NAME_P="${ROLE_NAME_P##*/}"
+T_ARN="arn:aws:dynamodb:$AWS_REGION:$ACCOUNT:table"
+echo "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"Payments\",\"Effect\":\"Allow\",\"Action\":[\"dynamodb:GetItem\",\"dynamodb:PutItem\",\"dynamodb:UpdateItem\",\"dynamodb:Query\"],\"Resource\":[\"$T_ARN/$PAYMENTS_TABLE\",\"$T_ARN/$PAYMENTS_TABLE/index/*\",\"$T_ARN/payments-history\",\"$T_ARN/payments-history/index/*\"]}]}" > "$TMP/pagos-policy.json"
+aws iam put-role-policy --role-name "$ROLE_NAME_P" --policy-name pagos-dynamo --policy-document "$(fpath "$TMP/pagos-policy.json")"
 
 # ---------------------------------------------------------------- 2. Lambdas
 BASE_URL="https://$API_ID.execute-api.$AWS_REGION.amazonaws.com/$STAGE"
@@ -69,13 +75,13 @@ env_file "$TMP/env-vtl.json" vtl
 env_file "$TMP/env-proxy.json" proxy
 ROLE_ARN="$(aws lambda get-function-configuration --function-name start-payment --query Role --output text)"
 
-deploy_lambda() { # deploy_lambda nombre timeout memoria archivo-env
-  local name="$1" timeout="$2" memory="$3" envf="$4"
+deploy_lambda() { # deploy_lambda nombre timeout memoria archivo-env [zip]
+  local name="$1" timeout="$2" memory="$3" envf="$4" zip="${5:-$1}"
   log "Lambda $name"
-  [ -f "$DIST/$name.zip" ] || { echo "Falta $DIST/$name.zip (npm run build)"; exit 1; }
+  [ -f "$DIST/$zip.zip" ] || { echo "Falta $DIST/$name.zip (npm run build)"; exit 1; }
   if ! aws lambda get-function-configuration --function-name "$name" >/dev/null 2>&1; then
     aws lambda create-function --function-name "$name" --runtime nodejs22.x --handler index.handler \
-      --role "$ROLE_ARN" --zip-file "$(bpath "$DIST/$name.zip")" --timeout "$timeout" --memory-size "$memory" \
+      --role "$ROLE_ARN" --zip-file "$(bpath "$DIST/$zip.zip")" --timeout "$timeout" --memory-size "$memory" \
       --environment "$(fpath "$envf")" --query 'FunctionArn' --output text
     aws lambda wait function-active-v2 --function-name "$name"
     echo "creada"
@@ -84,13 +90,14 @@ deploy_lambda() { # deploy_lambda nombre timeout memoria archivo-env
   local backup
   backup="$(aws lambda publish-version --function-name "$name" --description "respaldo antes de deploy-payments $(date -u +%FT%TZ)" --query Version --output text)"
   echo "respaldo publicado: versión $backup"
-  aws lambda update-function-code --function-name "$name" --zip-file "$(bpath "$DIST/$name.zip")" --query 'CodeSize' --output text
+  aws lambda update-function-code --function-name "$name" --zip-file "$(bpath "$DIST/$zip.zip")" --query 'CodeSize' --output text
   aws lambda wait function-updated-v2 --function-name "$name"
   aws lambda update-function-configuration --function-name "$name" --handler index.handler --runtime nodejs22.x \
     --timeout "$timeout" --memory-size "$memory" --environment "$(fpath "$envf")" --query 'LastUpdateStatus' --output text
   aws lambda wait function-updated-v2 --function-name "$name"
 }
-deploy_lambda start-payment 25 512 "$TMP/env-start.json"
+# start-payment = código de Duvan con los [fix] (src/start-payment-duvan.ts). La versión anterior: src/start-payment.ts
+deploy_lambda start-payment 25 512 "$TMP/env-start.json" start-payment-duvan
 deploy_lambda finish-payment 25 512 "$TMP/env-vtl.json"
 deploy_lambda get-payment 10 256 "$TMP/env-vtl.json"
 deploy_lambda return-payment 25 512 "$TMP/env-proxy.json"

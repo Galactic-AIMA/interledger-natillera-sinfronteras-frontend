@@ -65,6 +65,13 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
   script, corrió las pruebas, desplegó en `dev` y probó las 8 rutas. Una revisión automática marcó que
   el código de invitación (`PALABRA-1234`) se podía adivinar; se cambió a `PALABRA-XXXX-XXXX`
   (Crockford base32, ~2^40). Requests: [`docs/CURLS.md`](docs/CURLS.md) secciones 9–14.
+- **Préstamos (código de Henry):** Claude revisó, fusionó y desplegó la fase 1 y la versión con varias
+  natilleras, y probó las 5 rutas.
+- **`start-payment` de Duvan:** Claude corrigió su código con cambios mínimos marcados `// [fix]`
+  ([`deploy/payments/src/start-payment-duvan.ts`](deploy/payments/src/start-payment-duvan.ts)). Con
+  CloudTrail encontró que al rol le habían quitado permisos y que `payments-history` se había recreado con
+  otro esquema; agregó una política mínima y una tabla nueva. Resultado: un segundo pago real EUR→COP
+  completado.
 
 **Camilo · Claude Code (bloque A: natilleras, cuentas guardadas y perfil)**
 
