@@ -54,3 +54,7 @@ Sesiones de Claude Code (Opus 5.5, escritorio) abiertas en la raíz del workspac
 17. `Continua`
 18. `No hace falta, la demo va con el APK o el video.`
 19. `Perfecto, actualiza la memoria de, de todo el proceso. Y, y melos.`
+
+## 2026-10-17 08:18 · sesión en la raíz (memorias y lo que falta para entregar)
+
+> ahora memoria todo lo que tenemos hasta ahora ya tenemos el video y demás ¿qué más nos hace falta para los entregables? son las 8 y 18 de la mañana dale a toda la memoria todo lo que tenemos hasta ahora. Ya tenemos el video y demás. ¿Qué más nos hace falta para los entregables? Son las 8 y 10 de la mañana. Ya tenemos el video. revisa el repo
