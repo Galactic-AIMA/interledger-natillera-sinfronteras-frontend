@@ -127,7 +127,7 @@ test('cuentas guardadas: guardar, actualizar y listar solo las propias', async (
 
 test('crear, ver invitación, unirse y ver mi natillera con aportes', async () => {
   const created: any = await createNatillera(ev('rosa', { body: { natilleraName: 'Familia Pérez', walletAddress: 'fondo-rosa' } }));
-  assert.match(created.invitationCode, /^FAMILIA-\d{4}$/);
+  assert.match(created.invitationCode, /^FAMILIA-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$/);
   assert.equal(created.isAdmin, true);
   assert.deepEqual(created.quota, { value: '5000000', assetCode: 'COP', assetScale: 2 });
   assert.equal(created.joinUrl, `natillera://unirse/${created.invitationCode}`);
@@ -175,5 +175,5 @@ test('crear natillera valida nombre, billetera y cuota', async () => {
   await fails(createNatillera(ev('rosa', { body: { natilleraName: 'X', walletAddress: 'fondo-rosa', quota: { value: '1.5' } } })), 400, 'InvalidAmount');
   const ok: any = await createNatillera(ev('rosa', { body: { natilleraName: '¡Ñoños!', walletAddress: 'fondo-rosa', quota: { value: '3000000', assetCode: 'USD' } } }));
   assert.deepEqual(ok.quota, { value: '3000000', assetCode: 'COP', assetScale: 2 }, 'la cuota va en la moneda del fondo');
-  assert.match(ok.invitationCode, /^NONOS-\d{4}$/);
+  assert.match(ok.invitationCode, /^NONOS-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$/);
 });

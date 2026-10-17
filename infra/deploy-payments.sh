@@ -58,7 +58,8 @@ env_file() {
   "$PY" - "$1" "$2" "${3:-}" "$SECRET_ID" "$USERS_TABLE" "$PAYMENTS_TABLE" <<'PYEOF'
 import json, sys
 out, mode, base, secret, users, payments = sys.argv[1:]
-v = {"INTEGRATION_MODE": mode, "OP_SECRET_ID": secret, "USER_VIEW_TABLE": users, "PAYMENTS_TABLE": payments}
+v = {"INTEGRATION_MODE": mode, "OP_SECRET_ID": secret, "USER_VIEW_TABLE": users, "PAYMENTS_TABLE": payments,
+     "NATILLERA_RECORDS_TABLE": "natillera-records"}  # complete.ts registra los aportes (finish/return)
 if base: v["RETURN_BASE_URL"] = base
 json.dump({"Variables": v}, open(out, "w"))
 PYEOF

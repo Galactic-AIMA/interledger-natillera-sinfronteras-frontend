@@ -130,12 +130,16 @@ type RecordItem = {
 
 const normalizeCode = (code: unknown) => (typeof code === 'string' ? code.trim().toUpperCase() : '');
 
-// Código legible para dictarlo por teléfono: primera palabra del nombre + 4 dígitos (ROSA-4821).
+// Código para dictarlo por teléfono: primera palabra del nombre + 8 caracteres Crockford base32
+// (sin I, L, O, U) en dos grupos: FAMILIA-7K3M-Q9TD. 32^8 ≈ 2^40 combinaciones: el código da acceso a la
+// natillera, así que no debe poder adivinarse (la palabra del nombre no aporta secreto).
+const CROCKFORD = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+const randomGroup = () => Array.from({ length: 4 }, () => CROCKFORD[randomInt(CROCKFORD.length)]).join('');
 const newInvitationCode = (natilleraName: string) => {
   const word = (natilleraName.normalize('NFD').replace(/[^A-Za-z0-9 ]/g, '').split(' ').find(Boolean) ?? 'NAT')
     .toUpperCase()
     .slice(0, 8);
-  return `${word || 'NAT'}-${randomInt(1000, 10000)}`;
+  return `${word || 'NAT'}-${randomGroup()}-${randomGroup()}`;
 };
 
 const findByInvitation = async (code: string) => {
