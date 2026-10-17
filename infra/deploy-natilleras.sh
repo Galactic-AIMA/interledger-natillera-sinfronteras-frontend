@@ -121,7 +121,7 @@ deploy_lambda() { # deploy_lambda nombre timeout
     --timeout "$timeout" --memory-size 256 --environment "$(fpath "$TMP/env.json")" --query 'LastUpdateStatus' --output text
   aws lambda wait function-updated-v2 --function-name "$name"
 }
-for fn in get-me list-accounts get-my-natillera; do deploy_lambda "$fn" 10; done
+for fn in get-me list-accounts get-my-natillera list-natilleras; do deploy_lambda "$fn" 10; done
 for fn in verify-wallet save-account create-natillera get-invitation join-natillera; do deploy_lambda "$fn" 15; done
 
 # ---------------------------------------------------------------- 4. API Gateway (REST + VTL)
@@ -198,6 +198,7 @@ EOF
 AUTH="\"auth\": { \"username\": \"\$util.escapeJavaScript(\$context.authorizer.claims['cognito:username'])\", \"sub\": \"\$util.escapeJavaScript(\$context.authorizer.claims['sub'])\" }"
 BODY="\"body\": \$input.json('\$')"
 P_URL="\"params\": { \"url\": \"\$util.escapeJavaScript(\$input.params('url'))\" }"
+P_NAT="\"params\": { \"natilleraId\": \"\$util.escapeJavaScript(\$input.params('natilleraId'))\" }"
 P_CODE="\"params\": { \"code\": \"\$util.escapeJavaScript(\$input.params('code'))\" }"
 
 configure_route GET  /me                  get-me            "{ $AUTH }"
@@ -205,7 +206,8 @@ configure_route GET  /wallets/verify      verify-wallet     "{ $AUTH, $P_URL }"
 configure_route POST /accounts            save-account      "{ $AUTH, $BODY }"
 configure_route GET  /accounts            list-accounts     "{ $AUTH }"
 configure_route POST /natilleras          create-natillera  "{ $AUTH, $BODY }"
-configure_route GET  /natilleras/mine     get-my-natillera  "{ $AUTH }"
+configure_route GET  /natilleras         list-natilleras   "{ $AUTH }"
+configure_route GET  /natilleras/mine     get-my-natillera  "{ $AUTH, $P_NAT }"
 configure_route POST /natilleras/join     join-natillera    "{ $AUTH, $BODY }"
 configure_route GET  /invitations/{code}  get-invitation    "{ $AUTH, $P_CODE }"
 

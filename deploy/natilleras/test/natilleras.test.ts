@@ -12,6 +12,7 @@ import { handler as getMyNatillera } from '../src/get-my-natillera';
 import { handler as saveAccount } from '../src/save-account';
 import { handler as listAccounts } from '../src/list-accounts';
 import { handler as getMe } from '../src/get-me';
+import { handler as listNatilleras } from '../src/list-natilleras';
 import { handler as verifyWallet } from '../src/verify-wallet';
 
 type Row = Record<string, any>;
@@ -134,7 +135,6 @@ test('crear, ver invitación, unirse y ver mi natillera con aportes', async () =
   assert.equal(created.joinUrl, `natillera://unirse/${created.invitationCode}`);
   assert.equal(created.members.length, 1);
 
-  await fails(createNatillera(ev('rosa', { body: { natilleraName: 'Otra', walletAddress: 'fondo-rosa' } })), 409, 'AlreadyMember');
 
   const preview: any = await getInvitation(ev('luz', { params: { code: created.invitationCode.toLowerCase() } }));
   assert.deepEqual(preview, { code: created.invitationCode, natilleraName: 'Familia Pérez', adminName: 'rosa', quota: created.quota });
@@ -177,4 +177,28 @@ test('crear natillera valida nombre, billetera y cuota', async () => {
   const ok: any = await createNatillera(ev('rosa', { body: { natilleraName: '¡Ñoños!', walletAddress: 'fondo-rosa', quota: { value: '3000000', assetCode: 'USD' } } }));
   assert.deepEqual(ok.quota, { value: '3000000', assetCode: 'COP', assetScale: 2 }, 'la cuota va en la moneda del fondo');
   assert.match(ok.invitationCode, /^NONOS-[0-9A-HJKMNP-TV-Z]{4}-[0-9A-HJKMNP-TV-Z]{4}$/);
+});
+
+test('varias natilleras por persona: crear, unirse, listar y elegir', async () => {
+  const a: any = await createNatillera(ev('rosa', { body: { natilleraName: 'Familia Pérez', walletAddress: 'fondo-rosa' } }));
+  const b: any = await createNatillera(ev('rosa', { body: { natilleraName: 'Amigos del barrio', walletAddress: 'fondo-rosa' } }));
+  assert.notEqual(a.natilleraId, b.natilleraId, 'crear una segunda ya no da 409');
+
+  await joinNatillera(ev('luz', { body: { natilleraInvitation: a.invitationCode } }));
+  const joinedB: any = await joinNatillera(ev('luz', { body: { natilleraInvitation: b.invitationCode } }));
+  assert.equal(joinedB.natilleraId, b.natilleraId, 'unirse devuelve la natillera a la que se unió');
+
+  const list: any = await listNatilleras(ev('luz'));
+  assert.deepEqual(list.map((n: any) => n.natilleraName), ['Familia Pérez', 'Amigos del barrio']);
+  assert.equal(list[0].isAdmin, false);
+  assert.equal(list[0].membersCount, 2);
+  assert.equal(((await listNatilleras(ev('rosa'))) as any).every((n: any) => n.isAdmin), true);
+  assert.deepEqual(await listNatilleras(ev('andres')), []);
+
+  // Sin id: la más antigua (no cambia al unirse a otra). Con id: esa.
+  assert.equal(((await getMyNatillera(ev('luz'))) as any).natilleraId, a.natilleraId);
+  assert.equal(((await getMyNatillera(ev('luz', { params: { natilleraId: b.natilleraId } }))) as any).natilleraName, 'Amigos del barrio');
+  // Una natillera ajena o inexistente: 404 sin revelar nada.
+  await fails(getMyNatillera(ev('andres', { params: { natilleraId: a.natilleraId } })), 404, 'NatilleraNotFound');
+  await fails(getMyNatillera(ev('luz', { params: { natilleraId: 'no-existe' } })), 404, 'NatilleraNotFound');
 });

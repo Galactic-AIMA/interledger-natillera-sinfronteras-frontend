@@ -14,6 +14,7 @@ export const lambdas = [
   'get-invitation',
   'join-natillera',
   'get-my-natillera',
+  'list-natilleras',
 ];
 const common = { bundle: true, platform: 'node', target: 'node22', format: 'cjs', external: ['@aws-sdk/*'], logLevel: 'warning' };
 
