@@ -49,10 +49,13 @@ const methods = Object.fromEntries(
   (Object.keys(httpApi) as (keyof NatilleraApi)[]).filter((name): name is Method => name !== 'mode').map((name) => [name, pick(name)]),
 ) as Omit<NatilleraApi, 'mode'>;
 
-// Pagos reales: solo P2P (pagar a una persona y colectas de Metas). La cuota (`aporte`) necesita una
-// natillera que el back todavía no tiene, así que sigue de ejemplo. Se activa con `startPayment` en
-// EXPO_PUBLIC_REAL_METHODS; finish y get van al back solo para los pagos que él creó.
+// Pagos reales: P2P (pagar a una persona y colectas de Metas) con `startPayment` en EXPO_PUBLIC_REAL_METHODS.
+// La cuota (`aporte`) va real solo si la natillera también lo es (`getMyNatillera`): el back exige que la
+// natillera exista y que quien paga sea integrante. finish y get van al back solo para los pagos que él creó.
 const realPayments = realMethods.has('startPayment');
+const realNatillera = realMethods.has('getMyNatillera');
+// Con las cuentas guardadas en el back, el pago va por `customWalletName` y el back busca la billetera.
+const realAccounts = realMethods.has('listAccounts');
 const realPaymentIds = new Set<string>();
 // El back devuelve counterpartName vacío cuando se paga a una billetera directa (`walletAddress`):
 // el nombre que la persona escribió se recuerda aquí para mostrarlo en el resultado y el historial.
@@ -60,9 +63,10 @@ const realNames = new Map<string, string>();
 const withName = (p: Payment): Payment => (p.counterpartName ? p : { ...p, counterpartName: realNames.get(p.paymentId) ?? 'Billetera externa' });
 
 async function startHybridPayment(input: StartPaymentInput) {
-  if (!realPayments || input.kind !== 'p2p') return methods.startPayment(input);
+  const goesReal = realPayments && (input.kind === 'p2p' || (input.kind === 'aporte' && realNatillera));
+  if (!goesReal) return methods.startPayment(input);
   let body: StartPaymentInput = input;
-  if ('customWalletName' in input) {
+  if (input.kind === 'p2p' && 'customWalletName' in input && !realAccounts) {
     // Las cuentas guardadas siguen de ejemplo: el back recibe la billetera directa (extensión de P0).
     const account = (await mockApi.listAccounts()).find((a) => a.customWalletName === input.customWalletName);
     if (account) body = { kind: 'p2p', walletAddress: account.walletAddress, counterpartName: account.customWalletName, amount: input.amount };
