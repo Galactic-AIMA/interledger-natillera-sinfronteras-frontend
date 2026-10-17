@@ -3,10 +3,9 @@
 Todos los requests en un solo lugar, listos para copiar en **Git Bash** o **CloudShell**.
 Explicación del API: [API.md](API.md). Prueba guiada automática: `bash scripts/probar-pago.sh`.
 
-> Estado de las rutas al 2026-10-16: `POST /start-payment` responde (401 sin token). Las rutas del
-> contrato (`/payments`, `/payments/{id}`, `/payments/{id}/finish`) todavía **no están implementadas
-> en el stage `dev`** (responden 403 "Missing Authentication Token"). Mientras tanto, para iniciar
-> se puede usar `/start-payment` (ver 3b).
+> Estado al 2026-10-16 (noche): todas las rutas de este archivo están desplegadas en `dev` y piden
+> el **IdToken** (sin token → 401). Pagos: secciones 3–8. Bloque A (perfil, billeteras, cuentas
+> guardadas, natilleras): secciones 9–14. Primer pago real EUR→COP completado con este flujo.
 
 ## 0 · Variables
 
@@ -50,8 +49,21 @@ curl -s https://cognito-idp.us-east-2.amazonaws.com/ -H 'Content-Type: applicati
 Paga la wallet del usuario logueado; recibe `walletAddress` (debe ser otra wallet). Monto en
 unidades menores (`"100"` = 1,00) en la moneda de quien paga **o** de quien recibe.
 
+Ejemplo probado (EUR → COP): monto fijo **en la moneda de quien recibe** (4.000,00 COP).
+
 ```bash
-curl -s -X POST "$API/payments" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"kind":"p2p","walletAddress":"https://ilp.interledger-test.dev/<wallet-que-recibe>","value":"100","assetCode":"EUR","assetScale":2,"returnUrl":"exp://localhost:8081/--/retorno"}'
+curl -s -X POST "$API/payments" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"kind":"p2p","walletAddress":"https://ilp.interledger-test.dev/<wallet-que-recibe>","value":"400000","assetCode":"COP","assetScale":2,"returnUrl":"natillera://retorno"}'
+```
+
+> Con monto fijo en EUR hacia una wallet COP, Rafiki falla la cotización
+> (`502 OpenPaymentsError: non-positive receive amount`). Pendiente de revisar.
+
+Pagar con una cuenta guardada (sección 11): `"customWalletName":"<nombre>"` en lugar de `walletAddress`.
+
+Aporte a mi natillera (sección 12): `kind` `aporte` + `natilleraId`; al completarse suma a `fundTotal`.
+
+```bash
+curl -s -X POST "$API/payments" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"kind":"aporte","natilleraId":"'"$NATILLERA_ID"'","value":"5000000","assetCode":"COP","assetScale":2,"returnUrl":"natillera://retorno"}'
 ```
 
 Respuesta: `{ "paymentId", "redirectUrl", "debitAmount", "receiveAmount" }`.
@@ -60,19 +72,16 @@ Respuesta: `{ "paymentId", "redirectUrl", "debitAmount", "receiveAmount" }`.
 PAYMENT_ID=<paymentId>
 ```
 
-### 3b · Mientras `/payments` no esté implementada
-
-```bash
-curl -s -X POST "$API/start-payment" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"kind":"p2p","walletAddress":"https://ilp.interledger-test.dev/<wallet-que-recibe>","value":"100","assetCode":"EUR","assetScale":2,"returnUrl":"exp://localhost:8081/--/retorno"}'
-```
-
 ## 4 · Aprobar en la billetera (navegador)
 
-1. Abrir `redirectUrl` en Chrome con la sesión de la Test Wallet de **quien paga** → **Aceptar**.
-2. La billetera intenta abrir
-   `exp://localhost:8081/--/retorno?paymentId=…&interact_ref=…&hash=…`. Chrome no puede abrirla:
-   copiar la URL de la barra o de la consola (F12, "Failed to launch 'exp://…'").
-3. Sacar `interact_ref` y `hash`. Si el `hash` trae `%2B`, `%2F` o `%3D`, cambiarlos por `+`, `/` y `=`.
+1. Abrir `redirectUrl` (vence en ~10 min) con la sesión de la Test Wallet **dueña de la wallet que
+   paga** → **Accept**. Si la abre otra cuenta, la Test Wallet rechaza el grant.
+2. La billetera vuelve a `$API/payments/{id}/return`; el backend **finaliza el pago solo** y redirige a
+   `natillera://retorno?paymentId=…&result=ok|rejected|failed|pending`. En un PC el navegador no abre
+   `natillera://`: es normal.
+3. Si la Test Wallet muestra **"Internal Server Error"**, no significa que falló: revisar con la sección 6.
+
+La sección 5 queda como respaldo (opción A): solo hace falta si la app recibe `interact_ref` y `hash`.
 
 ```bash
 INTERACT_REF=<interact_ref>
@@ -96,6 +105,8 @@ Repetirlo devuelve el mismo estado sin pagar de nuevo.
 ```bash
 curl -s "$API/payments/$PAYMENT_ID" -H "Authorization: Bearer $TOKEN"
 ```
+
+`status`: `pending` (sin aprobar), `processing`, `completed`, `rejected` o `failed`.
 
 ## 7 · Historial — `GET /payments`
 
@@ -137,3 +148,92 @@ curl -s -i "$API/payments/no-existe" -H "Authorization: Bearer $TOKEN"
 
 Si un error llega como **200** con `{"errorMessage":"[400] …"}`, faltan las *respuestas de
 integración* del método ([API-PAGOS.md](API-PAGOS.md#respuestas-de-error-sin-proxy)).
+
+---
+
+Bloque A. Detalle de cada respuesta: [API-NATILLERAS.md](API-NATILLERAS.md). Errores con el mismo
+formato `{ "error", "message" }`.
+
+## 9 · Mi perfil — `GET /me`
+
+```bash
+curl -s "$API/me" -H "Authorization: Bearer $TOKEN"
+```
+
+Respuesta: `{ userId, sub, username, displayName, email, phone, walletAddress, assetCode, assetScale }`.
+`userId` es el **username** (el mismo valor que `members[].userId` de la natillera).
+
+## 10 · Verificar una wallet — `GET /wallets/verify?url=`
+
+Acepta la URL completa, `$ilp.interledger-test.dev/<id>` o solo el id.
+
+```bash
+curl -s "$API/wallets/verify?url=<wallet-id>" -H "Authorization: Bearer $TOKEN"
+```
+
+Respuesta: `{ "exists": true, "walletAddress", "assetCode", "assetScale" }` o `{ "exists": false, … }`.
+Host distinto de `ilp.interledger-test.dev` → **400** `InvalidWalletAddress`.
+
+## 11 · Cuentas guardadas — `POST /accounts` y `GET /accounts`
+
+Guardar (mismo nombre = se actualiza la wallet):
+
+```bash
+curl -s -X POST "$API/accounts" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"customWalletName":"Mamá","walletAddress":"https://ilp.interledger-test.dev/<wallet>"}'
+```
+
+Listar:
+
+```bash
+curl -s "$API/accounts" -H "Authorization: Bearer $TOKEN"
+```
+
+## 12 · Crear natillera — `POST /natilleras`
+
+`walletAddress` es la wallet del **fondo** (define la moneda). `quota` es opcional (por defecto
+50.000 COP o 20,00 en otra moneda), en unidades menores.
+
+```bash
+curl -s -X POST "$API/natilleras" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{"natilleraName":"Familia Pérez","walletAddress":"https://ilp.interledger-test.dev/<wallet-del-fondo>","quota":{"value":"5000000"}}'
+```
+
+Respuesta: la natillera con `natilleraId`, `invitationCode` (formato `FAMILIA-7K3M-Q9TD`), `joinUrl`,
+`fundTotal`, `members`, … Una persona solo puede estar en **una** natillera (otra vez → **409** `AlreadyMember`).
+
+```bash
+NATILLERA_ID=<natilleraId>
+```
+
+```bash
+CODE=<invitationCode>
+```
+
+## 13 · Mi natillera — `GET /natilleras/mine`
+
+```bash
+curl -s "$API/natilleras/mine" -H "Authorization: Bearer $TOKEN"
+```
+
+Respuesta: la natillera (con `fundTotal`, `myTotal`, `myStatus`, `members`, `lastRecords`) o `null`.
+
+## 14 · Invitación y unirse — `GET /invitations/{code}` y `POST /natilleras/join`
+
+Con el token de **otra** persona (que no esté en ninguna natillera):
+
+```bash
+TOKEN_2=<IdToken de otra persona>
+```
+
+Vista previa (no distingue mayúsculas):
+
+```bash
+curl -s "$API/invitations/$CODE" -H "Authorization: Bearer $TOKEN_2"
+```
+
+Respuesta: `{ code, natilleraName, adminName, quota }`. Código inexistente → **404** `InvitationNotFound`.
+
+Unirse (repetirlo no duplica):
+
+```bash
+curl -s -X POST "$API/natilleras/join" -H "Authorization: Bearer $TOKEN_2" -H 'Content-Type: application/json' -d '{"natilleraInvitation":"'"$CODE"'"}'
+```

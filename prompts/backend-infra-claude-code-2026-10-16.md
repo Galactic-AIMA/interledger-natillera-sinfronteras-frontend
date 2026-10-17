@@ -3,10 +3,12 @@
 - **Persona:** David Ciro (equipo backend)
 - **Herramienta:** Claude Code (app de escritorio), modelo Claude Opus 5.5
 - **Alcance:** setup del repo, lectura de la arquitectura, guía de montaje en AWS, Lambdas
-  `pre-signup` y `natillera-me`, requests de auth para el front.
+  `pre-signup` y `natillera-me`, requests de auth para el front, Lambdas y despliegue de pagos,
+  depuración del flujo en la Test Wallet, integración y despliegue del bloque A.
 
 Prompts **literales**, en orden. Las capturas de pantalla adjuntas se marcan como
-`[captura: ...]`. Se reemplazó por `[REDACTED]` una llave privada que se pegó por error.
+`[captura: ...]`. Se reemplazaron por `[REDACTED]` una llave privada que se pegó por error, una contraseña, datos de
+contacto y un token de sesión de Cognito.
 
 ---
 
@@ -221,3 +223,69 @@ Prompts **literales**, en orden. Las capturas de pantalla adjuntas se marcan com
 > Ya estan listos, ahora no demoraron nada en abrir el enlace
 >
 > Por cierto no podemos hacerlo con mi test wallet, o abrir la test wallet en mi navegador y abrirlo yo ?
+
+### 49
+> A que link o donde tienen que entrar para que acepten el pago?
+
+### 50
+> [captura: Test Wallet "Internal Server Error" al aceptar]
+> Salio internal server error
+>
+> https://wallet.interledger-test.dev/grant-interactions?interactId=a9f53231-ce30-4283-8b37-76ef43ceab0f&nonce=F13B605C6DFEF1C6&clientName=d8f12cf9&clientUri=https%3A%2F%2Filp.interledger-test.dev%2Ff9a1abde
+
+### 51
+> [captura: Secrets Manager con los secretos ciro, prueba1 y natillera/open-payments-client]
+> [captura: PowerShell, error "curl: option : blank argument"]
+> Duvan dice que puede ser que no sea la cuenta de melos si no la de él, puede ser.
+> En el secrets manager ya cree un secreto ciro.
+>
+> Que me quedó faltando del curl?
+> curl -s https://cognito-idp.us-east-2.amazonaws.com/ -H 'Content-Type: application/x-amz-json-1.1' -H 'X-Amz-Target: AWSCognitoIdentityProviderService.SignUp' -d '{"ClientId":"'"$CLIENT_ID"'","Username":"ciro-demo-euro","Password":"[REDACTED]","UserAttributes":[{"Name":"email","Value":"[REDACTED]"},{"Name":"phone_number","Value":"[REDACTED]"},{"Name":"custom:walletId","Value":"https://ilp.interledger-test.dev/ciroeur"}]}'
+
+### 52
+> [captura: PowerShell, SignUp responde "PreSignUp failed with error exports is not defined in ES module scope"]
+> no respondió UserConfirmed: true
+
+### 53
+> [salida pegada de PowerShell: SignUp respondió solo `Session` (valor [REDACTED])]
+
+### 54
+> [captura: Test Wallet "Internal Server Error" al aceptar el pago de ciroeur → cirocol]
+> [captura: DevTools Network, petición CAD72287CC7D7F88 con status 500]
+
+### 55
+> [captura: DevTools Headers: PATCH https://api-wallet.interledger-test.dev/grant-interactions/…/CAD72287CC7D7F88 → 500]
+
+### 56
+> [captura: mensaje del front: bloque A (natilleras, cuentas guardadas y /me) listo en la rama back/feat-natilleras, con instrucciones para probar y desplegar]
+> Listo, que sigue?
+> Esta imagen es de los de front
+
+### 57
+> Volvió Duvan, vamos a documentarle el codigo o dame un reporte de lo que vayas haciendo para que el tenga contexto y entienda lo que se está haciendo
+
+### 58
+> Sí, corre los tests y despliega el bloque A en dev, y agrega NATILLERA_RECORDS_TABLE a finish-payment y return-payment.
+
+### 59
+> Duvan, vio algo raro en la lambda de start-payment, así que el se va a encargar de esa por el momento, entonces no la toquemos, nosotros podemos concentrarnos en las lambdas de get y finish-payments, como vas con el despliegue del bloque A?
+> y que puede ir haciendo Camilo mientras tanto?
+
+### 60
+> Como vas?
+
+### 61
+> Duvan necesita que le demos permisos de secrets manager a la lambda, como se los damos
+
+### 62
+> A Duvan ya no le aparecen los logs en CloudWatch, sabes por que?
+
+### 63
+> A Duvan ya le aparecen los logs, con que podemos seguir? o hay que esperar a alguien?
+
+### 64
+> Sí: integra y despliega el arreglo de Henry (solo get-me), luego actualiza CURLS.md con las rutas nuevas y pon al día AI_USAGE.md y prompts.
+
+### 65
+> [captura: mensaje de Henry: ramas viejas borradas y PR #2 (GET /me con userId = username) pendiente de revisión de Ciro]
+> Lo de Henry

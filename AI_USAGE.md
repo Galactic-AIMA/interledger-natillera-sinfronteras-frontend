@@ -2,7 +2,7 @@
 
 Divulgación del uso de IA según la [política de IA de la hackathon](https://interledger.org/hackathon/ai-policy/).
 Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts literales en
-[`/prompts`](prompts/). Última actualización: 2026-10-16.
+[`/prompts`](prompts/). Última actualización: 2026-10-17.
 
 ## Tools Used
 
@@ -50,6 +50,21 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
   InitiateAuth contra Cognito y un ejemplo con `fetch` para React Native.
 - **Verificaciones automáticas:** consultas a la wallet de prueba (`GET` público), una llamada de
   prueba al endpoint de Cognito y la validación de sintaxis de las Lambdas con `node --check`.
+- **Opción B del retorno** ([`deploy/payments/src/return-payment.ts`](deploy/payments/src/return-payment.ts),
+  [`complete.ts`](deploy/payments/src/complete.ts)): la billetera vuelve por https al backend, que
+  verifica el hash, finaliza el pago y redirige a la app. Una revisión automática marcó un open
+  redirect; se corrigió revalidando `returnUrl` contra la lista cerrada.
+- **Depuración del primer pago real:** Claude restauró la Lambda `pre-signup` (tenía cargado otro
+  código), leyó el código fuente de la Test Wallet y de Rafiki para explicar el "Internal Server Error"
+  al aceptar, consultó el estado del grant y los logs, y confirmó el **primer pago EUR→COP completado**
+  (2,13 EUR → 4.000 COP). David hizo la aprobación en su Test Wallet.
+- **Diagnóstico de AWS para Duvan:** el `AccessDenied` al leer un secreto venía de una SCP de la
+  organización (no de IAM); y la falta de logs, de log streams borrados sin invocaciones nuevas.
+  Reporte para el equipo: [`docs/REPORTE-DUVAN.md`](docs/REPORTE-DUVAN.md).
+- **Integración y despliegue del bloque A** (código de Camilo y Henry): Claude revisó el código y el
+  script, corrió las pruebas, desplegó en `dev` y probó las 8 rutas. Una revisión automática marcó que
+  el código de invitación (`PALABRA-1234`) se podía adivinar; se cambió a `PALABRA-XXXX-XXXX`
+  (Crockford base32, ~2^40). Requests: [`docs/CURLS.md`](docs/CURLS.md) secciones 9–14.
 
 **Camilo · Claude Code (bloque A: natilleras, cuentas guardadas y perfil)**
 
@@ -83,7 +98,7 @@ Los commits hechos con IA llevan `Co-Authored-By: Claude` en el historial de git
 **Henry Taborda · Claude Code (apoyo del front al back, 2026-10-16 noche)**
 
 - **`GET /me` con `userId = username`:** Claude cambió `getMe` en [`deploy/natilleras/src/domain.ts`](deploy/natilleras/src/domain.ts) (el `sub` va en `sub`), ajustó la prueba y regeneró `dist/get-me.zip`. Motivo: la app compara `me.userId` con `members[].userId` (username) en cuota y recurrente.
-- **Revisión humana:** Henry pidió el cambio; Ciro lo revisa y despliega con `infra/deploy-natilleras.sh`.
+- **Revisión humana:** Henry pidió el cambio; Ciro lo revisó y Claude lo desplegó (solo la Lambda `get-me`).
 
 ## Prompt Log
 
@@ -91,6 +106,6 @@ Prompts literales en [`/prompts`](prompts/):
 
 | Archivo | Persona | Herramienta | Tema |
 |---|---|---|---|
-| [`prompts/backend-infra-claude-code-2026-10-16.md`](prompts/backend-infra-claude-code-2026-10-16.md) | David | Claude Code | Setup del repo, infra AWS, Cognito, pre-signup, API Gateway |
+| [`prompts/backend-infra-claude-code-2026-10-16.md`](prompts/backend-infra-claude-code-2026-10-16.md) | David | Claude Code | Setup del repo, infra AWS, Cognito, pre-signup, API Gateway, pagos, bloque A |
 | [`prompts/henry-claude-code-2026-10-16.md`](prompts/henry-claude-code-2026-10-16.md) | Henry | Claude Code | `GET /me` con `userId = username` |
 | [`prompts/backend-natilleras-claude-code-2026-10-16.md`](prompts/backend-natilleras-claude-code-2026-10-16.md) | Camilo | Claude Code | Bloque A: natilleras, cuentas guardadas, perfil |
