@@ -289,3 +289,20 @@ contacto y un token de sesión de Cognito.
 ### 65
 > [captura: mensaje de Henry: ramas viejas borradas y PR #2 (GET /me con userId = username) pendiente de revisión de Ciro]
 > Lo de Henry
+
+### 66
+> Duvan ya quitó la linea, como entiendo que start-payment ya está listo, eso libera otras cosas en las que avanzar cierto?
+
+### 67
+> Guarda todo el estado en memoria, Arregla lo del start-payment, sin cambiar demasiado el codigo de Duvan, y probemos el funcionamiento
+>
+> Duvan dejó este codigo, revisa para que es:
+>
+> [código pegado: grant.continue del outgoing payment grant y outgoing payment (pasos 6 y 7 del ejemplo de Open Payments)]
+
+### 68
+> [captura: mensaje de Henry pidiendo revisar y fusionar el PR #6 (redesplegar solo start-payment) antes del video de las 08:00]
+> Mensaje de Henry
+
+### 69
+> [captura: Test Wallet "Internal Server Error" al aceptar €1.85]
