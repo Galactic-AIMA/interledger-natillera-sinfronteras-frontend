@@ -9,7 +9,10 @@ Backend de **Natillera sin Fronteras**, proyecto de hackathon de Interledger. Un
 es un fondo de ahorro colectivo: los socios aportan periódicamente a una billetera común y el
 fondo presta a sus integrantes. Los pagos se hacen con **Open Payments** (Interledger).
 
-- Frontend: app nativa en **React Native** (otro repo; aquí solo backend).
+- **Repo único desde el 2026-10-17 (PR #10 del front):** este backend vive en `backend/` del repo
+  `Galactic-AIMA/interledger-natillera-sinfronteras-frontend`; el repo de Duvan quedó congelado y
+  las ramas de abajo son históricas. Los arreglos nuevos van aquí, por PR al `main` del repo único.
+- Frontend: app nativa en **React Native** (Expo), en la raíz del repo único.
 - Backend: **AWS** — API Gateway + Lambda, Cognito, DynamoDB, Secrets Manager, EventBridge Scheduler.
 - Pagos: SDK `@interledger/open-payments` (ver `app/package.json`).
 - Equipo backend: Duvan Jaramillo (dueño del repo) y David Ciro.

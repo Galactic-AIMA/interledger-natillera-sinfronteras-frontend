@@ -12,6 +12,12 @@ terminar. Fechas absolutas (YYYY-MM-DD). Reglas de uso en [CLAUDE.md](CLAUDE.md)
   conexión con el frontend), `david` (David + sus
   sesiones de Claude; las sesiones salen de `david` con `feat/<carril>-...` y vuelven a `david`).
 
+- 2026-10-17 06:55 COL — **Vigente:** el back vive en `backend/` del repo del front (PR #10) y el repo
+  de Duvan quedó congelado (`main` = `e32dcda`, `master` = `63ef6a3`; sin PR abiertos). Sin cambios de
+  código del back desde las 04:45. Pendiente antes de las 11:00: prueba real de préstamos fase 2 y cuota
+  automática (`docs/prueba-apk-2026-10-17.md` del front), confirmar `NATILLERA_RECORDS_TABLE` en
+  `finish-payment` y `return-payment` en AWS, y completar `AI_USAGE.md` (Duvan, Henry y créditos).
+
 ### Foto al 2026-10-17 ~01:30 COL (stage `dev`, API `lofoyfhz52`, us-east-2)
 
 | Parte | Estado |

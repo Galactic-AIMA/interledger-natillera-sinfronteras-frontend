@@ -12,6 +12,8 @@ Orden de Camilo: la interfaz del front es la **versión final** (tag `v0.11.0`, 
 | Arreglar un bug que **rompa la demo**, solo con OK explícito de Camilo en el chat y diff mínimo | «Mejoras», pulido visual, rediseños, textos nuevos, refactors |
 | Tag `v1.0.0` sobre el commit entregado a las 11:00 | Cambiar la versión de la interfaz |
 
+Única excepción ya aplicada: los avisos sonoros de `v0.12.0` (solo sonido, sin cambio visual), por pedido de Camilo.
+
 Si alguien pide un cambio de interfaz, **no se hace**: se le recuerda esta regla y se le remite a Camilo.
 
 ## Qué es
@@ -35,7 +37,9 @@ App móvil de **Natillera sin Fronteras** para la Hackatón Open Payments de Int
 | [docs/api-contrato.md](docs/api-contrato.md) | Contrato con el back (auth con Cognito ya confirmado por el back) |
 | [docs/INTEGRACION-EXPO-GO.md](docs/INTEGRACION-EXPO-GO.md) | Rama de Henry lista para `main`, cambios en `src/api` y pruebas en Expo Go |
 | [docs/prueba-apk-2026-10-17.md](docs/prueba-apk-2026-10-17.md) | **Prueba con sesión en el APK** antes de las 11:00: pago real, cuota automática, préstamo fase 2 y metas (solo en el celular) |
-| [docs/estado-2026-10-17-madrugada.md](docs/estado-2026-10-17-madrugada.md) | **Estado más reciente** (17/10 03:25) de front y back: qué está desplegado en `dev`, la fase 2 sin desplegar y lo que falta para la entrega, por prioridad (incluye unir los dos repos). Los de la noche y la tarde quedan como histórico |
+| [MEMORY.md](MEMORY.md) → «Estado general» | **Estado vigente** (la primera línea es la más reciente) y checklist de entrega |
+| [CHANGELOG.md](CHANGELOG.md) | Versiones de la app y del back (SemVer, tags `vX.Y.Z` y `backend-vX.Y.Z`) |
+| [docs/estado-2026-10-17-madrugada.md](docs/estado-2026-10-17-madrugada.md) | Estado del 17/10 03:25 (histórico, como los de la noche y la tarde) |
 | [docs/logs-back-2026-10-16.md](docs/logs-back-2026-10-16.md) | Informe de logs del back (errores vistos desde el front) |
 | [docs/openapi.yaml](docs/openapi.yaml) | Contrato exacto de la API que llama la app (20 rutas, P0 marcadas) |
 | [docs/COORDINACION-BACK.md](docs/COORDINACION-BACK.md) | Estado del back verificado, camino mínimo para el pago real, formatos JSON exactos y en qué ayuda el front |

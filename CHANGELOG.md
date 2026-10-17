@@ -7,10 +7,13 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 - Cada versión nombra su commit; con `git show <tag>` se ve el estado exacto.
 
 ## [Sin publicar]
+### Documentación
+- Pitch en HTML con 13 láminas (5:15): «Lo que se está perdiendo», figuras de Doña Rosa, Luz y Andrés, «Una colecta con nombre propio» y «El impacto»; modo claro y oscuro y capturas incrustadas (`208e34d`, `d9fbab6`, `5f1f4c1`). Sin cambios en la app.
+- Tablero, `CLAUDE.md`, memoria del back y `AI_USAGE.md` al día (06:55).
 
 ## App (front)
 
-## [0.12.0] · 2026-10-17 06:50 · 🔊 sonidos
+## [0.12.0] · 2026-10-17 06:50 · `4f6b68c` · 🔊 sonidos
 Única excepción a la interfaz congelada, por pedido de Camilo: solo sonido, sin cambio visual.
 ### Agregado
 - Aviso sonoro «ding-ding» al completar un pago (P2P, aporte a una meta o desembolso de un préstamo).
