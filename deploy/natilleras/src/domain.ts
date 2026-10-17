@@ -164,9 +164,11 @@ const getNatillera = async (natilleraId: string) => {
   return (Item as NatilleraItem | undefined) ?? null;
 };
 
-// Una persona = una natillera (la app muestra "Mi natillera"). Scan con filtro: en la hackatón hay
-// pocas filas; con más volumen convendría guardar el natilleraId en user-info.
-const findNatilleraOf = async (username: string) => {
+// Una persona puede estar en varias natilleras. Scan con filtro: en la hackatón hay pocas filas; con
+// más volumen convendría un índice por integrante (tabla aparte username → natilleraId).
+// Orden estable: la más antigua primero, así "mi natillera" por defecto no cambia al unirse a otra.
+const findNatillerasOf = async (username: string) => {
+  const items: NatilleraItem[] = [];
   let ExclusiveStartKey: Record<string, any> | undefined;
   do {
     const page = await dynamo.send(
@@ -177,11 +179,22 @@ const findNatilleraOf = async (username: string) => {
         ExclusiveStartKey,
       }),
     );
-    if (page.Items?.[0]) return page.Items[0] as NatilleraItem;
+    items.push(...((page.Items ?? []) as NatilleraItem[]));
     ExclusiveStartKey = page.LastEvaluatedKey;
   } while (ExclusiveStartKey);
-  return null;
+  return items.sort((a, b) => (a.createdAt ?? '').localeCompare(b.createdAt ?? ''));
 };
+
+// GET /natilleras: resumen para el selector de la app (sin aportes, para que sea liviano).
+export const listMyNatilleras = async (username: string) =>
+  (await findNatillerasOf(username)).map((n) => ({
+    natilleraId: n.natilleraId,
+    natilleraName: n.natilleraName,
+    isAdmin: n.author === username,
+    membersCount: n.integrants.length,
+    asset: { assetCode: n.assetCode, assetScale: n.assetScale },
+    quota: n.quota,
+  }));
 
 // Cuota sugerida si el body no la trae: 50.000 en COP; 20,00 en otras monedas.
 const defaultQuota = (assetCode: string, assetScale: number): Amount => ({
@@ -202,7 +215,6 @@ const parseQuota = (value: unknown, assetCode: string, assetScale: number): Amou
 
 export const createNatillera = async (username: string, body: Record<string, any>) => {
   const natilleraName = requiredString(body.natilleraName, 'natilleraName', 60);
-  if (await findNatilleraOf(username)) throw new HttpError(409, 'AlreadyMember', 'User already belongs to a natillera');
   const wallet = await requireWallet(body.walletAddress);
 
   // El código es único: se reintenta si ya existe (4 dígitos por palabra alcanzan de sobra para la demo).
@@ -243,11 +255,7 @@ export const getInvitation = async (rawCode: unknown) => {
 export const joinNatillera = async (username: string, body: Record<string, any>) => {
   const natillera = await findByInvitation(normalizeCode(body.natilleraInvitation));
   if (!natillera) throw new HttpError(404, 'InvitationNotFound', 'Invitation not found');
-  const current = await findNatilleraOf(username);
-  if (current && current.natilleraId !== natillera.natilleraId) {
-    throw new HttpError(409, 'AlreadyMember', 'User already belongs to another natillera');
-  }
-  if (!current) {
+  if (!natillera.integrants.includes(username)) {
     try {
       await dynamo.send(
         new UpdateCommand({
@@ -263,11 +271,21 @@ export const joinNatillera = async (username: string, body: Record<string, any>)
       if (error?.name !== 'ConditionalCheckFailedException') throw error;
     }
   }
-  return getMyNatillera(username);
+  return getMyNatillera(username, natillera.natilleraId);
 };
 
-export const getMyNatillera = async (username: string) => {
-  const natillera = await findNatilleraOf(username);
+// GET /natilleras/mine[?natilleraId=]: con id, esa natillera (solo si es integrante: si no, 404 para no
+// revelar ids ajenos); sin id, la primera de la persona o null.
+export const getMyNatillera = async (username: string, natilleraId?: string) => {
+  let natillera: NatilleraItem | null;
+  if (natilleraId) {
+    natillera = await getNatillera(natilleraId);
+    if (!natillera || !natillera.integrants.includes(username)) {
+      throw new HttpError(404, 'NatilleraNotFound', 'Natillera not found');
+    }
+  } else {
+    natillera = (await findNatillerasOf(username))[0] ?? null;
+  }
   if (!natillera) return null;
   return toView(natillera, username, await listRecords(natillera.natilleraId));
 };

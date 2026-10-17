@@ -9,6 +9,7 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
 | Herramienta | Modelo | Quién | Plan / créditos |
 |---|---|---|---|
 | Claude Code (app de escritorio) | Claude Opus 5.5 | David Ciro | Plan de pago de Claude (suscripción); consumo de créditos: _por completar_ |
+| Claude Code (app de escritorio) | Claude Opus 5.5 | Camilo | Plan de pago de Claude (suscripción) |
 | _(Duvan: agregar si usó alguna herramienta de IA)_ | | Duvan Jaramillo | |
 | Claude Code (app de escritorio) | Claude Opus 5.5 | Henry Taborda (front, apoyo al back) | Plan de pago de Claude (suscripción) |
 
@@ -81,6 +82,12 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
   con el mismo patrón VTL de pagos, y las probó en local con un DynamoDB en memoria (6 casos).
 - **Despliegue** ([`infra/deploy-natilleras.sh`](infra/deploy-natilleras.sh)): script de AWS CLI que
   Claude escribió; lo ejecuta David Ciro. Doc: [`docs/API-NATILLERAS.md`](docs/API-NATILLERAS.md).
+- **Varias natilleras por persona** (rama `feat/natilleras-multi`): sin el bloqueo de una sola, Lambda
+  `list-natilleras` y `mine?natilleraId=`, con su prueba local y el despliegue actualizado.
+- **Diagnóstico de `start-payment` desde el front:** el registro técnico de la app mostró el 502 por falta de
+  `dynamodb:Query` en `user-info`; el pedido quedó en `MEMORY.md`.
+- **Coordinación del back:** reparto con Henry (préstamos), mensajes para Ciro y Duvan y la rama
+  `feat/natilleras` rebasada sobre `david` y subida para revisión de Duvan antes de desplegar.
 
 Los commits hechos con IA llevan `Co-Authored-By: Claude` en el historial de git.
 
