@@ -74,6 +74,7 @@ export default function Entrar() {
               {formError}
             </AppText>
           ) : null}
+          <Button label="¿Olvidó su contraseña?" variant="ghost" onPress={() => router.push('/recuperar-clave')} />
           <Button label="Todavía no tengo cuenta" variant="ghost" onPress={() => router.replace('/crear-cuenta')} />
         </View>
       </FadeIn>
