@@ -94,3 +94,9 @@ Las capturas de pantalla se describen entre corchetes.
 > lejos en la distancia, juntos en el ahorro
 >
 > haz lo anterior implementa y continua
+
+## 21
+
+> [captura del celular: el splash con los anillos incompletos, cortes corridos] Mira en la pantalla de carga esta fallando el logo para que lo tengas en cuenta
+>
+> tambien quiero que los logs se vean de una manera mas navagable y dejame un botonsito de clipboard en llos para copiarlos todos de  una

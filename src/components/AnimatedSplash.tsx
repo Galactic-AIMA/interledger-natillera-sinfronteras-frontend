@@ -11,7 +11,7 @@ import Animated, {
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
-import Svg, { Circle } from 'react-native-svg';
+import Svg, { Circle, G } from 'react-native-svg';
 
 import { colors, fonts } from '@/theme';
 
@@ -38,19 +38,22 @@ function Ring({ index, progress }: { index: number; progress: SharedValue<number
   const ring = BRAND_RINGS[index];
   // progress 0 → anillo vacío; 1 → cerrado.
   const animatedProps = useAnimatedProps(() => ({ strokeDashoffset: CIRCUMFERENCE * (1 - progress.value) }));
+  // La máscara va en el grupo y la rotación en el círculo: si la rotación quedara en el mismo
+  // elemento que la máscara, también giraría los cortes y los cruces saldrían corridos.
   return (
-    <AnimatedCircle
-      cx={ring.cx}
-      cy={ring.cy}
-      r={RING_RADIUS}
-      fill="none"
-      stroke={ring.color}
-      strokeWidth={RING_STROKE}
-      strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
-      transform={`rotate(${ring.start} ${ring.cx} ${ring.cy})`}
-      mask={`url(#splash-ring-${index})`}
-      animatedProps={animatedProps}
-    />
+    <G mask={`url(#splash-ring-${index})`}>
+      <AnimatedCircle
+        cx={ring.cx}
+        cy={ring.cy}
+        r={RING_RADIUS}
+        fill="none"
+        stroke={ring.color}
+        strokeWidth={RING_STROKE}
+        strokeDasharray={`${CIRCUMFERENCE} ${CIRCUMFERENCE}`}
+        transform={`rotate(${ring.start} ${ring.cx} ${ring.cy})`}
+        animatedProps={animatedProps}
+      />
+    </G>
   );
 }
 
