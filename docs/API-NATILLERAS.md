@@ -19,7 +19,8 @@ Todos con `Authorization: Bearer <IdToken>`. El usuario sale de `cognito:usernam
 | `POST /accounts` | `save-account` | `{ walletAddress, customWalletName }` | `{ customWalletName, walletAddress, assetCode, assetScale }` |
 | `GET /accounts` | `list-accounts` | — | lista de cuentas guardadas |
 | `POST /natilleras` | `create-natillera` | `{ natilleraName, walletAddress, quota? }` | Natillera (vista) |
-| `GET /natilleras/mine` | `get-my-natillera` | — | Natillera (vista) o `null` |
+| `GET /natilleras` | `list-natilleras` | — | `[{ natilleraId, natilleraName, isAdmin, membersCount, asset, quota }]`, la más antigua primero |
+| `GET /natilleras/mine[?natilleraId=]` | `get-my-natillera` | `natilleraId` opcional | Natillera (vista): la pedida, o sin id la más antigua; `null` si no tiene |
 | `GET /invitations/{code}` | `get-invitation` | — | `{ code, natilleraName, adminName, quota }` |
 | `POST /natilleras/join` | `join-natillera` | `{ natilleraInvitation }` | Natillera (vista) |
 
@@ -38,16 +39,17 @@ Todos con `Authorization: Bearer <IdToken>`. El usuario sale de `cognito:usernam
 
 | Tema | Regla |
 |---|---|
-| Una natillera por persona | Crear o unirse estando en otra → `409 AlreadyMember`. Unirse dos veces a la misma es idempotente |
+| Varias natilleras por persona | Desde 2026-10-16 noche se puede crear o unirse a varias (ya no hay `409`). Unirse dos veces a la misma es idempotente y devuelve esa natillera. `mine` con un `natilleraId` ajeno → `404 NatilleraNotFound` |
 | ADMIN | Quien crea (`author`). `userId` de los socios = username (es lo que guarda `integrants` y lo que valida `start-payment`) |
 | Código de invitación | Primera palabra del nombre + 4 dígitos (`FAMILIA-7K3M-Q9TD`), único; se busca sin importar mayúsculas |
 | Cuota | Opcional en el body (`quota.value`); siempre en la moneda del fondo. Por defecto 50.000 COP (u otras monedas: 20,00) |
 | Total del fondo | Suma de `natillera-records` en la moneda del fondo − `disbursedTotal` de la natillera (lo suma el carril de préstamos) |
 | Al día / debe | "Al día" si tiene al menos un aporte en el mes calendario actual (hora Colombia); si no, "debe" 1 cuota |
-| Buscar mi natillera | Scan con `contains(integrants, username)`: suficiente para la demo |
+| Buscar mis natilleras | Scan con `contains(integrants, username)`: suficiente para la demo |
+| Front | Sin selector, la app ve siempre la más antigua: tras crear una segunda debe pedir `mine?natilleraId=` con la nueva |
 
 **Errores**: `400 BadRequest | InvalidWalletAddress | InvalidAmount`, `401 Unauthorized`, `404 UserNotFound |
-InvitationNotFound`, `409 AlreadyMember`, `502 WalletLookupFailed`, `500 InternalError`.
+InvitationNotFound | NatilleraNotFound`, `502 WalletLookupFailed`, `500 InternalError`.
 
 ## Tablas
 
@@ -67,7 +69,7 @@ AWS_PROFILE=natillera bash infra/deploy-natilleras.sh
 ```
 
 El script crea las tablas que falten (si existen con otras llaves, se detiene), el índice, una política
-inline `natilleras-dynamo` en el rol de `start-payment`, las 8 Lambdas, las rutas y el deployment del stage.
+inline `natilleras-dynamo` en el rol de `start-payment`, las 9 Lambdas, las rutas y el deployment del stage.
 
 **Pendiente en pagos para que el fondo sume:** `finish-payment` y `return-payment` necesitan
 `NATILLERA_RECORDS_TABLE=natillera-records` en su entorno (hoy `deploy-payments.sh` no la pone y

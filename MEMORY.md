@@ -22,9 +22,14 @@ terminar. Fechas absolutas (YYYY-MM-DD). Reglas de uso en [CLAUDE.md](CLAUDE.md)
 | Tabla de pagos | **`natillera-payments`** (PK `paymentId`, GSI `author-index`). `payments-history` = tabla de eventos de Duvan (`source`+`id`), vacía |
 | Permisos del rol `PowerUserRole` | **Sin `PowerUserAccess`** (lo quitó otra sesión a las 22:27). Inline: `natilleras-dynamo` (logs, secrets `natillera/*`, user-info solo lectura), `prestamos-dynamo`, `pagos-dynamo`, `presignup-cognito` (ListUsers + PutItem user-info) |
 | Bloque A (perfil, wallets, cuentas, natilleras) | ✅ desplegado y probado |
+| Multi-natilleras (PR #8 de Camilo, `GET /natilleras`) | ✅ desplegado 2026-10-17 (deployment `xk83n3`); respaldos: get-me v2, resto del bloque A v1 |
 | Préstamos fase 1 (+ multi-natillera) | ✅ desplegado y probado; aprobar/desembolsar = fase 2 (501) |
-| Aportes (`kind:'aporte'`) | Soportado en el `start-payment` actual; falta probar uno real |
-| Recurrente, desembolso, cobro de cuotas | ❌ sin código (modo demo en el front) |
+| Préstamos fase 2 + cuota automática (Henry, 2026-10-17 madrugada) | 🟡 código y 11 pruebas locales en `feat/credito-fase2-recurrente` (PR a `david`); **sin desplegar**: lo despliega Ciro con `infra/deploy-prestamos.sh` |
+| Aportes (`kind:'aporte'`) | ✅ **probado real** 2026-10-17 07:45Z: prueba3 → Familia Ciro 50.000 COP, `fundTotal` subió |
+| Préstamos fase 2 + cuota automática (PR #9 de Henry) | Desplegado 2026-10-17 (deployment `1x7kck`; tabla `natillera-grants`, política `cobros-op`, secreto por grant `natillera/grants/<id>`). Respaldos: simulate-loan v1, list-loan-requests v2, get-my-loans v2, request-loan v2, decide-loan v1. **Falta prueba real** (riesgos: desembolso con debit fijo COP→EUR, CreateSecret vs SCP) |
+| Llaves | Una sola: `natillera/open-payments-client`. Restos a borrar post-hackatón: secretos `prueba1`, `ciro` y `privateKey` de prueba1 en user-info |
+| CLI de AWS | **Solo David** despliega (Camilo sin acceso) |
+| `return-payment` | 2026-10-17: responde el 302 de una (`result=pending`) y completa el pago con auto-invocación asíncrona (política inline `pagos-async`). Respaldo v3. Motivo: el "Internal Server Error" de la Test Wallet sale al tocar Accept otra vez mientras espera la redirección |
 | Rama `main` | Existe; `david` tiene lo último. PR #6 de Henry **no se debe correr** (vuelve a `payments-history`) |
 
 ## Metas acordadas con todo el equipo (2026-10-16)
@@ -55,7 +60,7 @@ P2 = flujos 7, 8, 9, 13; P3 = flujos 10, 11, 12B; P4 no está en el diagrama.
 | `pagos` | Flujos 3 y 4 (start / finish payment), 5 y 6 (cuentas guardadas y pago a ellas) | — | duvdev | — | libre |
 | `usuarios` | Flujos 1 y 2 (signup con verificación de wallet, login Cognito) y 13 (lecturas GET) | Middleware de auth (sub del token) | duvdev | — | libre |
 | `natillera` | Flujos 5, 7, 8 y 13 sin préstamos (cuentas, crear, unirse, `/me`, `/natilleras/mine`) | Tablas `saved-accounts`, `natillera-registration` | Camilo (rama `feat/natilleras`) | Claude Code de Camilo, 2026-10-16 noche | código + pruebas locales listos; falta desplegar (Ciro) |
-| `credito` | Flujos 10, 11, 12, 12B (préstamos, recurrentes, cobro de cuotas) | — | Henry (10, 11 y lecturas de préstamos; 12/12B quedan en demo) | Claude Code de Henry, 2026-10-16 noche | reclamado |
+| `credito` | Flujos 10, 11, 12, 12B (préstamos, recurrentes, cobro de cuotas) | — | Henry (10, 11, 12 y 12B; falta el cobro programado) | Claude Code de Henry, 2026-10-16 noche y 2026-10-17 | reclamado |
 
 Orden sugerido: `infra` + `op-core` primero (desbloquean todo); `usuarios` en paralelo con
 mocks; luego `pagos`, `natillera`, `credito`.
@@ -252,8 +257,21 @@ Decisiones técnicas aún sin tomar:
   (`get-me`, `verify-wallet`, `save-account`, `list-accounts`, `create-natillera`, `get-invitation`,
   `join-natillera`, `get-my-natillera`), despliegue en `infra/deploy-natilleras.sh` y doc en
   [docs/API-NATILLERAS.md](docs/API-NATILLERAS.md). `npm test`: 6/6 con DynamoDB en memoria. Sin desplegar.
+- 2026-10-16 ~22:00 · `feat/natilleras` rebasada sobre `david` (`3f96a3b`) y subida al repo back **para
+  revisión de Duvan**; no se despliega en AWS hasta su visto bueno. Henry sube `feat/prestamos` igual.
 - Contrato con préstamos: el fondo = aportes − `disbursedTotal` (string, unidades menores) de la fila en
   `natillera-registration`; préstamos lo suma al quedar `completed` un desembolso.
+- 2026-10-16 ~23:00 · `feat/natilleras-multi` (sale de `david`): **varias natilleras por persona**. Sin `409
+  AlreadyMember`; Lambda nueva `list-natilleras` (`GET /natilleras`); `GET /natilleras/mine?natilleraId=`
+  (sin id = la más antigua; ajena = 404). `npm test` 7/7. Sin desplegar: revisión de Duvan, luego Ciro
+  corre `infra/deploy-natilleras.sh`. El front ya tiene su selector (front `main` = `15b3f81`): sin este back
+  desplegado la app sigue con una sola natillera.
+- 2026-10-16 ~23:30 · Pedido a `start-payment` (Duvan): con `prueba3` da 502 porque `PowerUserRole` no tiene
+  `dynamodb:Query` sobre `user-info`; usar `GetItem` (`source` + `id: 1`, como `getUser` de pagos) o dar el permiso.
 
 ### credito
-- (vacío)
+- 2026-10-17 (madrugada) · Henry · fase 2 de préstamos y cuota automática en `feat/credito-fase2-recurrente`:
+  permiso de cobro (12B), desembolso al aprobar (11) y `/recurring` (12) con `charge-now`. Tabla nueva
+  `natillera-grants`; tokens en Secrets Manager (`natillera/grants/*`), nunca en DynamoDB. El desembolso usa la
+  tabla y las rutas de retorno de pagos **sin cambiarlas**. Política nueva `cobros-op` (no toca las otras).
+  Pendiente: despliegue (Ciro, avisando en el grupo) y el cobro programado de cuotas (Scheduler).

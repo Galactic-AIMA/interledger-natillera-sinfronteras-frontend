@@ -9,6 +9,7 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
 | Herramienta | Modelo | Quién | Plan / créditos |
 |---|---|---|---|
 | Claude Code (app de escritorio) | Claude Opus 5.5 | David Ciro | Plan de pago de Claude (suscripción); consumo de créditos: _por completar_ |
+| Claude Code (app de escritorio) | Claude Opus 5.5 | Camilo | Plan de pago de Claude (suscripción) |
 | _(Duvan: agregar si usó alguna herramienta de IA)_ | | Duvan Jaramillo | |
 | Claude Code (app de escritorio) | Claude Opus 5.5 | Henry Taborda (front, apoyo al back) | Plan de pago de Claude (suscripción) |
 
@@ -72,6 +73,17 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
   CloudTrail encontró que al rol le habían quitado permisos y que `payments-history` se había recreado con
   otro esquema; agregó una política mínima y una tabla nueva. Resultado: un segundo pago real EUR→COP
   completado.
+- **Vista previa de la tasa** ([`deploy/payments/src/preview-payment.ts`](deploy/payments/src/preview-payment.ts)):
+  `POST /payments/preview`, a partir de la fase 1 de Duvan (incoming payment + quote, sin guardar nada).
+- **Revisión, fusión y despliegue (2026-10-17):** varias natilleras (PR #8 de Camilo) y préstamos fase 2 con
+  cuota automática (PR #9 de Henry). Claude corrió las pruebas (7/7 y 11/11), revisó el manejo de grants y
+  tokens y la compatibilidad con `return-payment`, publicó versiones de respaldo, desplegó y verificó las rutas.
+  David aprobó cada fusión y despliegue.
+- **Revisión de llaves:** Claude verificó en el código y en AWS que solo existe la llave del cliente y que el
+  registro de una persona no crea secretos; dejó anotada la deuda (llaves de prueba guardadas por usuario).
+- **Coordinación y documentación:** [`docs/COORDINACION.md`](docs/COORDINACION.md) (dueños, reglas para no
+  pisarse, quién despliega), y la puesta al día del README, [`docs/API.md`](docs/API.md),
+  [`docs/API-PRESTAMOS.md`](docs/API-PRESTAMOS.md) y [`docs/CURLS.md`](docs/CURLS.md) con lo desplegado.
 
 **Camilo · Claude Code (bloque A: natilleras, cuentas guardadas y perfil)**
 
@@ -81,6 +93,20 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
   con el mismo patrón VTL de pagos, y las probó en local con un DynamoDB en memoria (6 casos).
 - **Despliegue** ([`infra/deploy-natilleras.sh`](infra/deploy-natilleras.sh)): script de AWS CLI que
   Claude escribió; lo ejecuta David Ciro. Doc: [`docs/API-NATILLERAS.md`](docs/API-NATILLERAS.md).
+- **Varias natilleras por persona** (rama `feat/natilleras-multi`): sin el bloqueo de una sola, Lambda
+  `list-natilleras` y `mine?natilleraId=`, con su prueba local y el despliegue actualizado.
+- **Diagnóstico de `start-payment` desde el front:** el registro técnico de la app mostró el 502 por falta de
+  `dynamodb:Query` en `user-info`; el pedido quedó en `MEMORY.md`.
+- **Coordinación del back:** reparto con Henry (préstamos), mensajes para Ciro y Duvan y la rama
+  `feat/natilleras` rebasada sobre `david` y subida para revisión de Duvan antes de desplegar.
+- **PR #8 de varias natilleras (2026-10-17):** Claude trajo `david` a `feat/natilleras-multi` (entró sin
+  conflictos; la política `natilleras-dynamo` conserva los bloques `Logs` y `Secrets`), corrió typecheck y
+  `npm test` (7/7), recompiló los zips y abrió el PR a `david`. Camilo pidió el trabajo; David lo revisó, lo
+  fusionó y lo desplegó.
+- **Prueba real de aporte y préstamo desde la app (2026-10-17):** Claude manejó el emulador por `adb` y leyó
+  el registro técnico; Camilo inició sesión y aprobó en la Test Wallet (Claude no escribe contraseñas).
+  Resultado: `prueba3` aportó $50.000 COP a «Familia Ciro» (`fundTotal` de $0 a $50.000) y pidió un préstamo
+  de $20.000 en 4 cuotas. La Test Wallet mostró «Internal Server Error» al aceptar y el pago igual quedó completo.
 
 Los commits hechos con IA llevan `Co-Authored-By: Claude` en el historial de git.
 
@@ -107,6 +133,13 @@ Los commits hechos con IA llevan `Co-Authored-By: Claude` en el historial de git
 - **`GET /me` con `userId = username`:** Claude cambió `getMe` en [`deploy/natilleras/src/domain.ts`](deploy/natilleras/src/domain.ts) (el `sub` va en `sub`), ajustó la prueba y regeneró `dist/get-me.zip`. Motivo: la app compara `me.userId` con `members[].userId` (username) en cuota y recurrente.
 - **Revisión humana:** Henry pidió el cambio; Ciro lo revisó y Claude lo desplegó (solo la Lambda `get-me`).
 - **Préstamos, fase 1 (sin Open Payments):** Claude escribió [`deploy/prestamos`](deploy/prestamos) (simular, pedir, listar pendientes, mi préstamo, rechazar; 5 Lambdas con el patrón del bloque A y 5 pruebas locales), [`infra/deploy-prestamos.sh`](infra/deploy-prestamos.sh) y [`docs/API-PRESTAMOS.md`](docs/API-PRESTAMOS.md). Henry decidió el alcance; Ciro revisa y despliega.
+- **Préstamos fase 2 y cuota automática (2026-10-17):** Henry pidió que todo funcionara de forma real y que lo
+  hiciéramos nosotros sin pisar el trabajo de los demás. Claude escribió en [`deploy/prestamos`](deploy/prestamos)
+  el permiso de cobro de las cuotas, el desembolso al aprobar y `/recurring` con `charge-now` (`op.ts`, `grants.ts`,
+  `recurring.ts`, 5 Lambdas nuevas y 5 pruebas con Open Payments falso), extendió
+  [`infra/deploy-prestamos.sh`](infra/deploy-prestamos.sh) y documentó en
+  [`docs/API-PRESTAMOS.md`](docs/API-PRESTAMOS.md). Copió lo necesario de pagos en vez de editarlo y decidió
+  guardar los tokens en Secrets Manager por la regla del equipo. Henry revisa; Ciro despliega.
 - **README del repo:** Claude escribió [`README.md`](README.md) (arquitectura, pago con Open Payments, rutas, despliegue, seguridad) y el pedido de la rama `main` en `MEMORY.md`; Henry lo revisó.
 
 ## Prompt Log
@@ -117,4 +150,6 @@ Prompts literales en [`/prompts`](prompts/):
 |---|---|---|---|
 | [`prompts/backend-infra-claude-code-2026-10-16.md`](prompts/backend-infra-claude-code-2026-10-16.md) | David | Claude Code | Setup del repo, infra AWS, Cognito, pre-signup, API Gateway, pagos, bloque A |
 | [`prompts/henry-claude-code-2026-10-16.md`](prompts/henry-claude-code-2026-10-16.md) | Henry | Claude Code | `GET /me` con `userId = username`; préstamos fase 1 |
+| [`prompts/henry-claude-code-2026-10-17.md`](prompts/henry-claude-code-2026-10-17.md) | Henry | Claude Code | Préstamos fase 2 (permiso de cobro y desembolso) y cuota automática |
 | [`prompts/backend-natilleras-claude-code-2026-10-16.md`](prompts/backend-natilleras-claude-code-2026-10-16.md) | Camilo | Claude Code | Bloque A: natilleras, cuentas guardadas, perfil |
+| [`prompts/camilo-pr8-y-aporte-real-2026-10-17.md`](prompts/camilo-pr8-y-aporte-real-2026-10-17.md) | Camilo | Claude Code | PR #8 (varias natilleras) y prueba real de aporte y préstamo |

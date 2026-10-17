@@ -306,3 +306,51 @@ contacto y un token de sesión de Cognito.
 
 ### 69
 > [captura: Test Wallet "Internal Server Error" al aceptar €1.85]
+
+### 70
+> Fusiona el PR #7. Lo de Camilo cuales son las instrucciones de la multi-natilleras
+
+### 71
+> Listo, que mas nos falta?
+
+### 72
+> Fusiona el PR #8
+
+### 73
+> Noticias, no pude configurar el acceso al proyecto para que CAmilo entrar por AWS CLI, por el momento solo yo tengo acceso al CLI
+
+### 74
+> Sí, ya avisé al grupo. Corre infra/deploy-natilleras.sh en dev y verifica GET /natilleras.
+
+### 75
+> Bien, mientras con que puedo avanzar yo?
+
+### 76
+> [mensaje de Henry pidiendo revisar y desplegar el PR #9: préstamos fase 2 y cuota automática]
+
+### 77
+> Sí: cuando termine deploy-natilleras y verifiques GET /natilleras, fusiona el PR #9 en david y corre deploy-prestamos.sh desde david. Luego verifica las 10 rutas (401 sin token) y dame las versiones de respaldo.
+
+### 78
+> [captura del avance de Henry + mensaje de Camilo: aporte real OK, préstamo de $20.000 pedido]
+
+### 79
+> Nos surgió esta duda ... ¿es obligatorio crear un Secret Manager por cuenta para cada wallet? ... [respuesta pegada]
+
+### 80
+> En paralelo, quiero que revises bien cómo vamos, cuál es el estado y en qué me pueden apoyar el compañero Henry para ir avanzando mejor.
+
+### 81
+> Bien, Henry va a hacer las pruebas de la fase 2, mientras pongámonos al tanto de lo que falta, actualizar el readme, el openapi.yaml, actualizar el AI Usage y lo que falta
+
+### 82
+> [captura: Test Wallet "Internal Server Error" en un aporte de 50.000 COP] Haciendo las pruebas de la fase 2 salió esto, es lo que dices que es normal? no deberia salir así, porque donde salga así en el pitch o explicando la app es maluco
+
+### 83
+> Mensaje de Camilo: "David, abrí el PR #10 … solo AI_USAGE y prompts de mi sesión …"
+
+### 84
+> Sí: haz que return-payment redirija de una y complete el pago en segundo plano, pruébalo y despliégalo. Y fusiona el PR #10 de Camilo.
+
+### 85
+> [captura de las instrucciones de prueba de Henry, pasos 6–8] Un aporte de Henry analizalo

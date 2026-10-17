@@ -1,4 +1,6 @@
-# API — préstamos, fase 1 (sin Open Payments)
+# API — préstamos y cuota automática
+
+> **Desplegado en `dev` el 2026-10-17** (fase 1 y fase 2, deployment `1x7kck`). La fase 2 está más abajo.
 
 Flujos 10, 11 y 13 de [ARQUITECTURA.md](ARQUITECTURA.md), solo la parte que **no** usa Open Payments.
 Rama `back/feat-prestamos` (sale de `david`). Código en `deploy/prestamos/src/`, con un handler por endpoint y la lógica en `domain.ts`.
@@ -41,12 +43,12 @@ Las formas son las de `src/api/types.ts` y `docs/openapi.yaml` del front:
 | Uno a la vez | **Por natillera** (una persona puede estar en varias): si tiene en esa natillera una solicitud pendiente o un préstamo con cuotas por pagar, responde `409 LoanAlreadyActive` |
 | Quién decide | La ADMIN (`author` de la natillera). A cualquier otra persona se le responde `404`, para no revelar solicitudes ajenas |
 | Rechazar | Escritura condicional `pending → rejected`. Repetir la decisión da `409 AlreadyDecided` |
-| Aprobar | Exige `repaymentAuthorized` (`409 RepaymentNotAuthorized`). Con las cuotas autorizadas responde **`501 DisbursementNotAvailable`** hasta que exista la fase 2 |
+| Aprobar | Exige `repaymentAuthorized` (`409 RepaymentNotAuthorized`). Con las cuotas autorizadas inicia el **desembolso** (ver fase 2) |
 | `receiveAmount` de la simulación | Es el mismo monto: la conversión a la moneda de quien pide sale de la quote del desembolso (fase 2) |
 
 **Errores:** `400 BadRequest | InvalidAmount | InvalidInstallments`, `401 Unauthorized`, `403 Forbidden`,
 `404 NatilleraNotFound | LoanRequestNotFound`, `409 LoanAlreadyActive | InsufficientFunds | AlreadyDecided |
-RepaymentNotAuthorized`, `501 DisbursementNotAvailable`, `500 InternalError`.
+RepaymentNotAuthorized`, `500 InternalError` (los de la fase 2, más abajo).
 
 ## Tabla
 
@@ -56,15 +58,58 @@ RepaymentNotAuthorized`, `501 DisbursementNotAvailable`, `500 InternalError`.
 
 Solo lee `natillera-registration` y `natillera-records`, sin escribir en ellas.
 
-## Fase 2 (pendiente, con Open Payments, en coordinación con Duvan)
+## Fase 2 y cuota automática (con Open Payments)
 
-`GET /loans/mine` ya lee los campos que la fase 2 debe escribir, así que basta con que esa fase los escriba:
+Rama `feat/credito-fase2-recurrente` (sale de `david`). Mismo paquete `deploy/prestamos` (carril `credito`):
+`op.ts` (cliente, billeteras, returnUrl y hash, copiados de pagos sin tocar sus archivos), `grants.ts`
+(grants recurrentes) y `recurring.ts`. Todas con `Authorization: Bearer <IdToken>` e integración VTL.
 
-| Paso | Ruta | Escribe en `natillera-loan-request` |
+| Método y ruta | Lambda | Entrada | Respuesta 200 |
+|---|---|---|---|
+| `POST /loans/requests/{requestId}/repayment-grant` | `start-repayment-grant` | `{ returnUrl }` | `RecurringGrant` con `redirectUrl` |
+| `POST /loans/repayment/{grantId}/finish` | `finish-repayment-grant` | `{ interact_ref, hash, result }` | `RecurringGrant` (`active` → la solicitud queda `repaymentAuthorized`) |
+| `POST /loans/requests/{requestId}/decision` | `decide-loan` | `{ accepted: true, returnUrl }` | `{ status: "approved", paymentId, redirectUrl, debitAmount, receiveAmount }` (antes: 501) |
+| `POST /recurring` | `start-recurring` | `{ natilleraId, author?, value, assetCode, assetScale, returnUrl }` | `RecurringGrant` con `redirectUrl` |
+| `POST /recurring/{grantId}/finish` | `finish-recurring` | `{ interact_ref, hash, result }` | `RecurringGrant` |
+| `POST /recurring/{grantId}/charge-now` | `charge-recurring-now` | — | `Payment` (`kind: "aporte"`) |
+
+```json
+// RecurringGrant (src/api/types.ts del front)
+{ "grantId": "uuid", "redirectUrl": "https://…", "limitPerCharge": { "value": "4725000", "assetCode": "COP", "assetScale": 2 },
+  "repetitions": 3, "status": "pending | active | rejected" }
+```
+
+### Cómo funciona
+
+| Tema | Regla |
+|---|---|
+| Grant recurrente | `outgoing-payment` con `limits.debitAmount` (tope por cobro) e `interval` `R<n>/<ahora>/P1M`, sobre la billetera de quien paga |
+| Tope por cobro | Quote de hoy (llega la cuota exacta al fondo) + **5 %** de margen por la tasa (`GRANT_LIMIT_MARGIN_BPS=500`) |
+| Repeticiones | Préstamo: una por cuota. Cuota de la natillera: hasta diciembre, contando el mes actual (`RECURRING_REPETITIONS` la fija) |
+| Vuelta de la billetera | `interact.finish.uri` = `<returnUrl>?grantId=<id>`: vuelve directo a la app con `interact_ref` y `hash`, y la app llama a `…/finish` (opción A). Se verifica el hash igual que en pagos |
+| Tokens | **Nada de tokens en DynamoDB.** El de continuación y, ya aprobado, el access token y su URL de manejo van en Secrets Manager: `natillera/grants/<grantId>` |
+| Cobro (`charge-now`) | Incoming payment en el fondo + quote + outgoing payment con el token guardado; si el token venció (401) se rota una vez. Por encima del tope → `409 LimitExceeded`. Se guarda en `natillera-payments` (historial de quien paga) y en `natillera-records` (aporte, a nombre de `author` si paga por otro) |
+| Desembolso | Sale **exacto** el monto del préstamo de la billetera del fondo (quote con `debitAmount`) a la de quien pidió; la tesorera lo aprueba en la billetera del fondo. Se guarda como `PaymentRecord` en `natillera-payments`, así lo completan **return-payment / finish-payment de pagos sin cambios** y la app lo sigue con `GET /payments/{id}` |
+| Préstamo activo | Al leer (mis préstamos, pendientes, decidir) se mira el pago del desembolso: `completed` → `approved`, `disbursed`, `receivedAmount`, `disbursedAt` y `disbursedTotal` += monto (una sola vez, escritura condicional); `rejected` / `failed` → se libera para intentarlo de nuevo |
+
+**Errores nuevos:** `400 InvalidReturnUrl | InvalidHash | InvalidWalletAddress`, `404 GrantNotFound`,
+`409 AlreadyAuthorized | DisbursementInProgress | GrantNotActive | GrantExhausted | LimitExceeded`,
+`502 OpenPaymentsError`. Ya no existe el `501 DisbursementNotAvailable`.
+
+### Tabla nueva
+
+| Tabla | PK | Quién escribe |
 |---|---|---|
-| Autorizar el cobro de las cuotas (flujo 12B) | `POST /loans/requests/{id}/repayment-grant` + `POST /loans/repayment/{grantId}/finish` | `repaymentAuthorized = true` (+ token del grant) |
-| Desembolso al aprobar (flujo 11) | en `decide-loan`, en lugar del 501: pago del fondo a quien pidió → `{ status: "approved", paymentId, redirectUrl, debitAmount, receiveAmount }` | al quedar `completed`: `status = approved`, `disbursed = true`, `receivedAmount`; y `disbursedTotal` += monto en la natillera |
-| Cobro de cada cuota | programado | `paidCount` += 1 |
+| `natillera-grants` | `grantId` (S) | `start-*` / `finish-*` / `charge-recurring-now`. Solo datos sin acceso: dueña, natillera, monto, tope, intervalo, billeteras, nonces, estado y cobros hechos |
+
+Escribe además en tablas que ya existen, con la forma de sus dueños: `natillera-payments` (fila de pago),
+`natillera-records` (aporte, igual que `complete.ts`) y `disbursedTotal` en `natillera-registration`.
+
+### Pendiente
+
+- Cobro programado de cada cuota del préstamo (`paidCount`): el grant ya queda aprobado; falta la Lambda y
+  el EventBridge Scheduler. La app no lo pide para la demo.
+- Cobro mensual automático de la cuota: hoy se cobra con `charge-now`; el Scheduler queda para después.
 
 ## Desplegar (Ciro)
 
@@ -73,9 +118,10 @@ cd deploy/prestamos && npm install && npm test && npm run build && cd ../..
 AWS_PROFILE=natillera bash infra/deploy-prestamos.sh
 ```
 
-Crea la tabla y sus dos índices (uno a la vez), una política inline `prestamos-dynamo` en el rol de
-`start-payment`, las 5 Lambdas (cada una con versión de respaldo si ya existía), las rutas con VTL y el
-deployment. Sin token, las 5 rutas deben responder `401`.
+Crea las tablas `natillera-loan-request` (con sus dos índices, uno a la vez) y `natillera-grants`, dos políticas
+inline en el rol de `start-payment` (`prestamos-dynamo` y la nueva `cobros-op`: tablas de la fase 2, la llave del
+cliente y los secretos `natillera/grants/*`), las 10 Lambdas (cada una con versión de respaldo si ya existía), las
+rutas con VTL y el deployment. Sin token, las 10 rutas deben responder `401`. **Avisar en el grupo antes.**
 
 ## Probar
 
@@ -89,11 +135,11 @@ curl -s -X POST "$API/loans/requests/<requestId>/decision" -H "Authorization: Be
   -H 'Content-Type: application/json' -d '{"accepted":false}'
 ```
 
-Para correr las pruebas en local, sin AWS (DynamoDB en memoria): `npm test` en `deploy/prestamos` (6 casos).
+Para correr las pruebas en local, sin AWS (DynamoDB, secretos y Open Payments en memoria): `npm test` en `deploy/prestamos` (11 casos).
 
 ## En el front
 
-Con esto desplegado se pueden poner como reales `simulateLoan,requestLoan,getMyLoans,listPendingLoanRequests`.
-**`decideLoan` conviene dejarla en demo hasta la fase 2:** la pantalla 21 solo deja aprobar con las cuotas
-autorizadas, y eso hoy pasa en el modo demo. Si `requestLoan` es real pero `startLoanRepaymentGrant` no,
-la solicitud real nunca queda autorizada. Para el pitch, el camino completo de préstamos sigue en demo.
+Con esto desplegado, la app ya tiene en `EXPO_PUBLIC_REAL_METHODS` todos los métodos (rama `feat/prestamos-reales`
+del front): préstamos completos (`startLoanRepaymentGrant`, `finishLoanRepaymentGrant`, `decideLoan`) y cuota
+automática (`startRecurring`, `finishRecurring`, `chargeRecurringNow`). Hasta que se despliegue, esas rutas responden
+403 y la app lo explica sin inventar resultados.

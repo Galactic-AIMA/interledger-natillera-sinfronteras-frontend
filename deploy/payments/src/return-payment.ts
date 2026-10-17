@@ -7,6 +7,13 @@
 // Seguridad: sin un hash válido no cambia nada. El hash incluye el nonce que solo conoce el backend
 // y el nonce del servidor de autorización, así que no se puede fabricar. Un "rechazo" sin hash no
 // modifica el pago (queda pending y vence solo): nadie puede anular el pago de otra persona.
+//
+// Rapidez: con el hash verificado responde el 302 de una (result=pending) y completa el pago en segundo
+// plano, invocándose a sí misma de forma asíncrona. Mientras la Test Wallet espera la redirección sigue
+// mostrando "Accept"; si la persona lo toca otra vez, la billetera muestra "Internal Server Error"
+// (aunque el pago sale bien). La app consulta GET /payments/{id} hasta el estado final.
+// Si la invocación asíncrona falla, se completa aquí mismo como antes.
+import { InvokeCommand, LambdaClient } from '@aws-sdk/client-lambda';
 import { GetCommand } from '@aws-sdk/lib-dynamodb';
 import { dynamo, env, validateReturnUrl, verifyInteractHash, type PaymentRecord } from './shared';
 import { completePayment } from './complete';
@@ -48,7 +55,23 @@ const backToApp = (p: PaymentRecord, result: string) => {
   return page(302, titles[result] ?? 'Natillera', 'Puede volver a la app.', target);
 };
 
+const lambda = new LambdaClient({ region: process.env.AWS_REGION });
+const SELF = process.env.AWS_LAMBDA_FUNCTION_NAME;
+
+// Evento interno (solo por lambda:Invoke, nunca desde API Gateway): completa el pago en segundo plano.
+type AsyncComplete = { asyncComplete: { paymentId: string; interactRef: string; hash: string } };
+
+const completeInBackground = async ({ paymentId, interactRef, hash }: AsyncComplete['asyncComplete']) => {
+  const { Item } = await dynamo.send(new GetCommand({ TableName: env.paymentsTable, Key: { paymentId } }));
+  const payment = Item as PaymentRecord | undefined;
+  if (!payment || payment.status !== 'pending') return;
+  if (!verifyInteractHash(payment, interactRef, hash)) return;
+  const result = await completePayment(payment, interactRef);
+  console.log('async complete', paymentId, result?.status ?? 'already processing');
+};
+
 export const handler = async (event: any) => {
+  if (event?.asyncComplete) return completeInBackground((event as AsyncComplete).asyncComplete);
   try {
     const paymentId = event?.pathParameters?.id;
     if (typeof paymentId !== 'string' || !UUID.test(paymentId)) {
@@ -72,6 +95,18 @@ export const handler = async (event: any) => {
     if (!verifyInteractHash(payment, interactRef, hash)) {
       console.log('return with invalid hash', paymentId);
       return page(400, 'Enlace inválido', 'No pudimos verificar la aprobación de la billetera.');
+    }
+
+    if (SELF) {
+      try {
+        const payload: AsyncComplete = { asyncComplete: { paymentId, interactRef, hash } };
+        await lambda.send(
+          new InvokeCommand({ FunctionName: SELF, InvocationType: 'Event', Payload: Buffer.from(JSON.stringify(payload)) }),
+        );
+        return backToApp(payment, 'pending');
+      } catch (error) {
+        console.log('async invoke failed, completing inline', error);
+      }
     }
 
     const result = await completePayment(payment, interactRef);

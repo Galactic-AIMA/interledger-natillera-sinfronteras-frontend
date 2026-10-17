@@ -56,6 +56,9 @@ ROLE_NAME_P="$(aws lambda get-function-configuration --function-name start-payme
 T_ARN="arn:aws:dynamodb:$AWS_REGION:$ACCOUNT:table"
 echo "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"Payments\",\"Effect\":\"Allow\",\"Action\":[\"dynamodb:GetItem\",\"dynamodb:PutItem\",\"dynamodb:UpdateItem\",\"dynamodb:Query\"],\"Resource\":[\"$T_ARN/$PAYMENTS_TABLE\",\"$T_ARN/$PAYMENTS_TABLE/index/*\",\"$T_ARN/payments-history\",\"$T_ARN/payments-history/index/*\"]}]}" > "$TMP/pagos-policy.json"
 aws iam put-role-policy --role-name "$ROLE_NAME_P" --policy-name pagos-dynamo --policy-document "$(fpath "$TMP/pagos-policy.json")"
+# return-payment responde el 302 de una y se invoca a sí misma (asíncrona) para completar el pago.
+echo "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Sid\":\"SelfInvoke\",\"Effect\":\"Allow\",\"Action\":\"lambda:InvokeFunction\",\"Resource\":\"arn:aws:lambda:$AWS_REGION:$ACCOUNT:function:return-payment\"}]}" > "$TMP/pagos-async.json"
+aws iam put-role-policy --role-name "$ROLE_NAME_P" --policy-name pagos-async --policy-document "$(fpath "$TMP/pagos-async.json")"
 
 # ---------------------------------------------------------------- 2. Lambdas
 BASE_URL="https://$API_ID.execute-api.$AWS_REGION.amazonaws.com/$STAGE"

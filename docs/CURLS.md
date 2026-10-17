@@ -307,5 +307,36 @@ Rechazar → `{ "status": "rejected" }`. Repetir → **409** `AlreadyDecided`. S
 curl -s -X POST "$API/loans/requests/$REQUEST_ID/decision" -H "Authorization: Bearer $TOKEN_ADMIN" -H 'Content-Type: application/json' -d '{"accepted":false}'
 ```
 
-Aprobar (`"accepted":true`) todavía no desembolsa: **409** `RepaymentNotAuthorized` mientras no se
-autoricen las cuotas, y **501** `DisbursementNotAvailable` hasta la fase 2 (Open Payments).
+Aprobar (`"accepted":true`) exige que quien pidió haya autorizado las cuotas (§20); si no, **409**
+`RepaymentNotAuthorized`. Con ellas, responde el **desembolso**: `{ status: "approved", paymentId, redirectUrl,
+debitAmount, receiveAmount }`. La tesorera abre `redirectUrl` con la cuenta dueña de la **billetera del fondo** y
+acepta; `return-payment` lo completa, y al leer el préstamo queda `approved` y `disbursed`.
+
+```bash
+curl -s -X POST "$API/loans/requests/$REQUEST_ID/decision" -H "Authorization: Bearer $TOKEN_ADMIN" -H 'Content-Type: application/json'   -d '{"accepted":true,"returnUrl":"natillera://retorno"}'
+curl -s "$API/payments/$PAYMENT_ID" -H "Authorization: Bearer $TOKEN_ADMIN"   # completed
+```
+
+## 20 · Autorizar las cuotas del préstamo — `POST /loans/requests/{requestId}/repayment-grant`
+
+Lo hace **quien pidió**, antes de que la tesorera apruebe. Devuelve un `RecurringGrant` con `redirectUrl`: se abre
+con la cuenta dueña de su billetera y se acepta. La billetera vuelve a `natillera://retorno?grantId=…&interact_ref=…&hash=…`
+y la app llama a `finish` con esos valores.
+
+```bash
+curl -s -X POST "$API/loans/requests/$REQUEST_ID/repayment-grant" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json'   -d '{"returnUrl":"natillera://retorno"}'
+curl -s -X POST "$API/loans/repayment/$GRANT_ID/finish" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json'   -d '{"interact_ref":"<interact_ref>","hash":"<hash>"}'   # status: active
+```
+
+## 21 · Cuota automática — `POST /recurring`, `…/finish` y `…/charge-now`
+
+Monto en la **moneda del fondo**. Mismo patrón: aprobar en la billetera y luego `finish`. `charge-now` cobra una
+cuota ya (para la demo) y la registra como aporte; por encima del tope aprobado → **409** `LimitExceeded`.
+
+```bash
+curl -s -X POST "$API/recurring" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json'   -d '{"natilleraId":"'$NATILLERA_ID'","value":"5000000","assetCode":"COP","assetScale":2,"returnUrl":"natillera://retorno"}'
+curl -s -X POST "$API/recurring/$GRANT_ID/finish" -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json'   -d '{"interact_ref":"<interact_ref>","hash":"<hash>"}'
+curl -s -X POST "$API/recurring/$GRANT_ID/charge-now" -H "Authorization: Bearer $TOKEN"   # Payment kind=aporte
+```
+
+Sin token, las 10 rutas de préstamos y cuota automática responden **401**.
