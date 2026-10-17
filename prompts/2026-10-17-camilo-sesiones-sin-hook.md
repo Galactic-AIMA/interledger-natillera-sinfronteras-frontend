@@ -50,3 +50,7 @@ Sesiones de Claude Code (Opus 5.5, escritorio) abiertas en la raíz del workspac
 13. `Ya toqué Accept una vez. Sigue.`
 14. `Eh, me está gustando mucho el video. Está bacano, está chévere. Eh, aquí se me ocurrió una nueva idea. Tenemos 88% de tokens. Entonces, eh, quiero que le agreguemos con la API de Vertex, con el Gemini, eh, la voz. Que le agreguemos explicando toda la aplicación. Voz de mujer o de hombre. Vamos a hacerlo con voz de mujer. Listo. Voz bien elegante, bien linda, bien atractiva. Y y que explique todo el proceso de la aplicación. Genera un guión y, y lo haces. Y quiero que también des una versión de, del video en crudo como tal, solo con la musiquita. Del video pues de, como tal de la aplicación. Entonces, hacerle con esto. Eh, hablo con lo que queda de tokens. Y que te rinda.`
 15. (con una captura de pantalla adjunta) `me encanto` / `Quiero hacer un cambio y es en esa escena que mete a open payments quiero que pongamos el logo de interledger open payments con una animación bien elegante y demosle fuerza a toda la solucion de interledger con open payments` / `si tendrias que modifica el audio y el video pero reahcelo` / `si necesitas hacerme rpeguntas hazmelas` / `hazlo con el 9% que queda`
+16. (con una captura de pantalla adjunta) `te falto solo una cosa pone el logo de interledger` / `puede hacer esta mision rapidamente?`
+17. `Continua`
+18. `No hace falta, la demo va con el APK o el video.`
+19. `Perfecto, actualiza la memoria de, de todo el proceso. Y, y melos.`
