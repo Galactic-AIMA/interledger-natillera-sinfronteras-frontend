@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
   title: Natillera sin Fronteras — API que consume la app
-  version: 2026-10-16
+  version: 2026-10-16-noche
   description: |
     Contrato que implementa el front en src/api/httpApi.ts (tipos en src/api/types.ts).
     Escrito por el front el 2026-10-16 ~16:30 a partir de docs/api-contrato.md y de los tipos reales;
@@ -10,15 +10,18 @@ info:
 
     Reglas:
     - Registro y login NO pasan por esta API: van directo a Cognito (docs/api-contrato.md).
-    - Todo lleva `Authorization: Bearer <AccessToken de Cognito>`. El usuario sale de
+    - Todo lleva `Authorization: Bearer <IdToken de Cognito>` (autorizador Cognito del API REST; en la app `EXPO_PUBLIC_AUTH_TOKEN_TYPE=id`). El usuario sale de
       `requestContext.authorizer.jwt.claims` (`sub`, `username`), nunca del body.
     - Montos: `Amount` en unidades menores, `value` siempre string.
     - Errores: `{ error, message }` con su status. La app muestra su propio texto según el status.
+    - Desplegado en `dev` (2026-10-16 noche, back rama `david`): /me, /wallets/verify, /accounts, /natilleras (POST), /natilleras/mine,
+      /invitations/{code}, /natilleras/join y /payments (POST, GET, /{id}, /{id}/finish). Sin desplegar: GET /natilleras
+      (varias natilleras, rama `feat/natilleras-multi`), /payments/preview, /recurring/* y /loans/*: la app las usa en modo de ejemplo.
     - P0 (pago real del video): /me, /natilleras/mine, POST /payments, /payments/{id}/finish, GET /payments/{id}.
 servers:
-  - url: https://{apiId}.execute-api.us-east-2.amazonaws.com
+  - url: https://{apiId}.execute-api.us-east-2.amazonaws.com/dev
     variables:
-      apiId: { default: pendiente }
+      apiId: { default: lofoyfhz52 }
 security:
   - cognitoJwt: []
 
@@ -41,6 +44,9 @@ paths:
   /natilleras/mine:
     get:
       summary: "[P0] Mi natillera (flujo 13). null si no está en ninguna"
+      description: Sin natilleraId devuelve la por defecto (la más antigua). Con natilleraId, esa natillera si la persona es integrante.
+      parameters:
+        - { name: natilleraId, in: query, required: false, schema: { type: string } }
       responses:
         "200":
           description: OK
@@ -49,6 +55,12 @@ paths:
               schema: { oneOf: [ { $ref: "#/components/schemas/Natillera" }, { type: "null" } ] }
 
   /natilleras:
+    get:
+      summary: Mis natilleras (selector de la 10). Si responde 403/404/405 la app usa solo /natilleras/mine
+      responses:
+        "200":
+          description: OK
+          content: { application/json: { schema: { type: array, items: { $ref: "#/components/schemas/NatilleraSummary" } } } }
     post:
       summary: Crear natillera (flujo 7)
       requestBody:
@@ -325,6 +337,16 @@ components:
         paidByName: { type: string, description: Quién lo pagó }
         amount: { $ref: "#/components/schemas/Amount" }
         createdAt: { type: string, format: date-time }
+    NatilleraSummary:
+      type: object
+      required: [natilleraId, natilleraName, isAdmin, membersCount, asset, quota]
+      properties:
+        natilleraId: { type: string }
+        natilleraName: { type: string }
+        isAdmin: { type: boolean }
+        membersCount: { type: integer }
+        asset: { type: object, properties: { assetCode: { type: string }, assetScale: { type: integer } } }
+        quota: { $ref: "#/components/schemas/Amount" }
     Natillera:
       type: object
       required: [natilleraId, natilleraName, walletAddress, asset, quota, invitationCode, joinUrl, isAdmin, fundTotal, myTotal, myStatus, members, lastRecords]

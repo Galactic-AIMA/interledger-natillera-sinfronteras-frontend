@@ -20,7 +20,8 @@ App móvil de **Natillera sin Fronteras** para la Hackatón Open Payments de Int
 | [docs/open-payments.md](docs/open-payments.md) | Resumen técnico de Open Payments y trampas |
 | [docs/api-contrato.md](docs/api-contrato.md) | Contrato con el back (auth con Cognito ya confirmado por el back) |
 | [docs/INTEGRACION-EXPO-GO.md](docs/INTEGRACION-EXPO-GO.md) | Rama de Henry lista para `main`, cambios en `src/api` y pruebas en Expo Go |
-| [docs/estado-2026-10-16-tarde.md](docs/estado-2026-10-16-tarde.md) | **Estado más reciente** de front y back y lo que falta para la entrega, por prioridad |
+| [docs/estado-2026-10-16-noche.md](docs/estado-2026-10-16-noche.md) | **Estado más reciente** (23:40) de front y back, `.env` del modo híbrido y lo que falta para la entrega, por prioridad. El de la tarde queda como histórico |
+| [docs/logs-back-2026-10-16.md](docs/logs-back-2026-10-16.md) | Informe de logs del back (errores vistos desde el front) |
 | [docs/openapi.yaml](docs/openapi.yaml) | Contrato exacto de la API que llama la app (20 rutas, P0 marcadas) |
 | [docs/COORDINACION-BACK.md](docs/COORDINACION-BACK.md) | Estado del back verificado, camino mínimo para el pago real, formatos JSON exactos y en qué ayuda el front |
 | [docs/ENCARGO-SIGNUP-COGNITO.md](docs/ENCARGO-SIGNUP-COGNITO.md) | Encargo del registro directo a Cognito (hecho) |

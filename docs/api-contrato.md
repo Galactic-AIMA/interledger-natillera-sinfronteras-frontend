@@ -6,6 +6,8 @@ Basado en `docs/ARQUITECTURA.md` (rama `david` del back, transcripción del draw
 >
 > **Fuente de verdad (decisión de Camilo, 2026-10-16):** `docs/openapi.yaml` en el repo back; este archivo es el resumen del front. Si difieren, manda el OpenAPI. El proceso conjunto está en `docs/INTEGRACION.md` del back (rama `docs/integracion-front`, por subir). Hasta que el back apruebe el borrador, nada es definitivo. Mientras tanto el front trabaja solo con mocks hasta la madrugada.
 
+> **Estado 2026-10-16 ~23:40 (manda sobre las líneas de estado de abajo):** el back desplegó en `dev` el **bloque A**: `GET /me`, `GET /wallets/verify`, `GET/POST /accounts`, `POST /natilleras`, `GET /natilleras/mine`, `GET /invitations/{code}`, `POST /natilleras/join` y `POST /payments` (opción B), `POST /payments/{id}/finish`, `GET /payments/{id}`, `GET /payments`. `/start-payment` es la ruta vieja: `EXPO_PUBLIC_PAYMENTS_START_PATH` va vacío. Siguen sin back: `GET /natilleras` (varias natilleras, rama `feat/natilleras-multi` sin fusionar), `/payments/preview`, `/recurring/*` y `/loans/*`. Resumen: [estado-2026-10-16-noche.md](estado-2026-10-16-noche.md).
+
 Estado 2026-10-16 ~15:50: en el back solo existe `GET /me` (URL del API sin publicar). `start-payment` está documentado como `POST /payments/start` (el front usa `POST /payments`: alinear). Mientras tanto el front corre en modo híbrido (`src/api/hybridApi.ts`).
 
 Estado 2026-10-16 ~17:15 (verificado sin token): API REST `https://lofoyfhz52.execute-api.us-east-2.amazonaws.com/dev`, autorizador Cognito con **IdToken**. `POST /start-payment` responde `401` (desplegada); `/payments`, `/payments/{id}`, `/payments/{id}/finish`, `/me` y `/natilleras/mine` responden `403 Missing Authentication Token` (sin desplegar). El front usa `EXPO_PUBLIC_PAYMENTS_START_PATH=/start-payment` hasta que exista `POST /payments`, y solo manda pagos P2P al back (`walletAddress` directo).
@@ -29,7 +31,8 @@ Reglas comunes: `Authorization: Bearer <accessToken de Cognito>` en todo salvo s
 | 7 | `POST /natilleras` | {natilleraName, walletAddress} → {natilleraId, natilleraName, joinNatilleraUrl, natilleraInvitation} | 08, 09 |
 | 8 | `GET /invitations/{code}` | → {natilleraName, adminName, cuota?} (vista previa) | 06 |
 | 8 | `POST /natilleras/join` | {natilleraInvitation} → {natilleraId} | 06, 07 |
-| 13 | `GET /natilleras/mine` | → {natilleraId, natilleraName, isAdmin, asset, fundTotal, myTotal, myStatus, members[{name, total, status}], lastRecords[]} \| null | 05, 10, 15 |
+| — | `GET /natilleras` | → [{natilleraId, natilleraName, isAdmin, membersCount, asset, quota}] (selector de la 10; si da 403/404/405 la app usa solo `/natilleras/mine`) | 10 |
+| 13 | `GET /natilleras/mine?natilleraId=` | → {natilleraId, natilleraName, isAdmin, asset, fundTotal, myTotal, myStatus, members[{name, total, status}], lastRecords[]} \| null | 05, 10, 15 |
 | 12 | `POST /recurring` | {natilleraId, author?, value, assetCode, assetScale} → {grantId, redirectUrl, limit, repetitions} | 12 |
 | 12 | `POST /recurring/{grantId}/finish` | {interact_ref} → {status: active} | 14 |
 | 12 | `POST /recurring/{grantId}/charge-now` | (demo) → {paymentId} | demo |

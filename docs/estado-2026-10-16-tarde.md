@@ -1,5 +1,7 @@
 # Estado de los repos y qué falta · 2026-10-16 ~16:45
 
+> **Histórico.** El estado vigente (23:40, bloque A del back desplegado) está en [estado-2026-10-16-noche.md](estado-2026-10-16-noche.md).
+
 Revisión de Henry con Claude Code. Se trajeron front y back de GitHub; nada se subió ni se borró.
 
 > **Actualización 2026-10-16 ~17:15 (manda sobre lo de abajo):**

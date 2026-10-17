@@ -2,6 +2,8 @@
 
 > **Actualización 2026-10-17 ~01:00:** en `dev` ya están perfil, natilleras, invitaciones, cuentas guardadas y pagos (bloque A de Camilo, desplegado por Ciro; `GET /me` con `userId = username`, PR #2 del back). **Préstamos fase 1** (sin Open Payments: simular, pedir, listar pendientes, mi préstamo, rechazar) en el PR https://github.com/duvanjaramillomarin/interterledger-natillera-sin-fronteras-backend/pull/3 (rama `back/feat-prestamos`, Ciro revisa y despliega con `infra/deploy-prestamos.sh`). Aprobar responde 501 hasta la fase 2 (grant de cuotas y desembolso con Open Payments, con Duvan); para el pitch, préstamos sigue en demo.
 
+> **Actualización ~23:40:** el back desplegó el bloque A (perfil, cuentas, natilleras, invitaciones y pagos por `POST /payments` con opción B) y el front ya lo usa en modo híbrido. Lo que queda (`main` en el back, `GET /natilleras`, préstamos, recurrentes) está en [estado-2026-10-16-noche.md](estado-2026-10-16-noche.md). Lo de abajo es histórico.
+
 > **Actualización ~17:15:** el PR del front ya está en `main` y la app tiene modo híbrido: cada función pasa a real cuando su ruta exista (`EXPO_PUBLIC_REAL_METHODS`). Para el pago real hacen falta, con estos nombres exactos, `POST /payments`, `POST /payments/{id}/finish` y `GET /payments/{id}` (hoy solo existe `/start-payment`). Si prefieren otros nombres, avisen: se cambian solo en `src/api/httpApi.ts`.
 >
 > **Actualización ~17:00 (rama `david` `4d38582`, API probada por curl):**
