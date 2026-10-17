@@ -138,6 +138,11 @@ Decisiones técnicas aún sin tomar:
   00:42 y 00:52 UTC). Su versión lee `USERS_VIEW_TABLE`, que no está en la Lambda → falla con
   `tableName null`. Respaldos: v1 (edición en consola), v2 (repo), v3 (código de Duvan de 00:42).
   Acordar cuál `start-payment` queda antes de volver a correr el script.
+- 2026-10-16 (~20:01 COL) · Decisión: queda el `start-payment` **del repo** (código de Duvan
+  respaldado como v4); David coordina con Duvan para no volver a subirlo desde la consola.
+  Verificado invocando la Lambda: validaciones 400/401/404 OK y **un inicio de pago real contra
+  Open Payments** (prueba1, wallet `melos` COP → `f9a1abde` EUR: 1,00 EUR llega, 3.552,19 COP sale;
+  pago `d010eca7…` en `pending`). Usuarios de prueba prueba1/2/3 tienen la wallet `melos` (COP).
 - 2026-10-16 · `pre-signup` ahora también guarda en `user-info` (PK `source` + `id`), basado en el
   cambio de Duvan. Falta crear la tabla y desplegar.
 

@@ -194,3 +194,6 @@ Prompts **literales**, en orden. Las capturas de pantalla adjuntas se marcan com
 
 ### 42
 > Como vas?
+
+### 43
+> Dejamos el start-payment del repo (ya revisado). Coordino con Duvan para que no lo vuelva a subir y vuelve a desplegarlo.
