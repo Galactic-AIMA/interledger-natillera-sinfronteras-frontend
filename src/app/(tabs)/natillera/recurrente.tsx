@@ -73,6 +73,11 @@ export default function ScreenNatilleraRecurrente() {
         }),
       );
     } catch (e) {
+      // El back todavía no tiene /recurring: ruta inexistente (403 en el API REST), 404/405 o 501.
+      if (e instanceof ApiError && [403, 404, 405, 501].includes(e.status)) {
+        setError('La cuota automática todavía no está lista en el servidor. No salió plata: por ahora ponga la cuota a mano.');
+        return;
+      }
       setError(e instanceof ApiError ? e.message : 'No pudimos activar la cuota automática. No salió plata. Intente de nuevo.');
     } finally {
       setStarting(false);

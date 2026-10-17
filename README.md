@@ -38,23 +38,25 @@ App ──GET /payments/{id}──▶ estado final (pantalla 30 → resultado)
   que llega, cada uno en su moneda.
 - Un pago solo se da por hecho cuando el backend lo confirma: la app consulta el estado real en vez de fiarse de la URL de vuelta.
 
-## Qué funciona contra el backend real y qué es demo
+## Qué funciona contra el backend real
 
-| Real (Cognito + API Gateway + Lambda + Test Wallet) | Demo (datos de ejemplo) |
+Con sesión iniciada, **todas las funciones llaman al backend real** (`EXPO_PUBLIC_REAL_METHODS` en `eas.json`); ya no se
+mezclan datos de ejemplo con la plata de verdad.
+
+| Funciona de punta a punta (Cognito + API Gateway + Lambda + Test Wallet) | Llama al back, que aún no tiene la ruta |
 |---|---|
 | Registro y entrada (Cognito), perfil | Préstamos fase 2: permiso de cobro de las cuotas y desembolso |
 | Crear natillera, invitar con código y unirse | Aporte mensual automático (grant recurrente) |
-| Cuentas guardadas | Metas de la familia (solo en la app) |
+| Cuentas guardadas | |
 | Pagar a una persona y poner la cuota, con aprobación en la Test Wallet y vista previa de la quote | |
 | Préstamos fase 1: simular, pedir, ver mi préstamo, solicitudes de la tesorera y rechazar | |
+| Metas: los aportes a una colecta son pagos reales; la meta se guarda en el celular | |
 
-En préstamos, aprobar todavía no desembolsa: el backend pide primero el permiso de cobro de las cuotas (fase 2) y la
-app explica en la 17 y la 21 por qué la solicitud queda en espera. Si la persona está en varias natilleras, los
-préstamos y las solicitudes son siempre los de la natillera que está viendo.
+Cuando una ruta todavía no existe, la app lo dice («todavía no está lista en el servidor, no salió plata») en vez de
+mostrar un resultado inventado. Si la persona está en varias natilleras, los préstamos y las solicitudes son siempre
+los de la natillera que está viendo.
 
-La app funciona en **modo híbrido**: cada función pasa a real cuando su ruta existe en el backend
-(`EXPO_PUBLIC_REAL_METHODS`), y el resto sigue con los datos de ejemplo. El botón «Empezar con datos de ejemplo»
-abre la app completa en demo, sin internet (Doña Rosa, Luz y Andrés).
+El botón «Empezar con datos de ejemplo» abre la app completa en demo, sin internet (Doña Rosa, Luz y Andrés).
 
 ## Correrla
 
