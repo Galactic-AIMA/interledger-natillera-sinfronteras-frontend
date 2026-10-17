@@ -8,10 +8,17 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y 
 
 ## [Sin publicar]
 
-### Agregado
-- Este historial de versiones y los tags de las versiones anteriores.
-
 ## App (front)
+
+## [0.11.0] · 2026-10-17 06:10 · `b35f29d` · 🔒 interfaz final
+Versión final de la interfaz: desde aquí la interfaz queda **congelada** (ver «Interfaz congelada» en `CLAUDE.md`). La `v1.0.0` de la entrega no cambia la interfaz.
+### Agregado
+- Bote de la portada rediseñado: frasco de vidrio con tapa de alcancía, monedas que se apilan según el fondo, moneda que cae por la ranura, etiqueta con los anillos de la familia y camino del año hasta la estrella del reparto de diciembre.
+- «¿Olvidó su contraseña?» en Entrar, con recuperación en modo demostración.
+- Este historial de versiones y los tags de las versiones anteriores (PR #14).
+- Guías de Android y de cómo trabaja el equipo (PR #15).
+### Cambiado
+- Splash de entrada en 3 s exactos, con halo, onda de unión, barra de carga y crédito de Open Payments.
 
 ## [0.10.2] · 2026-10-17 05:32 · `5efbdaa`
 ### Cambiado

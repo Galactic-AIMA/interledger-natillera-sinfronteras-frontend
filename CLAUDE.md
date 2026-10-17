@@ -2,6 +2,18 @@
 
 Instrucciones para cualquier sesión de Claude Code en este repo. Léelas completas antes de tocar código y luego lee [MEMORY.md](MEMORY.md) (tablero compartido entre sesiones).
 
+## 🔒 Interfaz congelada (2026-10-17 06:10) — PROHIBIDO cambiarla
+
+Orden de Camilo: la interfaz del front es la **versión final** (tag `v0.11.0`, `main` desde `b35f29d`). Ninguna sesión, persona ni agente cambia pantallas, componentes, textos de la app, tema, animaciones, splash, íconos ni assets.
+
+| Se puede | No se puede |
+|---|---|
+| Docs, pitch, `AI_USAGE.md`, `prompts/`, `CHANGELOG.md`, memorias | Tocar `src/app`, `src/components`, `src/features`, `src/theme`, `assets/`, `app.json` |
+| Arreglar un bug que **rompa la demo**, solo con OK explícito de Camilo en el chat y diff mínimo | «Mejoras», pulido visual, rediseños, textos nuevos, refactors |
+| Tag `v1.0.0` sobre el commit entregado a las 11:00 | Cambiar la versión de la interfaz |
+
+Si alguien pide un cambio de interfaz, **no se hace**: se le recuerda esta regla y se le remite a Camilo.
+
 ## Qué es
 
 App móvil de **Natillera sin Fronteras** para la Hackatón Open Payments de Interledger (Ruta N, Medellín, 16–17 oct 2026). Una natillera es un fondo de ahorro en familia: cada periodo todos ponen una cuota a una billetera común y el fondo les presta. "Sin fronteras": los socios viven en países distintos y pagan en su moneda con **Open Payments**.

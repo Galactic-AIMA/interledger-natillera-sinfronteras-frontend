@@ -4,6 +4,7 @@ Estado vivo. Cada sesión lo lee al empezar y actualiza **solo su sección** al 
 
 ## Estado general
 
+- 2026-10-17 06:10 — 🔒 **Interfaz congelada, versión final** (Camilo + Claude): `main` = `b35f29d` con el bote de monedas nuevo y el splash de 3 s; tag `v0.11.0`. Prohibido cambiar la interfaz (ver la sección «Interfaz congelada» de [CLAUDE.md](CLAUDE.md)); solo arreglos que rompan la demo, con OK de Camilo.
 - 2026-10-16 — Repo vacío creado. Setup inicial: CLAUDE.md, MEMORY.md, AI_USAGE.md, hook de prompts, docs (Camilo + Claude Code).
 - 2026-10-17 05:35 — **Estado vigente** (Henry + Claude, con git, gh y curl): `main` del front = `5efbdaa`, con el PR #11 (metas solo en el celular, guía [docs/prueba-apk-2026-10-17.md](docs/prueba-apk-2026-10-17.md)) y el PR #12 (la pantalla 28 muestra con qué billetera entrar a la Test Wallet). Las 24 rutas que llama la app responden 401 en `dev` (existen y piden token), incluidas préstamos fase 2 y cuota automática; `/goals` da 403 (metas van solo en el celular). Todas las funciones ya van al back real en `eas.json`: **no falta integración en el front**, falta generar el APK desde `main` y probar con sesión. En el celular apareció «Access to the given resource is forbidden» en la Test Wallet: la sesión abierta en Chrome era de otra cuenta, no la dueña de la billetera del usuario que paga (no es error de la app ni del back). Falta: APK nuevo, pago real grabado, prueba de fase 2 y cuota automática, renombrar el repo, slides y formulario.
 - 2026-10-17 05:07 — Estado anterior (validado con git y gh por Camilo + Claude): **repo único** desde el PR #10 (04:47): el back vive en [`backend/`](backend/) y su repo quedó congelado (`main` = `e32dcda`). `main` del front = `69dc490`, con el PR #9 (vista previa con espera y aviso de billetera inexistente), el PR #3 (docs, pitch y video) y el PR #8 (préstamos de la natillera que se ve; todas las funciones van al back real en `eas.json`). En `dev` ya están desplegados préstamos fase 2 y cuota automática (deployment `1x7kck`), **sin prueba real**. Abierto: PR #11 de Henry (metas solo en el celular porque `/goals` da 403, y guía [docs/prueba-apk-2026-10-17.md] en esa rama). Falta: renombrar el repo, prueba real de fase 2, APK, video y slides.
@@ -35,6 +36,7 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 
 ## Decisiones tomadas
 
+- 2026-10-17 06:10 — **Interfaz del front congelada** en `v0.11.0`: nadie la cambia más. **Por qué:** orden de Camilo; a 5 h de la entrega, cualquier cambio visual arriesga la demo, el video y las capturas del pitch.
 - 2026-10-16 — Expo + APK Android para la demo. **Por qué:** deep link de regreso de la billetera fiable y build rápido.
 - 2026-10-16 — Contrato + mocks: el front no espera al back. **Por qué:** quedan menos de 24 h.
 - 2026-10-16 — Las 31 pantallas propias navegables y todas conectadas al back (incluidos préstamos).

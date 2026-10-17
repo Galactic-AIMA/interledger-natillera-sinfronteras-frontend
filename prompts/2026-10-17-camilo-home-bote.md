@@ -11,3 +11,7 @@ Herramienta: Claude Code (Opus 5.5, escritorio). Sesión abierta en la raíz del
 ## Prompt 2
 
 > También de una vez, mejora el, Splash del inicio de la pantalla de carga, que dure tres segundos.
+
+## Prompt 3
+
+> Listo, deja en memoria. Y en todo, que ya no se cambia más pronto. Versión final de front y versionamiento final de, de, de la interfaz. Para que si en otro, sesión se quiera hacer así, no se, no se, no se haga. Prohibido ya.
