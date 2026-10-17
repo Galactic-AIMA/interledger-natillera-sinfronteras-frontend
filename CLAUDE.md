@@ -32,6 +32,10 @@ App móvil de **Natillera sin Fronteras** para la Hackatón Open Payments de Int
 | Arquitectura del back | `docs/ARQUITECTURA.md` en la rama `david` del repo back (**fuente de verdad del back**) |
 | Figma | https://www.figma.com/design/hK29vkj23AZZXEN7W2hjmA |
 
+## Repo único (desde el 17/10)
+
+El backend está en [`backend/`](backend/) (traído con `git subtree`, historia completa). Al trabajar ahí rigen su [backend/CLAUDE.md](backend/CLAUDE.md) y su [backend/MEMORY.md](backend/MEMORY.md); su declaración de IA es [backend/AI_USAGE.md](backend/AI_USAGE.md). El repo del back quedó congelado: los arreglos del back van a `backend/` aquí. `tsconfig.json` excluye `backend/` (tiene sus propias dependencias).
+
 ## Reglas no negociables
 
 1. **La app nunca firma con Open Payments ni tiene llaves.** El SDK solo corre en Node: todo pasa por nuestra API. La app solo abre la URL de la billetera y vuelve por `natillera://retorno`.

@@ -2,6 +2,8 @@
 
 Declaración de uso de IA según la política de la hackatón (https://interledger.org/hackathon/ai-policy/). Se actualiza durante todo el evento: cada tarea asistida agrega una fila y cada prompt queda literal en [`/prompts`](prompts/).
 
+**Backend:** el backend está en [`backend/`](backend/) y tiene su propia declaración: [backend/AI_USAGE.md](backend/AI_USAGE.md), con sus prompts literales en [`backend/prompts/`](backend/prompts/). Este archivo cubre la app.
+
 ## Tools Used
 
 | Herramienta | Modelo | Quién | Para qué |
@@ -108,6 +110,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Arreglos pedidos por el back tras la prueba real: billetera de la meta de ejemplo a `cirocol` (la de `carmen` no existe), vista previa con espera de 600 ms en vez de una consulta por tecla y mensaje «La billetera de quien recibe no existe» | `src/api/mockApi.ts`, `src/api/httpApi.ts`, `src/utils/useDebouncedValue.ts`, `src/app/(tabs)/pagar/index.tsx`, `src/app/(tabs)/natillera/metas/[goalId].tsx`, `AI_USAGE.md` |
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Tareas de Henry de la guía del back (`docs/COORDINACION.md` de `david`): se verificó contra `docs/API-PRESTAMOS.md` y las rutas de `dev` que los préstamos fase 1 y `previewQuote` ya van reales; préstamos y solicitudes de la tesorera ahora piden los de la natillera que se está mostrando (`natilleraId` opcional del back) y las pantallas esperan esa natillera antes de decir «no hay»; `openapi.yaml` al día (varias natilleras, preview, monto en la moneda de quien recibe, errores de préstamos, fase 2 marcada) y validado con Redocly; README con lo real y lo demo; prompts de la sesión en su propio archivo | `src/api/client.ts`, `src/api/httpApi.ts`, `src/api/queries.ts`, `src/app/(tabs)/natillera/prestamos/{autorizar,plan,tesorera}.tsx`, `docs/openapi.yaml`, `README.md`, `AI_USAGE.md`, `prompts/2026-10-17-henry-logo-y-prestamos.md` |
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | «Todo debe funcionar de forma real»: se probaron en `dev` las rutas que faltaban (recurrente, metas, préstamos fase 2: no existen en ninguna rama del back) y todas las funciones pasan a real en `eas.json`; el historial ya no mezcla pagos de ejemplo con los reales y la cuota automática explica que el servidor aún no la tiene en vez de fallar con «sesión cerrada»; README al día | `eas.json`, `src/api/hybridApi.ts`, `src/app/(tabs)/natillera/recurrente.tsx`, `README.md`, `AI_USAGE.md` |
+| 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Repo único: el backend entra en `backend/` con `git subtree` (sin `--squash`, `main` del back `e32dcda` congelado por Ciro); `tsconfig.json` excluye `backend/`; README, CLAUDE.md y este archivo enlazan la parte del back. Ensayo previo: `tsc`, pruebas, chequeo de IA y `expo export` Android | `backend/`, `tsconfig.json`, `README.md`, `CLAUDE.md`, `AI_USAGE.md` |
 
 ## What We Did Ourselves
 
