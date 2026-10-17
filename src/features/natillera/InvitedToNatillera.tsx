@@ -2,11 +2,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { ActivityIndicator } from 'react-native';
 
-import { ApiError, keys, useApi } from '@/api';
+import { ApiError, keys, setActiveNatillera, useApi } from '@/api';
 import { AppText, Button, Card, InfoRow, LinkRow, Screen } from '@/components';
 import { palette } from '@/theme';
 
 function messageOf(error: unknown, fallback: string): string {
+  // El back viejo solo deja una natillera por persona (409 AlreadyMember).
+  if (error instanceof ApiError && error.code === 'AlreadyMember') return 'Por ahora cada persona puede estar en una sola natillera. Pronto podrá tener varias.';
   return error instanceof ApiError || error instanceof Error ? error.message : fallback;
 }
 
@@ -23,8 +25,13 @@ export function InvitedToNatillera({ code }: { code: string }) {
 
   const join = useMutation({
     mutationFn: () => api.joinNatillera(code),
-    // Al invalidar, el index detecta la natillera y pasa solo a la pantalla 10.
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: keys.natillera }),
+    // La natillera a la que se unió pasa a ser la activa; se quita el código de la ruta para que el
+    // index muestre la 10 (con varias natilleras, el código ya no se apaga solo al tener una).
+    onSuccess: async (joined) => {
+      setActiveNatillera(joined.natilleraId);
+      await queryClient.invalidateQueries({ queryKey: keys.natillera });
+      router.replace('/natillera');
+    },
   });
 
   if (preview.isLoading) {

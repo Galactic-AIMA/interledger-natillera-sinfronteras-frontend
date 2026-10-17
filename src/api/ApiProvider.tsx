@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 
+import { setActiveNatillera } from './activeNatillera';
 import type { NatilleraApi } from './client';
 import { config } from './config';
 import { hybridApi } from './hybridApi';
@@ -37,6 +38,7 @@ export function ApiProvider({ children }: { children: ReactNode }) {
   const enterDemo = useCallback(
     async (username = 'rosa.gomez') => {
       mockApi.switchUser(username);
+      setActiveNatillera(null);
       setApi(mockApi);
       setSession('signed-in');
       // Vuelve a pedir lo que está en pantalla con el usuario nuevo.
@@ -56,11 +58,13 @@ export function ApiProvider({ children }: { children: ReactNode }) {
       },
       login: async (username, password) => {
         await api.login(username, password);
+        setActiveNatillera(null);
         queryClient.clear();
         setSession('signed-in');
       },
       logout: async () => {
         await api.logout();
+        setActiveNatillera(null);
         queryClient.clear();
         // Al salir de la demo, "Ya tengo cuenta" debe entrar contra Cognito, no contra los datos de ejemplo.
         setApi(config.startInDemo ? mockApi : hybridApi);

@@ -2,11 +2,14 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { router } from 'expo-router';
 import { useState } from 'react';
 
-import { ApiError, keys, useApi, type WalletInfo } from '@/api';
+import { ApiError, keys, setActiveNatillera, useApi, type WalletInfo } from '@/api';
 import { AppText, Button, Card, Screen, TextField } from '@/components';
 import { WalletVerifier } from '@/features/natillera/WalletVerifier';
 import { currencyName } from '@/utils/money';
 import { BackButton } from '@/features/navegacion/BackButton';
+
+// El back viejo solo deja una natillera por persona (409 AlreadyMember).
+const ONE_ONLY = 'Por ahora cada persona puede estar en una sola natillera. Pronto podrá tener varias.';
 
 // 08 · Crear una natillera
 export default function ScreenNatilleraCrear() {
@@ -19,7 +22,9 @@ export default function ScreenNatilleraCrear() {
 
   const create = useMutation({
     mutationFn: () => api.createNatillera({ natilleraName: name.trim(), walletAddress: wallet.trim() }),
-    onSuccess: async () => {
+    onSuccess: async (created) => {
+      // Si ya estaba en otra, la recién creada pasa a ser la activa.
+      setActiveNatillera(created.natilleraId);
       await queryClient.invalidateQueries({ queryKey: keys.natillera });
       router.replace('/natillera/invitacion');
     },
@@ -33,7 +38,7 @@ export default function ScreenNatilleraCrear() {
     if (Object.keys(next).length === 0) create.mutate();
   }
 
-  const failure = create.error instanceof ApiError ? create.error.message : create.error ? 'No pudimos crear la natillera. Intente otra vez.' : null;
+  const failure = create.error instanceof ApiError && create.error.code === 'AlreadyMember' ? ONE_ONLY : create.error instanceof ApiError ? create.error.message : create.error ? 'No pudimos crear la natillera. Intente otra vez.' : null;
 
   return (
     <Screen headerLeft={<BackButton />} title="Crear natillera" inTabs footer={<Button label="Crear la natillera" onPress={submit} loading={create.isPending} />}>

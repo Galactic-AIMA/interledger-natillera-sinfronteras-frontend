@@ -11,6 +11,7 @@ import type {
   LoanSimulation,
   MyLoans,
   Natillera,
+  NatilleraSummary,
   Payment,
   QuotePreview,
   RecurringGrant,
@@ -193,7 +194,19 @@ export const httpApi: NatilleraApi = {
     return lookupPublicWallet(walletAddress);
   },
 
-  getMyNatillera: () => request<Natillera | null>('GET', '/natilleras/mine'),
+  getMyNatillera: (natilleraId) =>
+    request<Natillera | null>('GET', natilleraId ? `/natilleras/mine?natilleraId=${encodeURIComponent(natilleraId)}` : '/natilleras/mine'),
+  // GET /natilleras es del back de varias natilleras. Si aún no está desplegado (403 en el API REST),
+  // la lista sale de la única natillera que devuelve /natilleras/mine: el selector no aparece.
+  listMyNatilleras: async () => {
+    try {
+      return await request<NatilleraSummary[]>('GET', '/natilleras');
+    } catch (error) {
+      if (!(error instanceof ApiError && (error.status === 403 || error.status === 404 || error.status === 405))) throw error;
+      const only = await request<Natillera | null>('GET', '/natilleras/mine');
+      return only ? [toSummary(only)] : [];
+    }
+  },
   createNatillera: (input) => request<Natillera>('POST', '/natilleras', input),
   getInvitation: (code) => request('GET', `/invitations/${encodeURIComponent(code)}`),
   joinNatillera: (code) => request<Natillera>('POST', '/natilleras/join', { natilleraInvitation: code }),
@@ -247,6 +260,10 @@ export const httpApi: NatilleraApi = {
   createGoal: async (input) => goals.create(input, 'Usted'),
   addGoalContribution: async (goalId, input) => goals.contribute(goalId, input, 'Usted'),
 };
+
+function toSummary(n: Natillera): NatilleraSummary {
+  return { natilleraId: n.natilleraId, natilleraName: n.natilleraName, isAdmin: n.isAdmin, membersCount: n.members.length, asset: n.asset, quota: n.quota };
+}
 
 function toPaymentBody(input: StartPaymentInput) {
   if (input.kind === 'aporte') return { kind: 'aporte', natilleraId: input.natilleraId, author: input.onBehalfOfUserId, ...input.amount };
