@@ -77,6 +77,8 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
   Claude escribió; lo ejecuta David Ciro. Doc: [`docs/API-NATILLERAS.md`](docs/API-NATILLERAS.md).
 - **Varias natilleras por persona** (rama `feat/natilleras-multi`): sin el bloqueo de una sola, Lambda
   `list-natilleras` y `mine?natilleraId=`, con su prueba local y el despliegue actualizado.
+- **Diagnóstico de `start-payment` desde el front:** el registro técnico de la app mostró el 502 por falta de
+  `dynamodb:Query` en `user-info`; el pedido quedó en `MEMORY.md`.
 - **Coordinación del back:** reparto con Henry (préstamos), mensajes para Ciro y Duvan y la rama
   `feat/natilleras` rebasada sobre `david` y subida para revisión de Duvan antes de desplegar.
 

@@ -204,7 +204,10 @@ Decisiones técnicas aún sin tomar:
 - 2026-10-16 ~23:00 · `feat/natilleras-multi` (sale de `david`): **varias natilleras por persona**. Sin `409
   AlreadyMember`; Lambda nueva `list-natilleras` (`GET /natilleras`); `GET /natilleras/mine?natilleraId=`
   (sin id = la más antigua; ajena = 404). `npm test` 7/7. Sin desplegar: revisión de Duvan, luego Ciro
-  corre `infra/deploy-natilleras.sh`. El front necesita su selector (lo hace Camilo).
+  corre `infra/deploy-natilleras.sh`. El front ya tiene su selector (front `main` = `15b3f81`): sin este back
+  desplegado la app sigue con una sola natillera.
+- 2026-10-16 ~23:30 · Pedido a `start-payment` (Duvan): con `prueba3` da 502 porque `PowerUserRole` no tiene
+  `dynamodb:Query` sobre `user-info`; usar `GetItem` (`source` + `id: 1`, como `getUser` de pagos) o dar el permiso.
 
 ### credito
 - (vacío)
