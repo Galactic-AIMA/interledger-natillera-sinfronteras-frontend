@@ -316,6 +316,22 @@ body:hover .hud,.hud:focus-within{opacity:1}
   .draw .rings .r,.draw .rise{animation:none}.slide{transition:none}.envivo i{animation:none}
 }
 
+/* Sección técnica de Open Payments */
+.cab-c{display:flex;justify-content:space-between;align-items:center}
+.logo-c{width:92px;height:92px;flex:none}.logo-c svg{width:100%;height:100%}
+.et{font-family:var(--f-num);font-weight:700;font-size:16px;letter-spacing:.16em;color:var(--verde)}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.tarj{background:var(--blanco);border:2px solid var(--linea);border-radius:24px;padding:26px 30px;display:flex;flex-direction:column;gap:12px}
+.tarj p{margin:0;font-size:22px;line-height:1.38}.tarj .sutil{color:var(--gris);font-size:20px}
+.tarj code,.seq code{font-family:var(--f-num);font-size:.86em;background:var(--menta-suave);color:var(--verde);padding:2px 8px;border-radius:7px}
+.rejilla{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.seq{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:s}
+.seq li{counter-increment:s;display:grid;grid-template-columns:56px auto;column-gap:18px;align-items:baseline;font-size:24px}
+.seq li::before{content:counter(s);grid-row:span 2;font-family:var(--f-num);font-weight:700;color:var(--indigo2);font-size:26px}
+.seq em{font-style:normal;font-weight:700;color:var(--alerta)}
+.seq span{grid-column:2;color:var(--gris);line-height:1.35;margin-top:4px}
+.tarj .seq li{font-size:21px;grid-template-columns:40px auto}
+
 /* Pitch corto: 2 láminas de intro + video + cierre + anexo técnico */
 .cab-c{display:flex;justify-content:space-between;align-items:center}
 .logo-c{width:92px;height:92px;flex:none}.logo-c svg{width:100%;height:100%}
@@ -348,106 +364,28 @@ body:hover .hud,.hud:focus-within{opacity:1}
 .seq em{font-style:normal;font-weight:700;color:var(--alerta)}
 .seq span{grid-column:2;color:var(--gris);line-height:1.35;margin-top:4px}
 
-/* Bloques de intro breve */
-.filas{display:flex;flex-direction:column;gap:20px;margin-top:auto;margin-bottom:24px}
-.fila{display:grid;grid-template-columns:240px 1fr;align-items:center;gap:24px;background:var(--blanco);border:2px solid var(--linea);border-radius:24px;padding:26px 32px}
-.fila p{margin:0;font-size:34px;line-height:1.25}
-.fila.oscura{background:var(--ilp-bg);border-color:var(--ilp-bg);color:var(--sobre-noche)}.fila.oscura .et{color:var(--menta)}
-.equipo4 .ini2{width:72px;height:72px;border-radius:50%;display:grid;place-items:center;color:#fff;font-family:var(--f-titulo);font-size:30px}
-html[data-theme="dark"] .equipo4 .ini2{color:#12133A}
-html[data-theme="dark"] .equipo4 .miembro:nth-child(4) .ini2{background:#8E3FB5 !important;color:#fff}
-.pp p{font-size:26px !important}
-.apr>div{font-size:30px !important}
+.cinco{display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-top:auto}
+.c5{position:relative;background:var(--blanco);border:2px solid var(--linea);border-radius:24px;padding:26px 22px;display:flex;flex-direction:column;gap:12px}
+.c5 p{margin:0;font-size:25px;line-height:1.3}
+.c5 .n5{font-family:var(--f-titulo);font-size:56px;line-height:1;color:var(--indigo2)}
+.c5.op{background:var(--ilp-bg);border-color:var(--ilp-bg);color:var(--sobre-noche)}.c5.op .et,.c5.op .n5{color:var(--menta)}
 </style>
 
 <div class="viewport" id="vp">
   <main class="stage" id="stage" aria-live="polite">
 
-    <section class="slide" aria-label="El reto y el usuario">
-      <div class="pad">
-        <div class="cab-c"><div class="kicker">1 · El reto &nbsp;·&nbsp; 2 · El usuario</div><div class="logo-c" data-rings="claro" role="img" aria-label="Logo de Natillera sin Fronteras"></div></div>
-        <h2 class="rise" style="--d:.2s;max-width:20ch">La familia se fue lejos. La natillera se quedó en un cuaderno.</h2>
-        <div class="filas">
-          <div class="fila rise" style="--d:.5s"><span class="et">EL RETO</span><p>Giros sueltos, pantallazos y una tasa que se come la plata.</p></div>
-          <div class="fila rise" style="--d:.7s"><span class="et">EL USUARIO</span><p><b>Doña Rosa</b> en Medellín, Luz en EE. UU., Andrés en España.</p></div>
+    <section class="slide" aria-label="Introducción en un minuto">
+      <div class="pad" style="gap:30px">
+        <div class="cab-c"><div class="kicker">Natillera sin Fronteras · en un minuto</div><div class="logo-c" data-rings="claro" role="img" aria-label="Logo de Natillera sin Fronteras"></div></div>
+        <h2 class="rise" style="--d:.2s;max-width:none">Lejos en distancia, juntos en el ahorro.</h2>
+        <div class="cinco">
+          <div class="c5 rise" style="--d:.4s"><span class="n5">1</span><span class="et">EL RETO</span><p>Giros sueltos, pantallazos y una tasa que se come la plata.</p></div>
+          <div class="c5 rise" style="--d:.55s"><span class="n5">2</span><span class="et">EL USUARIO</span><p>Doña Rosa en Medellín, Luz en EE. UU. y Andrés en España.</p></div>
+          <div class="c5 rise" style="--d:.7s"><span class="n5">3</span><span class="et">LA SOLUCIÓN</span><p>Cada uno pone en su moneda; al fondo llegan pesos.</p></div>
+          <div class="c5 op rise" style="--d:.85s"><span class="n5">4</span><span class="et">OPEN PAYMENTS</span><p>La persona aprueba en su billetera; de € a $ por Interledger.</p></div>
+          <div class="c5 rise" style="--d:1s"><span class="n5">5</span><span class="et">APRENDIZAJE</span><p>El permiso va aparte de la plata. Sigue: la cuota sola.</p></div>
         </div>
-      </div>
-    </section>
-
-    <section class="slide" aria-label="La solución">
-      <div class="pad">
-        <div class="cab-c"><div class="kicker">3 · La solución</div><div class="logo-c" data-rings="claro" role="img" aria-label="Logo de Natillera sin Fronteras"></div></div>
-        <h2 class="rise" style="--d:.2s;max-width:20ch">Cada uno pone en su moneda. Al fondo llegan pesos.</h2>
-        <div class="filas">
-          <div class="fila rise" style="--d:.5s"><span class="et">TODOS VEN</span><p>Cuánto hay y quién ya puso.</p></div>
-          <div class="fila oscura rise" style="--d:.7s"><span class="et">NOS DIFERENCIA</span><p>Un fondo común y transparente. <b>La app nunca toca la plata:</b> cada quien aprueba en su billetera.</p></div>
-        </div>
-      </div>
-    </section>
-
-    <section class="slide dark" aria-label="Video demo">
-      <div class="pad">
-        <div class="kicker" style="color:var(--menta)">4 · Open Payments · un pago real</div>
-        <h2 class="rise" style="--d:.2s;max-width:none;color:var(--sobre-noche)">Andrés pone su cuota desde España.</h2>
-        <div class="pps">
-          <div class="pp rise" style="--d:.5s"><i>1</i><span class="et">SOLICITUD</span><p>Toca «Poner cuota».</p></div>
-          <div class="pp rise" style="--d:.7s"><i>2</i><span class="et">CONSENTIMIENTO</span><p>Acepta en su billetera.</p></div>
-          <div class="pp rise" style="--d:.9s"><i>3</i><span class="et">PAGO</span><p>Sale en €, llega en $.</p></div>
-          <div class="pp fin rise" style="--d:1.1s"><i>✓</i><span class="et">LISTO</span><p>El fondo sube a $350.000.</p></div>
-        </div>
-        <div class="play rise" style="--d:1.4s">▶ &nbsp;Video demo (3:50)</div>
-      </div>
-    </section>
-
-    <section class="slide dark" aria-label="Aprendizajes y cierre">
-      <div class="pad">
-        <div class="kicker" style="color:var(--menta)">5 · Aprendizajes clave</div>
-        <div class="apr">
-          <div class="rise" style="--d:.2s"><b>El permiso va aparte de la plata.</b></div>
-          <div class="rise" style="--d:.4s"><b>Entre monedas, Open Payments lo resuelve.</b></div>
-          <div class="rise" style="--d:.6s"><b>Sigue:</b> la cuota que se pone sola.</div>
-        </div>
-        <h2 class="rise final" style="--d:.9s">Este diciembre, Doña Rosa no va a sacar el cuaderno.</h2>
-        <div class="pie" style="color:#AEB2D0"><span>Natillera sin Fronteras</span><span>Anexo técnico →</span></div>
-      </div>
-    </section>
-
-    <!-- A1 · Anexo técnico: las llamadas al SDK -->
-    <section class="slide" aria-label="Anexo: el pago con el SDK">
-      <div class="pad" style="gap:22px">
-        <div class="cab-c"><div class="kicker">Anexo técnico · @interledger/open-payments 7.4.0</div><div class="logo-c" data-rings="claro" role="img" aria-label="Logo de Natillera sin Fronteras"></div></div>
-        <h2 style="font-size:64px;max-width:none">Un pago, paso a paso, con el SDK oficial.</h2>
-        <ol class="seq">
-          <li class="rise" style="--d:.2s"><code>walletAddress.get</code><span>De la billetera de Andrés (€) y de la del fondo ($): servidor de autorización, de recursos y moneda.</span></li>
-          <li class="rise" style="--d:.35s"><code>grant.request</code> → <code>incomingPayment.create</code><span>Permiso no interactivo y cobro entrante en la billetera del fondo.</span></li>
-          <li class="rise" style="--d:.5s"><code>grant.request</code> → <code>quote.create</code><span>Cotización en la billetera de Andrés: <b>debitAmount</b> en € y <b>receiveAmount</b> en $.</span></li>
-          <li class="rise" style="--d:.65s"><code>grant.request</code> <em>interactivo</em><span>Permiso de outgoing payment con <b>limits.debitAmount</b> = lo cotizado y <b>interact.finish</b> por redirect. La app abre la billetera.</span></li>
-          <li class="rise" style="--d:.8s"><code>sha256(nonce · nonce AS · interact_ref · URL)</code><span>La billetera vuelve al back; verificamos el hash de interacción antes de tocar el pago.</span></li>
-          <li class="rise" style="--d:.95s"><code>grant.continue</code> → <code>outgoingPayment.create</code><span>Con el token final se ejecuta el pago y el fondo queda al día.</span></li>
-        </ol>
-      </div>
-    </section>
-
-    <!-- A2 · Anexo técnico: arquitectura y seguridad -->
-    <section class="slide" aria-label="Anexo: arquitectura">
-      <div class="pad" style="gap:26px">
-        <div class="cab-c"><div class="kicker">Anexo técnico · Arquitectura</div><div class="logo-c" data-rings="claro" role="img" aria-label="Logo de Natillera sin Fronteras"></div></div>
-        <h2 style="font-size:64px;max-width:none">La app nunca firma. Todo lo firmado sale del servidor.</h2>
-        <div class="tubo" style="margin-top:8px">
-          <div class="nodo"><span class="n">APP</span><span class="h">Expo · Android</span><p>React Native + TypeScript. Login con Cognito.</p></div>
-          <div class="conector" aria-hidden="true"></div>
-          <div class="nodo"><span class="n">API</span><span class="h">API Gateway</span><p>REST con autorizador de IdToken.</p></div>
-          <div class="conector" aria-hidden="true"></div>
-          <div class="nodo ilp"><span class="n">SERVIDOR</span><span class="h">AWS Lambda · Node</span><p>SDK de Open Payments. Llave en Secrets Manager; pagos y natilleras en DynamoDB.</p></div>
-          <div class="conector" aria-hidden="true"></div>
-          <div class="nodo"><span class="n">RED</span><span class="h">Test Wallet</span><p>Interledger: billeteras en € y en $.</p></div>
-        </div>
-        <div class="sellos" style="margin-top:auto">
-          <span class="sello">Llave privada fuera del celular</span>
-          <span class="sello">Hash de interacción verificado</span>
-          <span class="sello">Montos en enteros con assetScale</span>
-          <span class="sello">Grants recurrentes (interval P1M) para la cuota automática: en pruebas</span>
-        </div>
+        <div class="play rise" style="--d:1.3s">▶ &nbsp;Video demo (3:50)</div>
       </div>
     </section>
 
@@ -457,7 +395,7 @@ html[data-theme="dark"] .equipo4 .miembro:nth-child(4) .ini2{background:#8E3FB5 
 <div class="barra" aria-hidden="true"><i id="prog"></i></div>
 <div class="notas" id="notas" hidden></div>
 <div class="hud" id="hud">
-  <span id="cuenta" class="num">1 / 6</span>
+  <span id="cuenta" class="num">1 / 17</span>
   <button id="b-prev" type="button" aria-label="Lámina anterior">←</button>
   <button id="b-next" type="button" aria-label="Lámina siguiente">→</button>
   <button id="b-tema" type="button" aria-pressed="false">Modo oscuro (T)</button>
@@ -490,12 +428,7 @@ html[data-theme="dark"] .equipo4 .miembro:nth-child(4) .ini2{background:#8E3FB5 
 
   // Guion: lo que se dice en cada lámina (basado en docs/pitch/GUION.md de Henry) y segundos objetivo.
   var NOTAS=[
-    {t:25,q:'Henry',p:['«En diciembre se reparte la natillera… y media familia de Doña Rosa está lejos.»','Luz en Estados Unidos, Andrés en España. Hoy son giros sueltos, pantallazos y una tasa que se come la plata.']},
-    {t:25,q:'Camilo',p:['Natillera sin Fronteras: cada uno pone en su moneda, al fondo llegan pesos y todos ven quién ya puso.','La app nunca toca la plata: cada quien aprueba en su billetera, con Open Payments. Mírenlo. (Play.)']},
-    {t:230,q:'Video',p:['VIDEO «Natillera sin Fronteras - demo.mp4» (3:50). Si falla: narrar los 4 pasos.']},
-    {t:10,q:'Camilo',p:['Aprendimos que el permiso va aparte de la plata.','«Este diciembre, Doña Rosa no va a sacar el cuaderno.»']},
-    {t:0,q:'Anexo',p:['Para preguntas: las llamadas al SDK (start-payment.ts y return-payment.ts).']},
-    {t:0,q:'Anexo',p:['Para preguntas: arquitectura. La cuota automática está desplegada sin prueba real.']}
+    {t:55,q:'Camilo',p:['1 · El reto: «En diciembre se reparte la natillera, pero media familia de Doña Rosa vive afuera. Reunir esa plata hoy son giros sueltos, pantallazos por WhatsApp y una tasa de cambio que se come una tajada.»','2 · El usuario: «Doña Rosa lleva la natillera en Medellín. Luz vive en Estados Unidos y gana en dólares; Andrés vive en España y gana en euros.»','3 · La solución: «Natillera sin Fronteras es la natillera de siempre, pero en el celular. Cada uno pone su cuota en su moneda, al fondo le llegan pesos y todos ven quién ya puso.»','4 · Open Payments: «La app nunca toca la plata. Con Open Payments, el servidor pide la cotización y la persona aprueba el pago en su billetera. El pago va de euros a pesos por Interledger.»','5 · Aprendizajes: «Aprendimos que el permiso va separado de la plata: quien decide siempre es la persona. Lo que sigue es la cuota que se pone sola cada mes.» (Play al video.)']}
   ];
 
   // Índice de escalonado para las animaciones de entrada.

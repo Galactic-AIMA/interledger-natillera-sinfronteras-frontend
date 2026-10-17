@@ -193,7 +193,8 @@ test('préstamo: permiso de cobro → la tesorera aprueba → desembolso → pr�
   // Tope en la moneda de Luz (COP), con el 5 % de margen sobre la quote.
   assert.deepEqual(grant.limitPerCharge, money('4725000', 'COP'));
   const interactive = calls.grants.find((g) => g.interact);
-  assert.equal(interactive.interact.finish.uri, `${RETURN}?grantId=${grant.grantId}`);
+  // Vuelve al back (página «Volver a la app»), no directo a la app.
+  assert.equal(interactive.interact.finish.uri, `https://api.test/dev/payments/${grant.grantId}/return`);
   assert.match(interactive.access_token.access[0].limits.interval, /^R2\/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z\/P1M$/);
   // Nada de tokens en DynamoDB: el de continuación está en el secreto.
   assert.equal(JSON.stringify(rows(opEnv.grantsTable)).includes('cont-'), false);
