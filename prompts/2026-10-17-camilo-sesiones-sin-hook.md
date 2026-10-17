@@ -81,3 +81,8 @@ Sesiones de Claude Code (Opus 5.5, escritorio) abiertas en la raíz del workspac
 - `Deja v1.0.0 como está y a las 10:45 crea v1.0.1 sobre el último commit de main, con su entrada en el CHANGELOG y la Release de GitHub ahí.`
 - `Valida que toda las memorias esten al día`
 - `Sí, actualiza frontend/MEMORY.md (estado y checklist de entrega) en un PR a main y fusiónalo antes de las 10:45.`
+- `espera crees que los nombre de los archivos estan bien?`
+- `si actualiza y sube a git hun de una` / `y deja el uso de ia melo`
+- (con una captura de la lámina del pago paso a paso adjunta) `Estás explicando mucho la, la parte técnica de AWS, y de, de lo que hicimos, y sí, elegante, pero necesitamos explicar la de Open Payments e Interledger, no tanto la, lo demás, ¿listo? Entonces corrige eso. Eh, que sea el foco de esa parte, agrega los logos de Interledger, Open Payments y el pitch corto, bórralo. Solo dejemos el slide 1 y el slide 2 de, del pitch. Completo con detalle técnico, pero el pitch completo con detalle técnico añádele también lo que es la plantilla oficial y mandamos solo eh, unos slides. Listo,`
+- `Sí, haz push a main.`
+- `en la plantilla de, de equipo y demás. No estás poniendo el nombre del equipo, Galactic Crew. Y es importante.`
