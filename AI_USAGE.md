@@ -114,6 +114,13 @@ Los commits hechos con IA llevan `Co-Authored-By: Claude` en el historial de git
 - **`GET /me` con `userId = username`:** Claude cambió `getMe` en [`deploy/natilleras/src/domain.ts`](deploy/natilleras/src/domain.ts) (el `sub` va en `sub`), ajustó la prueba y regeneró `dist/get-me.zip`. Motivo: la app compara `me.userId` con `members[].userId` (username) en cuota y recurrente.
 - **Revisión humana:** Henry pidió el cambio; Ciro lo revisó y Claude lo desplegó (solo la Lambda `get-me`).
 - **Préstamos, fase 1 (sin Open Payments):** Claude escribió [`deploy/prestamos`](deploy/prestamos) (simular, pedir, listar pendientes, mi préstamo, rechazar; 5 Lambdas con el patrón del bloque A y 5 pruebas locales), [`infra/deploy-prestamos.sh`](infra/deploy-prestamos.sh) y [`docs/API-PRESTAMOS.md`](docs/API-PRESTAMOS.md). Henry decidió el alcance; Ciro revisa y despliega.
+- **Préstamos fase 2 y cuota automática (2026-10-17):** Henry pidió que todo funcionara de forma real y que lo
+  hiciéramos nosotros sin pisar el trabajo de los demás. Claude escribió en [`deploy/prestamos`](deploy/prestamos)
+  el permiso de cobro de las cuotas, el desembolso al aprobar y `/recurring` con `charge-now` (`op.ts`, `grants.ts`,
+  `recurring.ts`, 5 Lambdas nuevas y 5 pruebas con Open Payments falso), extendió
+  [`infra/deploy-prestamos.sh`](infra/deploy-prestamos.sh) y documentó en
+  [`docs/API-PRESTAMOS.md`](docs/API-PRESTAMOS.md). Copió lo necesario de pagos en vez de editarlo y decidió
+  guardar los tokens en Secrets Manager por la regla del equipo. Henry revisa; Ciro despliega.
 - **README del repo:** Claude escribió [`README.md`](README.md) (arquitectura, pago con Open Payments, rutas, despliegue, seguridad) y el pedido de la rama `main` en `MEMORY.md`; Henry lo revisó.
 
 ## Prompt Log
@@ -124,4 +131,5 @@ Prompts literales en [`/prompts`](prompts/):
 |---|---|---|---|
 | [`prompts/backend-infra-claude-code-2026-10-16.md`](prompts/backend-infra-claude-code-2026-10-16.md) | David | Claude Code | Setup del repo, infra AWS, Cognito, pre-signup, API Gateway, pagos, bloque A |
 | [`prompts/henry-claude-code-2026-10-16.md`](prompts/henry-claude-code-2026-10-16.md) | Henry | Claude Code | `GET /me` con `userId = username`; préstamos fase 1 |
+| [`prompts/henry-claude-code-2026-10-17.md`](prompts/henry-claude-code-2026-10-17.md) | Henry | Claude Code | Préstamos fase 2 (permiso de cobro y desembolso) y cuota automática |
 | [`prompts/backend-natilleras-claude-code-2026-10-16.md`](prompts/backend-natilleras-claude-code-2026-10-16.md) | Camilo | Claude Code | Bloque A: natilleras, cuentas guardadas, perfil |

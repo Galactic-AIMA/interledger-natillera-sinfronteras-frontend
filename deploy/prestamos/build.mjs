@@ -11,6 +11,11 @@ export const lambdas = [
   'list-loan-requests',
   'get-my-loans',
   'decide-loan',
+  'start-repayment-grant',
+  'finish-repayment-grant',
+  'start-recurring',
+  'finish-recurring',
+  'charge-recurring-now',
 ];
 const common = { bundle: true, platform: 'node', target: 'node22', format: 'cjs', external: ['@aws-sdk/*'], logLevel: 'warning' };
 
