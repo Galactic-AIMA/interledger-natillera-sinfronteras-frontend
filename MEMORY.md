@@ -5,7 +5,8 @@ Estado vivo. Cada sesión lo lee al empezar y actualiza **solo su sección** al 
 ## Estado general
 
 - 2026-10-16 — Repo vacío creado. Setup inicial: CLAUDE.md, MEMORY.md, AI_USAGE.md, hook de prompts, docs (Camilo + Claude Code).
-- 2026-10-17 03:25 — **Estado vigente:** [docs/estado-2026-10-17-madrugada.md](docs/estado-2026-10-17-madrugada.md). `start-payment` funciona en el `main` del back (PR #7). Préstamos fase 2 y cuota automática están en `david` (PR #9) pero **sin desplegar** (403). `POST /payments/preview` sí está desplegado. `main` del front trae logo Anillos, panel de logs y el barrido UX. `tsc` limpio, `npm test` 15/15. **Falta unir los dos repos en uno** (ver checklist).
+- 2026-10-17 05:07 — **Estado vigente** (validado con git y gh por Camilo + Claude): **repo único** desde el PR #10 (04:47): el back vive en [`backend/`](backend/) y su repo quedó congelado (`main` = `e32dcda`). `main` del front = `69dc490`, con el PR #9 (vista previa con espera y aviso de billetera inexistente), el PR #3 (docs, pitch y video) y el PR #8 (préstamos de la natillera que se ve; todas las funciones van al back real en `eas.json`). En `dev` ya están desplegados préstamos fase 2 y cuota automática (deployment `1x7kck`), **sin prueba real**. Abierto: PR #11 de Henry (metas solo en el celular porque `/goals` da 403, y guía [docs/prueba-apk-2026-10-17.md] en esa rama). Falta: renombrar el repo, prueba real de fase 2, APK, video y slides.
+- 2026-10-17 03:25 — Estado anterior (histórico): [docs/estado-2026-10-17-madrugada.md](docs/estado-2026-10-17-madrugada.md). `start-payment` funciona en el `main` del back (PR #7). Préstamos fase 2 y cuota automática están en `david` (PR #9) pero **sin desplegar** (403). `POST /payments/preview` sí está desplegado. `main` del front trae logo Anillos, panel de logs y el barrido UX. `tsc` limpio, `npm test` 15/15. **Falta unir los dos repos en uno** (ver checklist).
 - 2026-10-16 23:40 — Estado anterior (histórico): [docs/estado-2026-10-16-noche.md](docs/estado-2026-10-16-noche.md). Bloque A del back desplegado; `main` del front trae cuota real, pagos reales y varias natilleras. `tsc` limpio, `npm test` 15/15.
 - Entrega: **2026-10-17 11:00**. Grabar video de respaldo antes de las 08:00.
 
@@ -23,8 +24,12 @@ Plan completo: [docs/PLAN.md](docs/PLAN.md) · guía de Henry: [docs/HENRY.md](d
 | `auth-signup` | Registro directo a Cognito (encargo de Camilo) | Henry | `feat/auth-signup` (fork) e integrado en `feat/creditos` | **hecho**; falta probar contra Cognito real en Expo Go |
 | `cuenta-celular` | Pulido en celular (`expo-clipboard`, botón volver) + textos de más impacto | Henry | `feat/cuenta-celular` (fork; sale de `feat/creditos`) | **hecho y probado en demo** (2026-10-16 ~14:10); el 2026-10-16 ~15:30 se le fusionó `feat/creditos` `4e4d5b1` (arreglos de `base`, `npm test`, región `us-east-2`, `web.output` estático): `tsc` limpio, `npm test` 8/8. **Fusionada en `main` (PR #1, 16:39)**; después recibió `main` `47213b6` (modo híbrido, Metas) en `a912952`. Desde ~17:00 el front no se toca más (decisión de Henry); falta probar en celular (Camilo) |
 | `pagos-reales` | Pagos P2P y bloque A contra el back real (modo híbrido), varias natilleras con selector en la 10 | Camilo | `feat/pagos-reales` → `main` | **en `main`** (`200bcc7`, `c916920`, 23:28); falta probar en celular |
-| `natillera-real` | Cuota real cuando la natillera es real; cuentas guardadas por nombre | Henry | `feat/natillera-real` | **en `main`** (PR #2, 23:29); docs al día después, falta llevarlas a `main` |
+| `natillera-real` | Cuota real cuando la natillera es real; cuentas guardadas por nombre | Henry | `feat/natillera-real` | **en `main`** (PR #2, 23:29; docs en el PR #3, 04:43) |
 | `metas` | Pantallas 36–38 (Metas: ahorro y colecta) + sección en la 10 + fecha en los movimientos | Camilo | `feat/metas` → `main` | **en `main`** (`47213b6`; fechas en `7c01a6e`); probado en web en modo demo; falta celular y una billetera real de beneficiario. Diseño: [docs/superpowers/specs/2026-10-16-metas-design.md](docs/superpowers/specs/2026-10-16-metas-design.md) |
+| `preview-billetera` | Vista previa con espera, meta de ejemplo con billetera real, aviso de billetera inexistente | Henry | `fix/preview-billetera` | **en `main`** (PR #9, 04:12) |
+| `prestamos-reales` | Préstamos de la natillera que se está viendo; todas las funciones al back real en `eas.json`; `openapi.yaml` y README al día | Henry | `feat/prestamos-reales` | **en `main`** (PR #8, 04:44) |
+| `repo-unico` | Back dentro de `backend/` con `git subtree` (historia completa); `tsconfig` lo excluye | Henry | `chore/repo-unico` | **en `main`** (PR #10, 04:47); falta renombrar el repo |
+| `metas-locales` | Metas solo en el celular con sesión real (`/goals` da 403); README separa lo probado de lo desplegado; guía de prueba del APK | Henry | `fix/metas-locales-y-recurrente` | **PR #11 abierto** (05:01) |
 
 ## Decisiones tomadas
 
@@ -105,7 +110,7 @@ Orden sugerido. Detalle y comandos en la sección "Pendientes de Henry" de [docs
 - [ ] APK instalado en un Android real
 - [ ] `AI_USAGE.md` completo y `node scripts/ai-usage-check.mjs` limpio (front y back)
 - [ ] Todo en `main`, repos públicos
-- [ ] **Un solo repo (regla de la hackatón):** renombrar este repo a `interledger-natillera-sin-fronteras` (lo hace un admin de Galactic-AIMA; GitHub redirige el nombre viejo) y meter el back en `backend/` con `git subtree add --prefix=backend` sin `--squash`, desde su rama final. Se hace cuando la versión que vamos a presentar esté lista y Duvan/David confirmen que ya no hay más pushes al back. No se cambian los links viejos que están en `prompts/`
+- [ ] **Un solo repo (regla de la hackatón):** el back ya está en `backend/` (PR #10, 2026-10-17 04:47). Falta renombrar este repo a `interledger-natillera-sin-fronteras` (lo hace un admin de Galactic-AIMA; GitHub redirige el nombre viejo) y meter el back en `backend/` con `git subtree add --prefix=backend` sin `--squash`, desde su rama final. Se hace cuando la versión que vamos a presentar esté lista y Duvan/David confirmen que ya no hay más pushes al back. No se cambian los links viejos que están en `prompts/`
 - [ ] Slides en la plantilla oficial + link de demo en el Drive del equipo + formulario enviado
 
 ## Bitácora por carril

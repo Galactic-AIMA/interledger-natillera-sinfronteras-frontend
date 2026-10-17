@@ -24,7 +24,7 @@ terminar. Fechas absolutas (YYYY-MM-DD). Reglas de uso en [CLAUDE.md](CLAUDE.md)
 | Bloque A (perfil, wallets, cuentas, natilleras) | ✅ desplegado y probado |
 | Multi-natilleras (PR #8 de Camilo, `GET /natilleras`) | ✅ desplegado 2026-10-17 (deployment `xk83n3`); respaldos: get-me v2, resto del bloque A v1 |
 | Préstamos fase 1 (+ multi-natillera) | ✅ desplegado y probado; aprobar/desembolsar = fase 2 (501) |
-| Préstamos fase 2 + cuota automática (Henry, 2026-10-17 madrugada) | 🟡 código y 11 pruebas locales en `feat/credito-fase2-recurrente` (PR a `david`); **sin desplegar**: lo despliega Ciro con `infra/deploy-prestamos.sh` |
+| Préstamos fase 2 + cuota automática (Henry, 2026-10-17 madrugada) | ~~sin desplegar~~ **Superado:** ya desplegado (ver la fila del PR #9, abajo) |
 | Aportes (`kind:'aporte'`) | ✅ **probado real** 2026-10-17 07:45Z: prueba3 → Familia Ciro 50.000 COP, `fundTotal` subió |
 | Préstamos fase 2 + cuota automática (PR #9 de Henry) | Desplegado 2026-10-17 (deployment `1x7kck`; tabla `natillera-grants`, política `cobros-op`, secreto por grant `natillera/grants/<id>`). Respaldos: simulate-loan v1, list-loan-requests v2, get-my-loans v2, request-loan v2, decide-loan v1. **Falta prueba real** (riesgos: desembolso con debit fijo COP→EUR, CreateSecret vs SCP) |
 | Llaves | Una sola: `natillera/open-payments-client`. Restos a borrar post-hackatón: secretos `prueba1`, `ciro` y `privateKey` de prueba1 en user-info |
