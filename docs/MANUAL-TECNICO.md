@@ -133,6 +133,16 @@ APK: [prueba-apk-2026-10-17.md](prueba-apk-2026-10-17.md).
 Depurar desde el celular: **Su cuenta → Registro técnico** muestra cada llamada al API (método, ruta, estado y
 tiempo). Se puede encender como botón flotante y copiar todo para pegarlo en un issue.
 
+### Guía paso a paso (pantalla 39)
+
+`src/features/guia/`: `guides.ts` (contenido de 8 procesos, mismo texto que el manual de usuario), `GuideSheet.tsx`
+(modal con ícono que late, paso que entra deslizado y barra de avance; quieto con `useReducedMotion`; se desplaza con
+A+ al máximo), `FirstTimeGuide.tsx` (la oferta la primera vez) y `guideSeen.ts` (procesos ya ofrecidos, en
+`SecureStore` con la clave `natillera.guidesOffered`; en web, `localStorage`). Cada pantalla de proceso tiene
+`<FirstTimeGuide id="…" />` antes de `</Screen>`; Ayuda las abre directo en los pasos. Para agregar un proceso:
+sumarlo a `GUIDE_IDS` y `GUIDES` y poner el componente en su pantalla. Para volver a ver las ofertas en un celular:
+borrar los datos de la app.
+
 ## 7. Backend
 
 Todo en [backend/README.md](../backend/README.md): arquitectura, las rutas por bloque, estado en `dev`, despliegue
@@ -164,4 +174,3 @@ Ninguna de las dos cosas prueba que funcione: eso solo lo dice una prueba con se
 - Vuelta por página también para los grants (opción A → ruta pública como `return-payment`).
 - Deuda de seguridad del back: llaves por usuario en `user-info` (heredado del `start-payment` de Duvan) y rotar las
   llaves de la Test Wallet usadas en la demo.
-- Guía paso a paso dentro de la app, con animación: diseño listo en [GUIA-EN-LA-APP.md](GUIA-EN-LA-APP.md), espera el OK de Camilo por la interfaz congelada.
