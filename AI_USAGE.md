@@ -165,4 +165,5 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 - Sesiones de la mañana del 17/10 sin hook (integración del back, sonidos, inglés, usuarios reales y video demo), copiadas de su transcripción: [`prompts/2026-10-17-camilo-sesiones-sin-hook.md`](prompts/2026-10-17-camilo-sesiones-sin-hook.md).
 - Encargos enviados a otras sesiones: [`prompts/2026-10-16-camilo-encargos-sesiones.md`](prompts/2026-10-16-camilo-encargos-sesiones.md).
 - Sesión de Henry del logo, el slogan y los préstamos reales (el hook la guardó en el archivo de otra rama; aquí va separada): [`prompts/2026-10-17-henry-logo-y-prestamos.md`](prompts/2026-10-17-henry-logo-y-prestamos.md).
+- Sesión de Camilo de la APK v1.0.0, la versión web para iPhone y los QR del pitch (Claude Code, raíz sin hook): [`prompts/2026-10-17-camilo-apk-web-qr.md`](prompts/2026-10-17-camilo-apk-web-qr.md).
 - Sesiones de Henry en claude.ai (sin hook, copiadas a mano): [`prompts/2026-10-16-henry-claude-ai.md`](prompts/2026-10-16-henry-claude-ai.md). Los encargos a los subagentes de la auditoría se resumen en [`docs/auditoria-2026-10-16.md`](docs/auditoria-2026-10-16.md).
