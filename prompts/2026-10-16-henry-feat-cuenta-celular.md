@@ -166,3 +166,19 @@ El equipo no le parece que el código sea tan largo. Entonces, valida si, si es 
 ## 18:33 · sesión 2594d34c
 
 Revisa entonces en el repo del backend bien la, las líneas de código, en la ruta Dígale que la archivos que subimos son esos, en deploy/ payments/  dist y los archivos zip que es un código de 30.000 líneas. Entonces, imagínate, papá.
+
+## 18:37 · sesión 2594d34c
+
+entonces porque no funciona la app?
+
+## 20:22 · sesión 2fa70ba0
+
+actualízate y muéstrame como se vería el pitch hasta ahora
+
+## 20:32 · sesión 2fa70ba0
+
+explícame todo el flujo y las historias de usuario por favor
+
+## 21:36 · sesión 9ef31aea
+
+revisa el repo y comencemos a trabajar en apoyo al back

@@ -1,5 +1,11 @@
 # Coordinación front ↔ back (2026-10-16 ~16:00)
 
+> **Actualización ~22:00 (rama `david` `dc3a428`, API probada por curl):**
+> - **Pagos listos en AWS:** `POST /payments`, `GET /payments`, `GET /payments/{id}`, `POST /payments/{id}/finish` responden 401 sin token (existen y tienen autorizador) y `GET /payments/{id}/return` (opción B, pública) responde. Primer inicio de pago real verificado por David (`melos` COP → `f9a1abde` EUR).
+> - **El front ya es compatible con la opción B:** la billetera vuelve a `return-payment`, que finaliza y redirige a `natillera://retorno?paymentId=…&result=ok|rejected|failed|pending`. La 30 llama `finish` sin `interact_ref`; como el pago ya no está `pending`, el back devuelve el estado (idempotente) y la 30 consulta hasta el final. `rejected` ya está en `WALLET_REJECTIONS`.
+> - **Faltan `GET /me` y `GET /natilleras/mine`** (403). **El front las escribió:** rama [`front/natillera-mine`](https://github.com/HenryStark866/interterledger-natillera-sin-fronteras-backend/tree/front/natillera-mine) del fork de Henry (`c6ce48a`): Lambda `natilleras-mine` (solo DynamoDB, proxy), `GET /me` con `userId = username` (lo que usa `start-payment` en `integrants`), semilla `n-rosa` (prueba1 Doña Rosa admin, prueba2 Luz, prueba3 Andrés «debe»; fondo `f9a1abde` EUR, cuota 11,00 €) y `infra/deploy-natillera.sh`. Probadas con DynamoDB simulado; **David corre el script** (`AWS_PROFILE=natillera bash infra/deploy-natillera.sh`). Guía: `docs/API-NATILLERA.md` en esa rama.
+> - **Luego, en el front (Camilo):** `EXPO_PUBLIC_REAL_METHODS=getMe,getMyNatillera,startPayment,finishPayment,getPayment` y `EXPO_PUBLIC_AUTH_TOKEN_TYPE=id`. Entrar con `prueba3` y poner la cuota = camino del pitch con pago real.
+
 > **Actualización ~17:15:** el PR del front ya está en `main` y la app tiene modo híbrido: cada función pasa a real cuando su ruta exista (`EXPO_PUBLIC_REAL_METHODS`). Para el pago real hacen falta, con estos nombres exactos, `POST /payments`, `POST /payments/{id}/finish` y `GET /payments/{id}` (hoy solo existe `/start-payment`). Si prefieren otros nombres, avisen: se cambian solo en `src/api/httpApi.ts`.
 >
 > **Actualización ~17:00 (rama `david` `4d38582`, API probada por curl):**
