@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="es">
 <meta charset="utf-8">
+<script>try{var t=localStorage.getItem("natillera-tema");if(t==="oscuro")document.documentElement.setAttribute("data-theme","dark")}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Natillera sin Fronteras</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -17,15 +18,30 @@
   --f-titulo:"Gloock",Georgia,"Times New Roman",serif;
   --f-texto:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
   --f-num:"Martian Mono",ui-monospace,Consolas,monospace;
+  --bisel:#1A1B4B; --ilp-bg:#1A1B4B; --luego-bg:#ECEEF8; --anillo1:#1A1B4B; --anillo2:#2F6F63; --anillo3:#3F4C9A;
   color-scheme:light;
 }
+/* Modo oscuro: mismas tintas, noche profunda con lila y menta; las pantallas de la app quedan claras y resaltan. */
+html[data-theme="dark"]{
+  --fondo:#0E1030; --tinta:#F5F6FA; --indigo2:#9AA6F0; --verde:#7FC3AE; --menta:#A7C9B9;
+  --menta-suave:#16304A; --gris:#AEB2D0; --linea:#2B2E66; --blanco:#181A4A; --noche:#080920;
+  --bisel:#34377F; --ilp-bg:#262A75; --luego-bg:#23266B; --anillo1:#F5F6FA; --anillo2:#A7C9B9; --anillo3:#9AA6F0;
+  color-scheme:dark;
+}
+html[data-theme="dark"] .slide:not(.dark){background:radial-gradient(1200px 700px at 78% 8%,#1B1E5C 0,var(--fondo) 62%)}
+html[data-theme="dark"] .slide.dark{background:var(--noche)}
+html[data-theme="dark"] .tel{box-shadow:0 30px 70px -30px rgba(0,0,0,.9),0 0 0 1px #4A4E9E}
+html[data-theme="dark"] .nodo,html[data-theme="dark"] .socio,html[data-theme="dark"] .chip,html[data-theme="dark"] .viene .card{box-shadow:0 18px 40px -28px rgba(0,0,0,.8)}
+html[data-theme="dark"] .ini{color:#12133A}
+html[data-theme="dark"] .persona:nth-child(4) .ini{background:#8E3FB5;color:#fff}
+html[data-theme="dark"] .barra i{background:var(--verde)}
 html,body{height:100%}
 body{margin:0;background:var(--noche);color:var(--tinta);font-family:var(--f-texto);overflow:hidden;
   padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
 .viewport{position:fixed;inset:0;overflow:hidden}
 .stage{position:absolute;left:50%;top:50%;width:1600px;height:900px;transform-origin:center center;transform:translate(-50%,-50%)}
 .slide{position:absolute;inset:0;background:var(--fondo);overflow:hidden;opacity:0;visibility:hidden;
-  transition:opacity .45s ease,visibility 0s linear .45s}
+  transition:opacity .45s ease,visibility 0s linear .45s,background-color .4s ease}
 .slide.on{opacity:1;visibility:visible;transition:opacity .45s ease,visibility 0s}
 .pad{position:absolute;inset:0;padding:88px 112px;display:flex;flex-direction:column;gap:28px}
 
@@ -77,7 +93,7 @@ h2{font-size:84px;line-height:1.02;max-width:15ch}
 .fuente{font-family:var(--f-num);font-size:16px;color:var(--gris);letter-spacing:.04em}
 
 /* Teléfonos */
-.tel{width:300px;aspect-ratio:780/1654;max-width:100%;border-radius:44px;background:var(--tinta);padding:12px;box-shadow:0 30px 60px -30px rgba(26,27,75,.55);flex:none}
+.tel{width:300px;aspect-ratio:780/1654;max-width:100%;border-radius:44px;background:var(--bisel);padding:12px;box-shadow:0 30px 60px -30px rgba(26,27,75,.55);flex:none}
 .tel img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;border-radius:34px}
 .tel.sm{width:250px;border-radius:38px;padding:10px}.tel.sm img{border-radius:29px}
 
@@ -112,7 +128,7 @@ h2{font-size:84px;line-height:1.02;max-width:15ch}
 .nodo p{margin:0;font-size:22px;line-height:1.35;color:var(--gris)}
 .nodo .m{font-family:var(--f-num);font-weight:700;font-size:26px}
 .nodo.eur .m{color:var(--indigo2)}.nodo.cop .m{color:var(--verde)}
-.nodo.ilp{background:var(--tinta);border-color:var(--tinta);color:var(--sobre-noche)}.nodo.ilp p,.nodo.ilp .n{color:#C5C9E8}
+.nodo.ilp{background:var(--ilp-bg);border-color:var(--ilp-bg);color:var(--sobre-noche)}.nodo.ilp p,.nodo.ilp .n{color:#C5C9E8}
 .conector{align-self:center;height:4px;background:repeating-linear-gradient(90deg,var(--indigo2) 0 12px,transparent 12px 20px);position:relative}
 .conector::after{content:"";position:absolute;right:-2px;top:-8px;border:10px solid transparent;border-left:14px solid var(--indigo2)}
 .sellos{display:flex;gap:16px;flex-wrap:wrap}
@@ -144,7 +160,7 @@ h2{font-size:84px;line-height:1.02;max-width:15ch}
 .viene .card p{margin:0;font-size:23px;line-height:1.35;color:var(--gris)}
 .estado{font-family:var(--f-num);font-size:14px;letter-spacing:.12em;font-weight:700;padding:6px 12px;border-radius:99px;width:max-content}
 .estado.ya{background:var(--menta-suave);color:var(--verde)}
-.estado.luego{background:#ECEEF8;color:var(--indigo2)}
+.estado.luego{background:var(--luego-bg);color:var(--indigo2)}
 .equipo{display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-top:auto;border-top:2px solid var(--linea);padding-top:28px}
 .persona{display:flex;gap:16px;align-items:center}
 .ini{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-titulo);font-size:28px;color:#fff;flex:none}
@@ -181,7 +197,20 @@ body:hover .hud,.hud:focus-within{opacity:1}
 .incl h2{font-size:62px}
 .incl .chip{padding:16px 20px;font-size:21px}.incl .chip b{font-size:29px}
 .incl .kicker{margin-bottom:-8px}
+
+/* Animaciones breves de entrada (≤ .7 s por elemento, escalonadas con --i) */
+.draw .tel,.draw .billetera{animation:telSube .65s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.12s + var(--i,0)*.12s)}
+.draw .socio,.draw .cifra,.draw .nodo,.draw .chip,.draw .viene .card,.draw .persona,.draw .paso .cap,.draw .lista li,.draw .sello,.draw .mas,.draw .duo figcaption,.draw .frase,.draw .kicker,.draw h2,.draw .lead{
+  animation:aparece .5s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(.05s + var(--i,0)*.09s)}
+.draw .cuaderno{animation:cae .7s cubic-bezier(.2,.9,.3,1.2) both;animation-delay:.35s}
+.draw .conector,.draw .flecha{animation:aparece .4s ease both;animation-delay:calc(.25s + var(--i,0)*.09s)}
+.draw .cifra .grande,.draw .duo figcaption .num{animation:enfoca .6s ease both;animation-delay:calc(.2s + var(--i,0)*.09s)}
+@keyframes aparece{from{opacity:0;transform:translateY(18px)}}
+@keyframes telSube{from{opacity:0;transform:translateY(36px) scale(.96)}}
+@keyframes cae{from{opacity:0;transform:translateY(-30px) rotate(-4deg)}}
+@keyframes enfoca{from{opacity:0;filter:blur(6px)}}
 @media (prefers-reduced-motion:reduce){
+  .draw *{animation:none!important}
   .draw .rings .r,.draw .rise{animation:none}.slide{transition:none}.envivo i{animation:none}
 }
 </style>
@@ -238,13 +267,13 @@ body:hover .hud,.hud:focus-within{opacity:1}
             <div class="kicker">La solución</div>
             <h2>La natillera de siempre, ahora en el celular.</h2>
             <ul class="lista">
-              <li><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="15" fill="none" stroke="#3F4C9A" stroke-width="5"/></svg>Cada quien pone su cuota desde su billetera, en su moneda.</li>
-              <li><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="15" fill="none" stroke="#2F6F63" stroke-width="5"/></svg>Al fondo de la natillera le llegan pesos.</li>
-              <li><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="15" fill="none" stroke="#1A1B4B" stroke-width="5"/></svg>Todos ven lo mismo: cuánto hay, quién está al día y quién pidió prestado.</li>
+              <li><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="15" fill="none" style="stroke:var(--indigo2)" stroke-width="5"/></svg>Cada quien pone su cuota desde su billetera, en su moneda.</li>
+              <li><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="15" fill="none" style="stroke:var(--verde)" stroke-width="5"/></svg>Al fondo de la natillera le llegan pesos.</li>
+              <li><svg viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="15" fill="none" style="stroke:var(--tinta)" stroke-width="5"/></svg>Todos ven lo mismo: cuánto hay, quién está al día y quién pidió prestado.</li>
             </ul>
             <p class="frase">«Ahorre en familia, aunque vivan en países distintos.»</p>
           </div>
-          <div class="tel"><img src="pantallas/v2-mi-natillera.png" alt="Pantalla Mi natillera: entre todos llevan, el fondo y su ahorro al día"></div>
+          <div class="tel"><img src="pantallas/v3-mi-natillera.png" alt="Pantalla Mi natillera: entre todos llevan, el fondo y su ahorro al día"></div>
         </div>
       </div>
     </section>
@@ -255,7 +284,7 @@ body:hover .hud,.hud:focus-within{opacity:1}
         <span class="envivo"><i></i>EN VIVO</span>
         <h2 style="max-width:none">Andrés pone su cuota desde España.</h2>
         <div class="camino">
-          <div class="paso"><div class="tel sm"><img src="pantallas/v2-poner-cuota.png" alt="Poner la cuota: cuánto llega y cuánto sale"></div><div class="cap"><b>1 · LA CUOTA</b>Ve antes cuánto sale en euros y cuánto llega en pesos</div></div>
+          <div class="paso"><div class="tel sm"><img src="pantallas/v3-poner-cuota.png" alt="Poner la cuota: cuánto llega y cuánto sale"></div><div class="cap"><b>1 · LA CUOTA</b>Ve antes cuánto llega y cuánto sale</div></div>
           <div class="flecha" aria-hidden="true">→</div>
           <div class="paso"><div class="tel sm"><img src="pantallas/28-va-a-su-billetera.png" alt="Va a su billetera, en tres pasos"></div><div class="cap"><b>2 · SIN SUSTOS</b>Le contamos en tres pasos qué va a pasar</div></div>
           <div class="flecha" aria-hidden="true">→</div>
@@ -290,9 +319,9 @@ body:hover .hud,.hud:focus-within{opacity:1}
         <div class="kicker">Y en Medellín…</div>
         <h2 style="max-width:none">Doña Rosa lo ve de una.</h2>
         <div class="duo">
-          <figure><div class="tel sm"><img src="pantallas/v2-mi-natillera.png" alt="El fondo sube y la cuota queda al día"></div><figcaption>El fondo, en vivo<span class="num">Al día</span>sin cuaderno ni pantallazos</figcaption></figure>
+          <figure><div class="tel sm"><img src="pantallas/v3-mi-natillera.png" alt="El fondo sube y la cuota queda al día"></div><figcaption>El fondo, en vivo<span class="num">Al día</span>sin cuaderno ni pantallazos</figcaption></figure>
           <div class="mas num">+$50.000<small>la cuota de Andrés</small></div>
-          <figure class="despues"><div class="tel sm"><img src="pantallas/v2-quien-ya-puso.png" alt="¿Quién ya puso? Anillos de color para quien está al día"></div><figcaption>¿Quién ya puso?<span class="num">Un anillo</span>por cada socio</figcaption></figure>
+          <figure class="despues"><div class="tel sm"><img src="pantallas/v3-quien-ya-puso.png" alt="¿Quién ya puso? Anillos de color para quien está al día"></div><figcaption>¿Quién ya puso?<span class="num">Un anillo</span>por cada socio</figcaption></figure>
         </div>
       </div>
     </section>
@@ -314,8 +343,8 @@ body:hover .hud,.hud:focus-within{opacity:1}
             </div>
           </div>
           <div class="tels">
-            <div class="tel sm"><img src="pantallas/v2-letra-grande.png" alt="Mi natillera con la letra grande"></div>
-            <div class="tel sm" style="margin-top:80px"><img src="pantallas/v2-ayuda.png" alt="Ayuda: preguntas en palabras de la casa"></div>
+            <div class="tel sm"><img src="pantallas/v3-letra-grande.png" alt="Mi natillera con la letra grande"></div>
+            <div class="tel sm" style="margin-top:80px"><img src="pantallas/v3-ayuda.png" alt="Ayuda: preguntas en palabras de la casa"></div>
           </div>
         </div>
       </div>
@@ -367,6 +396,7 @@ body:hover .hud,.hud:focus-within{opacity:1}
   <span id="cuenta" class="num">1 / 10</span>
   <button id="b-prev" type="button" aria-label="Lámina anterior">←</button>
   <button id="b-next" type="button" aria-label="Lámina siguiente">→</button>
+  <button id="b-tema" type="button" aria-pressed="false">Modo oscuro (T)</button>
   <button id="b-notas" type="button">Notas (N)</button>
   <button id="b-full" type="button">Pantalla completa (F)</button>
 </div>
@@ -379,7 +409,7 @@ body:hover .hud,.hud:focus-within{opacity:1}
     {cx:415.9,cy:595.5,start:150,cuts:['M347.4 499.3 A179 179 0 0 1 341.9 373.3','M465.0 488.0 A179 179 0 0 1 571.4 420.3']},
     {cx:608.1,cy:595.5,start:30,cuts:['M559.0 703.0 A179 179 0 0 1 452.6 770.7','M490.5 606.7 A179 179 0 0 1 378.7 548.4']}
   ];
-  var COLORES={claro:['#1A1B4B','#2F6F63','#3F4C9A'],oscuro:['#F5F6FA','#A7C9B9','#9AA6F0']};
+  var COLORES={claro:['var(--anillo1)','var(--anillo2)','var(--anillo3)'],oscuro:['#F5F6FA','#A7C9B9','#9AA6F0']};
   document.querySelectorAll('[data-rings]').forEach(function(el,k){
     var c=COLORES[el.getAttribute('data-rings')], id='m'+k, s='<svg class="rings" viewBox="0 0 1024 1024" aria-hidden="true"><defs>';
     RINGS.forEach(function(r,i){
@@ -389,7 +419,7 @@ body:hover .hud,.hud:focus-within{opacity:1}
     });
     s+='</defs>';
     RINGS.forEach(function(r,i){
-      s+='<g mask="url(#'+id+i+')"><circle class="r" style="--d:'+(0.15+i*0.2)+'s" cx="'+r.cx+'" cy="'+r.cy+'" r="179" fill="none" stroke="'+c[i]+'" stroke-width="58" transform="rotate('+r.start+' '+r.cx+' '+r.cy+')"/></g>';
+      s+='<g mask="url(#'+id+i+')"><circle class="r" style="--d:'+(0.15+i*0.2)+'s;stroke:'+c[i]+'" cx="'+r.cx+'" cy="'+r.cy+'" r="179" fill="none" stroke-width="58" transform="rotate('+r.start+' '+r.cx+' '+r.cy+')"/></g>';
     });
     el.innerHTML=s+'</svg>';
   });
@@ -408,6 +438,11 @@ body:hover .hud,.hud:focus-within{opacity:1}
     {t:25,q:'Camilo',p:['Este diciembre, Doña Rosa no va a sacar el cuaderno.','Va a abrir el celular. Va a ver que Luz puso. Que Andrés puso.','Y va a repartir la natillera con toda la familia… aunque estén lejos.','Natillera sin Fronteras. Lejos en distancia, juntos en el ahorro. Gracias. (Quietos dos segundos.)']}
   ];
 
+  // Índice de escalonado para las animaciones de entrada.
+  ['.familia','.cifras','.tubo','.chips','.viene','.equipo','.lista','.camino','.sellos','.duo','.tels'].forEach(function(sel){
+    document.querySelectorAll(sel).forEach(function(g){[].slice.call(g.children).forEach(function(el,i){el.style.setProperty('--i',i);
+      [].forEach.call(el.querySelectorAll('.tel,.billetera,.cap,.grande,.num'),function(n){n.style.setProperty('--i',i)})})});
+  });
   var slides=[].slice.call(document.querySelectorAll('.slide')), cur=0, t0=null, tick=null;
   var stage=document.getElementById('stage'), notas=document.getElementById('notas');
   function fit(){
@@ -436,6 +471,15 @@ body:hover .hud,.hud:focus-within{opacity:1}
   function full(){
     try{ if(document.fullscreenElement)document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(function(){}); }catch(e){}
   }
+  var bt=document.getElementById('b-tema'), root=document.documentElement;
+  function pintarTema(){var o=root.getAttribute('data-theme')==='dark';bt.textContent=o?'Modo claro (T)':'Modo oscuro (T)';bt.setAttribute('aria-pressed',o?'true':'false')}
+  function tema(){
+    var o=root.getAttribute('data-theme')==='dark';
+    if(o)root.removeAttribute('data-theme'); else root.setAttribute('data-theme','dark');
+    try{localStorage.setItem('natillera-tema',o?'claro':'oscuro')}catch(e){}
+    pintarTema();
+  }
+  pintarTema();
   function toggleNotas(){notas.hidden=!notas.hidden;pintarNotas()}
   document.addEventListener('keydown',function(e){
     if(e.target.closest&&e.target.closest('button')&&(e.key===' '||e.key==='Enter'))return;
@@ -444,6 +488,7 @@ body:hover .hud,.hud:focus-within{opacity:1}
     else if(k==='ArrowLeft'||k==='PageUp'||k==='Backspace'){e.preventDefault();ir(cur-1)}
     else if(k==='Home')ir(0); else if(k==='End')ir(slides.length-1);
     else if(k==='n'||k==='N')toggleNotas();
+    else if(k==='t'||k==='T')tema();
     else if(k==='f'||k==='F')full();
     else if(k==='r'||k==='R'){t0=null;clearInterval(tick);pintarNotas()}
   });
@@ -453,6 +498,7 @@ body:hover .hud,.hud:focus-within{opacity:1}
   document.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>40)ir(dx<0?cur+1:cur-1);x0=null});
   document.getElementById('b-prev').onclick=function(){ir(cur-1)};
   document.getElementById('b-next').onclick=function(){ir(cur+1)};
+  bt.onclick=function(e){e.stopPropagation();tema()};
   document.getElementById('b-notas').onclick=toggleNotas;
   document.getElementById('b-full').onclick=full;
   window.addEventListener('resize',fit); fit();
