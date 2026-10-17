@@ -1,11 +1,10 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, View } from 'react-native';
+import { View } from 'react-native';
 
 import { demoUsers, useApiContext, useMe } from '@/api';
 import { isHybrid } from '@/api/hybridApi';
-import { AppText, Button, Card, Choice, InfoRow, Screen } from '@/components';
-import { palette } from '@/theme';
+import { AppText, BrandLoader, Button, Card, Choice, InfoRow, Screen } from '@/components';
 import { currencyName } from '@/utils/money';
 import { BackButton } from '@/features/navegacion/BackButton';
 
@@ -40,7 +39,7 @@ export default function ScreenCuenta() {
     <Screen headerLeft={<BackButton fallback={'/natillera'} />} title="Su cuenta" footer={footer}>
       {isLoading ? (
         <View style={{ alignItems: 'center', padding: 24 }}>
-          <ActivityIndicator size="large" color={palette.primary} accessibilityLabel="Cargando sus datos" />
+          <BrandLoader size={72} label="Cargando sus datos" />
         </View>
       ) : isError || !me ? (
         <Card tone="danger" title="No pudimos cargar sus datos">

@@ -1,3 +1,6 @@
+export { AnimatedSplash, SLOGAN } from './AnimatedSplash';
+export { BrandLoader } from './BrandLoader';
+export { BrandSymbol } from './BrandSymbol';
 export { AppText, type AppTextProps } from './AppText';
 export { Button } from './Button';
 export { Card } from './Card';
