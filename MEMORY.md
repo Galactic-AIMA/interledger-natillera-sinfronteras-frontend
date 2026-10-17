@@ -153,6 +153,11 @@ Decisiones técnicas aún sin tomar:
   la Test Wallet **rechaza el grant** automáticamente (enlace inservible).
 - 2026-10-16 · `pre-signup` ahora también guarda en `user-info` (PK `source` + `id`), basado en el
   cambio de Duvan. Falta crear la tabla y desplegar.
+- 2026-10-16 (~21:40 COL) · El registro fallaba con `PreSignUp failed with error exports is not
+  defined in ES module scope`: en la Lambda **`pre-signup`** se había subido (19:37 COL) un
+  start-payment compilado a CommonJS dentro de `index.mjs`. Se respaldó como **versión 1** y se
+  restauró `deploy/pre-signup/index.mjs` del repo; timeout 3 s → 10 s. Verificado: rechaza wallet
+  inválida. **Antes de subir desde la consola, revisar el nombre de la Lambda.**
 
 ### op-core
 - (vacío)
