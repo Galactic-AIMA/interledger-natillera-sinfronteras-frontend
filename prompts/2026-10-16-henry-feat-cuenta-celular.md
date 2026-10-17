@@ -220,3 +220,15 @@ verifica y dime cómo se ve, y dame sugerencias que apliquen para mejorar
 ## 22:41 · sesión b3a5a546
 
 Sí, aplica las mejoras 1 a 5 en scripts/build-logo.py, regenera assets/brand y haz commit.
+
+## 22:56 · sesión b3a5a546
+
+ahora trabaja en el slogan y que tambien se vea en el splahs por favor, pero antes dame opciones
+
+## 22:56 · sesión 9ef31aea
+
+ya esta David lo integro, ahora que sigue?
+
+## 23:00 · sesión 9ef31aea
+
+Hazlo tú en una rama nueva desde main y abre el PR para que Camilo lo revise.
