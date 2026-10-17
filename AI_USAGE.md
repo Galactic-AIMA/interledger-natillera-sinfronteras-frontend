@@ -77,6 +77,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-16 | Henry | Claude Code (Opus 5.5, escritorio) | Modo híbrido con el bloque A del back: la cuota va real si la natillera es real, las cuentas guardadas viajan por nombre al back, sin vista previa inventada para pagos reales; prueba nueva del modo híbrido con fetch falso y stubs de Expo para Node | `src/api/hybridApi.ts`, `tests/hibrido.test.mjs`, `tests/expo-native-stub.mjs`, `tests/hooks.mjs`, `.env.example`, `MEMORY.md`, `AI_USAGE.md` |
 | 2026-10-16 | Camilo | Claude Code (Opus 5.5, escritorio) | Integración del PR #2 de Henry con el selector de natilleras (choques en `hybridApi.ts` y `AI_USAGE.md` resueltos conservando ambos); revisión de memorias y uso de IA de front y back; tablero al día | `src/api/hybridApi.ts`, `AI_USAGE.md`, `MEMORY.md`, `prompts/2026-10-16-camilo-back-natilleras.md` |
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Apoyo al back: préstamos con varias natilleras por persona (pendientes por ADMIN en todas sus natilleras, un préstamo activo por natillera, prueba nueva) en el PR #4 del repo back | `MEMORY.md`, `AI_USAGE.md`; en el back: `deploy/prestamos/`, `infra/deploy-prestamos.sh`, `docs/API-PRESTAMOS.md` |
+| 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | README del front (qué es, flujo de Open Payments, real vs demo, cómo correrla, stack, seguridad, equipo) y README del back (PR aparte en su repo) | `README.md`, `AI_USAGE.md` |
 
 ## What We Did Ourselves
 
