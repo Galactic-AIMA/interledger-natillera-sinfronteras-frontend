@@ -54,7 +54,7 @@ export default function ScreenAutorizarCuotas() {
     }
   }
 
-  if (!loans.isLoading && !request) {
+  if (!loans.isPending && !request) {
     return (
       <Screen headerLeft={<BackButton fallback={'/natillera/prestamos'} />} title="Permiso para cobrar las cuotas" inTabs footer={<Button label="Volver" onPress={() => router.navigate('/natillera/prestamos')} />}>
         <Card tone="danger">

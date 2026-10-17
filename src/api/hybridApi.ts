@@ -92,17 +92,11 @@ const demoFinish = demo('finishPayment');
 const demoGet = demo('getPayment');
 const demoList = demo('listPayments');
 
-// Historial: los pagos reales (GET /payments) encima de los de ejemplo. Si la ruta aún no está
-// desplegada (403) o falla, se muestran solo los de ejemplo; el error queda en el registro técnico.
+// Historial: con pagos reales, solo los del back (GET /payments). Nada de ejemplo mezclado con la plata
+// de verdad: si la ruta falla, la pantalla muestra el error en vez de pagos inventados.
 async function listHybridPayments() {
-  const sample = await demoList();
-  if (!realPayments) return sample;
-  try {
-    const real = (await httpApi.listPayments()).map(withName);
-    return [...real, ...sample].sort((a, b) => b.createdAt.localeCompare(a.createdAt));
-  } catch {
-    return sample;
-  }
+  if (!realPayments) return demoList();
+  return (await httpApi.listPayments()).map(withName);
 }
 
 export const hybridApi: NatilleraApi = {

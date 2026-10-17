@@ -12,6 +12,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | Figma MCP (vía Claude Code) | — | Camilo | Leer los bocetos de Figma (textos y estructura de las 35 pantallas) |
 | Claude (claude.ai con herramientas de código y subagentes) | Claude Opus 5.5 (subagentes: Sonnet 5.5 y Opus 5.5) | Henry | Revisión del repo, auditoría de verificación, pruebas, coordinación y ciberseguridad del carril `pagos`, y sus arreglos |
 | Claude (claude.ai, proyecto del equipo, con acceso al equipo de Henry) | Claude Opus 5.5 | Henry | Revisión de pendientes, integración de ramas, plan de sesiones paralelas, registro Cognito, recorridos automáticos de la app en modo demo (Playwright manejado por la IA), documentación de integración; también ejecutó en el equipo de Henry scripts de git para subir ramas a su fork |
+| Claude Code (app de escritorio) | Claude Opus 5.5 | Henry | Código del front (préstamos, registro, splash), logo y slogan, contrato `openapi.yaml`, documentación y apoyo al back |
 
 | IA de diseño para los bocetos de Figma | — | Equipo | Apoyo para generar los bocetos de las 35 pantallas, que luego el equipo ajustó (declarado el 2026-10-17) |
 
@@ -105,6 +106,8 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Merge del pitch final de Camilo en `feat/natillera-real` y guion de `pitch-y-video.html` igualado a las notas de `pitch.html` (10 láminas, reparto y roles nuevos, cronómetro y horario ajustados); artefacto republicado | `docs/pitch/pitch-y-video.html`, `AI_USAGE.md` |
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Cierre de la declaración de IA: bocetos de Figma con IA, Gemini de Duvan en el back, chequeo `ai-usage-check` en verde y curso marcado en el checklist | `AI_USAGE.md`, `MEMORY.md` |
 | 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Arreglos pedidos por el back tras la prueba real: billetera de la meta de ejemplo a `cirocol` (la de `carmen` no existe), vista previa con espera de 600 ms en vez de una consulta por tecla y mensaje «La billetera de quien recibe no existe» | `src/api/mockApi.ts`, `src/api/httpApi.ts`, `src/utils/useDebouncedValue.ts`, `src/app/(tabs)/pagar/index.tsx`, `src/app/(tabs)/natillera/metas/[goalId].tsx`, `AI_USAGE.md` |
+| 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | Tareas de Henry de la guía del back (`docs/COORDINACION.md` de `david`): se verificó contra `docs/API-PRESTAMOS.md` y las rutas de `dev` que los préstamos fase 1 y `previewQuote` ya van reales; préstamos y solicitudes de la tesorera ahora piden los de la natillera que se está mostrando (`natilleraId` opcional del back) y las pantallas esperan esa natillera antes de decir «no hay»; `openapi.yaml` al día (varias natilleras, preview, monto en la moneda de quien recibe, errores de préstamos, fase 2 marcada) y validado con Redocly; README con lo real y lo demo; prompts de la sesión en su propio archivo | `src/api/client.ts`, `src/api/httpApi.ts`, `src/api/queries.ts`, `src/app/(tabs)/natillera/prestamos/{autorizar,plan,tesorera}.tsx`, `docs/openapi.yaml`, `README.md`, `AI_USAGE.md`, `prompts/2026-10-17-henry-logo-y-prestamos.md` |
+| 2026-10-17 | Henry | Claude Code (Opus 5.5, escritorio) | «Todo debe funcionar de forma real»: se probaron en `dev` las rutas que faltaban (recurrente, metas, préstamos fase 2: no existen en ninguna rama del back) y todas las funciones pasan a real en `eas.json`; el historial ya no mezcla pagos de ejemplo con los reales y la cuota automática explica que el servidor aún no la tiene en vez de fallar con «sesión cerrada»; README al día | `eas.json`, `src/api/hybridApi.ts`, `src/app/(tabs)/natillera/recurrente.tsx`, `README.md`, `AI_USAGE.md` |
 
 ## What We Did Ourselves
 
@@ -115,6 +118,7 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 - Revisión humana de todo lo generado antes de cada commit.
 - Henry: decidió alinear el registro con el mensaje del back sobre Cognito «al pie de la letra», el orden de integración (una rama `feat/creditos` para el PR) y dio el OK para subir a su fork; Camilo dio el OK y redactó el encargo de Cognito.
 - Mensaje de autenticación con Cognito (endpoint, cuerpos y errores): lo escribió el equipo back.
+- Marca: entre cuatro rutas que propuso la IA, el equipo eligió los Anillos (ruta B) en su versión clara y el slogan «Lejos en distancia, juntos en el ahorro.»; Camilo pidió las alternativas y Henry tomó la decisión final.
 
 (Al cerrar: listar aquí los archivos hechos con poca o ninguna IA.)
 
@@ -130,4 +134,5 @@ Declaración de uso de IA según la política de la hackatón (https://interledg
 - Sesión del botón de logs, el PR #8 del back y el aporte real (raíz, sin hook): [`prompts/2026-10-17-camilo-logs-y-aporte-real.md`](prompts/2026-10-17-camilo-logs-y-aporte-real.md).
 - Sesión del botón de logs visible con portapapeles (raíz, sin hook): [`prompts/2026-10-17-camilo-logs-visibles.md`](prompts/2026-10-17-camilo-logs-visibles.md).
 - Encargos enviados a otras sesiones: [`prompts/2026-10-16-camilo-encargos-sesiones.md`](prompts/2026-10-16-camilo-encargos-sesiones.md).
+- Sesión de Henry del logo, el slogan y los préstamos reales (el hook la guardó en el archivo de otra rama; aquí va separada): [`prompts/2026-10-17-henry-logo-y-prestamos.md`](prompts/2026-10-17-henry-logo-y-prestamos.md).
 - Sesiones de Henry en claude.ai (sin hook, copiadas a mano): [`prompts/2026-10-16-henry-claude-ai.md`](prompts/2026-10-16-henry-claude-ai.md). Los encargos a los subagentes de la auditoría se resumen en [`docs/auditoria-2026-10-16.md`](docs/auditoria-2026-10-16.md).
