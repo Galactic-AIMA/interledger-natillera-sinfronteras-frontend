@@ -342,3 +342,15 @@ contacto y un token de sesión de Cognito.
 
 ### 81
 > Bien, Henry va a hacer las pruebas de la fase 2, mientras pongámonos al tanto de lo que falta, actualizar el readme, el openapi.yaml, actualizar el AI Usage y lo que falta
+
+### 82
+> [captura: Test Wallet "Internal Server Error" en un aporte de 50.000 COP] Haciendo las pruebas de la fase 2 salió esto, es lo que dices que es normal? no deberia salir así, porque donde salga así en el pitch o explicando la app es maluco
+
+### 83
+> Mensaje de Camilo: "David, abrí el PR #10 … solo AI_USAGE y prompts de mi sesión …"
+
+### 84
+> Sí: haz que return-payment redirija de una y complete el pago en segundo plano, pruébalo y despliégalo. Y fusiona el PR #10 de Camilo.
+
+### 85
+> [captura de las instrucciones de prueba de Henry, pasos 6–8] Un aporte de Henry analizalo
