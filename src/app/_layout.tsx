@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ApiProvider } from '@/api';
+import { DevLogOverlay } from '@/features/registro/DevLogOverlay';
 import { appFonts, palette, TextScaleProvider } from '@/theme';
 
 SplashScreen.preventAutoHideAsync();
@@ -33,6 +34,7 @@ export default function RootLayout() {
               <Stack.Screen name="billetera/volviendo" options={{ gestureEnabled: false }} />
               <Stack.Screen name="resultado" options={{ gestureEnabled: false }} />
             </Stack>
+            <DevLogOverlay />
           </TextScaleProvider>
         </ApiProvider>
       </QueryClientProvider>
