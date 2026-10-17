@@ -1,9 +1,9 @@
 # Coordinación del equipo — cómo trabajar en paralelo sin pisarnos
 
-> **🧊 Back congelado (2026-10-17).** Este repo ya no recibe cambios: el código pasa a `backend/` del repo único
-> (el del front, que se renombra a `interledger-natillera-sin-fronteras`, con `git subtree` y la historia completa).
-> Cualquier arreglo, por ejemplo de la prueba de préstamos fase 2, se hace en `backend/` del repo único.
-> Lo ya desplegado en AWS no cambia: los scripts de `infra/` corren igual desde `backend/`.
+> **Repo único (2026-10-17).** El back vive en `backend/` de
+> [Galactic-AIMA/interledger-natillera-sin-fronteras](https://github.com/Galactic-AIMA/interledger-natillera-sin-fronteras)
+> (entró con `git subtree`, historia completa). El repo viejo de Duvan quedó congelado. Los arreglos van por PR a `main`
+> de este repo y los despliega David desde `backend/` con los scripts de `infra/` (compilando desde el código, sin dejar zips cambiados).
 
 
 Vigente desde 2026-10-17 (madrugada). Estado detallado: [MEMORY.md](../MEMORY.md) → "Foto al 2026-10-17".

@@ -314,7 +314,7 @@ paths:
 
 components:
   securitySchemes:
-    cognitoJwt: { type: http, scheme: bearer, bearerFormat: JWT, description: AccessToken de Cognito (us-east-2_2pQzW95IK) }
+    cognitoJwt: { type: http, scheme: bearer, bearerFormat: JWT, description: IdToken de Cognito (us-east-2_2pQzW95IK) }
   parameters:
     PaymentId: { name: paymentId, in: path, required: true, schema: { type: string } }
     GrantId: { name: grantId, in: path, required: true, schema: { type: string } }

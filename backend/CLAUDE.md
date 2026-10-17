@@ -16,7 +16,7 @@ fondo presta a sus integrantes. Los pagos se hacen con **Open Payments** (Interl
 - Backend: **AWS** — API Gateway + Lambda, Cognito, DynamoDB, Secrets Manager, EventBridge Scheduler.
 - Pagos: SDK `@interledger/open-payments` (ver `app/package.json`).
 - Equipo backend: Duvan Jaramillo (dueño del repo) y David Ciro.
-- Repo: https://github.com/duvanjaramillomarin/interterledger-natillera-sin-fronteras-backend
+- Repo: https://github.com/Galactic-AIMA/interledger-natillera-sin-fronteras (carpeta `backend/`). Repo viejo, congelado: https://github.com/duvanjaramillomarin/interterledger-natillera-sin-fronteras-backend
 
 ## Documentos de referencia
 

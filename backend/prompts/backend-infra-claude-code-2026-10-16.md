@@ -372,3 +372,24 @@ contacto y un token de sesión de Cognito.
 
 ### 91
 > Reporte de estado de Henry: [reporte: PR #12 del back con la declaración de IA de Duvan, ensayo del repo único con tsconfig exclude, reparto de pasos 1–5]
+
+### 92
+> Esta madrugada es back quedó congelado, pero los compañeros de front como que agregaron nuevas funcionalidades, hay que revisarlas y ver que es lo que agregaron, que se tiene que hacer, si vale la pena hacerlo, en cuanto tiempo. [...] Henry va a revisar el "Internal server error" que al parecer sigue apareciendo
+
+### 93
+> Ya hice aws login. Revisa si el return-payment de Henry está desplegado; si no, despliégalo desde backend/ del repo único con respaldo y verifícalo.
+
+### 94
+> El return payment es el mismo PR #16? esto es lo que el me dice [capturas]
+
+### 95
+> Bien, la pruebas 2 resolvería el tema del internal server error o es lo del return payment
+
+### 96
+> Listo , dame el paso a paso para la prueba 1
+
+### 97
+> Se nos olvidó la contraseña de ingreso a la cuenta de henry, que podemos hacer?
+
+### 98
+> 9:05. No salió el internal server error. Si salió su pago va en camino pero no devuelve automaticamente a la app, toca darle al boton verde, dejemoslo así. [...] Camilo ya me dió acceso al repo: [...] Ya puedes terminar de organizar main; avísanos al terminar para sacar el v1.0.0 antes de las 11:00.
