@@ -76,7 +76,9 @@ async function profileFromToken(): Promise<User> {
 }
 
 /** Mensajes en «usted» por status: no se muestra el `message` crudo del back (puede filtrar detalles internos). */
-function friendlyError(status: number): string {
+function friendlyError(status: number, backMessage?: string): string {
+  // Open Payments no encontró la billetera de destino (p. ej. una meta con una dirección que no existe).
+  if (backMessage?.includes('Could not get wallet address')) return 'La billetera de quien recibe no existe.';
   if (status === 401 || status === 403) return 'Su sesión se cerró o no tiene permiso. Vuelva a entrar.';
   if (status === 404) return 'No encontramos lo que buscaba.';
   if (status === 409) return 'Eso ya se hizo antes.';
@@ -124,7 +126,7 @@ async function request<T>(method: Method, path: string, body?: unknown, auth = t
       parsed = { message: match?.[2] ?? lambdaError };
     }
     logEvent({ kind: 'api', label, ok: false, status, ms, detail: [parsed.error, parsed.message].filter(Boolean).join(': ') || 'error de Lambda' });
-    throw new ApiError(friendlyError(status), status, parsed.error ?? 'error');
+    throw new ApiError(friendlyError(status, parsed.message), status, parsed.error ?? 'error');
   }
   // Lambda en modo proxy detrás de una integración sin proxy: la respuesta entera de la Lambda llega
   // como 200 con {"statusCode": 401, "body": "{…}"} (visto el 2026-10-16). Se desenvuelve.
@@ -140,14 +142,14 @@ async function request<T>(method: Method, path: string, body?: unknown, auth = t
     if (status >= 400) {
       const innerError = (inner as { error?: string; message?: string } | null) ?? {};
       logEvent({ kind: 'api', label, ok: false, status, ms, detail: `${[innerError.error, innerError.message].filter(Boolean).join(': ')} (respuesta proxy envuelta en 200)` });
-      throw new ApiError(friendlyError(status), status, innerError.error ?? 'error');
+      throw new ApiError(friendlyError(status, innerError.message), status, innerError.error ?? 'error');
     }
     logEvent({ kind: 'api', label, ok: true, status, ms, detail: 'respuesta proxy envuelta en 200' });
     return inner as T;
   }
   const backError = (data as { error?: string; message?: string } | null) ?? null;
   logEvent({ kind: 'api', label, ok: response.ok, status: response.status, ms, detail: response.ok ? undefined : [backError?.error, backError?.message].filter(Boolean).join(': ') || undefined });
-  if (!response.ok) throw new ApiError(friendlyError(response.status), response.status, backError?.error ?? 'error');
+  if (!response.ok) throw new ApiError(friendlyError(response.status, backError?.message), response.status, backError?.error ?? 'error');
   return data as T;
 }
 

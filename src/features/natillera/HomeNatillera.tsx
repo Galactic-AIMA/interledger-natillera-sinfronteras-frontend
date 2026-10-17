@@ -11,6 +11,7 @@ import { formatMovementDate } from '@/utils/dates';
 import { formatAmount } from '@/utils/money';
 
 import { JarIllustration } from './JarIllustration';
+import { MemberRings } from './MemberRings';
 import { AccountButton } from './AccountButton';
 
 const MONTHS_IN_YEAR = 12;
@@ -157,6 +158,14 @@ export function HomeNatillera() {
         <InfoRow label="Lleva" amount={natillera.myTotal} tone="money" />
         <InfoRow label="Estado" right={<StatusPill label={upToDate ? 'Al día' : 'Debe cuota'} tone={upToDate ? 'ok' : 'danger'} />} />
       </Card>
+
+      {natillera.members.length > 0 ? (
+        <Animated.View entering={enter}>
+          <Card title="¿Quién ya puso?">
+            <MemberRings members={natillera.members} />
+          </Card>
+        </Animated.View>
+      ) : null}
 
       <GoalsSection />
 

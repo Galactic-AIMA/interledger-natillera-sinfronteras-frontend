@@ -14,6 +14,7 @@ import { param } from '@/features/pagos/flujo/params';
 import { palette, space } from '@/theme';
 import { formatMovementDate } from '@/utils/dates';
 import { currencyName, formatAmount, toMinorUnits } from '@/utils/money';
+import { useDebouncedValue } from '@/utils/useDebouncedValue';
 
 function ContributionRow({ item }: { item: GoalContribution }) {
   // Si aportó en otra moneda se ve lo que salió de su billetera: ahí está lo "sin fronteras".
@@ -61,13 +62,16 @@ export default function ScreenMeta() {
   const isColecta = goal?.mode === 'colecta';
 
   // Colecta: cuánto sale de la billetera de quien aporta (puede ser otra moneda).
+  // Se pide cuando el monto lleva 600 ms quieto, no en cada tecla (aviso del back, 2026-10-17).
+  const previewValue = useDebouncedValue(amount?.value ?? null, 600);
+  const previewAmount = amount && previewValue === amount.value ? amount : null;
   const quote = useQuery({
-    queryKey: ['quote', api.mode, 'meta', goal?.beneficiaryWallet, amount?.value],
+    queryKey: ['quote', api.mode, 'meta', goal?.beneficiaryWallet, previewAmount?.value],
     queryFn: () =>
-      goal?.beneficiaryWallet && amount
-        ? api.previewQuote({ kind: 'p2p', walletAddress: goal.beneficiaryWallet, counterpartName: goal.beneficiaryName ?? goal.name, amount })
+      goal?.beneficiaryWallet && previewAmount
+        ? api.previewQuote({ kind: 'p2p', walletAddress: goal.beneficiaryWallet, counterpartName: goal.beneficiaryName ?? goal.name, amount: previewAmount })
         : null,
-    enabled: Boolean(isColecta && goal?.beneficiaryWallet && amount),
+    enabled: Boolean(isColecta && goal?.beneficiaryWallet && previewAmount),
   });
 
   async function contribute(current: Goal) {

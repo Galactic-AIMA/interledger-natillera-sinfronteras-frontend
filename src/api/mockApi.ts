@@ -98,7 +98,8 @@ const goalSeed: Goal[] = [
     target: cop(3000000),
     deadline: '2026-11-15',
     beneficiaryName: 'Abuela Carmen',
-    beneficiaryWallet: 'https://ilp.interledger-test.dev/carmen',
+    // Billetera COP real de la Test Wallet (la de David): /carmen no existe y la colecta fallaba con «Could not get wallet address».
+    beneficiaryWallet: 'https://ilp.interledger-test.dev/cirocol',
     raised: cop(1257350),
     contributions: [
       { id: 'c-1', authorName: 'Andrés', amount: cop(454500), sent: fromMajor(100, 'EUR'), createdAt: '2026-10-14T18:00:00Z' },
