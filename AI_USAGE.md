@@ -73,6 +73,17 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
   CloudTrail encontró que al rol le habían quitado permisos y que `payments-history` se había recreado con
   otro esquema; agregó una política mínima y una tabla nueva. Resultado: un segundo pago real EUR→COP
   completado.
+- **Vista previa de la tasa** ([`deploy/payments/src/preview-payment.ts`](deploy/payments/src/preview-payment.ts)):
+  `POST /payments/preview`, a partir de la fase 1 de Duvan (incoming payment + quote, sin guardar nada).
+- **Revisión, fusión y despliegue (2026-10-17):** varias natilleras (PR #8 de Camilo) y préstamos fase 2 con
+  cuota automática (PR #9 de Henry). Claude corrió las pruebas (7/7 y 11/11), revisó el manejo de grants y
+  tokens y la compatibilidad con `return-payment`, publicó versiones de respaldo, desplegó y verificó las rutas.
+  David aprobó cada fusión y despliegue.
+- **Revisión de llaves:** Claude verificó en el código y en AWS que solo existe la llave del cliente y que el
+  registro de una persona no crea secretos; dejó anotada la deuda (llaves de prueba guardadas por usuario).
+- **Coordinación y documentación:** [`docs/COORDINACION.md`](docs/COORDINACION.md) (dueños, reglas para no
+  pisarse, quién despliega), y la puesta al día del README, [`docs/API.md`](docs/API.md),
+  [`docs/API-PRESTAMOS.md`](docs/API-PRESTAMOS.md) y [`docs/CURLS.md`](docs/CURLS.md) con lo desplegado.
 
 **Camilo · Claude Code (bloque A: natilleras, cuentas guardadas y perfil)**
 

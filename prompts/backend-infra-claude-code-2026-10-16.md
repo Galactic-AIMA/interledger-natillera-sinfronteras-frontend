@@ -339,3 +339,6 @@ contacto y un token de sesión de Cognito.
 
 ### 80
 > En paralelo, quiero que revises bien cómo vamos, cuál es el estado y en qué me pueden apoyar el compañero Henry para ir avanzando mejor.
+
+### 81
+> Bien, Henry va a hacer las pruebas de la fase 2, mientras pongámonos al tanto de lo que falta, actualizar el readme, el openapi.yaml, actualizar el AI Usage y lo que falta

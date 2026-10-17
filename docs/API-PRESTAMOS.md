@@ -1,4 +1,6 @@
-# API — préstamos, fase 1 (sin Open Payments)
+# API — préstamos y cuota automática
+
+> **Desplegado en `dev` el 2026-10-17** (fase 1 y fase 2, deployment `1x7kck`). La fase 2 está más abajo.
 
 Flujos 10, 11 y 13 de [ARQUITECTURA.md](ARQUITECTURA.md), solo la parte que **no** usa Open Payments.
 Rama `back/feat-prestamos` (sale de `david`). Código en `deploy/prestamos/src/`, con un handler por endpoint y la lógica en `domain.ts`.
@@ -41,12 +43,12 @@ Las formas son las de `src/api/types.ts` y `docs/openapi.yaml` del front:
 | Uno a la vez | **Por natillera** (una persona puede estar en varias): si tiene en esa natillera una solicitud pendiente o un préstamo con cuotas por pagar, responde `409 LoanAlreadyActive` |
 | Quién decide | La ADMIN (`author` de la natillera). A cualquier otra persona se le responde `404`, para no revelar solicitudes ajenas |
 | Rechazar | Escritura condicional `pending → rejected`. Repetir la decisión da `409 AlreadyDecided` |
-| Aprobar | Exige `repaymentAuthorized` (`409 RepaymentNotAuthorized`). Con las cuotas autorizadas responde **`501 DisbursementNotAvailable`** hasta que exista la fase 2 |
+| Aprobar | Exige `repaymentAuthorized` (`409 RepaymentNotAuthorized`). Con las cuotas autorizadas inicia el **desembolso** (ver fase 2) |
 | `receiveAmount` de la simulación | Es el mismo monto: la conversión a la moneda de quien pide sale de la quote del desembolso (fase 2) |
 
 **Errores:** `400 BadRequest | InvalidAmount | InvalidInstallments`, `401 Unauthorized`, `403 Forbidden`,
 `404 NatilleraNotFound | LoanRequestNotFound`, `409 LoanAlreadyActive | InsufficientFunds | AlreadyDecided |
-RepaymentNotAuthorized`, `501 DisbursementNotAvailable`, `500 InternalError`.
+RepaymentNotAuthorized`, `500 InternalError` (los de la fase 2, más abajo).
 
 ## Tabla
 

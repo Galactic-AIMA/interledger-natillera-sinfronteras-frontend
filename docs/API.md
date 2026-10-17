@@ -8,11 +8,15 @@ cómo fluye un pago con Open Payments y cómo probarlo. Detalle por tema:
 | [CURLS.md](CURLS.md) | **Todos los curl** listos para copiar (registro, login, pagos, pruebas negativas) |
 | [API-AUTH.md](API-AUTH.md) | Registro y login contra Cognito (requests, errores, ejemplo React Native) |
 | [API-PAGOS.md](API-PAGOS.md) | Pagos: despliegue de las Lambdas, plantillas VTL, respuestas de error, curl |
+| [API-NATILLERAS.md](API-NATILLERAS.md) | Perfil, billeteras, cuentas guardadas y natilleras (varias por persona) |
+| [API-PRESTAMOS.md](API-PRESTAMOS.md) | Préstamos (pedir, autorizar cuotas, desembolso) y cuota automática |
+| [COORDINACION.md](COORDINACION.md) | Quién es dueño de qué y cómo desplegar sin pisarse |
 | [AWS-SETUP.md](AWS-SETUP.md) | Montaje de la infra en la consola de AWS y estado de cada recurso |
 | [ARQUITECTURA.md](ARQUITECTURA.md) | Los 13 flujos y las tablas del diseño (draw.io, página 3) |
 
-Estado al 2026-10-16: registro y login **funcionando**; pagos 1 a 1 (flujos 3 y 4) **escritos y en
-despliegue** (pendiente la primera prueba real de punta a punta).
+Estado al 2026-10-17: todo desplegado en `dev`. Registro, login, pagos 1 a 1 (EUR→COP), vista previa,
+natilleras y aportes **probados con la Test Wallet**. Préstamos fase 2 y cuota automática desplegados y en
+prueba. Tabla de pagos: `natillera-payments` (antes `payments-history`). Resumen en el [README](../README.md#estado-en-dev-2026-10-17).
 
 ## 1 · Piezas
 
@@ -30,7 +34,7 @@ despliegue** (pendiente la primera prueba real de punta a punta).
               start-payment       finish-payment       get-payment        (Lambdas Node.js 22)
                      │                  │                  │
                      ├─ Secrets Manager: llave del cliente Open Payments
-                     ├─ DynamoDB: user-info, payments-history (+ saved-accounts, natillera-*)
+                     ├─ DynamoDB: user-info, natillera-payments (+ saved-accounts, natillera-*)
                      └─ Open Payments (Test Wallet de Interledger): wallets, grants,
                         incoming payments, quotes, outgoing payments
 ```
@@ -112,6 +116,10 @@ Todos con `Authorization: Bearer <IdToken>` y `Content-Type: application/json`. 
 
 ## 4 · Flujo de un pago (flujos 3 y 4 del diagrama)
 
+> **Desplegado: opción B.** `finish.uri` es `…/payments/{id}/return` del back (no la app): `return-payment`
+> verifica el hash, completa el pago y redirige a `natillera://retorno?paymentId=…&result=…`. El diagrama
+> de abajo es la opción A (la app llama a `…/finish`), que sigue disponible como respaldo idempotente.
+
 ```
 App                      API / Lambdas                       Open Payments (Test Wallet)
  │ POST /payments ─────► start-payment
@@ -173,9 +181,7 @@ Curl paso a paso: [CURLS.md](CURLS.md).
 
 ## 7 · Pendiente
 
-- Primera prueba real del pago en AWS (confirma también el formato del `hash` de la Test Wallet).
-- Confirmar si la Test Wallet acepta `natillera://` y `exp://` como `finish.uri` (si no: opción B del
-  contrato, redirección https del back).
-- `POST /accounts` / `saved-accounts` (flujo 5) para pagar por `customWalletName`.
-- Natillera (flujos 7, 8, 9), recurrentes (12) y préstamos (10, 11, 12B).
-- `docs/openapi.yaml` acordado con el front (fuente de verdad del contrato).
+- Prueba real de préstamos fase 2 (autorizar cuotas → desembolso) y de la cuota automática con `charge-now`.
+- Cobro programado mensual (EventBridge Scheduler) de cuotas y préstamos: después de la hackatón.
+- Después de la hackatón: borrar los secretos y llaves de usuario que quedaron de pruebas (`prueba1`, `ciro`)
+  y rotar esas llaves en la Test Wallet. El diseño correcto es una sola llave, la del cliente.
