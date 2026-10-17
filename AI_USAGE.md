@@ -99,6 +99,14 @@ Cada persona del equipo agrega lo suyo en las cuatro secciones y sus prompts lit
   `dynamodb:Query` en `user-info`; el pedido quedó en `MEMORY.md`.
 - **Coordinación del back:** reparto con Henry (préstamos), mensajes para Ciro y Duvan y la rama
   `feat/natilleras` rebasada sobre `david` y subida para revisión de Duvan antes de desplegar.
+- **PR #8 de varias natilleras (2026-10-17):** Claude trajo `david` a `feat/natilleras-multi` (entró sin
+  conflictos; la política `natilleras-dynamo` conserva los bloques `Logs` y `Secrets`), corrió typecheck y
+  `npm test` (7/7), recompiló los zips y abrió el PR a `david`. Camilo pidió el trabajo; David lo revisó, lo
+  fusionó y lo desplegó.
+- **Prueba real de aporte y préstamo desde la app (2026-10-17):** Claude manejó el emulador por `adb` y leyó
+  el registro técnico; Camilo inició sesión y aprobó en la Test Wallet (Claude no escribe contraseñas).
+  Resultado: `prueba3` aportó $50.000 COP a «Familia Ciro» (`fundTotal` de $0 a $50.000) y pidió un préstamo
+  de $20.000 en 4 cuotas. La Test Wallet mostró «Internal Server Error» al aceptar y el pago igual quedó completo.
 
 Los commits hechos con IA llevan `Co-Authored-By: Claude` en el historial de git.
 
@@ -144,3 +152,4 @@ Prompts literales en [`/prompts`](prompts/):
 | [`prompts/henry-claude-code-2026-10-16.md`](prompts/henry-claude-code-2026-10-16.md) | Henry | Claude Code | `GET /me` con `userId = username`; préstamos fase 1 |
 | [`prompts/henry-claude-code-2026-10-17.md`](prompts/henry-claude-code-2026-10-17.md) | Henry | Claude Code | Préstamos fase 2 (permiso de cobro y desembolso) y cuota automática |
 | [`prompts/backend-natilleras-claude-code-2026-10-16.md`](prompts/backend-natilleras-claude-code-2026-10-16.md) | Camilo | Claude Code | Bloque A: natilleras, cuentas guardadas, perfil |
+| [`prompts/camilo-pr8-y-aporte-real-2026-10-17.md`](prompts/camilo-pr8-y-aporte-real-2026-10-17.md) | Camilo | Claude Code | PR #8 (varias natilleras) y prueba real de aporte y préstamo |
