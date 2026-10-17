@@ -38,6 +38,7 @@ export type GrantItem = {
   authServer: string;
   clientNonce: string;
   interactFinishNonce: string;
+  appReturnUrl?: string; // natillera://retorno o exp://…: a dónde lleva la página de vuelta del back
   status: GrantStatus;
   chargedCount: number;
   createdAt: string;
@@ -158,8 +159,15 @@ export const startGrant = async (p: {
       },
       interact: {
         start: ['redirect'],
-        // La billetera vuelve directo a la app con interact_ref y hash; la app llama a …/finish.
-        finish: { method: 'redirect', uri: `${p.returnUrl}?grantId=${grantId}`, nonce: clientNonce },
+        // La billetera vuelve al back (return-payment, que también atiende grants) y este muestra la página
+        // «Volver a la app» con interact_ref y hash; la app llama a …/finish. Chrome en Android no abre
+        // natillera:// desde la redirección directa de la billetera (sin toque reciente) y el permiso se perdía.
+        // Sin RETURN_BASE_URL (pruebas locales), vuelve directo a la app como antes.
+        finish: {
+          method: 'redirect',
+          uri: opEnv.returnBaseUrl ? `${opEnv.returnBaseUrl}/payments/${grantId}/return` : `${p.returnUrl}?grantId=${grantId}`,
+          nonce: clientNonce,
+        },
       },
     },
   );
@@ -184,6 +192,7 @@ export const startGrant = async (p: {
     authServer: q.sender.authServer,
     clientNonce,
     interactFinishNonce: grant.interact.finish,
+    appReturnUrl: p.returnUrl,
     status: 'pending',
     chargedCount: 0,
     createdAt: now,

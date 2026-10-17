@@ -315,6 +315,22 @@ body:hover .hud,.hud:focus-within{opacity:1}
   .draw *{animation:none!important}.ojos{animation:none}
   .draw .rings .r,.draw .rise{animation:none}.slide{transition:none}.envivo i{animation:none}
 }
+
+/* Sección técnica de Open Payments */
+.cab-c{display:flex;justify-content:space-between;align-items:center}
+.logo-c{width:92px;height:92px;flex:none}.logo-c svg{width:100%;height:100%}
+.et{font-family:var(--f-num);font-weight:700;font-size:16px;letter-spacing:.16em;color:var(--verde)}
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.tarj{background:var(--blanco);border:2px solid var(--linea);border-radius:24px;padding:26px 30px;display:flex;flex-direction:column;gap:12px}
+.tarj p{margin:0;font-size:22px;line-height:1.38}.tarj .sutil{color:var(--gris);font-size:20px}
+.tarj code,.seq code{font-family:var(--f-num);font-size:.86em;background:var(--menta-suave);color:var(--verde);padding:2px 8px;border-radius:7px}
+.rejilla{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.seq{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;counter-reset:s}
+.seq li{counter-increment:s;display:block;position:relative;padding-left:56px;font-size:24px}
+.seq li::before{content:counter(s);position:absolute;left:0;top:0;font-family:var(--f-num);font-weight:700;color:var(--indigo2);font-size:26px}
+.seq em{font-style:normal;font-weight:700;color:var(--alerta)}
+.seq span{display:block;color:var(--gris);line-height:1.35;margin-top:4px}
+.tarj .seq li{font-size:21px;padding-left:40px}
 </style>
 
 <div class="viewport" id="vp">
@@ -455,6 +471,86 @@ body:hover .hud,.hud:focus-within{opacity:1}
       </div>
     </section>
 
+    <!-- A2 · Anexo técnico: arquitectura y seguridad -->
+    <section class="slide" aria-label="Técnico: arquitectura">
+      <div class="pad" style="gap:26px">
+        <div class="cab-c"><div class="kicker">Cómo integramos Open Payments · arquitectura</div><div class="logo-c" data-rings="claro" role="img" aria-label="Logo de Natillera sin Fronteras"></div></div>
+        <h2 style="font-size:64px;max-width:none">La app nunca firma. Todo lo firmado sale del servidor.</h2>
+        <div class="tubo" style="margin-top:8px">
+          <div class="nodo"><span class="n">APP</span><span class="h">Expo · Android</span><p>React Native + TypeScript. Login con Cognito.</p></div>
+          <div class="conector" aria-hidden="true"></div>
+          <div class="nodo"><span class="n">API</span><span class="h">API Gateway</span><p>REST con autorizador de IdToken.</p></div>
+          <div class="conector" aria-hidden="true"></div>
+          <div class="nodo ilp"><span class="n">SERVIDOR</span><span class="h">AWS Lambda · Node</span><p>SDK de Open Payments. Llave en Secrets Manager; pagos y natilleras en DynamoDB.</p></div>
+          <div class="conector" aria-hidden="true"></div>
+          <div class="nodo"><span class="n">RED</span><span class="h">Test Wallet</span><p>Interledger: billeteras en € y en $.</p></div>
+        </div>
+        <div class="sellos" style="margin-top:auto">
+          <span class="sello">Llave privada fuera del celular</span>
+          <span class="sello">Hash de interacción verificado</span>
+          <span class="sello">Montos en enteros con assetScale</span>
+          <span class="sello">Grants recurrentes (interval P1M) para la cuota automática: en pruebas</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- A1 · Anexo técnico: las llamadas al SDK -->
+    <section class="slide" aria-label="Técnico: el pago con el SDK">
+      <div class="pad" style="gap:22px">
+        <div class="cab-c"><div class="kicker">Cómo integramos Open Payments · SDK @interledger/open-payments 7.4.0</div><div class="logo-c" data-rings="claro" role="img" aria-label="Logo de Natillera sin Fronteras"></div></div>
+        <h2 style="font-size:64px;max-width:none">Un pago, paso a paso, con el SDK oficial.</h2>
+        <ol class="seq">
+          <li class="rise" style="--d:.2s"><code>walletAddress.get</code><span>De la billetera de Andrés (€) y de la del fondo ($): servidor de autorización, de recursos y moneda.</span></li>
+          <li class="rise" style="--d:.35s"><code>grant.request</code> → <code>incomingPayment.create</code><span>Permiso no interactivo y cobro entrante en la billetera del fondo.</span></li>
+          <li class="rise" style="--d:.5s"><code>grant.request</code> → <code>quote.create</code><span>Cotización en la billetera de Andrés: <b>debitAmount</b> en € y <b>receiveAmount</b> en $.</span></li>
+          <li class="rise" style="--d:.65s"><code>grant.request</code> <em>interactivo</em><span>Permiso de outgoing payment con <b>limits.debitAmount</b> = lo cotizado y <b>interact.finish</b> por redirect. La app abre la billetera.</span></li>
+          <li class="rise" style="--d:.8s"><code>sha256(nonce · nonce AS · interact_ref · URL)</code><span>La billetera vuelve al back; verificamos el hash de interacción antes de tocar el pago.</span></li>
+          <li class="rise" style="--d:.95s"><code>grant.continue</code> → <code>outgoingPayment.create</code><span>Con el token final se ejecuta el pago y el fondo queda al día.</span></li>
+        </ol>
+      </div>
+    </section>
+
+
+    <!-- T3 · Open Payments: permisos que se repiten -->
+    <section class="slide" aria-label="Técnico: permisos recurrentes">
+      <div class="pad" style="gap:24px">
+        <div class="cab-c"><div class="kicker">Cómo integramos Open Payments · permisos que se repiten</div><div class="logo-c" data-rings="claro" role="img" aria-label="Logo de Natillera sin Fronteras"></div></div>
+        <h2 style="font-size:64px;max-width:none">Un permiso, y cada mes la cuota se pone sola.</h2>
+        <div class="dos" style="margin-top:0">
+          <div class="tarj">
+            <span class="et">CUOTA AUTOMÁTICA Y CUOTAS DEL PRÉSTAMO</span>
+            <ol class="seq">
+              <li><code>grant.request</code> <em>interactivo</em><span><b>limits.debitAmount</b> = tope por cobro y <b>interval</b> = <code>R&lt;n&gt;/inicio/P1M</code> hasta diciembre.</span></li>
+              <li>La persona aprueba una vez<span>Se verifica el hash y se cierra con <code>grant.continue</code>.</span></li>
+              <li>Cada cobro<span><code>quote.create</code> → <code>outgoingPayment.create</code> con el token del permiso; <code>token.rotate</code> si venció.</span></li>
+            </ol>
+          </div>
+          <div class="tarj">
+            <span class="et">CÓMO LO CUIDAMOS</span>
+            <p style="font-size:24px">Cero tokens en la base de datos: el token de continuación y el de acceso viven en <b>Secrets Manager</b>; DynamoDB solo guarda datos que no dan acceso a nada.</p>
+            <p style="font-size:24px">En préstamos, la persona aprueba las cuotas de pago <b>antes</b> del desembolso.</p>
+            <p class="sutil">Estado: desplegado en el servidor; el cobro recurrente aún no tiene una prueba real de punta a punta.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- T4 · Open Payments: lo que aprendimos del protocolo -->
+    <section class="slide" aria-label="Técnico: lo que aprendimos del protocolo">
+      <div class="pad" style="gap:24px">
+        <div class="cab-c"><div class="kicker">Cómo integramos Open Payments · decisiones y trampas</div><div class="logo-c" data-rings="claro" role="img" aria-label="Logo de Natillera sin Fronteras"></div></div>
+        <h2 style="font-size:64px;max-width:none">Lo que el protocolo nos obligó a hacer bien.</h2>
+        <div class="rejilla">
+          <div class="tarj"><span class="et">EL SDK SOLO CORRE EN NODE</span><p>La app nunca firma: todo pasa por Lambdas con <code>createAuthenticatedClient</code> y la llave en Secrets Manager.</p></div>
+          <div class="tarj"><span class="et">ENTRE MONEDAS</span><p>Billeteras con <b>assetCode</b> distinto: la cotización trae lo que sale en € y lo que llega en $. La tasa la pone el proveedor.</p></div>
+          <div class="tarj"><span class="et">TIEMPOS CORTOS</span><p>La cotización vence en ~5 min y el token en ~10 min: la billetera se abre enseguida y los tokens se rotan.</p></div>
+          <div class="tarj"><span class="et">SIN SALDOS NI WEBHOOKS</span><p>Open Payments no da saldos: el fondo = aportes − préstamos. El estado del pago se consulta, no llega solo.</p></div>
+          <div class="tarj"><span class="et">MONTOS SIN DECIMALES</span><p><code>value</code> es un entero en texto con <b>assetScale</b>: 10000 con escala 2 = 100,00. Nunca números con coma.</p></div>
+          <div class="tarj"><span class="et">VUELTA SEGURA A LA APP</span><p>La billetera vuelve al servidor, que verifica el hash y responde a la app con el resultado: el hash no pasa por el celular.</p></div>
+        </div>
+      </div>
+    </section>
+
     <!-- 7 · Antes y después -->
     <section class="slide" aria-label="Doña Rosa lo ve de una">
       <div class="pad">
@@ -584,7 +680,7 @@ body:hover .hud,.hud:focus-within{opacity:1}
 <div class="barra" aria-hidden="true"><i id="prog"></i></div>
 <div class="notas" id="notas" hidden></div>
 <div class="hud" id="hud">
-  <span id="cuenta" class="num">1 / 10</span>
+  <span id="cuenta" class="num">1 / 17</span>
   <button id="b-prev" type="button" aria-label="Lámina anterior">←</button>
   <button id="b-next" type="button" aria-label="Lámina siguiente">→</button>
   <button id="b-tema" type="button" aria-pressed="false">Modo oscuro (T)</button>
@@ -624,6 +720,10 @@ body:hover .hud,.hud:focus-within{opacity:1}
     {t:25,q:'Camilo',p:['Natillera sin Fronteras es la natillera de toda la vida, pero en el celular.','Cada uno pone su cuota desde su billetera, en su moneda. Al fondo le llegan pesos.','Y todos ven lo mismo. Ahorre en familia, aunque vivan en países distintos.','Se lo mostramos. (Pasar al celular proyectado.)']},
     {t:70,q:'Camilo',p:['DEMO EN VIVO en el celular. Si algo falla: «les muestro el mismo camino grabado esta mañana» y al video.','1. Andrés pone en euros; a la natillera le llegan pesos. Antes de tocar nada sabe cuánto sale, cuánto llega y cuánto cuesta. (Leer en voz alta los números que salgan.)','2. Le contamos en tres pasos qué va a pasar. Nadie se pierde.','3. Andrés da el permiso en su propia billetera.','4. Cuota puesta. Desde España, en menos de un minuto.']},
     {t:20,q:'Camilo',p:['Esto no es una maqueta: el pago de euros a pesos ya corrió de verdad con Open Payments, en la billetera de prueba de Interledger.','La app nunca guarda llaves ni toca la plata. Arma el pago y la persona da el permiso en su billetera.','Por debajo va Interledger con Open Payments: la tubería que mueve la plata entre billeteras y entre monedas.']},
+    {t:20,q:'Duvan',p:['La app nunca firma: el SDK de Open Payments solo corre en Node, así que todo lo firmado sale de Lambdas en AWS.','La llave privada vive en Secrets Manager; pagos, natilleras y socios en DynamoDB. La app entra con Cognito y llama un API REST con IdToken.']},
+    {t:30,q:'Duvan',p:['Un pago son seis pasos con el SDK oficial, en el orden real de start-payment.ts y return-payment.ts:','Datos de las dos billeteras; cobro entrante en el fondo; cotización en la billetera de Andrés, con lo que sale en euros y lo que llega en pesos.','Permiso interactivo con el tope de la cotización; Andrés aprueba en su billetera; verificamos el hash y ejecutamos el pago.']},
+    {t:20,q:'Ciro',p:['Para la cuota automática y las cuotas del préstamo usamos permisos recurrentes: tope por cobro e intervalo mensual hasta diciembre.','La persona aprueba una vez; cada cobro es cotización más pago con ese permiso, y el token se rota si venció. Los tokens van en Secrets Manager.','Está desplegado; el cobro recurrente aún no tiene prueba real de punta a punta.']},
+    {t:20,q:'Ciro',p:['Lo que el protocolo nos obligó a hacer bien: entre monedas basta con billeteras distintas; cotizaciones de 5 min y tokens de 10; sin saldos ni webhooks; montos enteros con assetScale; y la vuelta de la billetera pasa por el servidor.']},
     {t:15,q:'Henry',p:['Y Doña Rosa lo ve de una: el fondo sube en ese momento y Andrés queda al día.','En «¿Quién ya puso?» cada socio es un anillo: con color, al día; en gris, le falta la cuota.','Sin cuaderno y sin pantallazos.']},
     {t:25,q:'Camilo',p:['Y la natillera no es solo ahorro. Cuando alguien de la familia lo necesita, todos se unen.','Alguien abre una colecta con nombre propio: «la operación de la tía Marta», con meta y fecha.','Cada uno pone desde su país, en su moneda. Y la plata llega directo a la billetera de Marta, a su nombre. Nadie la recibe por el camino.']},
     {t:15,q:'Henry',p:['Cuando la plata tiene dueño, la familia ayuda más.','Llega a su nombre, todos ven cuánto va, y con esa confianza pone hasta el primo que vive lejos.','Sirve para un familiar enfermo, los 80 años de la abuela, la fiesta de diciembre o el semestre del hijo afuera.']},

@@ -393,3 +393,9 @@ contacto y un token de sesión de Cognito.
 
 ### 98
 > 9:05. No salió el internal server error. Si salió su pago va en camino pero no devuelve automaticamente a la app, toca darle al boton verde, dejemoslo así. [...] Camilo ya me dió acceso al repo: [...] Ya puedes terminar de organizar main; avísanos al terminar para sacar el v1.0.0 antes de las 11:00.
+
+### 99
+> Sigamos con la prueba 2, ya estoy con Duvan, que le podemos pasar para que vaya haciendo? Dame la guia para hacer la prueba 2
+
+### 100
+> [captura: Test Wallet "Internal Server Error" al autorizar las cuotas] A la hora de henry aceptar las cuotas le dimos una vez y no pasó nada, le dimos otra vez y dio Internal server error. Como vas?
