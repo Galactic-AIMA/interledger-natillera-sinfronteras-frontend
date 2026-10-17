@@ -67,3 +67,10 @@ Sesiones de Claude Code (Opus 5.5, escritorio) abiertas en la raíz del workspac
 - `Davidciro-333`
 - `revisemos lo del formulario` / `y me deajas el paso a paso para lo del drive`
 - `Estuve pensando que podemos poner el video con subtítulos en ingles ya que los directivos son de este idioma eso nos dejaria bien melos` / `Puedes hacer esta tarea con unos buenos subtítulos legibles`
+
+## 2026-10-17 ~09:45 · sesión en la raíz (pitch corto con el video)
+
+- (con una foto adjunta de la hoja «El pitch perfecto en 5 minutos») `Perfecto, estoy aquí revisando con los de soporte de Internet y les mostramos un poco de lo que podríamos presentar. Entonces nos recomendaron presentar el video, como el video pues deja un minutico, un minutico, 10 segundos, un poco de, de espacio para, para dar una introducción eh, como tal de nosotros como expositores. Entonces la idea es que de pronto vemos unos slides un poquito más cortos, ¿verdad? Prácticamente que en uno o dos slides introduzcamos con los siguientes puntos que te voy a adjuntar.` / `valida los 5 puntos de pitch Entonces crea unos slides corticos de introducción con los cinco puntos y los otros slides que tenemos eh, en la parte que hablamos de Open Payments habla de toda la parte técnica y cómo utilizamos eh, como tal la librería, ¿listo? El video quedó full.`
+- `Teóricamente puse unas diapositivas de Google Slides. Y resulta que hay que seguir como ese mismo lineamiento de los cinco puntos importantes que estén en los, en las diapositivas. No tiene que seguir el mismo diseño, pero que si esté como tal, pues también en los slides todo esto. Igual mantengamos los que nosotros creamos y creamos uno nuevo con este lineamiento.`
+- `Eso continúa, eso es lo que me refiero, es que te puse ahí un enlace con la plantilla de, de la hackathon. En Google Slides, entonces sigue lo que te dije.`
+- `y mantén eh, todas las otras instrucciones. O sea, mantén los otros slides y el slide de introducción corto. Con los cinco puntos que debemos dar. Y también siguiendo esos lineamientos.`
